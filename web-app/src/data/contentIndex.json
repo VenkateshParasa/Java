@@ -1,0 +1,255 @@
+{
+  "sections": [
+    {
+      "id": "00-getting-started",
+      "title": "Getting Started",
+      "path": "/content/00_Getting_Started",
+      "children": [
+        {
+          "id": "comprehensive-progress-tracker",
+          "title": "COMPREHENSIVE PROGRESS TRACKER",
+          "description": "**Last Updated:** January 4, 2026 - 23:45 (After Supplementary Exercises Completion)...",
+          "path": "/content/COMPREHENSIVE_PROGRESS_TRACKER",
+          "type": "file",
+          "tags": []
+        },
+        {
+          "id": "00_getting_started-folder_structure_guide",
+          "title": "📁 NEW ORGANIZED FOLDER STRUCTURE",
+          "description": "Your learning materials are now professionally organized into logical folders for easy navigation and maintenance....",
+          "path": "/content/00_Getting_Started/FOLDER_STRUCTURE_GUIDE",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "00_getting_started-master_index",
+          "title": "Java & Selenium Learning - Master Index",
+          "description": "**Welcome to your comprehensive Java and Selenium Automation learning program!**...",
+          "path": "/content/00_Getting_Started/Master_Index",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "00_getting_started-progress_tracker",
+          "title": "Java Learning Progress Tracker",
+          "description": "**Start Date**: _________________...",
+          "path": "/content/00_Getting_Started/Progress_Tracker",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "00_getting_started-quick_start_guide",
+          "title": "Quick Start Guide - Your Java Learning Journey",
+          "description": "**Start with**: Java Core Fundamentals (30 days)...",
+          "path": "/content/00_Getting_Started/Quick_Start_Guide",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "00_getting_started-readme_start_here",
+          "title": "🎯 UPDATED: Master Index with Beginner-Friendly Exercises",
+          "description": "**Last Updated:** January 2026...",
+          "path": "/content/00_Getting_Started/README_START_HERE",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "00_getting_started-whats_new_summary",
+          "title": "🎉 NEW: Ultra-Detailed Beginner Exercises - Summary",
+          "description": "**Your Request:**...",
+          "path": "/content/00_Getting_Started/WHATS_NEW_Summary",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        }
+      ]
+    },
+    {
+      "id": "01-core-courses",
+      "title": "Core Courses",
+      "path": "/content/01_Core_Courses",
+      "children": [
+        {
+          "id": "01_core_courses-java_core_fundamentals_30day_course",
+          "title": "Java Core Fundamentals - 30 Day Learning Plan",
+          "description": "This course is designed to take you from beginner to intermediate Java developer in 30 days, with a focus on building strong fundamentals needed for S...",
+          "path": "/content/01_Core_Courses/Java_Core_Fundamentals_30Day_Course",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "01_core_courses-java_for_selenium_automation_45day_course",
+          "title": "Java for Selenium Automation - 45 Day Role-Specific Course",
+          "description": "This specialized course combines essential Java concepts with Selenium WebDriver to make you job-ready for QA Automation Engineer roles. Assumes basic...",
+          "path": "/content/01_Core_Courses/Java_For_Selenium_Automation_45Day_Course",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        }
+      ]
+    },
+    {
+      "id": "02-detailed-topics",
+      "title": "Detailed Topics",
+      "path": "/content/02_Detailed_Topics",
+      "children": [
+        {
+          "id": "02_detailed_topics-deep_dive_exception_handling",
+          "title": "Deep Dive: Exception Handling in Java",
+          "description": "---...",
+          "path": "/content/02_Detailed_Topics/DEEP_DIVE_Exception_Handling",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "02_detailed_topics-deep_dive_oop_concepts",
+          "title": "Deep Dive: Object-Oriented Programming in Java",
+          "description": "---...",
+          "path": "/content/02_Detailed_Topics/DEEP_DIVE_OOP_Concepts",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "02_detailed_topics-detailed_topics_core_java",
+          "title": "Java Core Fundamentals - Detailed Topic Breakdown (30 Days)",
+          "description": "1. What is Java?...",
+          "path": "/content/02_Detailed_Topics/Detailed_Topics_Core_Java",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "02_detailed_topics-detailed_topics_core_java_with_exercises",
+          "title": "Java Core Fundamentals - Detailed Topics with Daily Coding Exercises",
+          "description": "**For Each Day:**...",
+          "path": "/content/02_Detailed_Topics/Detailed_Topics_Core_Java_With_Exercises",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "02_detailed_topics-detailed_topics_selenium_automation",
+          "title": "Java for Selenium Automation - Detailed Topic Breakdown (45 Days)",
+          "description": "1. **JDK Installation**...",
+          "path": "/content/02_Detailed_Topics/Detailed_Topics_Selenium_Automation",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "02_detailed_topics-detailed_topics_selenium_with_exercises",
+          "title": "Java for Selenium Automation - Detailed Topics with Daily Coding Exercises",
+          "description": "**For Each Day:**...",
+          "path": "/content/02_Detailed_Topics/Detailed_Topics_Selenium_With_Exercises",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        }
+      ]
+    },
+    {
+      "id": "03-beginner-friendly-exercises",
+      "title": "BEGINNER FRIENDLY Exercises",
+      "path": "/content/03_BEGINNER_FRIENDLY_Exercises",
+      "children": [
+        {
+          "id": "03_beginner_friendly_exercises-core_java",
+          "title": "Core Java",
+          "path": "/content/03_BEGINNER_FRIENDLY_Exercises/Core_Java",
+          "type": "folder",
+          "children": [
+            {
+              "id": "03_beginner_friendly_exercises-core_java-week1_days01-07_setup_and_basics",
+              "title": "Core Java - Week 1: Days 1-7 - Setup and Basics",
+              "description": "**Coverage:** Days 1-7 (Complete Week 1)...",
+              "path": "/content/03_BEGINNER_FRIENDLY_Exercises/Core_Java/Week1_Days01-07_Setup_and_Basics",
+              "type": "file",
+              "tags": [],
+              "estimatedTime": "",
+              "exercises": 0,
+              "lastUpdated": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "04-assessments",
+      "title": "Assessments",
+      "path": "/content/04_Assessments",
+      "children": [
+        {
+          "id": "04_assessments-answer_keys_and_scoring_guide",
+          "title": "Answer Keys & Scoring Guide",
+          "description": "1. **Attempt questions first** before checking answers...",
+          "path": "/content/04_Assessments/Answer_Keys_and_Scoring_Guide",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "04_assessments-daily_assessments_core_java",
+          "title": "Java Core Fundamentals - Daily Assessment Questions (Days 1-30)",
+          "description": "1. **After completing the day's learning**, attempt these questions...",
+          "path": "/content/04_Assessments/Daily_Assessments_Core_Java",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        },
+        {
+          "id": "04_assessments-daily_assessments_selenium_automation",
+          "title": "Java for Selenium Automation - Daily Assessment Questions (Days 1-45)",
+          "description": "1. **Complete the day's learning** from the course material...",
+          "path": "/content/04_Assessments/Daily_Assessments_Selenium_Automation",
+          "type": "file",
+          "tags": [],
+          "estimatedTime": "",
+          "exercises": 0,
+          "lastUpdated": ""
+        }
+      ]
+    }
+  ],
+  "generatedAt": "2026-01-03T23:01:14.215Z",
+  "totalFiles": 19
+}
