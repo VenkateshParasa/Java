@@ -737,7 +737,7 @@ const ResultsView = ({ results, assessment, answers, dayId, reviewMode = false, 
           {!reviewMode && (
             <>
               <button
-                onClick={() => navigate(`/day/${dayId}`)}
+                onClick={() => navigate('/assessments')}
                 className="btn-primary"
               >
                 Back to Lesson
@@ -752,7 +752,7 @@ const ResultsView = ({ results, assessment, answers, dayId, reviewMode = false, 
           )}
           {reviewMode && (
             <button
-              onClick={() => navigate(`/day/${dayId}/assessment`)}
+              onClick={() => navigate(`/assessment/${dayId.replace('java-', '')}`)}
               className="btn-primary"
             >
               Back to Assessment
