@@ -760,15 +760,50 @@ Sum of digits of 999: 27
 ## 💻 Practical Exercises
 
 ### Exercise 1: Temperature Converter
-Create a class with overloaded methods to convert temperatures.
 
+**📝 Problem Statement:**
+Create a TemperatureConverter class that demonstrates method overloading by providing multiple temperature conversion methods. The class should handle conversions between Celsius, Fahrenheit, and Kelvin scales using overloaded methods.
+
+**Requirements:**
+- Create an overloaded `convert()` method that converts Celsius to Fahrenheit
+- Create another overloaded `convert()` method that converts Fahrenheit to Celsius using a boolean parameter
+- Implement `convertToKelvin()` method to convert Celsius to Kelvin
+- Implement `convertFromKelvin()` method to convert Kelvin to Celsius
+- Provide a `displayConversions()` method showing all temperature scales for a given Celsius value
+- Test with standard temperature values (0°C, 25°C, 100°C)
+
+**Sample Test Cases:**
+```
+Input: displayConversions(25.0)
+Expected Output:
+=== Temperature Conversions ===
+Celsius: 25.0
+Fahrenheit: 77.0
+Kelvin: 298.15
+
+Input: displayConversions(0.0)
+Expected Output:
+=== Temperature Conversions ===
+Celsius: 0.0
+Fahrenheit: 32.0
+Kelvin: 273.15
+
+Input: displayConversions(100.0)
+Expected Output:
+=== Temperature Conversions ===
+Celsius: 100.0
+Fahrenheit: 212.0
+Kelvin: 373.15
+```
+
+**Solution:**
 ```java
 public class TemperatureConverter {
     // Celsius to Fahrenheit
     public double convert(double celsius) {
         return (celsius * 9/5) + 32;
     }
-    
+
     // Fahrenheit to Celsius
     public double convert(double fahrenheit, boolean toC) {
         if (toC) {
@@ -776,17 +811,17 @@ public class TemperatureConverter {
         }
         return fahrenheit;
     }
-    
+
     // Celsius to Kelvin
     public double convertToKelvin(double celsius) {
         return celsius + 273.15;
     }
-    
+
     // Kelvin to Celsius
     public double convertFromKelvin(double kelvin) {
         return kelvin - 273.15;
     }
-    
+
     void displayConversions(double temp) {
         System.out.println("\n=== Temperature Conversions ===");
         System.out.println("Celsius: " + temp);
@@ -798,7 +833,7 @@ public class TemperatureConverter {
 public class TestTemperature {
     public static void main(String[] args) {
         TemperatureConverter converter = new TemperatureConverter();
-        
+
         converter.displayConversions(25.0);
         converter.displayConversions(0.0);
         converter.displayConversions(100.0);
@@ -806,11 +841,60 @@ public class TestTemperature {
 }
 ```
 
+**💡 Tips:**
+- Method overloading allows same method name with different parameters
+- Use boolean parameters to distinguish between similar operations
+- Celsius to Fahrenheit formula: (C × 9/5) + 32
+- Fahrenheit to Celsius formula: (F - 32) × 5/9
+- Celsius to Kelvin: Add 273.15
+- Kelvin to Celsius: Subtract 273.15
+
 ---
 
 ### Exercise 2: String Manipulator
-Create methods for various string operations.
 
+**📝 Problem Statement:**
+Create a StringManipulator class that provides various string manipulation and analysis methods. The class should perform operations like reversing strings, counting vowels, checking palindromes, and counting words.
+
+**Requirements:**
+- Implement a `reverse()` method that returns the reversed string
+- Create a `countVowels()` method that counts all vowels (a, e, i, o, u) in a string
+- Implement an `isPalindrome()` method that checks if a string reads the same forwards and backwards
+- Create a `countWords()` method that counts the number of words in a string
+- Provide an `analyzeString()` method that displays comprehensive string analysis
+- Handle edge cases like null strings and empty strings
+
+**Sample Test Cases:**
+```
+Input: analyzeString("Hello World")
+Expected Output:
+=== String Analysis ===
+Original: Hello World
+Reversed: dlroW olleH
+Vowel Count: 3
+Is Palindrome: false
+Word Count: 2
+
+Input: analyzeString("madam")
+Expected Output:
+=== String Analysis ===
+Original: madam
+Reversed: madam
+Vowel Count: 2
+Is Palindrome: true
+Word Count: 1
+
+Input: analyzeString("Java Programming is fun")
+Expected Output:
+=== String Analysis ===
+Original: Java Programming is fun
+Reversed: nuf si gnimmargorP avaJ
+Vowel Count: 7
+Is Palindrome: false
+Word Count: 4
+```
+
+**Solution:**
 ```java
 public class StringManipulator {
     // Reverse a string
@@ -818,7 +902,7 @@ public class StringManipulator {
         StringBuilder reversed = new StringBuilder(str);
         return reversed.reverse().toString();
     }
-    
+
     // Count vowels
     public int countVowels(String str) {
         int count = 0;
@@ -831,13 +915,13 @@ public class StringManipulator {
         }
         return count;
     }
-    
+
     // Check if palindrome
     public boolean isPalindrome(String str) {
         String reversed = reverse(str);
         return str.equalsIgnoreCase(reversed);
     }
-    
+
     // Count words
     public int countWords(String str) {
         if (str == null || str.trim().isEmpty()) {
@@ -846,7 +930,7 @@ public class StringManipulator {
         String[] words = str.trim().split("\\s+");
         return words.length;
     }
-    
+
     // Display all operations
     public void analyzeString(String str) {
         System.out.println("\n=== String Analysis ===");
@@ -861,7 +945,7 @@ public class StringManipulator {
 public class TestStringManipulator {
     public static void main(String[] args) {
         StringManipulator sm = new StringManipulator();
-        
+
         sm.analyzeString("Hello World");
         sm.analyzeString("madam");
         sm.analyzeString("Java Programming is fun");
@@ -869,11 +953,60 @@ public class TestStringManipulator {
 }
 ```
 
+**💡 Tips:**
+- Use StringBuilder for efficient string reversal
+- Convert to lowercase for case-insensitive vowel counting
+- Palindrome check requires case-insensitive comparison
+- Use split("\\s+") to handle multiple spaces between words
+- Always validate input for null or empty strings
+- Regular expressions (\\s+) match one or more whitespace characters
+
 ---
 
 ### Exercise 3: Array Operations with Varargs
-Create methods using varargs for array operations.
 
+**📝 Problem Statement:**
+Create an ArrayOperations class that demonstrates the use of varargs (variable arguments) for performing various statistical operations on arrays. The class should accept any number of integer arguments and calculate maximum, minimum, and average values.
+
+**Requirements:**
+- Implement `findMax(int... numbers)` method using varargs to find the maximum value
+- Create `findMin(int... numbers)` method to find the minimum value
+- Implement `calculateAverage(int... numbers)` method to compute the average
+- Add validation to handle empty arrays
+- Create `displayStats(int... numbers)` method showing comprehensive array statistics
+- Test with different numbers of arguments (1 argument, 3 arguments, 6 arguments)
+
+**Sample Test Cases:**
+```
+Input: displayStats(5, 2, 8, 1, 9, 3)
+Expected Output:
+=== Array Statistics ===
+Numbers: 5 2 8 1 9 3
+Count: 6
+Maximum: 9
+Minimum: 1
+Average: 4.67
+
+Input: displayStats(10, 20, 30)
+Expected Output:
+=== Array Statistics ===
+Numbers: 10 20 30
+Count: 3
+Maximum: 30
+Minimum: 10
+Average: 20.00
+
+Input: displayStats(100)
+Expected Output:
+=== Array Statistics ===
+Numbers: 100
+Count: 1
+Maximum: 100
+Minimum: 100
+Average: 100.00
+```
+
+**Solution:**
 ```java
 public class ArrayOperations {
     // Find maximum using varargs
@@ -881,7 +1014,7 @@ public class ArrayOperations {
         if (numbers.length == 0) {
             throw new IllegalArgumentException("At least one number required");
         }
-        
+
         int max = numbers[0];
         for (int num : numbers) {
             if (num > max) {
@@ -890,13 +1023,13 @@ public class ArrayOperations {
         }
         return max;
     }
-    
+
     // Find minimum using varargs
     public int findMin(int... numbers) {
         if (numbers.length == 0) {
             throw new IllegalArgumentException("At least one number required");
         }
-        
+
         int min = numbers[0];
         for (int num : numbers) {
             if (num < min) {
@@ -905,20 +1038,20 @@ public class ArrayOperations {
         }
         return min;
     }
-    
+
     // Calculate average using varargs
     public double calculateAverage(int... numbers) {
         if (numbers.length == 0) {
             return 0.0;
         }
-        
+
         int sum = 0;
         for (int num : numbers) {
             sum += num;
         }
         return (double) sum / numbers.length;
     }
-    
+
     // Display statistics
     public void displayStats(int... numbers) {
         System.out.println("\n=== Array Statistics ===");
@@ -937,7 +1070,7 @@ public class ArrayOperations {
 public class TestArrayOperations {
     public static void main(String[] args) {
         ArrayOperations ops = new ArrayOperations();
-        
+
         ops.displayStats(5, 2, 8, 1, 9, 3);
         ops.displayStats(10, 20, 30);
         ops.displayStats(100);
@@ -945,11 +1078,60 @@ public class TestArrayOperations {
 }
 ```
 
+**💡 Tips:**
+- Varargs (int... numbers) allows passing variable number of arguments
+- Varargs parameter must be the last parameter in method signature
+- Internally, varargs are treated as arrays
+- Use enhanced for loop to iterate through varargs
+- Always validate that varargs array is not empty before operations
+- Cast to double for average calculation to avoid integer division
+
 ---
 
 ### Exercise 4: Recursive Power Calculator
-Create recursive methods for mathematical operations.
 
+**📝 Problem Statement:**
+Create a PowerCalculator class that implements recursive methods for calculating powers. The class should handle positive exponents, negative exponents, and provide power table generation functionality.
+
+**Requirements:**
+- Implement recursive `power(int base, int exponent)` method for positive exponents
+- Create `powerWithNegative()` method that handles both positive and negative exponents
+- Implement `displayPowerTable()` method that shows powers from 0 to a maximum exponent
+- Use recursion with proper base cases
+- Handle edge cases like exponent 0 and exponent 1
+- Return appropriate data types (long for large values, double for negative exponents)
+
+**Sample Test Cases:**
+```
+Input: power(2, 5)
+Expected Output: 32
+
+Input: power(3, 4)
+Expected Output: 81
+
+Input: power(5, 0)
+Expected Output: 1
+
+Input: powerWithNegative(2, -3)
+Expected Output: 0.125
+
+Input: displayPowerTable(2, 10)
+Expected Output:
+=== Power Table for 2 ===
+2^0 = 1
+2^1 = 2
+2^2 = 4
+2^3 = 8
+2^4 = 16
+2^5 = 32
+2^6 = 64
+2^7 = 128
+2^8 = 256
+2^9 = 512
+2^10 = 1024
+```
+
+**Solution:**
 ```java
 public class PowerCalculator {
     // Calculate power recursively
@@ -961,11 +1143,11 @@ public class PowerCalculator {
         if (exponent == 1) {
             return base;
         }
-        
+
         // Recursive case
         return base * power(base, exponent - 1);
     }
-    
+
     // Calculate power with negative exponents
     public double powerWithNegative(int base, int exponent) {
         if (exponent >= 0) {
@@ -974,7 +1156,7 @@ public class PowerCalculator {
             return 1.0 / power(base, -exponent);
         }
     }
-    
+
     // Display power table
     public void displayPowerTable(int base, int maxExponent) {
         System.out.println("\n=== Power Table for " + base + " ===");
@@ -987,35 +1169,75 @@ public class PowerCalculator {
 public class TestPowerCalculator {
     public static void main(String[] args) {
         PowerCalculator calc = new PowerCalculator();
-        
+
         System.out.println("2^5 = " + calc.power(2, 5));
         System.out.println("3^4 = " + calc.power(3, 4));
         System.out.println("5^0 = " + calc.power(5, 0));
-        
+
         System.out.println("\n2^-3 = " + calc.powerWithNegative(2, -3));
-        
+
         calc.displayPowerTable(2, 10);
     }
 }
 ```
 
+**💡 Tips:**
+- Recursive base cases prevent infinite recursion (exponent 0 and 1)
+- Each recursive call reduces the exponent by 1
+- Negative exponents: a^-n = 1/(a^n)
+- Return long for large positive results
+- Return double for negative exponents (fractional results)
+- Power of 0 always equals 1 for any non-zero base
+
 ---
 
 ### Exercise 5: Method Overloading with Shapes
-Create overloaded methods for different shapes.
 
+**📝 Problem Statement:**
+Create a ShapeCalculator class that demonstrates method overloading by providing different calculation methods for various geometric shapes (circle, rectangle, triangle). Each shape should have overloaded methods for calculating area and perimeter.
+
+**Requirements:**
+- Implement overloaded `calculateArea(double radius)` for circles
+- Implement overloaded `calculateArea(double length, double width)` for rectangles
+- Implement overloaded `calculateArea(double base, double height, boolean isTriangle)` for triangles
+- Create overloaded `calculatePerimeter()` methods for circles and rectangles
+- Provide `displayShapeInfo()` method to show formatted output
+- Use appropriate formulas for each shape
+
+**Sample Test Cases:**
+```
+Input: Circle with radius = 5.0
+Expected Output:
+=== Circle (radius=5) ===
+Area: 78.54
+Perimeter: 31.42
+
+Input: Rectangle with length = 4.0, width = 6.0
+Expected Output:
+=== Rectangle (4x6) ===
+Area: 24.00
+Perimeter: 20.00
+
+Input: Triangle with base = 6.0, height = 4.0
+Expected Output:
+=== Triangle (base=6, height=4) ===
+Area: 12.00
+Perimeter: 0.00
+```
+
+**Solution:**
 ```java
 public class ShapeCalculator {
     // Circle area
     public double calculateArea(double radius) {
         return Math.PI * radius * radius;
     }
-    
+
     // Rectangle area
     public double calculateArea(double length, double width) {
         return length * width;
     }
-    
+
     // Triangle area
     public double calculateArea(double base, double height, boolean isTriangle) {
         if (isTriangle) {
@@ -1023,17 +1245,17 @@ public class ShapeCalculator {
         }
         return 0;
     }
-    
+
     // Circle perimeter
     public double calculatePerimeter(double radius) {
         return 2 * Math.PI * radius;
     }
-    
+
     // Rectangle perimeter
     public double calculatePerimeter(double length, double width) {
         return 2 * (length + width);
     }
-    
+
     // Display shape info
     public void displayShapeInfo(String shapeName, double area, double perimeter) {
         System.out.println("\n=== " + shapeName + " ===");
@@ -1045,17 +1267,17 @@ public class ShapeCalculator {
 public class TestShapeCalculator {
     public static void main(String[] args) {
         ShapeCalculator calc = new ShapeCalculator();
-        
+
         // Circle
         double circleArea = calc.calculateArea(5.0);
         double circlePerimeter = calc.calculatePerimeter(5.0);
         calc.displayShapeInfo("Circle (radius=5)", circleArea, circlePerimeter);
-        
+
         // Rectangle
         double rectArea = calc.calculateArea(4.0, 6.0);
         double rectPerimeter = calc.calculatePerimeter(4.0, 6.0);
         calc.displayShapeInfo("Rectangle (4x6)", rectArea, rectPerimeter);
-        
+
         // Triangle
         double triangleArea = calc.calculateArea(6.0, 4.0, true);
         calc.displayShapeInfo("Triangle (base=6, height=4)", triangleArea, 0);
@@ -1063,11 +1285,58 @@ public class TestShapeCalculator {
 }
 ```
 
+**💡 Tips:**
+- Method overloading determined by number, type, or order of parameters
+- Circle area: π × r²
+- Rectangle area: length × width
+- Triangle area: ½ × base × height
+- Circle perimeter (circumference): 2 × π × r
+- Rectangle perimeter: 2 × (length + width)
+- Use String.format("%.2f") for consistent decimal formatting
+
 ---
 
 ### Exercise 6: Recursive String Operations
-Create recursive methods for string manipulation.
 
+**📝 Problem Statement:**
+Create a RecursiveString class that implements various string operations using recursion. The class should handle string reversal, character counting, and palindrome checking using recursive algorithms instead of loops.
+
+**Requirements:**
+- Implement recursive `reverse(String str)` method to reverse a string
+- Create recursive `countChar(String str, char ch)` method to count occurrences of a character
+- Implement recursive `isPalindrome(String str)` method to check palindrome status
+- Use proper base cases for recursion termination
+- Provide `analyzeString()` method for comprehensive analysis
+- Test with various strings including palindromes
+
+**Sample Test Cases:**
+```
+Input: analyzeString("Hello")
+Expected Output:
+=== Recursive String Analysis ===
+Original: Hello
+Reversed: olleH
+Is Palindrome: false
+Count of 'a': 0
+
+Input: analyzeString("madam")
+Expected Output:
+=== Recursive String Analysis ===
+Original: madam
+Reversed: madam
+Is Palindrome: true
+Count of 'a': 2
+
+Input: analyzeString("racecar")
+Expected Output:
+=== Recursive String Analysis ===
+Original: racecar
+Reversed: racecar
+Is Palindrome: true
+Count of 'a': 2
+```
+
+**Solution:**
 ```java
 public class RecursiveString {
     // Reverse string recursively
@@ -1079,7 +1348,7 @@ public class RecursiveString {
         // Recursive case
         return reverse(str.substring(1)) + str.charAt(0);
     }
-    
+
     // Count characters recursively
     public int countChar(String str, char ch) {
         // Base case
@@ -1090,25 +1359,24 @@ public class RecursiveString {
         int count = (str.charAt(0) == ch) ? 1 : 0;
         return count + countChar(str.substring(1), ch);
     }
-    
+
     // Check palindrome recursively
     public boolean isPalindrome(String str) {
         // Base cases
         if (str.length() <= 1) {
             return true;
         }
-        
+
         // Check first and last characters
         if (str.charAt(0) != str.charAt(str.length() - 1)) {
             return false;
         }
-        
+
         // Recursive case: check middle substring
         return isPalindrome(str.substring(1, str.length() - 1));
     }
-    
-    public void analyzeString(
-String str) {
+
+    public void analyzeString(String str) {
         System.out.println("\n=== Recursive String Analysis ===");
         System.out.println("Original: " + str);
         System.out.println("Reversed: " + reverse(str));
@@ -1120,7 +1388,7 @@ String str) {
 public class TestRecursiveString {
     public static void main(String[] args) {
         RecursiveString rs = new RecursiveString();
-        
+
         rs.analyzeString("Hello");
         rs.analyzeString("madam");
         rs.analyzeString("racecar");
@@ -1129,12 +1397,56 @@ public class TestRecursiveString {
 }
 ```
 
+**💡 Tips:**
+- Base case for string recursion: empty string or single character
+- Use substring() to reduce problem size in each recursive call
+- Reverse: move first character to end, reverse rest
+- Count: check first character, count rest recursively
+- Palindrome: compare first and last, check middle recursively
+- Always convert to lowercase for case-insensitive operations
+
 ---
 
 ### Exercise 7: Bank Account with Methods
-Create a BankAccount class with various methods.
 
-```java
+**📝 Problem Statement:**
+Create a comprehensive BankAccount class that demonstrates various methods for banking operations. The class should support deposits, withdrawals, balance inquiries, and money transfers between accounts with proper validation.
+
+**Requirements:**
+- Create private fields for accountNumber, accountHolder, and balance
+- Implement constructor to initialize account with initial balance
+- Create `deposit(double amount)` method with validation
+- Implement `withdraw(double amount)` method returning boolean for success/failure
+- Add `getBalance()` method to retrieve current balance
+- Create `transfer(BankAccount targetAccount, double amount)` method
+- Implement `displayInfo()` method showing formatted account details
+- Test with multiple accounts and various transactions
+
+**Sample Test Cases:**
+```
+Input: BankAccount("ACC001", "Alice", 1000.0), deposit(500), withdraw(200), transfer(acc2, 300)
+Expected Output:
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice
+Balance: $1000.00
+
+Deposited: $500.0
+Withdrawn: $200.0
+Transferred $300.0 to Bob
+
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice
+Balance: $1000.00
+
+=== Account Information ===
+Account Number: ACC002
+Account Holder: Bob
+Balance: $800.00
+```
+
+**Solution:**
 public class BankAccount {
     private String accountNumber;
     private String accountHolder;
@@ -1211,11 +1523,51 @@ public class TestBankAccount {
 }
 ```
 
+**💡 Tips:**
+- Use private fields with public methods for encapsulation
+- Validate amounts before modifying balance (positive values only)
+- Return boolean from withdraw/transfer to indicate success/failure
+- transfer() method reuses withdraw() for validation
+- Use String.format("%.2f") for consistent currency formatting
+- Constructor parameter validation ensures valid initial state
+
 ---
 
 ### Exercise 8: Calculator with All Operations
-Create a comprehensive calculator with overloaded methods.
 
+**📝 Problem Statement:**
+Create an AdvancedCalculator class demonstrating comprehensive method overloading with multiple arithmetic operations. The class should support integer and double operations, varargs for adding multiple numbers, and proper division-by-zero handling.
+
+**Requirements:**
+- Implement overloaded `add()` methods for int, double, and varargs
+- Create overloaded `subtract()` methods for int and double
+- Implement overloaded `multiply()` methods for int and double
+- Create overloaded `divide()` methods with zero-division checking
+- Add `modulus()` method for integer division remainder
+- Provide `displayMenu()` method showing available operations
+- Test all overloaded method variants
+
+**Sample Test Cases:**
+```
+Input: add(10, 20) [int]
+Expected Output: 30
+
+Input: add(10.5, 20.3) [double]
+Expected Output: 30.8
+
+Input: add(1, 2, 3, 4, 5) [varargs]
+Expected Output: 15
+
+Input: divide(10, 3) [int to double]
+Expected Output: 3.333...
+
+Input: divide(10, 0)
+Expected Output:
+Error: Division by zero
+0.0
+```
+
+**Solution:**
 ```java
 public class AdvancedCalculator {
     // Addition - integers
@@ -1308,11 +1660,52 @@ public class TestAdvancedCalculator {
 }
 ```
 
+**💡 Tips:**
+- Method overloading enables same method name with different parameter types
+- Varargs (int... numbers) must be last parameter
+- Cast to double in division to get decimal results: (double) a / b
+- Always validate divisor is not zero before division
+- Overloaded methods provide flexibility for different data types
+- Integer division truncates decimal; use double for precise results
+
 ---
 
 ### Exercise 9: Recursive Array Operations
-Create recursive methods for array operations.
 
+**📝 Problem Statement:**
+Create a RecursiveArray class implementing recursive algorithms for array operations. The class should calculate sum, find maximum and minimum values, and check if an array is sorted, all using recursion instead of iterative loops.
+
+**Requirements:**
+- Implement recursive `sum(int[] arr, int index)` method to calculate array sum
+- Create recursive `findMax(int[] arr, int index)` method for maximum value
+- Implement recursive `findMin(int[] arr, int index)` method for minimum value
+- Add recursive `isSorted(int[] arr, int index)` method to check sorting
+- Use proper base cases for recursion termination
+- Provide `analyzeArray()` method for comprehensive analysis
+- Test with sorted and unsorted arrays
+
+**Sample Test Cases:**
+```
+Input: analyzeArray([5, 2, 8, 1, 9])
+Expected Output:
+=== Array Analysis ===
+Array: 5 2 8 1 9
+Sum: 25
+Maximum: 9
+Minimum: 1
+Is Sorted: false
+
+Input: analyzeArray([1, 2, 3, 4, 5])
+Expected Output:
+=== Array Analysis ===
+Array: 1 2 3 4 5
+Sum: 15
+Maximum: 5
+Minimum: 1
+Is Sorted: true
+```
+
+**Solution:**
 ```java
 public class RecursiveArray {
     // Find sum of array elements recursively
@@ -1391,11 +1784,48 @@ public class TestRecursiveArray {
 }
 ```
 
+**💡 Tips:**
+- Base case for array recursion: index reaches array length
+- Pass index parameter to track current position in recursion
+- Sum: add current element to sum of rest
+- Max/Min: compare current element with max/min of rest using Math.max/min
+- isSorted: check if current element ≤ next element, recurse on rest
+- Start recursion with index 0: sum(arr, 0)
+
 ---
 
 ### Exercise 10: Method Chaining with Student
-Create a Student class with method chaining.
 
+**📝 Problem Statement:**
+Create a Student class implementing the builder/fluent interface pattern through method chaining. Each setter method should return `this` to enable chaining multiple method calls in a single statement, providing an elegant and readable way to construct objects.
+
+**Requirements:**
+- Create private fields for name, rollNumber, course, gpa, email
+- Constructor accepts only name (required field)
+- Implement setter methods that return `this` for chaining
+- Add validation in setGPA() method (0.0-4.0 range)
+- Provide getter methods for all fields
+- Create `display()` method showing all student information
+- Implement `getFormattedInfo()` for one-line summary
+- Test method chaining with multiple students
+
+**Sample Test Cases:**
+```
+Input: new Student("Alice Johnson").setRollNumber(101).setCourse("Computer Science").setGPA(3.8).setEmail("alice@university.edu")
+Expected Output:
+=== Student Information ===
+Name: Alice Johnson
+Roll Number: 101
+Course: Computer Science
+GPA: 3.8
+Email: alice@university.edu
+
+Input: getFormattedInfo()
+Expected Output:
+Alice Johnson (Roll: 101) - Computer Science - GPA: 3.80
+```
+
+**Solution:**
 ```java
 public class Student {
     private String name;
@@ -1496,11 +1926,52 @@ public class TestStudent {
 }
 ```
 
+**💡 Tips:**
+- Builder pattern provides fluent, readable object construction
+- Return `this` from setter methods to enable chaining
+- Method chaining: `object.method1().method2().method3()`
+- Constructor takes only required fields (name in this case)
+- Optional fields are set through chained method calls
+- Makes object creation more expressive and flexible
+
 ---
 
 ### Exercise 11: Prime Number Checker (Bonus)
-Create methods to work with prime numbers.
 
+**📝 Problem Statement:**
+Create a PrimeChecker class that implements various methods for working with prime numbers. The class should check if a number is prime, find all primes up to a given number, count primes, and find the nth prime number using efficient algorithms.
+
+**Requirements:**
+- Implement `isPrime(int number)` method to check if a number is prime
+- Create `printPrimes(int n)` method to display all prime numbers up to n
+- Implement `countPrimes(int n)` method to count total primes up to n
+- Add `nthPrime(int n)` method to find the nth prime number
+- Use optimized algorithm: check divisibility only up to √n
+- Check only odd numbers after 2 (even numbers > 2 are not prime)
+- Provide comprehensive test cases demonstrating all methods
+
+**Sample Test Cases:**
+```
+Input: isPrime(17), isPrime(20)
+Expected Output:
+Is 17 prime? true
+Is 20 prime? false
+
+Input: printPrimes(50)
+Expected Output:
+Prime numbers up to 50: 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47
+
+Input: countPrimes(100)
+Expected Output:
+Count of primes up to 100: 25
+
+Input: nthPrime(10), nthPrime(25)
+Expected Output:
+10th prime number: 29
+25th prime number: 97
+```
+
+**Solution:**
 ```java
 public class PrimeChecker {
     // Check if number is prime
@@ -1579,11 +2050,63 @@ public class TestPrimeChecker {
 }
 ```
 
+**💡 Tips:**
+- Prime number: only divisible by 1 and itself
+- Optimization: check divisibility only up to √n (if no divisor found by √n, none exists)
+- Skip even numbers after 2 (all even numbers > 2 are composite)
+- Use Math.sqrt(number) for square root calculation
+- Early return for special cases: numbers ≤ 1 are not prime, 2 is prime
+- isPrime() method is reused in other methods (DRY principle)
+
 ---
 
 ### Exercise 12: GCD and LCM Calculator (Bonus)
-Create recursive methods for GCD and LCM.
 
+**📝 Problem Statement:**
+Create a GCDLCMCalculator class that implements recursive methods for calculating Greatest Common Divisor (GCD) and Least Common Multiple (LCM) of numbers. Use the Euclidean algorithm for GCD and leverage it to calculate LCM. Extend functionality to handle multiple numbers using varargs.
+
+**Requirements:**
+- Implement recursive `gcd(int a, int b)` method using Euclidean algorithm
+- Create `lcm(int a, int b)` method that uses GCD formula: LCM = (a × b) / GCD
+- Implement `gcdMultiple(int... numbers)` to find GCD of multiple numbers using varargs
+- Create `lcmMultiple(int... numbers)` to find LCM of multiple numbers
+- Provide `displayCalculations()` method showing both GCD and LCM for two numbers
+- Test with various number pairs including coprime numbers (GCD = 1)
+- Demonstrate varargs usage with 3+ numbers
+
+**Sample Test Cases:**
+```
+Input: displayCalculations(12, 18)
+Expected Output:
+=== GCD and LCM ===
+Numbers: 12 and 18
+GCD: 6
+LCM: 36
+
+Input: displayCalculations(24, 36)
+Expected Output:
+=== GCD and LCM ===
+Numbers: 24 and 36
+GCD: 12
+LCM: 72
+
+Input: displayCalculations(7, 13) - coprime numbers
+Expected Output:
+=== GCD and LCM ===
+Numbers: 7 and 13
+GCD: 1
+LCM: 91
+
+Input: gcdMultiple(12, 18, 24)
+Expected Output:
+GCD of 12, 18, 24: 6
+
+Input: lcmMultiple(4, 6, 8)
+Expected Output:
+LCM of 4, 6, 8: 24
+```
+
+**Solution:**
 ```java
 public class GCDLCMCalculator {
     // Calculate GCD using Euclidean algorithm (recursive)
@@ -1655,6 +2178,15 @@ public class TestGCDLCM {
     }
 }
 ```
+
+**💡 Tips:**
+- GCD (Greatest Common Divisor): largest number that divides both numbers
+- LCM (Least Common Multiple): smallest number divisible by both numbers
+- Euclidean algorithm: gcd(a, b) = gcd(b, a % b) until b = 0
+- Relationship: LCM(a, b) = (a × b) / GCD(a, b)
+- Recursive base case: when b = 0, GCD is a
+- For multiple numbers: apply GCD/LCM pairwise iteratively
+- Coprime numbers (GCD = 1): LCM equals their product
 
 ---
 

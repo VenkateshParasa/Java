@@ -696,8 +696,58 @@ public class Main {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Employee Hierarchy
-Create an employee hierarchy with different employee types.
 
+**📝 Problem Statement:**
+Create a hierarchical employee management system demonstrating inheritance with multiple employee types. The base Employee class should provide common functionality, while specialized subclasses (Manager, Developer, Intern) override methods to provide type-specific behavior for salary calculations and information display.
+
+**Requirements:**
+- Create base Employee class with protected fields: employeeId, name, baseSalary
+- Implement calculateSalary() method in Employee returning baseSalary
+- Implement displayInfo() method showing employee details
+- Create Manager subclass with private fields: bonus, teamSize
+- Override calculateSalary() in Manager to add bonus to baseSalary
+- Override displayInfo() in Manager to call super.displayInfo() then show manager-specific fields
+- Create Developer subclass with private fields: programmingLanguage, projectsCompleted
+- Calculate Developer salary as baseSalary + (projectsCompleted × $500)
+- Create Intern subclass with fields: university, duration (months)
+- Intern uses base calculateSalary() (no bonus calculation)
+- All constructors must call super() to initialize parent class fields
+- Use protected access modifier for fields that subclasses need to access
+
+**Sample Test Cases:**
+```
+Input: Manager("M001", "Alice Johnson", 80000, 20000, 10)
+Expected Output:
+=== Employee Information ===
+ID: M001
+Name: Alice Johnson
+Base Salary: $80000.0
+Total Salary: $100000.0
+Bonus: $20000.0
+Team Size: 10
+
+Input: Developer("D001", "Bob Smith", 70000, "Java", 15)
+Expected Output:
+=== Employee Information ===
+ID: D001
+Name: Bob Smith
+Base Salary: $70000.0
+Total Salary: $77500.0
+Programming Language: Java
+Projects Completed: 15
+
+Input: Intern("I001", "Charlie Brown", 2000, "MIT", 6)
+Expected Output:
+=== Employee Information ===
+ID: I001
+Name: Charlie Brown
+Base Salary: $2000.0
+Total Salary: $2000.0
+University: MIT
+Duration: 6 months
+```
+
+**Solution:**
 ```java
 // Base class
 public class Employee {
@@ -799,7 +849,7 @@ public class TestEmployee {
         Manager manager = new Manager("M001", "Alice Johnson", 80000, 20000, 10);
         Developer developer = new Developer("D001", "Bob Smith", 70000, "Java", 15);
         Intern intern = new Intern("I001", "Charlie Brown", 2000, "MIT", 6);
-        
+
         manager.displayInfo();
         developer.displayInfo();
         intern.displayInfo();
@@ -807,11 +857,73 @@ public class TestEmployee {
 }
 ```
 
+**💡 Tips:**
+- protected fields (employeeId, name, baseSalary) accessible in all subclasses
+- super(args) in each subclass constructor initializes parent class fields
+- Method overriding: Manager and Developer override calculateSalary() with specific logic
+- @Override annotation recommended to catch signature errors at compile time
+- super.displayInfo() in subclasses calls parent method first, then adds subclass-specific info
+- Hierarchical inheritance: Employee → Manager/Developer/Intern (all extend Employee)
+- IS-A relationship: Manager IS-A Employee, Developer IS-A Employee, Intern IS-A Employee
+- Each subclass can have its own private fields (bonus, programmingLanguage, university)
+- Salary calculation demonstrates polymorphism: same method name, different behavior per type
+- Test with array of Employee type to see polymorphic behavior: Employee[] employees = {manager, developer, intern}
+
 ---
 
 ### Exercise 2: Shape Hierarchy
-Create a shape hierarchy with area and perimeter calculations.
 
+**📝 Problem Statement:**
+Create a geometric shape hierarchy that demonstrates inheritance and method overriding for area and perimeter calculations. The base Shape class should define common properties (color, filled status) and provide default implementations, while specialized shape subclasses (Circle, Rectangle, Triangle) override calculation methods with shape-specific formulas.
+
+**Requirements:**
+- Create base Shape class with protected fields: color (String), filled (boolean)
+- Implement default getArea() returning 0.0 and getPerimeter() returning 0.0 in Shape
+- Implement displayInfo() in Shape showing color, filled status, area, and perimeter
+- Create Circle subclass with private field radius and final constant PI = 3.14159
+- Override getArea() in Circle with formula: PI × radius²
+- Override getPerimeter() in Circle with formula: 2 × PI × radius
+- Create Rectangle subclass with private fields: length, width
+- Override getArea() in Rectangle with formula: length × width
+- Override getPerimeter() in Rectangle with formula: 2 × (length + width)
+- Create Triangle subclass with private fields: side1, side2, side3
+- Override getPerimeter() in Triangle with formula: side1 + side2 + side3
+- Override getArea() in Triangle using Heron's formula: √(s(s-a)(s-b)(s-c)) where s = perimeter/2
+- All subclasses override displayInfo() to call super and show shape-specific dimensions
+- Format output to 2 decimal places for area and perimeter
+
+**Sample Test Cases:**
+```
+Input: Circle("Red", true, 5.0)
+Expected Output:
+=== Shape Information ===
+Color: Red
+Filled: true
+Area: 78.54
+Perimeter: 31.42
+Radius: 5.0
+
+Input: Rectangle("Blue", false, 4.0, 6.0)
+Expected Output:
+=== Shape Information ===
+Color: Blue
+Filled: false
+Area: 24.00
+Perimeter: 20.00
+Length: 4.0
+Width: 6.0
+
+Input: Triangle("Green", true, 3.0, 4.0, 5.0)
+Expected Output:
+=== Shape Information ===
+Color: Green
+Filled: true
+Area: 6.00
+Perimeter: 12.00
+Sides: 3.0, 4.0, 5.0
+```
+
+**Solution:**
 ```java
 // Base class
 public class Shape {
@@ -932,7 +1044,7 @@ public class TestShape {
         Circle circle = new Circle("Red", true, 5.0);
         Rectangle rectangle = new Rectangle("Blue", false, 4.0, 6.0);
         Triangle triangle = new Triangle("Green", true, 3.0, 4.0, 5.0);
-        
+
         circle.displayInfo();
         rectangle.displayInfo();
         triangle.displayInfo();
@@ -940,11 +1052,84 @@ public class TestShape {
 }
 ```
 
+**💡 Tips:**
+- Base Shape class provides default implementations (getArea/getPerimeter returning 0.0) for extensibility
+- Each subclass overrides both calculation methods with shape-specific formulas
+- Heron's formula for triangle area: s = (a+b+c)/2, then area = √(s(s-a)(s-b)(s-c))
+- Math.sqrt() used for square root calculation in Triangle
+- String.format("%.2f", value) ensures consistent 2 decimal place formatting
+- super() calls in each constructor pass color and filled to parent Shape
+- super.displayInfo() in each subclass shows common properties first, then adds specific dimensions
+- Polymorphism allows treating all shapes uniformly: Shape[] shapes = {circle, rectangle, triangle}
+- final constant PI in Circle class prevents modification (mathematical constant)
+- protected fields allow subclasses to access color and filled without getters
+- Method overriding enables each shape to provide correct calculations while maintaining same interface
+
 ---
 
 ### Exercise 3: Vehicle Hierarchy with Polymorphism
-Create a vehicle hierarchy demonstrating polymorphism.
 
+**📝 Problem Statement:**
+Create a comprehensive vehicle hierarchy that demonstrates polymorphism, method overriding, and inheritance in a real-world scenario. The system should handle different vehicle types (Car, Motorcycle, Truck) with specialized behavior for starting engines and calculating insurance based on vehicle-specific characteristics.
+
+**Requirements:**
+- Create base Vehicle class with protected fields: brand, model, year, price
+- Implement start() and stop() methods in Vehicle with generic messages
+- Implement calculateInsurance() in Vehicle returning price × 0.05 (5%)
+- Implement displayInfo() showing all vehicle details with formatted insurance cost
+- Create Car subclass with fields: numberOfDoors, fuelType (String)
+- Override start() in Car with car-specific message ("Car engine starting with key...")
+- Override calculateInsurance() in Car: apply 10% discount for Electric fuel type
+- Create Motorcycle subclass with fields: type (Sport/Cruiser/Touring), engineCC
+- Override start() in Motorcycle with motorcycle-specific message
+- Override calculateInsurance() in Motorcycle: add 20% if engineCC > 1000
+- Create Truck subclass with fields: loadCapacity (tons), numberOfAxles
+- Override start() in Truck with truck-specific message ("Truck diesel engine starting...")
+- Override calculateInsurance() in Truck: add loadCapacity × $100 to base insurance
+- All subclasses override displayInfo() calling super first, then showing specific fields
+- Demonstrate polymorphism by storing different vehicle types in Vehicle array
+
+**Sample Test Cases:**
+```
+Input: Car("Toyota", "Camry", 2023, 30000, 4, "Hybrid")
+Expected Output:
+Car engine starting with key...
+=== Vehicle Information ===
+Brand: Toyota
+Model: Camry
+Year: 2023
+Price: $30000.0
+Insurance: $1500.00
+Number of Doors: 4
+Fuel Type: Hybrid
+Vehicle is stopping...
+
+Input: Motorcycle("Harley-Davidson", "Street 750", 2023, 8000, "Cruiser", 750)
+Expected Output:
+Motorcycle starting with kick/button...
+=== Vehicle Information ===
+Brand: Harley-Davidson
+Model: Street 750
+Year: 2023
+Price: $8000.0
+Insurance: $400.00
+Type: Cruiser
+Engine CC: 750
+
+Input: Truck("Ford", "F-150", 2023, 40000, 2.5, 2)
+Expected Output:
+Truck diesel engine starting...
+=== Vehicle Information ===
+Brand: Ford
+Model: F-150
+Year: 2023
+Price: $40000.0
+Insurance: $2250.00
+Load Capacity: 2.5 tons
+Number of Axles: 2
+```
+
+**Solution:**
 ```java
 // Base class
 public class Vehicle {
@@ -1099,11 +1284,93 @@ public class TestVehicle {
 }
 ```
 
+**💡 Tips:**
+- Polymorphism demonstration: Vehicle[] array contains different vehicle types, each responding differently to start() and calculateInsurance()
+- Method overriding: Each subclass overrides start() with vehicle-specific startup messages
+- super.calculateInsurance() in subclasses reuses parent's base calculation (price × 0.05) before adding type-specific adjustments
+- Conditional insurance logic: Car checks fuelType for Electric discount, Motorcycle checks engineCC threshold, Truck adds per-ton fee
+- protected fields (brand, model, year, price) accessible to all subclasses without breaking encapsulation
+- Vehicle array iteration (for-each loop) demonstrates runtime polymorphism - correct overridden method called for each object type
+- @Override annotation ensures methods actually override parent methods, catching typos at compile time
+- Each subclass has unique fields: Car (numberOfDoors, fuelType), Motorcycle (type, engineCC), Truck (loadCapacity, numberOfAxles)
+- displayInfo() calls super.displayInfo() first to show common properties, then adds subclass-specific information
+- Insurance calculation shows real-world business logic: incentives for eco-friendly vehicles, surcharges for high-risk vehicles
+
 ---
 
 ### Exercise 4: Bank Account Hierarchy
-Create a banking system with different account types.
 
+**📝 Problem Statement:**
+Create a comprehensive banking system demonstrating inheritance with specialized account types. The base BankAccount class should provide common banking operations (deposit, withdraw, interest calculation), while specialized subclasses (SavingsAccount, CheckingAccount) override methods to implement account-specific rules such as withdrawal limits, overdraft protection, and varying interest rates.
+
+**Requirements:**
+- Create base BankAccount class with protected fields: accountNumber, accountHolder, balance, interestRate
+- Implement deposit(double amount) method with validation for positive amounts
+- Implement withdraw(double amount) method returning boolean for success/failure, checking sufficient balance
+- Implement addInterest() method calculating and adding interest: balance × interestRate
+- Create displayInfo() method showing formatted account details
+- Default interest rate in BankAccount should be 0.01 (1%)
+- Create SavingsAccount subclass with private fields: withdrawalLimit, withdrawalCount
+- Set interestRate to 0.04 (4%) for savings accounts in constructor
+- Set withdrawalLimit to 6 withdrawals per period
+- Override withdraw() in SavingsAccount to check withdrawal limit before allowing withdrawal
+- Implement resetWithdrawalCount() method to reset counter for new period
+- Create CheckingAccount subclass with private fields: overdraftLimit, monthlyFee
+- Set interestRate to 0.005 (0.5%) for checking accounts
+- Set overdraftLimit to $500 allowing negative balance up to this limit
+- Set monthlyFee to $10.0 charged monthly
+- Override withdraw() in CheckingAccount to allow overdraft up to limit with warning message
+- Implement chargeMonthlyFee() method deducting monthly fee from balance
+- All subclasses override displayInfo() to show account-specific information
+
+**Sample Test Cases:**
+```
+Input: SavingsAccount("SAV001", "Alice", 5000), deposit(1000), withdraw(500), addInterest()
+Expected Output:
+=== Account Information ===
+Account Number: SAV001
+Account Holder: Alice
+Balance: $5000.00
+Interest Rate: 4.0%
+
+Deposited: $1000.0
+Withdrawn: $500.0
+Interest added: $220.00
+
+=== Account Information ===
+Account Number: SAV001
+Account Holder: Alice
+Balance: $5720.00
+Interest Rate: 4.0%
+Withdrawals: 1/6
+
+Input: CheckingAccount("CHK001", "Bob", 1000), deposit(500), withdraw(1200), chargeMonthlyFee()
+Expected Output:
+=== Account Information ===
+Account Number: CHK001
+Account Holder: Bob
+Balance: $1000.00
+Interest Rate: 0.5%
+
+Deposited: $500.0
+Withdrawn: $1200.0
+WARNING: Overdraft used. Balance: $300.00
+Monthly fee charged: $10.0
+
+=== Account Information ===
+Account Number: CHK001
+Account Holder: Bob
+Balance: $290.00
+Interest Rate: 0.5%
+Overdraft Limit: $500.0
+Monthly Fee: $10.0
+
+Input: SavingsAccount - attempt 7th withdrawal
+Expected Output:
+Withdrawal limit reached for this period
+```
+
+**Solution:**
 ```java
 // Base class
 public class BankAccount {
@@ -1249,11 +1516,101 @@ public class TestBankAccount {
 }
 ```
 
+**💡 Tips:**
+- Base BankAccount provides common functionality that both account types inherit and reuse
+- protected fields (accountNumber, accountHolder, balance, interestRate) allow subclass access while maintaining encapsulation
+- Constructor in subclasses calls super() to initialize parent fields, then sets account-specific interest rates
+- SavingsAccount overrides withdraw() to add withdrawal limit enforcement using super.withdraw() for actual withdrawal
+- CheckingAccount overrides withdraw() to implement overdraft protection allowing negative balance up to limit
+- Method overriding with super: both subclasses call super.withdraw() or super.displayInfo() then add specialized behavior
+- withdrawalCount tracking in SavingsAccount demonstrates stateful behavior specific to account type
+- Overdraft logic: balance + overdraftLimit gives total available funds (e.g., $100 balance + $500 limit = $600 available)
+- String.format("%.2f", balance) ensures consistent currency formatting with 2 decimal places
+- displayInfo() override pattern: call super.displayInfo() first to show common info, then add subclass-specific details
+- Interest calculation demonstrates polymorphism: same addInterest() method, different rates per account type
+
 ---
 
 ### Exercise 5: Person Hierarchy
-Create a person hierarchy for a university system.
 
+**📝 Problem Statement:**
+Create a comprehensive university system demonstrating inheritance with multiple person types. The base Person class should provide common personal information, while specialized subclasses (Student, Professor, Staff) implement role-specific functionality such as academic tracking, salary management, and hourly pay calculations.
+
+**Requirements:**
+- Create base Person class with protected fields: id, name, age, email
+- Implement displayInfo() method in Person showing basic personal information
+- Override toString() in Person to return formatted string: "Person{id='...', name='...'}"
+- Create Student subclass with private fields: major, gpa, creditsCompleted
+- Initialize gpa to 0.0 and creditsCompleted to 0 in Student constructor
+- Implement updateGPA(double newGPA) method validating range 0.0-4.0
+- Implement addCredits(int credits) method incrementing creditsCompleted and displaying total
+- Implement getClassLevel() method returning String based on credits: <30=Freshman, 30-59=Sophomore, 60-89=Junior, 90+=Senior
+- Student overrides displayInfo() calling super then showing major, GPA, credits, and class level
+- Student overrides toString() to include major
+- Create Professor subclass with private fields: department, specialization, yearsOfExperience, salary
+- Calculate Professor salary in constructor as: 60000 + (yearsOfExperience × 2000)
+- Implement giveRaise(double percentage) method increasing salary and displaying new amount
+- Professor overrides displayInfo() showing department, specialization, experience, and formatted salary
+- Professor overrides toString() to include department
+- Create Staff subclass with private fields: position, department, hourlyRate, hoursWorked
+- Initialize hoursWorked to 0 in Staff constructor
+- Implement logHours(int hours) method adding to hoursWorked and displaying total
+- Implement calculatePay() method returning hoursWorked × hourlyRate
+- Implement resetHours() method setting hoursWorked back to 0
+- Staff overrides displayInfo() showing position, department, hourly rate, hours worked, and total pay
+- Staff overrides toString() to include position
+
+**Sample Test Cases:**
+```
+Input: Student("S001", "Alice Johnson", 20, "alice@university.edu", "Computer Science")
+      updateGPA(3.7), addCredits(45)
+Expected Output:
+GPA updated to: 3.7
+Credits added. Total: 45
+
+=== Person Information ===
+ID: S001
+Name: Alice Johnson
+Age: 20
+Email: alice@university.edu
+Major: Computer Science
+GPA: 3.70
+Credits: 45
+Class Level: Sophomore
+
+Input: Professor("P001", "Dr. Bob Smith", 45, "bob@university.edu", "Computer Science", "Artificial Intelligence", 15)
+      giveRaise(5)
+Expected Output:
+Raise given. New salary: $94500.00
+
+=== Person Information ===
+ID: P001
+Name: Dr. Bob Smith
+Age: 45
+Email: bob@university.edu
+Department: Computer Science
+Specialization: Artificial Intelligence
+Experience: 15 years
+Salary: $94500.00
+
+Input: Staff("ST001", "Charlie Brown", 35, "charlie@university.edu", "IT Support", "Information Technology", 25.0)
+      logHours(40)
+Expected Output:
+Logged 40 hours. Total: 40
+
+=== Person Information ===
+ID: ST001
+Name: Charlie Brown
+Age: 35
+Email: charlie@university.edu
+Position: IT Support
+Department: Information Technology
+Hourly Rate: $25.0
+Hours Worked: 40
+Total Pay: $1000.00
+```
+
+**Solution:**
 ```java
 // Base class
 public class Person {
@@ -1434,6 +1791,21 @@ public class TestPerson {
     }
 }
 ```
+
+**💡 Tips:**
+- Base Person class provides common fields (id, name, age, email) inherited by all university roles
+- protected fields allow subclasses to access parent data without breaking encapsulation
+- Each subclass adds role-specific fields: Student (major, gpa, credits), Professor (department, salary), Staff (position, hourlyRate, hoursWorked)
+- Constructor chaining: all subclasses call super() to initialize Person fields first, then initialize own fields
+- toString() override in each class provides different string representations for debugging: "Student{...major...}", "Professor{...dept...}", "Staff{...position...}"
+- Student.getClassLevel() demonstrates conditional logic based on credits: <30, 30-59, 60-89, 90+
+- GPA validation (0.0-4.0 range) in updateGPA() prevents invalid academic data
+- Professor salary calculation in constructor: base $60k + $2k per year of experience shows formula-based initialization
+- giveRaise() percentage calculation: salary += salary × (percentage/100) increases by percentage
+- Staff hourly pay model: calculatePay() returns hoursWorked × hourlyRate, resetHours() prepares for next pay period
+- displayInfo() pattern: super.displayInfo() shows common Person info, then each subclass adds role-specific details
+- Hierarchical inheritance: Person → Student/Professor/Staff (three separate branches from same parent)
+- Different roles have different behavior: Student tracks academic progress, Professor manages salary, Staff logs hours
 
 ---
 

@@ -752,8 +752,62 @@ public final class ImmutablePerson {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Bank Account with Encapsulation
-Create a fully encapsulated BankAccount class.
 
+**📝 Problem Statement:**
+Create a fully encapsulated BankAccount class that demonstrates proper data hiding, validation, and controlled access to private fields. The class should protect account data from unauthorized access and invalid operations while providing a clean public interface for banking operations.
+
+**Requirements:**
+- Create private fields for accountNumber, accountHolder, balance, accountType, and isActive
+- Implement constructor accepting accountNumber, accountHolder, initialBalance, and accountType
+- Make accountNumber read-only (no setter, only getter)
+- Validate accountHolder name is not null or empty
+- Validate balance is non-negative (private setter used only in constructor)
+- Validate accountType is one of: "Savings", "Checking", or "Fixed"
+- Implement deposit() method with validation for positive amounts
+- Implement withdraw() method returning boolean for success/failure
+- Add closeAccount() method that deactivates account only if balance is zero
+- Prevent operations on inactive accounts
+- Provide displayInfo() method showing all account details with formatted output
+
+**Sample Test Cases:**
+```
+Input: BankAccount("ACC001", "Alice Johnson", 1000.0, "Savings")
+Expected Output:
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice Johnson
+Balance: $1000.00
+Account Type: Savings
+Status: Active
+
+Input: deposit(500), withdraw(200)
+Expected Output:
+Deposited: $500
+Withdrawn: $200
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice Johnson
+Balance: $1300.00
+Account Type: Savings
+Status: Active
+
+Input: closeAccount() with non-zero balance
+Expected Output:
+Cannot close account with non-zero balance!
+
+Input: withdraw(1300), then closeAccount()
+Expected Output:
+Withdrawn: $1300
+Account closed successfully
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice Johnson
+Balance: $0.00
+Account Type: Savings
+Status: Inactive
+```
+
+**Solution:**
 ```java
 public class BankAccount {
     private String accountNumber;
@@ -885,11 +939,72 @@ public class TestBankAccount {
 }
 ```
 
+**💡 Tips:**
+- Encapsulation = private fields + public getters/setters with validation
+- Read-only properties: provide getter only, no setter (like accountNumber)
+- Private setter can be used internally (e.g., in constructor) for validation reuse
+- Validate in setters to ensure data integrity at all times
+- Use boolean return from methods like withdraw() to indicate success/failure
+- Check account status (isActive) before allowing operations
+- String.format("%.2f") formats currency to 2 decimal places
+- Encapsulation protects object state from invalid modifications
+
 ---
 
 ### Exercise 2: Student with Grade Validation
-Create a Student class with proper encapsulation and validation.
 
+**📝 Problem Statement:**
+Create a Student class demonstrating encapsulation with comprehensive validation for academic data. The class should enforce business rules for student information, calculate derived properties like academic standing and class level, and provide safe access to student records.
+
+**Requirements:**
+- Create private fields for studentId, name, age, gpa, major, and creditsCompleted
+- Make studentId read-only (getter only, no setter)
+- Validate name has at least 2 characters
+- Validate age is between 16 and 100
+- Validate GPA is between 0.0 and 4.0
+- Implement addCredits() method that only accepts positive values
+- Create getAcademicStanding() method returning status based on GPA (>=3.5: "Dean's List", >=3.0: "Good Standing", >=2.0: "Satisfactory", else: "Academic Probation")
+- Create getClassLevel() method returning level based on credits (>=90: "Senior", >=60: "Junior", >=30: "Sophomore", else: "Freshman")
+- Handle null major gracefully (display "Undeclared")
+- Format GPA to 2 decimal places in display
+
+**Sample Test Cases:**
+```
+Input: Student("S001", "Alice Johnson", 20), setMajor("Computer Science"), setGPA(3.7), addCredits(45)
+Expected Output:
+=== Student Information ===
+Student ID: S001
+Name: Alice Johnson
+Age: 20
+Major: Computer Science
+GPA: 3.70
+Credits: 45
+Class Level: Sophomore
+Academic Standing: Dean's List
+
+Input: setAge(15) - invalid
+Expected Output:
+Invalid age! Must be 16-100
+
+Input: setGPA(5.0) - invalid
+Expected Output:
+Invalid GPA! Must be 0.0-4.0
+
+Input: addCredits(20), setGPA(3.9)
+Expected Output:
+Added 20 credits
+=== Student Information ===
+Student ID: S001
+Name: Alice Johnson
+Age: 20
+Major: Computer Science
+GPA: 3.90
+Credits: 65
+Class Level: Junior
+Academic Standing: Dean's List
+```
+
+**Solution:**
 ```java
 public class Student {
     private String studentId;
@@ -1018,11 +1133,80 @@ public class TestStudent {
 }
 ```
 
+**💡 Tips:**
+- Calculated properties (getAcademicStanding(), getClassLevel()) have getters but no setters - computed on demand
+- Validate ranges: age (16-100), GPA (0.0-4.0) to enforce business rules
+- Use ternary operator in display for optional fields: `(major != null ? major : "Undeclared")`
+- addCredits() prevents negative values - only increments, never decrements
+- Call setters from constructor to reuse validation logic
+- Read-only ID fields prevent changing identity after object creation
+- Encapsulation enforces academic rules: can't manually set invalid GPA or age
+
 ---
 
 ### Exercise 3: Product Inventory System
-Create an encapsulated Product class for inventory management.
 
+**📝 Problem Statement:**
+Create an encapsulated Product class for inventory management that tracks stock levels, calculates inventory value, and signals when reordering is needed. The class should protect product data while providing methods for stock operations and inventory reporting.
+
+**Requirements:**
+- Create private fields for productId, name, category, price, stockQuantity, reorderLevel, and supplier
+- Make productId read-only (no setter)
+- Validate name is not null or empty
+- Validate price is non-negative
+- Validate stockQuantity is non-negative
+- Implement addStock(int quantity) method to increase inventory
+- Implement removeStock(int quantity) method that returns boolean for success/failure
+- Create getTotalValue() method calculating price × quantity
+- Create needsReorder() method returning true if stock ≤ reorderLevel
+- Handle null supplier gracefully (display "Not assigned")
+- Set default reorderLevel to 10 in constructor
+
+**Sample Test Cases:**
+```
+Input: Product("P001", "Laptop", "Electronics", 999.99, 25), setSupplier("TechSupply Inc."), setReorderLevel(15)
+Expected Output:
+=== Product Information ===
+Product ID: P001
+Name: Laptop
+Category: Electronics
+Price: $999.99
+Stock Quantity: 25
+Reorder Level: 15
+Supplier: TechSupply Inc.
+Total Value: $24999.75
+Status: OK
+
+Input: removeStock(12)
+Expected Output:
+Removed 12 units
+=== Product Information ===
+Product ID: P001
+Name: Laptop
+Category: Electronics
+Price: $999.99
+Stock Quantity: 13
+Reorder Level: 15
+Supplier: TechSupply Inc.
+Total Value: $12999.87
+Status: NEEDS REORDER
+
+Input: addStock(20)
+Expected Output:
+Added 20 units
+=== Product Information ===
+Product ID: P001
+Name: Laptop
+Category: Electronics
+Price: $999.99
+Stock Quantity: 33
+Reorder Level: 15
+Supplier: TechSupply Inc.
+Total Value: $32999.67
+Status: OK
+```
+
+**Solution:**
 ```java
 public class Product {
     private String productId;
@@ -1178,11 +1362,65 @@ public class TestProduct {
 }
 ```
 
+**💡 Tips:**
+- Inventory management requires validation: stock can't be negative, price must be >= 0
+- getTotalValue() is a calculated property: price × quantity (no setter needed)
+- needsReorder() method encapsulates business logic for reordering alerts
+- removeStock() returns boolean to indicate if operation was successful
+- Default values in constructor (reorderLevel = 10) provide sensible defaults
+- Read-only productId prevents changing product identity after creation
+- Ternary operator handles optional fields: `(supplier != null ? supplier : "Not assigned")`
+
 ---
 
 ### Exercise 4: Employee with Salary Management
-Create an Employee class with encapsulated salary management.
 
+**📝 Problem Statement:**
+Create an Employee class with encapsulated salary management that handles base salary, bonuses, raises, and employment status. The class should protect sensitive compensation data while providing controlled methods for salary operations and employee lifecycle management.
+
+**Requirements:**
+- Create private fields for employeeId, name, department, baseSalary, bonus, yearsOfService, and isActive
+- Make employeeId read-only
+- Make baseSalary setter private (used only in constructor)
+- Validate baseSalary is positive
+- Validate bonus is non-negative
+- Implement giveRaise(double percentage) method with validation (0-50% range)
+- Create getTotalCompensation() method calculating baseSalary + bonus
+- Implement incrementYearsOfService() method (no direct setter for years)
+- Add terminate() method that sets isActive to false
+- Prevent invalid raise percentages (must be 0-50%)
+- Display formatted salary information with 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: Employee("E001", "Alice Johnson", "IT", 60000)
+Expected Output:
+=== Employee Information ===
+Employee ID: E001
+Name: Alice Johnson
+Department: IT
+Base Salary: $60000.00
+Bonus: $0.00
+Total Compensation: $60000.00
+Years of Service: 0
+Status: Active
+
+Input: setBonus(5000), incrementYearsOfService(), giveRaise(10)
+Expected Output:
+Years of service updated to: 1
+Raise of 10.0% applied. New salary: $66000.00
+=== Employee Information ===
+Employee ID: E001
+Name: Alice Johnson
+Department: IT
+Base Salary: $66000.00
+Bonus: $5000.00
+Total Compensation: $71000.00
+Years of Service: 1
+Status: Active
+```
+
+**Solution:**
 ```java
 public class Employee {
     private String employeeId;
@@ -1306,11 +1544,75 @@ public class TestEmployee {
 }
 ```
 
+**💡 Tips:**
+- Private baseSalary setter prevents external salary manipulation - only constructor and giveRaise() can modify it
+- Raise percentage validation (0-50%) prevents unrealistic salary changes
+- getTotalCompensation() is a calculated property combining base + bonus
+- incrementYearsOfService() controls how years can change - prevents direct setting to invalid values
+- yearsOfService has getter but no public setter - increments only, never decrements
+- terminate() method handles employee lifecycle - sets isActive to false permanently
+- Encapsulation protects sensitive compensation data from unauthorized access
+
 ---
 
 ### Exercise 5: Car with Mileage Tracking
-Create a Car class with encapsulated mileage and maintenance tracking.
 
+**📝 Problem Statement:**
+Create a Car class with encapsulated mileage and maintenance tracking that monitors fuel consumption, service needs, and prevents unauthorized mileage manipulation. The class should use final constants for capacity and service intervals, and calculate when maintenance is required.
+
+**Requirements:**
+- Create private fields for vin, make, model, year, mileage, fuelLevel, and lastServiceMileage
+- Use final constant FUEL_CAPACITY = 50.0 gallons
+- Use final constant SERVICE_INTERVAL = 5000 miles
+- Make VIN read-only (no setter)
+- Validate year is between 1900 and current year + 1
+- Implement drive(int miles) method that increases mileage and decreases fuel (fuel consumption: 25 mpg)
+- Implement refuel(double gallons) method preventing overfilling (max FUEL_CAPACITY)
+- Create performService() method that updates lastServiceMileage
+- Implement needsService() method returning true if miles since service >= SERVICE_INTERVAL
+- Create getMilesSinceService() and getMilesUntilService() calculated properties
+- Prevent driving if fuel is insufficient for the distance
+
+**Sample Test Cases**:
+```
+Input: Car("1HGBH41JXMN109186", "Honda", "Accord", 2020)
+Expected Output:
+=== Car Information ===
+VIN: 1HGBH41JXMN109186
+Make: Honda
+Model: Accord
+Year: 2020
+Mileage: 0 miles
+Fuel Level: 50.00 / 50.0 gallons
+Miles Since Service: 0
+Miles Until Service: 5000
+Service Status: OK
+
+Input: drive(100)
+Expected Output:
+Drove 100 miles
+=== Car Information ===
+[mileage: 100, fuel decreased]
+Service Status: OK
+
+Input: drive(5000)
+Expected Output:
+Drove 5000 miles
+=== Car Information ===
+[mileage: 5100]
+Service Status: REQUIRED
+
+Input: performService(), refuel(20)
+Expected Output:
+Service performed at 5100 miles
+Refueled 20.0 gallons
+=== Car Information ===
+Miles Since Service: 0
+Miles Until Service: 5000
+Service Status: OK
+```
+
+**Solution:**
 ```java
 public class Car {
     private String vin;  // Vehicle Identification Number
@@ -1469,11 +1771,74 @@ public class TestCar {
 }
 ```
 
+**💡 Tips:**
+- Final constants (FUEL_CAPACITY, SERVICE_INTERVAL) can't be changed - use for fixed values
+- Read-only VIN prevents changing vehicle identity
+- drive() method coordinates multiple state changes (mileage↑, fuel↓) in one operation
+- Fuel consumption formula: miles / MPG (25 miles per gallon)
+- Calculated properties (getMilesSinceService, getMilesUntilService) compute on demand, no storage needed
+- Math.max(0, remaining) ensures miles until service never goes negative
+- needsService() encapsulates business logic for maintenance schedule
+- Encapsulation prevents direct mileage manipulation (odometer fraud protection)
+
 ---
 
 ### Exercise 6: Temperature Sensor with Range Validation
-Create a TemperatureSensor class with validation.
 
+**📝 Problem Statement:**
+Create a TemperatureSensor class that validates temperature readings against absolute physical limits and tracks minimum, maximum, and average temperatures. The class should enforce sensor activation status and provide temperature range analytics.
+
+**Requirements:**
+- Create private fields for sensorId, location, currentTemperature, minTemperature, maxTemperature, and isActive
+- Use final constants ABSOLUTE_MIN = -273.15°C (absolute zero) and ABSOLUTE_MAX = 1000.0°C
+- Make sensorId read-only
+- Initialize with default room temperature (20.0°C)
+- Validate temperature readings are within absolute limits
+- Automatically update min/max temperatures when new readings are received
+- Implement getTemperatureRange() calculating max - min
+- Create getAverageTemperature() calculating (min + max) / 2
+- Add resetMinMax() method to reset tracking to current temperature
+- Implement activate() and deactivate() methods for sensor status
+- Display all sensor information with 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: TemperatureSensor("TEMP001", "Server Room")
+Expected Output:
+=== Temperature Sensor ===
+Sensor ID: TEMP001
+Location: Server Room
+Current: 20.00°C
+Minimum: 20.00°C
+Maximum: 20.00°C
+Range: 0.00°C
+Average: 20.00°C
+Status: Active
+
+Input: setCurrentTemperature(25.5), setCurrentTemperature(18.0), setCurrentTemperature(30.0)
+Expected Output:
+Temperature updated to: 25.50°C
+Temperature updated to: 18.00°C
+Temperature updated to: 30.00°C
+=== Temperature Sensor ===
+Current: 30.00°C
+Minimum: 18.00°C
+Maximum: 30.00°C
+Range: 12.00°C
+Average: 24.00°C
+
+Input: resetMinMax()
+Expected Output:
+Min/Max temperatures reset
+=== Temperature Sensor ===
+Current: 30.00°C
+Minimum: 30.00°C
+Maximum: 30.00°C
+Range: 0.00°C
+Average: 30.00°C
+```
+
+**Solution:**
 ```java
 public class TemperatureSensor {
     private String sensorId;
@@ -1595,11 +1960,71 @@ public class TestTemperatureSensor {
 }
 ```
 
+**💡 Tips:**
+- Final constants for absolute limits (ABSOLUTE_MIN, ABSOLUTE_MAX) represent physical laws - never change
+- Absolute zero (-273.15°C) is the lowest possible temperature in physics
+- Automatic min/max tracking: setCurrentTemperature() updates both current and historical values
+- Calculated properties (range, average) compute on demand - no storage needed
+- resetMinMax() is useful for starting new measurement periods
+- Read-only sensorId prevents changing sensor identity
+- Temperature validation prevents physically impossible readings
+
 ---
 
 ### Exercise 7: Library Book with Checkout System
-Create a Book class for library management.
 
+**📝 Problem Statement:**
+Create a Book class for library management that tracks checkout history, enforces maximum checkout limits, and manages book availability status. The class should encapsulate borrower information and prevent checkouts when books are unavailable or have reached their checkout limit.
+
+**Requirements:**
+- Create private fields for isbn, title, author, category, isAvailable, borrowerName, and checkoutCount
+- Use final constant MAX_CHECKOUTS = 50
+- Make ISBN read-only
+- Validate title and author are not null or empty
+- Implement checkout(String borrowerName) method that returns boolean for success/failure
+- Prevent checkout if book is unavailable or has reached MAX_CHECKOUTS limit
+- Implement returnBook() method that clears borrower and sets available to true
+- Create needsReplacement() method returning true if checkoutCount >= MAX_CHECKOUTS
+- Implement getRemainingCheckouts() calculating MAX_CHECKOUTS - checkoutCount (min 0)
+- Display borrower name only when book is checked out
+- Track checkout count throughout book's lifecycle
+
+**Sample Test Cases:**
+```
+Input: Book("978-0134685991", "Effective Java", "Joshua Bloch", "Programming")
+Expected Output:
+=== Book Information ===
+ISBN: 978-0134685991
+Title: Effective Java
+Author: Joshua Bloch
+Category: Programming
+Status: Available
+Checkout Count: 0 / 50
+Remaining Checkouts: 50
+
+Input: checkout("Alice Johnson")
+Expected Output:
+Book 'Effective Java' checked out by: Alice Johnson
+=== Book Information ===
+Status: Checked Out
+Borrowed by: Alice Johnson
+Checkout Count: 1 / 50
+Remaining Checkouts: 49
+
+Input: returnBook()
+Expected Output:
+Book returned by: Alice Johnson
+=== Book Information ===
+Status: Available
+Checkout Count: 1 / 50
+
+Input: checkout("Bob Smith")
+Expected Output:
+Book 'Effective Java' checked out by: Bob Smith
+Checkout Count: 2 / 50
+```
+
+**Solution:**
 ```java
 public class Book {
     private String isbn;
@@ -1742,11 +2167,74 @@ public class TestBook {
 }
 ```
 
+**💡 Tips:**
+- Final constant MAX_CHECKOUTS limits book usage - books wear out after many checkouts
+- checkout() returns boolean to indicate success/failure - useful for error handling
+- borrowerName is private and only displayed when book is checked out (conditional display)
+- checkoutCount persists across checkouts/returns - tracks book's entire history
+- needsReplacement() encapsulates business logic for book lifecycle management
+- Math.max(0, remaining) ensures getRemainingCheckouts() never returns negative
+- Read-only ISBN prevents changing book identity
+- Encapsulation protects checkout logic - can't manually set isAvailable to bypass checks
+
 ---
 
 ### Exercise 8: Circle with Immutable Properties
-Create a Circle class demonstrating immutability.
 
+**📝 Problem Statement:**
+Create an immutable Circle class that demonstrates the immutability pattern using final fields and no setters. Instead of modifying the object, provide methods that return new Circle instances with modified values, ensuring thread safety and preventing unintended state changes.
+
+**Requirements:**
+- Declare class as final to prevent inheritance
+- Use final fields for radius and color (cannot be changed after construction)
+- Validate radius is positive in constructor (default to 1.0 if invalid)
+- Provide only getters, no setters
+- Implement calculated properties: getArea(), getCircumference(), getDiameter()
+- Create withRadius(double) method returning NEW Circle with changed radius
+- Create withColor(String) method returning NEW Circle with changed color
+- Create scale(double factor) method returning NEW Circle with scaled radius
+- Demonstrate that original object remains unchanged after "modifications"
+- Use final for PI constant
+
+**Sample Test Cases:**
+```
+Input: Circle(5.0, "Red")
+Expected Output:
+=== Circle Information ===
+Radius: 5.0
+Color: Red
+Diameter: 10.00
+Area: 78.54
+Circumference: 31.42
+
+Input: circle1.withRadius(10.0)
+Expected Output:
+[New circle created with radius 10.0, color "Red"]
+=== Circle Information ===
+Radius: 10.0
+[original circle1 unchanged]
+
+Input: circle1.withColor("Blue")
+Expected Output:
+[New circle created with radius 5.0, color "Blue"]
+=== Circle Information ===
+Color: Blue
+[original circle1 unchanged]
+
+Input: circle1.scale(2.0)
+Expected Output:
+[New circle with radius 10.0 (5.0 × 2.0)]
+=== Circle Information ===
+Radius: 10.0
+
+Original circle:
+=== Circle Information ===
+Radius: 5.0
+Color: Red
+[unchanged]
+```
+
+**Solution:**
 ```java
 public final class Circle {
     private final double radius;
@@ -1829,11 +2317,67 @@ public class TestCircle {
 }
 ```
 
+**💡 Tips:**
+- Immutable class: final class + final fields + no setters = object state never changes
+- Final class prevents subclasses from adding mutable behavior
+- Final fields can only be set once (in constructor) - no modification possible
+- "with" methods (withRadius, withColor) return NEW objects - original unchanged
+- Immutable objects are thread-safe - can be shared safely between threads
+- String is immutable in Java - same pattern used here
+- Calculated properties (area, circumference) always compute fresh - no stale data
+- Immutability prevents bugs from unexpected state changes
+
 ---
 
 ### Exercise 9: Password Manager
-Create a PasswordManager class with secure encapsulation.
 
+**📝 Problem Statement:**
+Create a secure PasswordManager class that demonstrates encapsulation for sensitive data. The class should validate password strength, track failed login attempts, automatically lock accounts after excessive failures, and provide email-based account recovery.
+
+**Requirements:**
+- Create private fields for username, password, email, failedAttempts, and isLocked
+- Use final constant MAX_ATTEMPTS = 3 for failed login limit
+- Validate username has minimum 3 characters
+- Validate email contains "@" symbol
+- Implement password validation requiring: minimum 8 characters, at least one uppercase letter, at least one lowercase letter, and at least one digit
+- NO password getter (write-only field for security)
+- Implement verifyPassword() method that tracks failed attempts and locks account after MAX_ATTEMPTS
+- Implement unlock() method that verifies email before unlocking
+- Create getRemainingAttempts() method returning MAX_ATTEMPTS - failedAttempts
+- Display method should mask password as "********"
+- Prevent password verification when account is locked
+
+**Sample Test Cases:**
+```
+Input: PasswordManager("alice123", "alice@example.com"), setPassword("weak")
+Expected Output:
+Password must be at least 8 characters!
+
+Input: setPassword("weakpassword") - no uppercase or digit
+Expected Output:
+Password must contain at least one uppercase letter!
+
+Input: setPassword("StrongPass123") - valid
+Expected Output:
+Password set successfully!
+
+Input: verifyPassword("wrong"), verifyPassword("wrong"), verifyPassword("wrong")
+Expected Output:
+Incorrect password! Attempts: 1/3
+Incorrect password! Attempts: 2/3
+Incorrect password! Attempts: 3/3
+Account locked!
+
+Input: verifyPassword("StrongPass123") when locked
+Expected Output:
+Account is locked due to too many failed attempts!
+
+Input: unlock("alice@example.com")
+Expected Output:
+Account unlocked!
+```
+
+**Solution:**
 ```java
 public class PasswordManager {
     private String username;
@@ -1981,21 +2525,21 @@ public class TestPasswordManager {
     public static void main(String[] args) {
         PasswordManager pm = new PasswordManager("alice123", "alice@example.com");
         pm.displayInfo();
-        
+
         // Set password with validation
         pm.setPassword("weak");  // Too short
         pm.setPassword("weakpassword");  // No uppercase or digit
         pm.setPassword("StrongPass123");  // Valid
-        
+
         pm.displayInfo();
-        
+
         // Verify password
         pm.verifyPassword("wrong");
         pm.verifyPassword("wrong");
         pm.verifyPassword("wrong");  // Account locked
-        
+
         pm.displayInfo();
-        
+
         // Unlock
         pm.unlock("alice@example.com");
         pm.displayInfo();
@@ -2003,11 +2547,85 @@ public class TestPasswordManager {
 }
 ```
 
+**💡 Tips:**
+- No password getter protects sensitive data - write-only field pattern
+- Private helper methods (hasUpperCase, hasLowerCase, hasDigit) encapsulate validation logic
+- Password validation uses multiple criteria: length, uppercase, lowercase, digit
+- Failed attempt counter tracks security breaches and triggers account locking
+- MAX_ATTEMPTS constant defines security policy threshold
+- Account locking prevents brute-force password attacks
+- Email verification for unlock provides recovery mechanism
+- Display method masks password with "********" to prevent information leakage
+- verifyPassword() returns boolean and has side effects (incrementing counter, locking)
+- Resetting failedAttempts to 0 on successful verification prevents false lockouts
+
 ---
 
 ### Exercise 10: Shopping Cart with Price Calculation
-Create a ShoppingCart class with encapsulated pricing logic.
 
+**📝 Problem Statement:**
+Create a ShoppingCart class with encapsulated pricing logic that handles item management, tax calculation, discount application, and total price computation. The class should validate cart limits, manage item counts, and provide comprehensive price breakdowns.
+
+**Requirements:**
+- Create private fields for cartId, customerId, subtotal, taxRate, discountPercentage, and itemCount
+- Use final constant MAX_CART_VALUE = 10000.0 to limit cart size
+- Make cartId and customerId read-only (getters only, no setters)
+- Initialize with default taxRate of 0.08 (8%)
+- Validate taxRate is between 0 and 0.20 (max 20%)
+- Validate discountPercentage is between 0 and 100
+- Implement addItem(price) method that validates total doesn't exceed MAX_CART_VALUE
+- Implement removeItem(price) method with validation
+- Create getDiscountAmount() calculating subtotal × discountPercentage / 100
+- Create getTaxAmount() calculating (subtotal - discount) × taxRate
+- Create getTotal() calculating subtotal - discount + tax
+- Implement clear() method to reset cart to empty state
+- Provide displaySummary() showing all price components with 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: ShoppingCart("CART001", "CUST123"), addItem(29.99), addItem(49.99), addItem(19.99)
+Expected Output:
+Item added. Price: $29.99
+Item added. Price: $49.99
+Item added. Price: $19.99
+=== Shopping Cart Summary ===
+Cart ID: CART001
+Customer ID: CUST123
+Items: 3
+Subtotal: $99.97
+Discount (0.0%): -$0.00
+Tax (8.0%): $7.99
+Total: $107.96
+
+Input: setDiscountPercentage(10), displaySummary()
+Expected Output:
+=== Shopping Cart Summary ===
+Cart ID: CART001
+Customer ID: CUST123
+Items: 3
+Subtotal: $99.97
+Discount (10.0%): -$9.99
+Tax (8.0%): $7.19
+Total: $97.17
+
+Input: removeItem(19.99), displaySummary()
+Expected Output:
+Item removed. Price: $19.99
+=== Shopping Cart Summary ===
+Cart ID: CART001
+Customer ID: CUST123
+Items: 2
+Subtotal: $79.98
+Discount (10.0%): -$7.99
+Tax (8.0%): $5.75
+Total: $77.74
+
+Input: addItem(9500.0) when subtotal would exceed MAX_CART_VALUE
+Expected Output:
+Cannot add item. Exceeds maximum cart value!
+```
+
+**Solution:**
 ```java
 public class ShoppingCart {
     private String cartId;
@@ -2134,22 +2752,35 @@ public class ShoppingCart {
 
 public class TestShoppingCart {
     public static void main(String[] args) {
-        Shopping
-Cart cart = new ShoppingCart("CART001", "CUST123");
-        
+        ShoppingCart cart = new ShoppingCart("CART001", "CUST123");
+
         cart.addItem(29.99);
         cart.addItem(49.99);
         cart.addItem(19.99);
         cart.displaySummary();
-        
+
         cart.setDiscountPercentage(10);
         cart.displaySummary();
-        
+
         cart.removeItem(19.99);
         cart.displaySummary();
     }
 }
 ```
+
+**💡 Tips:**
+- Read-only cartId and customerId prevent modifying cart identity after creation
+- MAX_CART_VALUE constant enforces business rule preventing excessive cart totals
+- Calculated properties (discount amount, tax amount, total) compute on demand - no storage needed
+- Order of operations matters: discount applied first, then tax calculated on discounted price
+- Tax formula: (subtotal - discount) × taxRate (tax on final price, not original)
+- Total formula: subtotal - discount + tax (combines all pricing components)
+- Validation ranges: taxRate 0-20%, discountPercentage 0-100%
+- addItem() returns boolean to indicate success/failure for error handling
+- clear() resets cart but preserves cartId, customerId (identity remains)
+- displaySummary() shows percentage values for transparency (e.g., "Discount (10.0%): -$9.99")
+- String.format("%.2f") ensures currency displays with exactly 2 decimal places
+- Encapsulation protects pricing logic - can't manually set subtotal or manipulate calculations
 
 ---
 

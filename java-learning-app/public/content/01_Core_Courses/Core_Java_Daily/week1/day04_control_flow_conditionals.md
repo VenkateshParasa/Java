@@ -529,16 +529,47 @@ if (isMember) {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Grade Calculator
+
+**📝 Problem Statement:**
+Create a program that accepts student marks (0-100) and displays the corresponding grade based on the marks with descriptive feedback.
+
+**Requirements:**
+- Accept marks input from user (0-100 range)
+- Validate that marks are within valid range
+- Use if-else-if ladder to determine grade
+- Display grade with descriptive text
+- Grade scale: A (90+), B (80-89), C (70-79), D (60-69), F (below 60)
+
+**Sample Test Cases:**
+```
+Input: marks = 95
+Expected Output:
+Grade: A (Excellent)
+
+Input: marks = 75
+Expected Output:
+Grade: C (Good)
+
+Input: marks = 55
+Expected Output:
+Grade: F (Fail)
+
+Input: marks = 105
+Expected Output:
+Invalid marks
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class GradeCalculator {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter marks (0-100): ");
         int marks = scanner.nextInt();
-        
+
         if (marks < 0 || marks > 100) {
             System.out.println("Invalid marks");
         } else if (marks >= 90) {
@@ -552,33 +583,69 @@ public class GradeCalculator {
         } else {
             System.out.println("Grade: F (Fail)");
         }
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Always validate input range before processing
+- The order of conditions matters in if-else-if ladder
+- Check highest value first, then descend
+- Use clear, descriptive grade labels for better user experience
+
 ---
 
 ### Exercise 2: Largest of Three Numbers
+
+**📝 Problem Statement:**
+Write a program that finds and displays the largest among three numbers entered by the user.
+
+**Requirements:**
+- Accept three integer inputs from the user
+- Compare all three numbers using logical operators
+- Determine and display the largest number
+- Handle cases where two or all numbers are equal
+
+**Sample Test Cases:**
+```
+Input: num1 = 25, num2 = 30, num3 = 20
+Expected Output:
+Largest number: 30
+
+Input: num1 = 50, num2 = 50, num3 = 40
+Expected Output:
+Largest number: 50
+
+Input: num1 = 15, num2 = 10, num3 = 20
+Expected Output:
+Largest number: 20
+
+Input: num1 = 100, num2 = 100, num3 = 100
+Expected Output:
+Largest number: 100
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class LargestOfThree {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter first number: ");
         int num1 = scanner.nextInt();
-        
+
         System.out.print("Enter second number: ");
         int num2 = scanner.nextInt();
-        
+
         System.out.print("Enter third number: ");
         int num3 = scanner.nextInt();
-        
+
         int largest;
-        
+
         if (num1 >= num2 && num1 >= num3) {
             largest = num1;
         } else if (num2 >= num1 && num2 >= num3) {
@@ -586,29 +653,65 @@ public class LargestOfThree {
         } else {
             largest = num3;
         }
-        
+
         System.out.println("Largest number: " + largest);
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Use `>=` instead of `>` to handle equal values correctly
+- Logical AND (`&&`) ensures both conditions must be true
+- Alternative approach: Use nested if statements or Math.max()
+- This logic works correctly even when all three numbers are equal
+
 ---
 
 ### Exercise 3: Leap Year Checker
+
+**📝 Problem Statement:**
+Create a program that determines whether a given year is a leap year or not using nested if statements.
+
+**Requirements:**
+- Accept a year as input from the user
+- Apply leap year rules using nested if statements
+- Display whether the year is a leap year or not
+- Leap year rules: divisible by 4, but not by 100, unless also divisible by 400
+
+**Sample Test Cases:**
+```
+Input: year = 2024
+Expected Output:
+2024 is a LEAP YEAR
+
+Input: year = 1900
+Expected Output:
+1900 is NOT a leap year
+
+Input: year = 2000
+Expected Output:
+2000 is a LEAP YEAR
+
+Input: year = 2023
+Expected Output:
+2023 is NOT a leap year
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class LeapYearChecker {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter a year: ");
         int year = scanner.nextInt();
-        
+
         boolean isLeapYear;
-        
+
         if (year % 4 == 0) {
             if (year % 100 == 0) {
                 if (year % 400 == 0) {
@@ -617,308 +720,68 @@ public class LeapYearChecker {
                     isLeapYear = false;
                 }
             } else {
-
----
-
-### Exercise 6: Triangle Type Checker
-Determine the type of triangle based on sides.
-
-```java
-import java.util.Scanner;
-
-public class TriangleType {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter side 1: ");
-        int side1 = scanner.nextInt();
-        
-        System.out.print("Enter side 2: ");
-        int side2 = scanner.nextInt();
-        
-        System.out.print("Enter side 3: ");
-        int side3 = scanner.nextInt();
-        
-        // Check if valid triangle
-        if (side1 + side2 > side3 && side2 + side3 > side1 && side1 + side3 > side2) {
-            if (side1 == side2 && side2 == side3) {
-                System.out.println("Equilateral Triangle");
-            } else if (side1 == side2 || side2 == side3 || side1 == side3) {
-                System.out.println("Isosceles Triangle");
-            } else {
-                System.out.println("Scalene Triangle");
-            }
-        } else {
-            System.out.println("Not a valid triangle");
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 7: Month Days Calculator
-Display number of days in a month.
-
-```java
-import java.util.Scanner;
-
-public class MonthDays {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter month number (1-12): ");
-        int month = scanner.nextInt();
-        
-        System.out.print("Enter year: ");
-        int year = scanner.nextInt();
-        
-        int days;
-        
-        switch (month) {
-            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
-                days = 31;
-                break;
-            case 4: case 6: case 9: case 11:
-                days = 30;
-                break;
-            case 2:
-                // Check leap year
-                if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
-                    days = 29;
-                } else {
-                    days = 28;
-                }
-                break;
-            default:
-                days = 0;
-                System.out.println("Invalid month!");
-        }
-        
-        if (days > 0) {
-            System.out.println("Number of days: " + days);
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 8: Discount Calculator
-Calculate discount based on purchase amount.
-
-```java
-import java.util.Scanner;
-
-public class DiscountCalculator {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter purchase amount: $");
-        double amount = scanner.nextDouble();
-        
-        double discount = 0;
-        
-        if (amount >= 1000) {
-            discount = 20;  // 20% discount
-        } else if (amount >= 500) {
-            discount = 10;  // 10% discount
-        } else if (amount >= 200) {
-            discount = 5;   // 5% discount
-        }
-        
-        double discountAmount = amount * discount / 100;
-        double finalAmount = amount - discountAmount;
-        
-        System.out.println("\nOriginal Amount: $" + amount);
-        System.out.println("Discount: " + discount + "%");
-        System.out.println("Discount Amount: $" + discountAmount);
-        System.out.println("Final Amount: $" + finalAmount);
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 9: Character Type Checker
-Check if character is vowel, consonant, digit, or special character.
-
-```java
-import java.util.Scanner;
-
-public class CharacterType {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter a character: ");
-        char ch = scanner.next().charAt(0);
-        
-        if (Character.isLetter(ch)) {
-            ch = Character.toLowerCase(ch);
-            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
-                System.out.println(ch + " is a VOWEL");
-            } else {
-                System.out.println(ch + " is a CONSONANT");
-            }
-        } else if (Character.isDigit(ch)) {
-            System.out.println(ch + " is a DIGIT");
-        } else {
-            System.out.println(ch + " is a SPECIAL CHARACTER");
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 10: Quadrant Finder
-Find the quadrant of a point in coordinate system.
-
-```java
-import java.util.Scanner;
-
-public class QuadrantFinder {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter x coordinate: ");
-        int x = scanner.nextInt();
-        
-        System.out.print("Enter y coordinate: ");
-        int y = scanner.nextInt();
-        
-        if (x == 0 && y == 0) {
-            System.out.println("Point is at the ORIGIN");
-        } else if (x == 0) {
-            System.out.println("Point is on the Y-AXIS");
-        } else if (y == 0) {
-            System.out.println("Point is on the X-AXIS");
-        } else if (x > 0 && y > 0) {
-            System.out.println("Point is in QUADRANT I");
-        } else if (x < 0 && y > 0) {
-            System.out.println("Point is in QUADRANT II");
-        } else if (x < 0 && y < 0) {
-            System.out.println("Point is in QUADRANT III");
-        } else {
-            System.out.println("Point is in QUADRANT IV");
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 11: Eligibility Checker
-Check eligibility for voting, driving, and senior citizen benefits.
-
-```java
-import java.util.Scanner;
-
-public class EligibilityChecker {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter your age: ");
-        int age = scanner.nextInt();
-        
-        System.out.println("\n=== Eligibility Status ===");
-        
-        if (age >= 18) {
-            System.out.println("✓ Eligible to VOTE");
-        } else {
-            System.out.println("✗ Not eligible to vote (need " + (18 - age) + " more years)");
-        }
-        
-        if (age >= 16) {
-            System.out.println("✓ Eligible for DRIVING LICENSE");
-        } else {
-            System.out.println("✗ Not eligible for driving license");
-        }
-        
-        if (age >= 60) {
-            System.out.println("✓ Eligible for SENIOR CITIZEN benefits");
-        } else {
-            System.out.println("✗ Not a senior citizen yet");
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 12: Rock Paper Scissors Game
-Simple rock-paper-scissors game.
-
-```java
-import java.util.Scanner;
-import java.util.Random;
-
-public class RockPaperScissors {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        Random random = new Random();
-        
-        System.out.println("=== Rock Paper Scissors ===");
-        System.out.println("1. Rock");
-        System.out.println("2. Paper");
-        System.out.println("3. Scissors");
-        System.out.print("Enter your choice (1-3): ");
-        
-        int userChoice = scanner.nextInt();
-        int computerChoice = random.nextInt(3) + 1;
-        
-        String[] choices = {"", "Rock", "Paper", "Scissors"};
-        
-        System.out.println("\nYou chose: " + choices[userChoice]);
-        System.out.println("Computer chose: " + choices[computerChoice]);
-        
-        if (userChoice == computerChoice) {
-            System.out.println("It's a TIE!");
-        } else if ((userChoice == 1 && computerChoice == 3) ||
-                   (userChoice == 2 && computerChoice == 1) ||
-                   (userChoice == 3 && computerChoice == 2)) {
-            System.out.println("You WIN!");
-        } else {
-            System.out.println("Computer WINS!");
-        }
-        
-        scanner.close();
-    }
-}
-```
-
                 isLeapYear = true;
             }
         } else {
             isLeapYear = false;
         }
-        
+
         if (isLeapYear) {
             System.out.println(year + " is a LEAP YEAR");
         } else {
             System.out.println(year + " is NOT a leap year");
         }
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Leap year rules: divisible by 4 AND (not divisible by 100 OR divisible by 400)
+- Nested if statements follow the logical hierarchy of rules
+- Alternative: Use single compound condition `(year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)`
+- Examples: 2000, 2004, 2020, 2024 are leap years; 1900, 2001, 2100 are not
+
 ---
 
 ### Exercise 4: Simple ATM Menu
+
+**📝 Problem Statement:**
+Build a simple ATM menu system that allows users to check balance, deposit money, withdraw money, or exit using a switch statement.
+
+**Requirements:**
+- Display a menu with 4 options: Check Balance, Deposit, Withdraw, Exit
+- Accept user's menu choice (1-4)
+- Use switch statement to handle different operations
+- Initialize balance at $1000.0
+- Validate withdrawal amount (cannot exceed balance)
+- Display appropriate messages for each operation
+
+**Sample Test Cases:**
+```
+Input: choice = 1
+Expected Output:
+Current Balance: $1000.0
+
+Input: choice = 2, deposit = 500
+Expected Output:
+Deposit successful. New balance: $1500.0
+
+Input: choice = 3, withdraw = 200
+Expected Output:
+Withdrawal successful. New balance: $800.0
+
+Input: choice = 3, withdraw = 1500 (balance = 1000)
+Expected Output:
+Insufficient funds
+
+Input: choice = 5
+Expected Output:
+Invalid choice
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
@@ -926,16 +789,16 @@ public class ATMMenu {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         double balance = 1000.0;
-        
+
         System.out.println("=== ATM Menu ===");
         System.out.println("1. Check Balance");
         System.out.println("2. Deposit");
         System.out.println("3. Withdraw");
         System.out.println("4. Exit");
         System.out.print("Enter choice: ");
-        
+
         int choice = scanner.nextInt();
-        
+
         switch (choice) {
             case 1:
                 System.out.println("Current Balance: $" + balance);
@@ -962,28 +825,70 @@ public class ATMMenu {
             default:
                 System.out.println("Invalid choice");
         }
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Switch statement is ideal for menu-based programs with fixed choices
+- Always include a `default` case to handle invalid input
+- Don't forget `break` statements to prevent fall-through
+- Nested if statement inside case 3 validates withdrawal amount
+- Real ATM systems would use loops to allow multiple transactions
+
 ---
 
-### Exercise 5: Vowel or Consonant
+### Exercise 5: Vowel or Consonant Checker
+
+**📝 Problem Statement:**
+Create a program that checks whether an entered character is a vowel or consonant using a switch statement.
+
+**Requirements:**
+- Accept a single character input from the user
+- Convert character to lowercase for consistent checking
+- Use switch statement to check for vowels (a, e, i, o, u)
+- Handle non-letter characters appropriately
+- Display whether the character is a vowel, consonant, or not a letter
+
+**Sample Test Cases:**
+```
+Input: ch = 'a'
+Expected Output:
+a is a VOWEL
+
+Input: ch = 'A'
+Expected Output:
+a is a VOWEL
+
+Input: ch = 'b'
+Expected Output:
+b is a CONSONANT
+
+Input: ch = 'E'
+Expected Output:
+e is a VOWEL
+
+Input: ch = '5'
+Expected Output:
+Not a letter
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class VowelConsonant {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter a character: ");
         char ch = scanner.next().charAt(0);
-        
+
         // Convert to lowercase for easier checking
         ch = Character.toLowerCase(ch);
-        
+
         if (Character.isLetter(ch)) {
             switch (ch) {
                 case 'a':
@@ -999,11 +904,895 @@ public class VowelConsonant {
         } else {
             System.out.println("Not a letter");
         }
-        
+
         scanner.close();
     }
 }
 ```
+
+**💡 Tips:**
+- Use `Character.toLowerCase()` to handle both uppercase and lowercase input
+- Multiple case labels without break create a fall-through effect (useful here)
+- `Character.isLetter()` checks if input is an alphabet character
+- Alternative: Use if statement with multiple OR conditions
+- Vowels: a, e, i, o, u (5 vowels in English alphabet)
+
+---
+
+### Exercise 6: Triangle Type Checker
+
+**📝 Problem Statement:**
+Write a program that determines the type of triangle (Equilateral, Isosceles, Scalene) based on three side lengths provided by the user.
+
+**Requirements:**
+- Accept three side lengths from the user
+- First validate if the three sides can form a valid triangle
+- Triangle validity: sum of any two sides must be greater than the third side
+- Determine triangle type: Equilateral (all equal), Isosceles (two equal), Scalene (all different)
+- Display appropriate message for valid or invalid triangle
+
+**Sample Test Cases:**
+```
+Input: side1 = 5, side2 = 5, side3 = 5
+Expected Output:
+Equilateral Triangle
+
+Input: side1 = 5, side2 = 5, side3 = 8
+Expected Output:
+Isosceles Triangle
+
+Input: side1 = 3, side2 = 4, side3 = 5
+Expected Output:
+Scalene Triangle
+
+Input: side1 = 1, side2 = 2, side3 = 10
+Expected Output:
+Not a valid triangle
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class TriangleType {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter side 1: ");
+        int side1 = scanner.nextInt();
+
+        System.out.print("Enter side 2: ");
+        int side2 = scanner.nextInt();
+
+        System.out.print("Enter side 3: ");
+        int side3 = scanner.nextInt();
+
+        // Check if valid triangle
+        if (side1 + side2 > side3 && side2 + side3 > side1 && side1 + side3 > side2) {
+            if (side1 == side2 && side2 == side3) {
+                System.out.println("Equilateral Triangle");
+            } else if (side1 == side2 || side2 == side3 || side1 == side3) {
+                System.out.println("Isosceles Triangle");
+            } else {
+                System.out.println("Scalene Triangle");
+            }
+        } else {
+            System.out.println("Not a valid triangle");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Triangle inequality theorem: sum of any two sides > third side
+- Must check all three combinations for validity
+- Equilateral: all 3 sides equal
+- Isosceles: exactly 2 sides equal
+- Scalene: all 3 sides different
+- Example: 3-4-5 is a valid right-angled scalene triangle
+
+---
+
+### Exercise 7: Month Days Calculator
+
+**📝 Problem Statement:**
+Create a program that displays the number of days in a given month, considering leap years for February.
+
+**Requirements:**
+- Accept month number (1-12) and year as input
+- Use switch statement to determine days in each month
+- Handle February specially by checking for leap year
+- Display the number of days in the specified month
+- Handle invalid month numbers with appropriate error message
+
+**Sample Test Cases:**
+```
+Input: month = 1, year = 2024
+Expected Output:
+Number of days: 31
+
+Input: month = 2, year = 2024
+Expected Output:
+Number of days: 29
+
+Input: month = 2, year = 2023
+Expected Output:
+Number of days: 28
+
+Input: month = 4, year = 2024
+Expected Output:
+Number of days: 30
+
+Input: month = 13, year = 2024
+Expected Output:
+Invalid month!
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class MonthDays {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter month number (1-12): ");
+        int month = scanner.nextInt();
+
+        System.out.print("Enter year: ");
+        int year = scanner.nextInt();
+
+        int days;
+
+        switch (month) {
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                days = 31;
+                break;
+            case 4: case 6: case 9: case 11:
+                days = 30;
+                break;
+            case 2:
+                // Check leap year
+                if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+                    days = 29;
+                } else {
+                    days = 28;
+                }
+                break;
+            default:
+                days = 0;
+                System.out.println("Invalid month!");
+        }
+
+        if (days > 0) {
+            System.out.println("Number of days: " + days);
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Months with 31 days: Jan, Mar, May, Jul, Aug, Oct, Dec (7 months)
+- Months with 30 days: Apr, Jun, Sep, Nov (4 months)
+- February has 28 days (29 in leap year)
+- Multiple case labels can share the same code block
+- Mnemonic: "Thirty days hath September, April, June, and November"
+
+---
+
+### Exercise 8: Discount Calculator
+
+**📝 Problem Statement:**
+Build a discount calculator that applies tiered discounts based on purchase amount.
+
+**Requirements:**
+- Accept purchase amount from user
+- Apply discount tiers: 20% for $1000+, 10% for $500-999, 5% for $200-499, 0% below $200
+- Calculate discount amount and final amount to pay
+- Display original amount, discount percentage, discount amount, and final amount
+- Format monetary values appropriately
+
+**Sample Test Cases:**
+```
+Input: amount = 1500
+Expected Output:
+Original Amount: $1500.0
+Discount: 20%
+Discount Amount: $300.0
+Final Amount: $1200.0
+
+Input: amount = 750
+Expected Output:
+Original Amount: $750.0
+Discount: 10%
+Discount Amount: $75.0
+Final Amount: $675.0
+
+Input: amount = 150
+Expected Output:
+Original Amount: $150.0
+Discount: 0%
+Discount Amount: $0.0
+Final Amount: $150.0
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class DiscountCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter purchase amount: $");
+        double amount = scanner.nextDouble();
+
+        double discount = 0;
+
+        if (amount >= 1000) {
+            discount = 20;  // 20% discount
+        } else if (amount >= 500) {
+            discount = 10;  // 10% discount
+        } else if (amount >= 200) {
+            discount = 5;   // 5% discount
+        }
+
+        double discountAmount = amount * discount / 100;
+        double finalAmount = amount - discountAmount;
+
+        System.out.println("\nOriginal Amount: $" + amount);
+        System.out.println("Discount: " + discount + "%");
+        System.out.println("Discount Amount: $" + discountAmount);
+        System.out.println("Final Amount: $" + finalAmount);
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Check highest discount tier first, then descend
+- Formula: discountAmount = originalAmount × (discount / 100)
+- Formula: finalAmount = originalAmount - discountAmount
+- Real shopping apps often have more complex tiered discount systems
+- Consider using `String.format("%.2f", value)` for 2 decimal places
+
+---
+
+### Exercise 9: Character Type Checker
+
+**📝 Problem Statement:**
+Create a program that identifies whether an entered character is a vowel, consonant, digit, or special character.
+
+**Requirements:**
+- Accept a single character input from user
+- Use Character class methods to identify character type
+- Check if character is: letter (then vowel/consonant), digit, or special character
+- Convert letters to lowercase before vowel checking
+- Display appropriate message for each character type
+
+**Sample Test Cases:**
+```
+Input: ch = 'A'
+Expected Output:
+a is a VOWEL
+
+Input: ch = 'b'
+Expected Output:
+b is a CONSONANT
+
+Input: ch = '7'
+Expected Output:
+7 is a DIGIT
+
+Input: ch = '@'
+Expected Output:
+@ is a SPECIAL CHARACTER
+
+Input: ch = 'E'
+Expected Output:
+e is a VOWEL
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class CharacterType {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter a character: ");
+        char ch = scanner.next().charAt(0);
+
+        if (Character.isLetter(ch)) {
+            ch = Character.toLowerCase(ch);
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                System.out.println(ch + " is a VOWEL");
+            } else {
+                System.out.println(ch + " is a CONSONANT");
+            }
+        } else if (Character.isDigit(ch)) {
+            System.out.println(ch + " is a DIGIT");
+        } else {
+            System.out.println(ch + " is a SPECIAL CHARACTER");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- `Character.isLetter()` checks if character is A-Z or a-z
+- `Character.isDigit()` checks if character is 0-9
+- `Character.toLowerCase()` converts to lowercase for easier comparison
+- Special characters include: @, #, $, %, &, *, etc.
+- Use `scanner.next().charAt(0)` to read single character
+
+---
+
+### Exercise 10: Quadrant Finder
+
+**📝 Problem Statement:**
+Write a program that determines which quadrant a point lies in based on its X and Y coordinates.
+
+**Requirements:**
+- Accept X and Y coordinates from user
+- Determine the location using nested if-else
+- Handle special cases: origin (0,0), X-axis (y=0), Y-axis (x=0)
+- Display quadrant (I, II, III, IV) or axis/origin location
+- Quadrant rules: I (+,+), II (-,+), III (-,-), IV (+,-)
+
+**Sample Test Cases:**
+```
+Input: x = 5, y = 3
+Expected Output:
+Point is in QUADRANT I
+
+Input: x = -4, y = 6
+Expected Output:
+Point is in QUADRANT II
+
+Input: x = -2, y = -5
+Expected Output:
+Point is in QUADRANT III
+
+Input: x = 3, y = -2
+Expected Output:
+Point is in QUADRANT IV
+
+Input: x = 0, y = 0
+Expected Output:
+Point is at the ORIGIN
+
+Input: x = 0, y = 5
+Expected Output:
+Point is on the Y-AXIS
+
+Input: x = 4, y = 0
+Expected Output:
+Point is on the X-AXIS
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class QuadrantFinder {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter x coordinate: ");
+        int x = scanner.nextInt();
+
+        System.out.print("Enter y coordinate: ");
+        int y = scanner.nextInt();
+
+        if (x == 0 && y == 0) {
+            System.out.println("Point is at the ORIGIN");
+        } else if (x == 0) {
+            System.out.println("Point is on the Y-AXIS");
+        } else if (y == 0) {
+            System.out.println("Point is on the X-AXIS");
+        } else if (x > 0 && y > 0) {
+            System.out.println("Point is in QUADRANT I");
+        } else if (x < 0 && y > 0) {
+            System.out.println("Point is in QUADRANT II");
+        } else if (x < 0 && y < 0) {
+            System.out.println("Point is in QUADRANT III");
+        } else {
+            System.out.println("Point is in QUADRANT IV");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Quadrant I: Both positive (+, +)
+- Quadrant II: Negative X, positive Y (-, +)
+- Quadrant III: Both negative (-, -)
+- Quadrant IV: Positive X, negative Y (+, -)
+- Check special cases (origin, axes) before checking quadrants
+- Real applications: plotting graphs, GPS coordinates, game development
+
+---
+
+### Exercise 11: Eligibility Checker
+
+**📝 Problem Statement:**
+Create a program that checks a person's eligibility for voting, driving license, and senior citizen benefits based on their age.
+
+**Requirements:**
+- Accept age input from user
+- Check eligibility for voting (18+)
+- Check eligibility for driving license (16+)
+- Check eligibility for senior citizen benefits (60+)
+- Display all eligibility statuses with checkmarks or cross marks
+- Show how many more years needed for voting if not eligible
+
+**Sample Test Cases:**
+```
+Input: age = 25
+Expected Output:
+=== Eligibility Status ===
+✓ Eligible to VOTE
+✓ Eligible for DRIVING LICENSE
+✗ Not a senior citizen yet
+
+Input: age = 15
+Expected Output:
+=== Eligibility Status ===
+✗ Not eligible to vote (need 3 more years)
+✗ Not eligible for driving license
+✗ Not a senior citizen yet
+
+Input: age = 65
+Expected Output:
+=== Eligibility Status ===
+✓ Eligible to VOTE
+✓ Eligible for DRIVING LICENSE
+✓ Eligible for SENIOR CITIZEN benefits
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class EligibilityChecker {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter your age: ");
+        int age = scanner.nextInt();
+
+        System.out.println("\n=== Eligibility Status ===");
+
+        if (age >= 18) {
+            System.out.println("✓ Eligible to VOTE");
+        } else {
+            System.out.println("✗ Not eligible to vote (need " + (18 - age) + " more years)");
+        }
+
+        if (age >= 16) {
+            System.out.println("✓ Eligible for DRIVING LICENSE");
+        } else {
+            System.out.println("✗ Not eligible for driving license");
+        }
+
+        if (age >= 60) {
+            System.out.println("✓ Eligible for SENIOR CITIZEN benefits");
+        } else {
+            System.out.println("✗ Not a senior citizen yet");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Use separate if-else for each eligibility check (independent conditions)
+- Voting age is 18 in most countries (varies by country)
+- Driving age varies: 16-18 depending on region and license type
+- Senior citizen age is typically 60 or 65
+- Formula for years needed: `targetAge - currentAge`
+
+---
+
+### Exercise 12: Rock Paper Scissors Game
+
+**📝 Problem Statement:**
+Build a simple Rock-Paper-Scissors game where the user plays against the computer.
+
+**Requirements:**
+- Display menu with options: 1=Rock, 2=Paper, 3=Scissors
+- Accept user's choice (1-3)
+- Generate random choice for computer (1-3)
+- Display both choices
+- Determine winner using game rules: Rock beats Scissors, Scissors beats Paper, Paper beats Rock
+- Handle tie cases
+- Display result (Win, Lose, or Tie)
+
+**Sample Test Cases:**
+```
+Input: userChoice = 1 (Rock), computerChoice = 3 (Scissors)
+Expected Output:
+You chose: Rock
+Computer chose: Scissors
+You WIN!
+
+Input: userChoice = 2 (Paper), computerChoice = 1 (Rock)
+Expected Output:
+You chose: Paper
+Computer chose: Rock
+You WIN!
+
+Input: userChoice = 3 (Scissors), computerChoice = 2 (Paper)
+Expected Output:
+You chose: Scissors
+Computer chose: Paper
+You WIN!
+
+Input: userChoice = 1 (Rock), computerChoice = 1 (Rock)
+Expected Output:
+You chose: Rock
+Computer chose: Rock
+It's a TIE!
+
+Input: userChoice = 1 (Rock), computerChoice = 2 (Paper)
+Expected Output:
+You chose: Rock
+Computer chose: Paper
+Computer WINS!
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+import java.util.Random;
+
+public class RockPaperScissors {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+        System.out.println("=== Rock Paper Scissors ===");
+        System.out.println("1. Rock");
+        System.out.println("2. Paper");
+        System.out.println("3. Scissors");
+        System.out.print("Enter your choice (1-3): ");
+
+        int userChoice = scanner.nextInt();
+        int computerChoice = random.nextInt(3) + 1;
+
+        String[] choices = {"", "Rock", "Paper", "Scissors"};
+
+        System.out.println("\nYou chose: " + choices[userChoice]);
+        System.out.println("Computer chose: " + choices[computerChoice]);
+
+        if (userChoice == computerChoice) {
+            System.out.println("It's a TIE!");
+        } else if ((userChoice == 1 && computerChoice == 3) ||
+                   (userChoice == 2 && computerChoice == 1) ||
+                   (userChoice == 3 && computerChoice == 2)) {
+            System.out.println("You WIN!");
+        } else {
+            System.out.println("Computer WINS!");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- `random.nextInt(3)` generates 0, 1, or 2; add 1 to get 1, 2, or 3
+- Game rules: Rock beats Scissors, Scissors beats Paper, Paper beats Rock
+- Win conditions form a logical pattern (check all 3 win scenarios)
+- Array index 0 is empty string to match choices 1-3 with array indices
+- Enhancement: Add input validation and loop for multiple rounds
+
+---
+
+### Exercise 13: BMI Category Checker
+
+**📝 Problem Statement:**
+Create a program that calculates BMI (Body Mass Index) and determines the weight category.
+
+**Requirements:**
+- Accept weight in kilograms and height in meters from user
+- Calculate BMI using formula: BMI = weight / (height × height)
+- Determine category: Underweight (<18.5), Normal (18.5-24.9), Overweight (25-29.9), Obese (30+)
+- Display BMI value with 2 decimal places
+- Display category with health advice
+- Validate that weight and height are positive values
+
+**Sample Test Cases:**
+```
+Input: weight = 70 kg, height = 1.75 m
+Expected Output:
+Weight: 70.0 kg
+Height: 1.75 m
+BMI: 22.86
+Category: Normal weight
+Advice: Maintain your healthy weight through balanced diet and exercise.
+
+Input: weight = 55 kg, height = 1.70 m
+Expected Output:
+Weight: 55.0 kg
+Height: 1.7 m
+BMI: 19.03
+Category: Normal weight
+Advice: Maintain your healthy weight through balanced diet and exercise.
+
+Input: weight = 90 kg, height = 1.75 m
+Expected Output:
+Weight: 90.0 kg
+Height: 1.75 m
+BMI: 29.39
+Category: Overweight
+Advice: Consider adopting healthier eating habits and increasing physical activity.
+
+Input: weight = 50 kg, height = 1.80 m
+Expected Output:
+Weight: 50.0 kg
+Height: 1.8 m
+BMI: 15.43
+Category: Underweight
+Advice: Consider consulting a healthcare provider for proper nutrition guidance.
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class BMICalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter weight in kg: ");
+        double weight = scanner.nextDouble();
+
+        System.out.print("Enter height in meters: ");
+        double height = scanner.nextDouble();
+
+        // Calculate BMI
+        double bmi = weight / (height * height);
+
+        System.out.println("\nWeight: " + weight + " kg");
+        System.out.println("Height: " + height + " m");
+        System.out.printf("BMI: %.2f%n", bmi);
+
+        // Determine category and advice
+        String category;
+        String advice;
+
+        if (bmi < 18.5) {
+            category = "Underweight";
+            advice = "Consider consulting a healthcare provider for proper nutrition guidance.";
+        } else if (bmi < 25) {
+            category = "Normal weight";
+            advice = "Maintain your healthy weight through balanced diet and exercise.";
+        } else if (bmi < 30) {
+            category = "Overweight";
+            advice = "Consider adopting healthier eating habits and increasing physical activity.";
+        } else {
+            category = "Obese";
+            advice = "Please consult a healthcare provider for personalized health advice.";
+        }
+
+        System.out.println("Category: " + category);
+        System.out.println("Advice: " + advice);
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- BMI formula: weight(kg) / height²(m)
+- BMI categories are based on WHO standards
+- Use `System.out.printf("%.2f", bmi)` for 2 decimal places
+- Always validate positive values for weight and height in real applications
+- BMI is a screening tool, not a diagnostic tool
+
+---
+
+### Exercise 14: Tax Calculator
+
+**📝 Problem Statement:**
+Build a simple income tax calculator that calculates tax based on income slabs.
+
+**Requirements:**
+- Accept annual income from user
+- Calculate tax using progressive tax slabs
+- Tax slabs: $0-10,000 (0%), $10,001-30,000 (10%), $30,001-70,000 (20%), $70,001+ (30%)
+- Display income, tax amount, and net income after tax
+- Format monetary values to 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: income = 8000
+Expected Output:
+Annual Income: $8000.00
+Tax Rate: 0%
+Tax Amount: $0.00
+Net Income: $8000.00
+
+Input: income = 25000
+Expected Output:
+Annual Income: $25000.00
+Tax Rate: 10%
+Tax Amount: $1500.00
+Net Income: $23500.00
+
+Input: income = 50000
+Expected Output:
+Annual Income: $50000.00
+Tax Rate: 20%
+Tax Amount: $4000.00
+Net Income: $46000.00
+
+Input: income = 100000
+Expected Output:
+Annual Income: $100000.00
+Tax Rate: 30%
+Tax Amount: $9000.00
+Net Income: $91000.00
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class TaxCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter annual income: $");
+        double income = scanner.nextDouble();
+
+        double taxRate;
+        double taxAmount;
+
+        if (income <= 10000) {
+            taxRate = 0;
+        } else if (income <= 30000) {
+            taxRate = 10;
+        } else if (income <= 70000) {
+            taxRate = 20;
+        } else {
+            taxRate = 30;
+        }
+
+        // Simplified tax calculation (flat rate on excess)
+        if (income <= 10000) {
+            taxAmount = 0;
+        } else if (income <= 30000) {
+            taxAmount = (income - 10000) * 0.10;
+        } else if (income <= 70000) {
+            taxAmount = (20000 * 0.10) + (income - 30000) * 0.20;
+        } else {
+            taxAmount = (20000 * 0.10) + (40000 * 0.20) + (income - 70000) * 0.30;
+        }
+
+        double netIncome = income - taxAmount;
+
+        System.out.printf("\nAnnual Income: $%.2f%n", income);
+        System.out.println("Tax Rate: " + taxRate + "%");
+        System.out.printf("Tax Amount: $%.2f%n", taxAmount);
+        System.out.printf("Net Income: $%.2f%n", netIncome);
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Progressive tax: different rates apply to different income portions
+- Calculate tax on the excess over each slab boundary
+- Use `System.out.printf("$%.2f", amount)` for currency formatting
+- Real tax systems are more complex with deductions and credits
+- This is simplified for educational purposes
+
+---
+
+### Exercise 15: Simple Login System
+
+**📝 Problem Statement:**
+Create a simple login system that validates username and password.
+
+**Requirements:**
+- Define preset username and password (hardcoded for this exercise)
+- Accept username and password input from user
+- Validate both username and password
+- Display appropriate message for: successful login, wrong password, wrong username
+- Give user 3 attempts before locking account
+- Use nested if statements for validation
+
+**Sample Test Cases:**
+```
+Input: username = "admin", password = "pass123"
+Expected Output:
+Login Successful! Welcome, admin.
+
+Input: username = "admin", password = "wrongpass"
+Expected Output:
+Incorrect password. Please try again.
+
+Input: username = "user123", password = "pass123"
+Expected Output:
+Username not found.
+
+Input: username = "admin", password = "pass123" (on 3rd failed attempt)
+Expected Output:
+Account locked. Too many failed attempts.
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class LoginSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Preset credentials
+        String correctUsername = "admin";
+        String correctPassword = "pass123";
+
+        int attempts = 0;
+        int maxAttempts = 3;
+        boolean loggedIn = false;
+
+        while (attempts < maxAttempts && !loggedIn) {
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
+
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+
+            if (username.equals(correctUsername)) {
+                if (password.equals(correctPassword)) {
+                    System.out.println("\nLogin Successful! Welcome, " + username + ".");
+                    loggedIn = true;
+                } else {
+                    attempts++;
+                    System.out.println("Incorrect password. Please try again.");
+                    System.out.println("Attempts remaining: " + (maxAttempts - attempts));
+                }
+            } else {
+                attempts++;
+                System.out.println("Username not found.");
+                System.out.println("Attempts remaining: " + (maxAttempts - attempts));
+            }
+
+            System.out.println();
+        }
+
+        if (!loggedIn) {
+            System.out.println("Account locked. Too many failed attempts.");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Use `.equals()` for string comparison, not `==`
+- Nested if: first check username, then check password
+- Loop allows multiple attempts (while loop covered in Day 5)
+- Real systems: never hardcode passwords, use encryption, database storage
+- Security best practice: don't reveal which credential (username/password) is wrong
+- Add delay after failed attempts in real applications to prevent brute force
 
 ---
 

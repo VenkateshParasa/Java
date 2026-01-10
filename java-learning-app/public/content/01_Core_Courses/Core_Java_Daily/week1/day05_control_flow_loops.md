@@ -532,6 +532,32 @@ while (keepRunning) {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Print 1 to 100
+
+**📝 Problem Statement:**
+Create a program that prints all numbers from 1 to 100, displaying 10 numbers per line for better readability.
+
+**Requirements:**
+- Use a for loop to iterate from 1 to 100
+- Print each number followed by a space
+- Insert a line break after every 10 numbers
+- Use modulus operator to determine when to break the line
+
+**Sample Test Cases:**
+```
+Expected Output:
+1 2 3 4 5 6 7 8 9 10
+11 12 13 14 15 16 17 18 19 20
+21 22 23 24 25 26 27 28 29 30
+31 32 33 34 35 36 37 38 39 40
+41 42 43 44 45 46 47 48 49 50
+51 52 53 54 55 56 57 58 59 60
+61 62 63 64 65 66 67 68 69 70
+71 72 73 74 75 76 77 78 79 80
+81 82 83 84 85 86 87 88 89 90
+91 92 93 94 95 96 97 98 99 100
+```
+
+**Solution:**
 ```java
 public class Print1To100 {
     public static void main(String[] args) {
@@ -545,98 +571,252 @@ public class Print1To100 {
 }
 ```
 
+**💡 Tips:**
+- For loop is ideal when you know the number of iterations in advance
+- Use `print()` instead of `println()` to keep numbers on same line
+- `i % 10 == 0` checks if number is divisible by 10
+- Can modify the code to print any range or change numbers per line
+
 ---
 
 ### Exercise 2: Sum of Numbers
+
+**📝 Problem Statement:**
+Write a program that calculates the sum of all numbers from 1 to n, where n is provided by the user.
+
+**Requirements:**
+- Accept a positive integer n from the user
+- Use a for loop to calculate sum of 1 + 2 + 3 + ... + n
+- Use accumulator variable to store running sum
+- Display the final sum with clear message
+
+**Sample Test Cases:**
+```
+Input: n = 10
+Expected Output:
+Sum of 1 to 10 = 55
+
+Input: n = 5
+Expected Output:
+Sum of 1 to 5 = 15
+
+Input: n = 100
+Expected Output:
+Sum of 1 to 100 = 5050
+
+Input: n = 1
+Expected Output:
+Sum of 1 to 1 = 1
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class SumOfNumbers {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter n: ");
         int n = scanner.nextInt();
-        
+
         int sum = 0;
         for (int i = 1; i <= n; i++) {
             sum += i;
         }
-        
+
         System.out.println("Sum of 1 to " + n + " = " + sum);
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Initialize sum to 0 before the loop
+- Use `sum += i` which is shorthand for `sum = sum + i`
+- Mathematical formula: Sum = n × (n + 1) / 2
+- For large values, consider using `long` instead of `int`
+
 ---
 
-### Exercise 3: Factorial
+### Exercise 3: Factorial Calculator
+
+**📝 Problem Statement:**
+Create a program that calculates the factorial of a number entered by the user. Factorial (n!) is the product of all positive integers up to n.
+
+**Requirements:**
+- Accept a non-negative integer from user
+- Calculate factorial: n! = 1 × 2 × 3 × ... × n
+- Use `long` data type to handle large results
+- Display result with proper formatting
+
+**Sample Test Cases:**
+```
+Input: n = 5
+Expected Output:
+5! = 120
+
+Input: n = 7
+Expected Output:
+7! = 5040
+
+Input: n = 10
+Expected Output:
+10! = 3628800
+
+Input: n = 0
+Expected Output:
+0! = 1
+
+Input: n = 1
+Expected Output:
+1! = 1
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class Factorial {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter a number: ");
         int n = scanner.nextInt();
-        
+
         long factorial = 1;
         for (int i = 1; i <= n; i++) {
             factorial *= i;
         }
-        
+
         System.out.println(n + "! = " + factorial);
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Initialize factorial to 1 (not 0, as 0! = 1)
+- Use `long` because factorials grow very quickly
+- Factorial of 0 is defined as 1
+- Factorial of 20! is maximum for long type (2^63 - 1)
+- Use BigInteger for very large factorials
+
 ---
 
 ### Exercise 4: Fibonacci Series
+
+**📝 Problem Statement:**
+Generate and display the Fibonacci series up to n terms. In Fibonacci series, each number is the sum of the two preceding ones.
+
+**Requirements:**
+- Accept number of terms from user
+- First two terms are 0 and 1
+- Each subsequent term = previous term + term before previous
+- Display all terms in a single line separated by spaces
+
+**Sample Test Cases:**
+```
+Input: n = 10
+Expected Output:
+Fibonacci Series: 0 1 1 2 3 5 8 13 21 34
+
+Input: n = 5
+Expected Output:
+Fibonacci Series: 0 1 1 2 3
+
+Input: n = 1
+Expected Output:
+Fibonacci Series: 0
+
+Input: n = 2
+Expected Output:
+Fibonacci Series: 0 1
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class FibonacciSeries {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter number of terms: ");
         int n = scanner.nextInt();
-        
+
         int first = 0, second = 1;
-        
+
         System.out.print("Fibonacci Series: " + first + " " + second);
-        
+
         for (int i = 3; i <= n; i++) {
             int next = first + second;
             System.out.print(" " + next);
             first = second;
             second = next;
         }
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+- Pattern: F(n) = F(n-1) + F(n-2)
+- Use three variables: first, second, and next
+- Update variables: first = second, second = next for each iteration
+- Real applications: nature patterns, golden ratio, algorithms
+
 ---
 
 ### Exercise 5: Prime Number Checker
+
+**📝 Problem Statement:**
+Write a program that checks whether a given number is prime or not. A prime number is divisible only by 1 and itself.
+
+**Requirements:**
+- Accept an integer input from user
+- Check if number is prime using a loop
+- Numbers ≤ 1 are not prime
+- Display appropriate message
+
+**Sample Test Cases:**
+```
+Input: number = 17
+Expected Output:
+17 is PRIME
+
+Input: number = 20
+Expected Output:
+20 is NOT prime
+
+Input: number = 2
+Expected Output:
+2 is PRIME
+
+Input: number = 1
+Expected Output:
+1 is NOT prime
+
+Input: number = 97
+Expected Output:
+97 is PRIME
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class PrimeChecker {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter a number: ");
         int number = scanner.nextInt();
-        
+
         boolean isPrime = true;
-        
+
         if (number <= 1) {
             isPrime = false;
         } else {
@@ -647,318 +827,71 @@ public class PrimeChecker {
                 }
             }
         }
-        
+
         if (isPrime) {
             System.out.println(number + " is PRIME");
         } else {
             System.out.println(number + " is NOT prime");
         }
-        
-        scanner.close();
-    }
-}
 
----
-
-### Exercise 8: Armstrong Number Checker
-Check if a number is an Armstrong number (sum of cubes of digits equals the number).
-
-```java
-import java.util.Scanner;
-
-public class ArmstrongNumber {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter a number: ");
-        int number = scanner.nextInt();
-        int original = number;
-        int sum = 0;
-        
-        while (number > 0) {
-            int digit = number % 10;
-            sum += digit * digit * digit;
-            number /= 10;
-        }
-        
-        if (sum == original) {
-            System.out.println(original + " is an ARMSTRONG number");
-        } else {
-            System.out.println(original + " is NOT an Armstrong number");
-        }
-        
         scanner.close();
     }
 }
 ```
 
----
-
-### Exercise 9: Sum of Digits
-Calculate the sum of digits of a number.
-
-```java
-import java.util.Scanner;
-
-public class SumOfDigits {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter a number: ");
-        int number = scanner.nextInt();
-        int original = number;
-        int sum = 0;
-        
-        while (number > 0) {
-            sum += number % 10;
-            number /= 10;
-        }
-        
-        System.out.println("Sum of digits of " + original + " = " + sum);
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 10: Perfect Number Checker
-Check if a number is a perfect number (sum of divisors equals the number).
-
-```java
-import java.util.Scanner;
-
-public class PerfectNumber {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter a number: ");
-        int number = scanner.nextInt();
-        int sum = 0;
-        
-        System.out.print("Divisors: ");
-        for (int i = 1; i < number; i++) {
-            if (number % i == 0) {
-                System.out.print(i + " ");
-                sum += i;
-            }
-        }
-        
-        System.out.println("\nSum of divisors: " + sum);
-        
-        if (sum == number) {
-            System.out.println(number + " is a PERFECT number");
-        } else {
-            System.out.println(number + " is NOT a perfect number");
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 11: GCD (Greatest Common Divisor)
-Find GCD of two numbers using Euclidean algorithm.
-
-```java
-import java.util.Scanner;
-
-public class GCDCalculator {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter first number: ");
-        int num1 = scanner.nextInt();
-        
-        System.out.print("Enter second number: ");
-        int num2 = scanner.nextInt();
-        
-        int a = num1, b = num2;
-        
-        // Euclidean algorithm
-        while (b != 0) {
-            int temp = b;
-            b = a % b;
-            a = temp;
-        }
-        
-        System.out.println("GCD of " + num1 + " and " + num2 + " = " + a);
-        
-        // LCM = (num1 * num2) / GCD
-        int lcm = (num1 * num2) / a;
-        System.out.println("LCM of " + num1 + " and " + num2 + " = " + lcm);
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 12: Number Pyramid
-Print a number pyramid pattern.
-
-```java
-import java.util.Scanner;
-
-public class NumberPyramid {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter number of rows: ");
-        int rows = scanner.nextInt();
-        
-        for (int i = 1; i <= rows; i++) {
-            // Print spaces
-            for (int j = 1; j <= rows - i; j++) {
-                System.out.print("  ");
-            }
-            
-            // Print ascending numbers
-            for (int j = 1; j <= i; j++) {
-                System.out.print(j + " ");
-            }
-            
-            // Print descending numbers
-            for (int j = i - 1; j >= 1; j--) {
-                System.out.print(j + " ");
-            }
-            
-            System.out.println();
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 13: Diamond Pattern
-Print a diamond pattern using asterisks.
-
-```java
-import java.util.Scanner;
-
-public class DiamondPattern {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter number of rows: ");
-        int n = scanner.nextInt();
-        
-        // Upper half
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n - i; j++) {
-                System.out.print(" ");
-            }
-            for (int j = 1; j <= 2 * i - 1; j++) {
-                System.out.print("*");
-            }
-            System.out.println();
-        }
-        
-        // Lower half
-        for (int i = n - 1; i >= 1; i--) {
-            for (int j = 1; j <= n - i; j++) {
-                System.out.print(" ");
-            }
-            for (int j = 1; j <= 2 * i - 1; j++) {
-                System.out.print("*");
-            }
-            System.out.println();
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 14: Prime Numbers in Range
-Print all prime numbers in a given range.
-
-```java
-import java.util.Scanner;
-
-public class PrimesInRange {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter start of range: ");
-        int start = scanner.nextInt();
-        
-        System.out.print("Enter end of range: ");
-        int end = scanner.nextInt();
-        
-        System.out.println("Prime numbers between " + start + " and " + end + ":");
-        
-        for (int num = start; num <= end; num++) {
-            if (num <= 1) continue;
-            
-            boolean isPrime = true;
-            for (int i = 2; i <= num / 2; i++) {
-                if (num % i == 0) {
-                    isPrime = false;
-                    break;
-                }
-            }
-            
-            if (isPrime) {
-                System.out.print(num + " ");
-            }
-        }
-        
-        scanner.close();
-    }
-}
-```
-
----
-
-### Exercise 15: Power Calculator
-Calculate power of a number without using Math.pow().
-
-```java
-import java.util.Scanner;
-
-public class PowerCalculator {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter base: ");
-        int base = scanner.nextInt();
-        
-        System.out.print("Enter exponent: ");
-        int exponent = scanner.nextInt();
-        
-        long result = 1;
-        
-        for (int i = 1; i <= exponent; i++) {
-            result *= base;
-        }
-        
-        System.out.println(base + " ^ " + exponent + " = " + result);
-        
-        scanner.close();
-    }
-}
-```
-
-```
+**💡 Tips:**
+- Only need to check divisors up to n/2 (or better: √n)
+- Use `break` to exit loop early when divisor is found
+- 2 is the only even prime number
+- Optimization: Check 2 separately, then check only odd numbers
+- Prime numbers: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, ...
 
 ---
 
 ### Exercise 6: Pattern Printing
+
+**📝 Problem Statement:**
+Create a program that prints three different patterns using nested loops: right triangle, inverted triangle, and pyramid.
+
+**Requirements:**
+- Define number of rows (n = 5)
+- Print three patterns consecutively
+- Pattern 1: Right triangle (stars increase per row)
+- Pattern 2: Inverted triangle (stars decrease per row)
+- Pattern 3: Pyramid (centered stars with spaces)
+- Use nested loops for all patterns
+
+**Sample Test Cases:**
+```
+Expected Output:
+Pattern 1:
+*
+* *
+* * *
+* * * *
+* * * * *
+
+Pattern 2:
+* * * * *
+* * * *
+* * *
+* *
+*
+
+Pattern 3:
+        *
+      * * *
+    * * * * *
+  * * * * * * *
+* * * * * * * * *
+```
+
+**Solution:**
 ```java
 public class Patterns {
     public static void main(String[] args) {
         int n = 5;
-        
+
         // Pattern 1: Right triangle
         System.out.println("Pattern 1:");
         for (int i = 1; i <= n; i++) {
@@ -967,7 +900,7 @@ public class Patterns {
             }
             System.out.println();
         }
-        
+
         // Pattern 2: Inverted triangle
         System.out.println("\nPattern 2:");
         for (int i = n; i >= 1; i--) {
@@ -976,7 +909,7 @@ public class Patterns {
             }
             System.out.println();
         }
-        
+
         // Pattern 3: Pyramid
         System.out.println("\nPattern 3:");
         for (int i = 1; i <= n; i++) {
@@ -994,34 +927,890 @@ public class Patterns {
 }
 ```
 
+**💡 Tips:**
+- Pattern 1: Outer loop controls rows, inner loop prints i stars
+- Pattern 2: Similar to Pattern 1 but descending order
+- Pattern 3: Requires two inner loops - one for spaces, one for stars
+- Pyramid formula: Row i has (n-i) spaces and (2i-1) stars
+- Practice drawing patterns on paper first to understand the logic
+
 ---
 
 ### Exercise 7: Reverse a Number
+
+**📝 Problem Statement:**
+Write a program that reverses the digits of a number using a while loop.
+
+**Requirements:**
+- Accept an integer from user
+- Extract digits one by one from right to left
+- Build reversed number by multiplying by 10 and adding digit
+- Display both original and reversed numbers
+
+**Sample Test Cases:**
+```
+Input: number = 12345
+Expected Output:
+Original: 12345
+Reversed: 54321
+
+Input: number = 100
+Expected Output:
+Original: 100
+Reversed: 1
+
+Input: number = 9876
+Expected Output:
+Original: 9876
+Reversed: 6789
+
+Input: number = 5
+Expected Output:
+Original: 5
+Reversed: 5
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class ReverseNumber {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter a number: ");
         int number = scanner.nextInt();
         int original = number;
         int reverse = 0;
-        
+
         while (number != 0) {
             int digit = number % 10;
             reverse = reverse * 10 + digit;
             number /= 10;
         }
-        
+
         System.out.println("Original: " + original);
         System.out.println("Reversed: " + reverse);
-        
+
         scanner.close();
     }
 }
 ```
+
+**💡 Tips:**
+- `number % 10` extracts the last digit
+- `number /= 10` removes the last digit
+- `reverse = reverse * 10 + digit` builds reversed number
+- Save original value before starting loop
+- Use this logic to check palindrome numbers
+
+---
+
+### Exercise 8: Armstrong Number Checker
+
+**📝 Problem Statement:**
+Check if a number is an Armstrong number. An Armstrong number is equal to the sum of cubes of its digits. For example, 153 = 1³ + 5³ + 3³.
+
+**Requirements:**
+- Accept a number from user
+- Extract each digit using modulus and division
+- Calculate cube of each digit and sum them
+- Compare sum with original number
+- Display whether number is Armstrong or not
+
+**Sample Test Cases:**
+```
+Input: number = 153
+Expected Output:
+153 is an ARMSTRONG number
+
+Input: number = 370
+Expected Output:
+370 is an ARMSTRONG number
+
+Input: number = 371
+Expected Output:
+371 is an ARMSTRONG number
+
+Input: number = 123
+Expected Output:
+123 is NOT an Armstrong number
+
+Input: number = 9
+Expected Output:
+9 is an ARMSTRONG number
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class ArmstrongNumber {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+        int original = number;
+        int sum = 0;
+
+        while (number > 0) {
+            int digit = number % 10;
+            sum += digit * digit * digit;
+            number /= 10;
+        }
+
+        if (sum == original) {
+            System.out.println(original + " is an ARMSTRONG number");
+        } else {
+            System.out.println(original + " is NOT an Armstrong number");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- 3-digit Armstrong numbers: 153, 370, 371, 407
+- Single digit numbers (0-9) are also Armstrong numbers
+- For general case, count digits and raise to that power
+- Formula: digit³ = digit × digit × digit
+- While loop is perfect for digit extraction
+
+---
+
+### Exercise 9: Sum of Digits
+
+**📝 Problem Statement:**
+Calculate the sum of all digits in a given number.
+
+**Requirements:**
+- Accept an integer from user
+- Extract each digit using modulus operator
+- Add all digits to get sum
+- Display the sum with clear message
+
+**Sample Test Cases:**
+```
+Input: number = 12345
+Expected Output:
+Sum of digits of 12345 = 15
+
+Input: number = 999
+Expected Output:
+Sum of digits of 999 = 27
+
+Input: number = 100
+Expected Output:
+Sum of digits of 100 = 1
+
+Input: number = 54321
+Expected Output:
+Sum of digits of 54321 = 15
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class SumOfDigits {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+        int original = number;
+        int sum = 0;
+
+        while (number > 0) {
+            sum += number % 10;
+            number /= 10;
+        }
+
+        System.out.println("Sum of digits of " + original + " = " + sum);
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Similar to reversing, but simpler - just add digits
+- `number % 10` gives last digit
+- `number /= 10` removes last digit
+- Continue until number becomes 0
+- Can be used for digital root calculation
+
+---
+
+### Exercise 10: Perfect Number Checker
+
+**📝 Problem Statement:**
+Check if a number is a perfect number. A perfect number equals the sum of its proper divisors (excluding itself). For example, 6 = 1 + 2 + 3.
+
+**Requirements:**
+- Accept a positive integer from user
+- Find all divisors of the number (excluding the number itself)
+- Calculate sum of divisors
+- Display divisors and determine if sum equals original number
+
+**Sample Test Cases:**
+```
+Input: number = 6
+Expected Output:
+Divisors: 1 2 3
+Sum of divisors: 6
+6 is a PERFECT number
+
+Input: number = 28
+Expected Output:
+Divisors: 1 2 4 7 14
+Sum of divisors: 28
+28 is a PERFECT number
+
+Input: number = 12
+Expected Output:
+Divisors: 1 2 3 4 6
+Sum of divisors: 16
+12 is NOT a perfect number
+
+Input: number = 496
+Expected Output:
+Divisors: 1 2 4 8 16 31 62 124 248
+Sum of divisors: 496
+496 is a PERFECT number
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class PerfectNumber {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+        int sum = 0;
+
+        System.out.print("Divisors: ");
+        for (int i = 1; i < number; i++) {
+            if (number % i == 0) {
+                System.out.print(i + " ");
+                sum += i;
+            }
+        }
+
+        System.out.println("\nSum of divisors: " + sum);
+
+        if (sum == number) {
+            System.out.println(number + " is a PERFECT number");
+        } else {
+            System.out.println(number + " is NOT a perfect number");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Perfect numbers: 6, 28, 496, 8128, ...
+- Check divisors from 1 to n-1 (excluding n itself)
+- Use `number % i == 0` to check if i is a divisor
+- Perfect numbers are rare - only 51 known as of 2023
+- Related to Mersenne primes
+
+---
+
+### Exercise 11: GCD (Greatest Common Divisor)
+
+**📝 Problem Statement:**
+Find the GCD (Greatest Common Divisor) and LCM (Least Common Multiple) of two numbers using the Euclidean algorithm.
+
+**Requirements:**
+- Accept two positive integers from user
+- Use Euclidean algorithm: repeatedly divide and take remainder
+- Calculate GCD using while loop
+- Calculate LCM using formula: LCM = (num1 × num2) / GCD
+- Display both GCD and LCM
+
+**Sample Test Cases:**
+```
+Input: num1 = 12, num2 = 18
+Expected Output:
+GCD of 12 and 18 = 6
+LCM of 12 and 18 = 36
+
+Input: num1 = 24, num2 = 36
+Expected Output:
+GCD of 24 and 36 = 12
+LCM of 24 and 36 = 72
+
+Input: num1 = 7, num2 = 13
+Expected Output:
+GCD of 7 and 13 = 1
+LCM of 7 and 13 = 91
+
+Input: num1 = 100, num2 = 50
+Expected Output:
+GCD of 100 and 50 = 50
+LCM of 100 and 50 = 100
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class GCDCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter first number: ");
+        int num1 = scanner.nextInt();
+
+        System.out.print("Enter second number: ");
+        int num2 = scanner.nextInt();
+
+        int a = num1, b = num2;
+
+        // Euclidean algorithm
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+
+        System.out.println("GCD of " + num1 + " and " + num2 + " = " + a);
+
+        // LCM = (num1 * num2) / GCD
+        int lcm = (num1 * num2) / a;
+        System.out.println("LCM of " + num1 + " and " + num2 + " = " + lcm);
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Euclidean algorithm is very efficient for finding GCD
+- Process: GCD(a, b) = GCD(b, a % b) until b becomes 0
+- GCD(12, 18): 18 % 12 = 6, then 12 % 6 = 0, GCD = 6
+- LCM formula: LCM = (a × b) / GCD(a, b)
+- GCD is also called HCF (Highest Common Factor)
+
+---
+
+### Exercise 12: Number Pyramid
+
+**📝 Problem Statement:**
+Print a number pyramid pattern where each row contains ascending numbers followed by descending numbers, centered with spaces.
+
+**Requirements:**
+- Accept number of rows from user
+- Use nested loops: outer for rows, inner for spaces and numbers
+- First inner loop prints leading spaces
+- Second inner loop prints ascending numbers (1 to row number)
+- Third inner loop prints descending numbers (row-1 down to 1)
+
+**Sample Test Cases:**
+```
+Input: rows = 5
+Expected Output:
+        1
+      1 2 1
+    1 2 3 2 1
+  1 2 3 4 3 2 1
+1 2 3 4 5 4 3 2 1
+
+Input: rows = 3
+Expected Output:
+    1
+  1 2 1
+1 2 3 2 1
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class NumberPyramid {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter number of rows: ");
+        int rows = scanner.nextInt();
+
+        for (int i = 1; i <= rows; i++) {
+            // Print spaces
+            for (int j = 1; j <= rows - i; j++) {
+                System.out.print("  ");
+            }
+
+            // Print ascending numbers
+            for (int j = 1; j <= i; j++) {
+                System.out.print(j + " ");
+            }
+
+            // Print descending numbers
+            for (int j = i - 1; j >= 1; j--) {
+                System.out.print(j + " ");
+            }
+
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Three inner loops: spaces, ascending numbers, descending numbers
+- Row i has (rows - i) spaces
+- Row i has numbers from 1 to i ascending
+- Row i has numbers from i-1 to 1 descending
+- Spacing is crucial for pyramid alignment
+
+---
+
+### Exercise 13: Diamond Pattern
+
+**📝 Problem Statement:**
+Create a diamond shape pattern using asterisks with both upper and lower halves.
+
+**Requirements:**
+- Accept number of rows for diamond size from user
+- Print upper half: increasing asterisks with decreasing spaces
+- Print lower half: decreasing asterisks with increasing spaces
+- Use nested loops for pattern generation
+
+**Sample Test Cases:**
+```
+Input: n = 5
+Expected Output:
+    *
+   ***
+  *****
+ *******
+*********
+ *******
+  *****
+   ***
+    *
+
+Input: n = 3
+Expected Output:
+  *
+ ***
+*****
+ ***
+  *
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class DiamondPattern {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter number of rows: ");
+        int n = scanner.nextInt();
+
+        // Upper half
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n - i; j++) {
+                System.out.print(" ");
+            }
+            for (int j = 1; j <= 2 * i - 1; j++) {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+
+        // Lower half
+        for (int i = n - 1; i >= 1; i--) {
+            for (int j = 1; j <= n - i; j++) {
+                System.out.print(" ");
+            }
+            for (int j = 1; j <= 2 * i - 1; j++) {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Diamond = Upper pyramid + Lower inverted pyramid
+- Upper half: row i has (n-i) spaces and (2i-1) stars
+- Lower half: mirror of upper half (start from n-1 down to 1)
+- Pattern is symmetric both horizontally and vertically
+- Can modify to create hollow diamond by checking edge conditions
+
+---
+
+### Exercise 14: Prime Numbers in Range
+
+**📝 Problem Statement:**
+Print all prime numbers within a given range (inclusive).
+
+**Requirements:**
+- Accept start and end of range from user
+- Check each number in range for primality
+- Use nested loop: outer for range, inner for checking divisors
+- Display all prime numbers found in the range
+
+**Sample Test Cases:**
+```
+Input: start = 10, end = 30
+Expected Output:
+Prime numbers between 10 and 30:
+11 13 17 19 23 29
+
+Input: start = 1, end = 20
+Expected Output:
+Prime numbers between 1 and 20:
+2 3 5 7 11 13 17 19
+
+Input: start = 50, end = 60
+Expected Output:
+Prime numbers between 50 and 60:
+53 59
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class PrimesInRange {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter start of range: ");
+        int start = scanner.nextInt();
+
+        System.out.print("Enter end of range: ");
+        int end = scanner.nextInt();
+
+        System.out.println("Prime numbers between " + start + " and " + end + ":");
+
+        for (int num = start; num <= end; num++) {
+            if (num <= 1) continue;
+
+            boolean isPrime = true;
+            for (int i = 2; i <= num / 2; i++) {
+                if (num % i == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+
+            if (isPrime) {
+                System.out.print(num + " ");
+            }
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Nested loops: outer iterates through range, inner checks primality
+- Use `continue` to skip numbers ≤ 1
+- Use `break` to exit inner loop early when divisor found
+- Optimization: Only check up to √num instead of num/2
+- First 10 primes: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29
+
+---
+
+### Exercise 15: Power Calculator
+
+**📝 Problem Statement:**
+Calculate the power of a number (base^exponent) without using Math.pow() method.
+
+**Requirements:**
+- Accept base and exponent from user
+- Calculate power using loop and multiplication
+- Use long data type to handle large results
+- Display result in format: base ^ exponent = result
+
+**Sample Test Cases:**
+```
+Input: base = 2, exponent = 5
+Expected Output:
+2 ^ 5 = 32
+
+Input: base = 3, exponent = 4
+Expected Output:
+3 ^ 4 = 81
+
+Input: base = 5, exponent = 3
+Expected Output:
+5 ^ 3 = 125
+
+Input: base = 10, exponent = 2
+Expected Output:
+10 ^ 2 = 100
+
+Input: base = 2, exponent = 0
+Expected Output:
+2 ^ 0 = 1
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class PowerCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter base: ");
+        int base = scanner.nextInt();
+
+        System.out.print("Enter exponent: ");
+        int exponent = scanner.nextInt();
+
+        long result = 1;
+
+        for (int i = 1; i <= exponent; i++) {
+            result *= base;
+        }
+
+        System.out.println(base + " ^ " + exponent + " = " + result);
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Initialize result to 1 (any number^0 = 1)
+- Multiply base by itself exponent times
+- Use `long` for larger results
+- Time complexity: O(n) where n is exponent
+- For negative exponents, result would be 1/positive_power
+
+---
+
+### Exercise 16: Palindrome Number Checker
+
+**📝 Problem Statement:**
+Check if a number is a palindrome. A palindrome number reads the same forwards and backwards (e.g., 121, 12321).
+
+**Requirements:**
+- Accept an integer from user
+- Reverse the number using while loop
+- Compare reversed number with original
+- Display whether number is palindrome or not
+
+**Sample Test Cases:**
+```
+Input: number = 121
+Expected Output:
+121 is a PALINDROME
+
+Input: number = 12321
+Expected Output:
+12321 is a PALINDROME
+
+Input: number = 123
+Expected Output:
+123 is NOT a palindrome
+
+Input: number = 1001
+Expected Output:
+1001 is a PALINDROME
+
+Input: number = 5
+Expected Output:
+5 is a PALINDROME
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class PalindromeNumber {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+        int original = number;
+        int reverse = 0;
+
+        while (number != 0) {
+            int digit = number % 10;
+            reverse = reverse * 10 + digit;
+            number /= 10;
+        }
+
+        if (original == reverse) {
+            System.out.println(original + " is a PALINDROME");
+        } else {
+            System.out.println(original + " is NOT a palindrome");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Same logic as reversing a number
+- Compare original with reversed number
+- Single digit numbers are always palindromes
+- Examples: 11, 101, 131, 1221, 12321, 123321
+- Can also check strings for palindrome (covered later)
+
+---
+
+### Exercise 17: Multiplication Table
+
+**📝 Problem Statement:**
+Generate and display the multiplication table for a given number up to 10 times.
+
+**Requirements:**
+- Accept a number from user
+- Print multiplication table from 1 to 10
+- Display in format: number × i = result
+- Use for loop to iterate from 1 to 10
+
+**Sample Test Cases:**
+```
+Input: number = 5
+Expected Output:
+Multiplication Table of 5:
+5 × 1 = 5
+5 × 2 = 10
+5 × 3 = 15
+5 × 4 = 20
+5 × 5 = 25
+5 × 6 = 30
+5 × 7 = 35
+5 × 8 = 40
+5 × 9 = 45
+5 × 10 = 50
+
+Input: number = 12
+Expected Output:
+Multiplication Table of 12:
+12 × 1 = 12
+12 × 2 = 24
+12 × 3 = 36
+...
+12 × 10 = 120
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class MultiplicationTable {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+
+        System.out.println("Multiplication Table of " + number + ":");
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(number + " × " + i + " = " + (number * i));
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Simple for loop from 1 to 10
+- Use `×` symbol for better formatting (or use 'x')
+- Can extend to any range (e.g., up to 20)
+- Useful for learning basic multiplication
+- Enhancement: Generate tables for multiple numbers
+
+---
+
+### Exercise 18: Count Digits
+
+**📝 Problem Statement:**
+Count the total number of digits in a given number.
+
+**Requirements:**
+- Accept an integer from user
+- Use while loop to count digits
+- Divide by 10 repeatedly until number becomes 0
+- Display the total count of digits
+
+**Sample Test Cases:**
+```
+Input: number = 12345
+Expected Output:
+Number of digits in 12345 = 5
+
+Input: number = 7
+Expected Output:
+Number of digits in 7 = 1
+
+Input: number = 1000000
+Expected Output:
+Number of digits in 1000000 = 7
+
+Input: number = 999
+Expected Output:
+Number of digits in 999 = 3
+
+Input: number = 0
+Expected Output:
+Number of digits in 0 = 1
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class CountDigits {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+        int original = number;
+        int count = 0;
+
+        // Handle special case for 0
+        if (number == 0) {
+            count = 1;
+        } else {
+            while (number != 0) {
+                count++;
+                number /= 10;
+            }
+        }
+
+        System.out.println("Number of digits in " + original + " = " + count);
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Divide by 10 repeatedly and increment counter
+- Special case: 0 has 1 digit
+- Each division by 10 removes one digit
+- Alternative: Convert to string and check length
+- Can be used to validate phone numbers, PIN codes, etc.
 
 ---
 

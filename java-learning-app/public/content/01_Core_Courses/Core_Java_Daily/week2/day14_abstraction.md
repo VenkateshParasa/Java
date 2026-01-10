@@ -642,8 +642,96 @@ public class Main {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Banking System with Abstract Classes
-Create a banking system using abstract classes.
 
+**📝 Problem Statement:**
+Create a comprehensive banking system using abstract classes to demonstrate abstraction principles. The system should use an abstract BankAccount base class with concrete implementations for three account types (Savings, Checking, FixedDeposit), each with unique interest calculation, minimum balance rules, and withdrawal restrictions.
+
+**Requirements:**
+- Create abstract BankAccount class with protected fields: accountNumber, accountHolder, balance, interestRate
+- Define abstract methods: calculateInterest(), getMinimumBalance(), getAccountType()
+- Implement concrete methods in BankAccount: deposit(), withdraw(), displayInfo()
+- withdraw() method must check balance >= getMinimumBalance() using abstract method polymorphically
+- displayInfo() must call getAccountType() abstract method to display account type dynamically
+- Create SavingsAccount subclass with withdrawalCount field and MAX_WITHDRAWALS constant (6)
+- Set interestRate to 0.04 (4%) for SavingsAccount in constructor
+- Override calculateInterest() in SavingsAccount with simple interest: balance × interestRate
+- Override getMinimumBalance() returning 500.0 for SavingsAccount
+- Override withdraw() in SavingsAccount to enforce withdrawal limit before calling super.withdraw()
+- Implement resetWithdrawalCount() method in SavingsAccount
+- Create CheckingAccount subclass with overdraftLimit field set to 1000.0
+- Set interestRate to 0.01 (1%) for CheckingAccount
+- Override calculateInterest() in CheckingAccount to only add interest if balance > 0
+- Override getMinimumBalance() returning -overdraftLimit (allows negative balance)
+- CheckingAccount overrides displayInfo() calling super then showing overdraft limit
+- Create FixedDepositAccount subclass with termMonths and isMatured fields
+- Set interestRate to 0.07 (7%) for FixedDepositAccount
+- Override calculateInterest() using compound interest formula: balance × interestRate × (termMonths/12)
+- Override getMinimumBalance() returning current balance (prevents withdrawals before maturity)
+- Override withdraw() in FixedDepositAccount to check isMatured flag before allowing withdrawal
+- FixedDepositAccount overrides displayInfo() showing term and maturity status
+- Demonstrate polymorphism by storing different account types in BankAccount[] array
+
+**Sample Test Cases:**
+```
+Input: SavingsAccount("SAV001", "Alice", 5000), deposit(1000), withdraw(500), calculateInterest()
+Expected Output:
+=== Savings Account ===
+Account Number: SAV001
+Account Holder: Alice
+Balance: $5000.00
+Interest Rate: 4.0%
+Minimum Balance: $500.0
+
+Deposited: $1000.0
+Withdrawn: $500.0
+Interest added: $220.00
+
+=== Savings Account ===
+Account Number: SAV001
+Account Holder: Alice
+Balance: $5720.00
+Interest Rate: 4.0%
+Minimum Balance: $500.0
+
+Input: CheckingAccount("CHK001", "Bob", 2000), deposit(1000), withdraw(2500)
+Expected Output:
+=== Checking Account ===
+Account Number: CHK001
+Account Holder: Bob
+Balance: $2000.00
+Interest Rate: 1.0%
+Minimum Balance: $-1000.0
+Overdraft Limit: $1000.0
+
+Deposited: $1000.0
+Withdrawn: $2500.0
+
+=== Checking Account ===
+Account Number: CHK001
+Account Holder: Bob
+Balance: $500.00
+Interest Rate: 1.0%
+Minimum Balance: $-1000.0
+Overdraft Limit: $1000.0
+
+Input: FixedDepositAccount("FD001", "Charlie", 10000, 12), withdraw(500) [before maturity]
+Expected Output:
+Cannot withdraw before maturity!
+
+Input: FixedDepositAccount after calculateInterest()
+Expected Output:
+Maturity interest: $700.00
+=== Fixed Deposit Account ===
+Account Number: FD001
+Account Holder: Charlie
+Balance: $11200.00
+Interest Rate: 7.0%
+Minimum Balance: $11200.00
+Term: 12 months
+Status: Matured
+```
+
+**Solution:**
 ```java
 // Abstract base class
 abstract class BankAccount {
@@ -842,10 +930,99 @@ public class TestBankAccount {
 }
 ```
 
+**💡 Tips:**
+- Abstract BankAccount class cannot be instantiated directly - only concrete subclasses can be created
+- Abstract methods (calculateInterest, getMinimumBalance, getAccountType) force all subclasses to provide implementations
+- withdraw() in BankAccount calls abstract getMinimumBalance() - polymorphic behavior determined at runtime by subclass
+- Template Method pattern: BankAccount.withdraw() provides algorithm skeleton, subclasses fill in getMinimumBalance() details
+- SavingsAccount withdrawal limit enforced by overriding withdraw() and calling super.withdraw() after checking count
+- CheckingAccount allows negative balance by returning -overdraftLimit from getMinimumBalance()
+- FixedDepositAccount prevents premature withdrawal by overriding getMinimumBalance() to return current balance
+- Interest calculation differs per account type: Savings (simple), Checking (conditional), FixedDeposit (time-based)
+- isMatured flag in FixedDepositAccount controls withdrawal permission - demonstrates state-based behavior
+- BankAccount[] array holds different account types demonstrating polymorphism through abstraction
+- super() constructor calls in subclasses initialize protected parent fields (accountNumber, accountHolder, balance)
+- Override displayInfo() in subclasses calling super.displayInfo() first, then adding subclass-specific fields
+
 ---
 
 ### Exercise 2: Payment System with Interfaces
-Create a payment processing system using interfaces.
+
+**📝 Problem Statement:**
+Create a payment processing system using interfaces to demonstrate multiple interface implementation and interface segregation. The system should define Payment, Refundable, and Trackable interfaces, with concrete payment implementations (CreditCard, PayPal, Cash) that implement different combinations of these interfaces based on their capabilities, demonstrating that not all payment methods support all features.
+
+**Requirements:**
+- Create Payment interface with methods: processPayment(double amount), getPaymentMethod(), displayReceipt()
+- Create Refundable interface with method: processRefund(double amount)
+- Create Trackable interface with methods: getTransactionId(), getStatus()
+- Implement CreditCardPayment class implementing Payment, Refundable, and Trackable interfaces
+- CreditCardPayment has fields: cardNumber, cardHolder, amount, transactionId, status
+- Implement maskCard() private method in CreditCardPayment showing only last 4 digits: "**** **** **** 1234"
+- Override processPayment() in CreditCardPayment displaying card holder, masked card, and approval message
+- Implement PayPalPayment class implementing Payment, Refundable, and Trackable interfaces
+- PayPalPayment has fields: email, amount, transactionId, status
+- Override processPayment() in PayPalPayment displaying email and PayPal-specific confirmation
+- Implement CashPayment class implementing only Payment interface (NOT Refundable or Trackable)
+- CashPayment has only amount field - demonstrates interface segregation (cash not refundable/trackable)
+- Override processPayment() in CashPayment with simple cash receipt message
+- Create PaymentProcessor class with process(Payment payment) method accepting any Payment implementation
+- Demonstrate instanceof checks in PaymentProcessor to conditionally use Refundable and Trackable features
+- Show that CashPayment can be processed but doesn't support refunds or tracking
+- Use interface references (Payment, Refundable, Trackable) to demonstrate polymorphism
+
+**Sample Test Cases:**
+```
+Input: CreditCardPayment("1234567890123456", "John Doe", "TXN001").processPayment(150.00)
+Expected Output:
+Processing credit card payment of $150.0
+Card Holder: John Doe
+Card Number: **** **** **** 3456
+Payment of $150.0 approved!
+
+=== Payment Receipt ===
+Method: Credit Card
+Card: **** **** **** 3456
+Holder: John Doe
+Amount: $150.0
+Transaction ID: TXN001
+Status: Completed
+
+This payment method supports refunds
+Transaction ID: TXN001
+
+Input: PayPalPayment("john@example.com", "TXN002").processPayment(75.50)
+Expected Output:
+Processing PayPal payment of $75.5
+PayPal Email: john@example.com
+Payment of $75.5 sent via PayPal!
+
+=== Payment Receipt ===
+Method: PayPal
+Email: john@example.com
+Amount: $75.5
+Transaction ID: TXN002
+Status: Completed
+
+This payment method supports refunds
+Transaction ID: TXN002
+
+Input: CashPayment().processPayment(50.00)
+Expected Output:
+Cash payment of $50.0 received
+
+=== Payment Receipt ===
+Method: Cash
+Amount: $50.0
+Status: Completed
+
+[No refund or tracking support shown - CashPayment doesn't implement those interfaces]
+
+Input: creditCard.processRefund(50.00) [after payment]
+Expected Output:
+Refund of $50.0 processed
+```
+
+**Solution:**
 
 ```java
 // Payment interface
@@ -1047,6 +1224,1030 @@ public class TestPayment {
     }
 }
 ```
+
+**💡 Tips:**
+- Payment interface defines common contract that all payment methods must implement (processPayment, getPaymentMethod, displayReceipt)
+- Multiple interface implementation: CreditCardPayment and PayPalPayment implement Payment + Refundable + Trackable (3 interfaces)
+- Interface Segregation Principle: CashPayment only implements Payment interface - doesn't implement Refundable or Trackable since cash payments don't support those features
+- instanceof checks in PaymentProcessor conditionally access Refundable/Trackable features: if (payment instanceof Refundable)
+- Interfaces enable polymorphism: process(Payment payment) method accepts any Payment implementation
+- CreditCardPayment uses maskCard() private helper to show only last 4 digits for security
+- Casting after instanceof check: Trackable trackable = (Trackable) payment allows calling getTransactionId()
+- All interface methods are public by default - implementations must explicitly use public modifier
+- Interfaces define "CAN-DO" capabilities: Payment CAN process, Refundable CAN refund, Trackable CAN track
+- Java supports multiple interface implementation but not multiple class inheritance - interfaces provide flexibility
+- Payment reference can hold any payment type demonstrating polymorphism: Payment payment = new CreditCardPayment(...)
+- Interface segregation prevents forcing unnecessary methods on classes - CashPayment doesn't need refund/tracking methods
+
+---
+
+### Exercise 3: Document Processing System
+
+**📝 Problem Statement:**
+Create a document processing system using abstract classes to handle different document types. The system should use an abstract Document base class with concrete implementations for PDF, Word, and Text documents, each with unique processing, validation, and encryption capabilities while sharing common document properties.
+
+**Requirements:**
+- Create abstract Document class with protected fields: fileName, fileSize, content, isEncrypted
+- Define abstract methods: open(), save(), validate(), encrypt() that subclasses must implement
+- Implement displayInfo() method in Document showing file details and encrypted status
+- Implement getFileExtension() abstract method returning file extension as String
+- Create PDFDocument subclass with fields: pageCount, isCompressed
+- Override open() in PDFDocument with message: "Opening PDF document with Adobe Reader..."
+- Override validate() in PDFDocument checking if pageCount > 0 and fileSize < 10MB
+- Override encrypt() in PDFDocument with 256-bit encryption message
+- Create WordDocument subclass with fields: wordCount, hasComments
+- Override open() in WordDocument with message: "Opening Word document with Microsoft Word..."
+- Override validate() in WordDocument checking if wordCount > 0 and content not empty
+- Override encrypt() in WordDocument with password-protection message
+- Create TextDocument subclass with fields: lineCount, encoding
+- Override open() in TextDocument with message: "Opening text document with notepad..."
+- Override validate() in TextDocument checking if lineCount > 0 and encoding is UTF-8
+- Override encrypt() in TextDocument with simple XOR encryption message
+- Each document type overrides displayInfo() calling super then showing type-specific fields
+- Create DocumentManager class with processDocument(Document doc) method
+- Demonstrate polymorphism by storing different document types in Document[] array
+- Show validation before opening documents
+
+**Sample Test Cases:**
+```
+Input: PDFDocument("report.pdf", 1024, "Annual Report", 50, true)
+Expected Output:
+Opening PDF document with Adobe Reader...
+Validating PDF document...
+Document is valid!
+Encrypting with 256-bit AES encryption...
+Document encrypted successfully!
+
+=== Document Information ===
+File Name: report.pdf
+File Size: 1024 KB
+Extension: .pdf
+Encrypted: true
+Page Count: 50
+Compressed: true
+
+Input: WordDocument("proposal.docx", 512, "Project Proposal", 2500, true)
+Expected Output:
+Opening Word document with Microsoft Word...
+Validating Word document...
+Document is valid!
+Encrypting with password protection...
+Document encrypted successfully!
+
+=== Document Information ===
+File Name: proposal.docx
+File Size: 512 KB
+Extension: .docx
+Encrypted: true
+Word Count: 2500
+Has Comments: true
+
+Input: TextDocument("notes.txt", 10, "Meeting notes", 120, "UTF-8")
+Expected Output:
+Opening text document with notepad...
+Validating text document...
+Document is valid!
+Encrypting with XOR cipher...
+Document encrypted successfully!
+
+=== Document Information ===
+File Name: notes.txt
+File Size: 10 KB
+Extension: .txt
+Encrypted: true
+Line Count: 120
+Encoding: UTF-8
+```
+
+**Solution:**
+```java
+// Abstract Document class
+abstract class Document {
+    protected String fileName;
+    protected int fileSize;  // in KB
+    protected String content;
+    protected boolean isEncrypted;
+
+    public Document(String fileName, int fileSize, String content) {
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.content = content;
+        this.isEncrypted = false;
+    }
+
+    // Abstract methods
+    public abstract void open();
+    public abstract void save();
+    public abstract boolean validate();
+    public abstract void encrypt();
+    public abstract String getFileExtension();
+
+    // Concrete method
+    public void displayInfo() {
+        System.out.println("\n=== Document Information ===");
+        System.out.println("File Name: " + fileName);
+        System.out.println("File Size: " + fileSize + " KB");
+        System.out.println("Extension: " + getFileExtension());
+        System.out.println("Encrypted: " + isEncrypted);
+    }
+
+    public void processDocument() {
+        open();
+        if (validate()) {
+            System.out.println("Document is valid!");
+            encrypt();
+            displayInfo();
+        } else {
+            System.out.println("Document validation failed!");
+        }
+    }
+}
+
+// PDF Document
+class PDFDocument extends Document {
+    private int pageCount;
+    private boolean isCompressed;
+
+    public PDFDocument(String fileName, int fileSize, String content, int pageCount, boolean isCompressed) {
+        super(fileName, fileSize, content);
+        this.pageCount = pageCount;
+        this.isCompressed = isCompressed;
+    }
+
+    @Override
+    public void open() {
+        System.out.println("Opening PDF document with Adobe Reader...");
+    }
+
+    @Override
+    public void save() {
+        System.out.println("Saving PDF document...");
+    }
+
+    @Override
+    public boolean validate() {
+        System.out.println("Validating PDF document...");
+        return pageCount > 0 && fileSize < 10240;  // Less than 10MB
+    }
+
+    @Override
+    public void encrypt() {
+        System.out.println("Encrypting with 256-bit AES encryption...");
+        isEncrypted = true;
+        System.out.println("Document encrypted successfully!");
+    }
+
+    @Override
+    public String getFileExtension() {
+        return ".pdf";
+    }
+
+    @Override
+    public void displayInfo() {
+        super.displayInfo();
+        System.out.println("Page Count: " + pageCount);
+        System.out.println("Compressed: " + isCompressed);
+    }
+}
+
+// Word Document
+class WordDocument extends Document {
+    private int wordCount;
+    private boolean hasComments;
+
+    public WordDocument(String fileName, int fileSize, String content, int wordCount, boolean hasComments) {
+        super(fileName, fileSize, content);
+        this.wordCount = wordCount;
+        this.hasComments = hasComments;
+    }
+
+    @Override
+    public void open() {
+        System.out.println("Opening Word document with Microsoft Word...");
+    }
+
+    @Override
+    public void save() {
+        System.out.println("Saving Word document...");
+    }
+
+    @Override
+    public boolean validate() {
+        System.out.println("Validating Word document...");
+        return wordCount > 0 && content != null && !content.isEmpty();
+    }
+
+    @Override
+    public void encrypt() {
+        System.out.println("Encrypting with password protection...");
+        isEncrypted = true;
+        System.out.println("Document encrypted successfully!");
+    }
+
+    @Override
+    public String getFileExtension() {
+        return ".docx";
+    }
+
+    @Override
+    public void displayInfo() {
+        super.displayInfo();
+        System.out.println("Word Count: " + wordCount);
+        System.out.println("Has Comments: " + hasComments);
+    }
+}
+
+// Text Document
+class TextDocument extends Document {
+    private int lineCount;
+    private String encoding;
+
+    public TextDocument(String fileName, int fileSize, String content, int lineCount, String encoding) {
+        super(fileName, fileSize, content);
+        this.lineCount = lineCount;
+        this.encoding = encoding;
+    }
+
+    @Override
+    public void open() {
+        System.out.println("Opening text document with notepad...");
+    }
+
+    @Override
+    public void save() {
+        System.out.println("Saving text document...");
+    }
+
+    @Override
+    public boolean validate() {
+        System.out.println("Validating text document...");
+        return lineCount > 0 && encoding.equals("UTF-8");
+    }
+
+    @Override
+    public void encrypt() {
+        System.out.println("Encrypting with XOR cipher...");
+        isEncrypted = true;
+        System.out.println("Document encrypted successfully!");
+    }
+
+    @Override
+    public String getFileExtension() {
+        return ".txt";
+    }
+
+    @Override
+    public void displayInfo() {
+        super.displayInfo();
+        System.out.println("Line Count: " + lineCount);
+        System.out.println("Encoding: " + encoding);
+    }
+}
+
+// Document Manager
+class DocumentManager {
+    public void processDocument(Document doc) {
+        doc.processDocument();
+    }
+
+    public void processMultiple(Document[] documents) {
+        System.out.println("=== Processing Multiple Documents ===");
+        for (Document doc : documents) {
+            processDocument(doc);
+            System.out.println("---");
+        }
+    }
+}
+
+public class TestDocument {
+    public static void main(String[] args) {
+        DocumentManager manager = new DocumentManager();
+
+        Document[] documents = {
+            new PDFDocument("report.pdf", 1024, "Annual Report", 50, true),
+            new WordDocument("proposal.docx", 512, "Project Proposal", 2500, true),
+            new TextDocument("notes.txt", 10, "Meeting notes", 120, "UTF-8")
+        };
+
+        manager.processMultiple(documents);
+    }
+}
+```
+
+**💡 Tips:**
+- Abstract Document class enforces contract: all document types must implement open(), save(), validate(), encrypt()
+- Template Method pattern: processDocument() in Document provides algorithm skeleton, subclasses fill in specific steps
+- validate() abstract method allows each document type to have unique validation rules (PDF checks page count, Word checks word count, Text checks encoding)
+- encrypt() demonstrates different encryption strategies per document type: PDF uses AES-256, Word uses password protection, Text uses XOR
+- getFileExtension() abstract method forces each subclass to return appropriate extension (.pdf, .docx, .txt)
+- displayInfo() override pattern: super.displayInfo() shows common fields, then subclass adds type-specific fields
+- processDocument() method validates before encrypting - demonstrates workflow control in abstract class
+- isEncrypted flag updated in each encrypt() implementation - shared state managed across hierarchy
+- Document[] array demonstrates polymorphism - different document types processed uniformly through common interface
+- DocumentManager uses polymorphism: processDocument(Document doc) accepts any document type
+- Each document type has unique fields reflecting real-world properties (PDF: pageCount/isCompressed, Word: wordCount/hasComments, Text: lineCount/encoding)
+- Abstract class provides both structure (abstract methods) and behavior (processDocument, displayInfo)
+
+---
+
+### Exercise 4: Notification System with Interfaces
+
+**📝 Problem Statement:**
+Create a notification system using interfaces to demonstrate multiple interface implementation and the strategy pattern. The system should define Notification, Schedulable, and Retryable interfaces, with concrete implementations for Email, SMS, and Push notifications that implement different combinations based on their capabilities.
+
+**Requirements:**
+- Create Notification interface with methods: send(String recipient, String message), getNotificationType()
+- Create Schedulable interface with methods: schedule(String dateTime), cancelSchedule()
+- Create Retryable interface with methods: retry(), getMaxRetries()
+- Implement EmailNotification class implementing Notification, Schedulable, and Retryable
+- EmailNotification has fields: sender, subject, priority, retryCount, isScheduled
+- Override send() in EmailNotification with SMTP server message and email details
+- Implement retry() in EmailNotification with maximum 3 retry attempts
+- Implement PushNotification class implementing Notification and Schedulable (NOT Retryable)
+- PushNotification has fields: appName, deviceToken, isScheduled
+- Override send() in PushNotification with push service message and device info
+- Implement SMSNotification class implementing only Notification interface
+- SMSNotification has fields: phoneNumber, carrierCode
+- Override send() in SMSNotification with SMS gateway message
+- Create NotificationService class with sendNotification(Notification notification) method
+- Demonstrate instanceof checks to use Schedulable and Retryable features conditionally
+- Show that SMSNotification can be sent but doesn't support scheduling or retry
+- Implement batch sending with Notification[] array demonstrating polymorphism
+
+**Sample Test Cases:**
+```
+Input: EmailNotification("admin@example.com", "john@example.com", "Account Alert", "HIGH")
+       .send("john@example.com", "Your password was changed")
+Expected Output:
+Connecting to SMTP server...
+Sending email notification...
+From: admin@example.com
+To: john@example.com
+Subject: Account Alert
+Priority: HIGH
+Message: Your password was changed
+Email sent successfully!
+
+Notification Type: Email
+This notification can be scheduled
+This notification supports retry (Max retries: 3)
+
+Input: PushNotification("MyApp", "device_token_12345")
+       .schedule("2024-02-15 10:00")
+       .send("device_token_12345", "New message received")
+Expected Output:
+Notification scheduled for: 2024-02-15 10:00
+Connecting to push notification service...
+Sending push notification...
+App: MyApp
+Device Token: device_token_12345
+Message: New message received
+Push notification sent successfully!
+
+Notification Type: Push
+This notification can be scheduled
+
+Input: SMSNotification("+1234567890", "ATT")
+       .send("+1234567890", "Your verification code is 123456")
+Expected Output:
+Connecting to SMS gateway...
+Sending SMS notification...
+Phone Number: +1234567890
+Carrier: ATT
+Message: Your verification code is 123456
+SMS sent successfully!
+
+Notification Type: SMS
+[No scheduling or retry support - SMSNotification only implements Notification]
+
+Input: emailNotification.retry() [after failed send]
+Expected Output:
+Retrying email notification... (Attempt 1/3)
+Email sent successfully on retry!
+```
+
+**Solution:**
+```java
+// Notification interface
+interface Notification {
+    void send(String recipient, String message);
+    String getNotificationType();
+}
+
+// Schedulable interface
+interface Schedulable {
+    void schedule(String dateTime);
+    void cancelSchedule();
+}
+
+// Retryable interface
+interface Retryable {
+    boolean retry();
+    int getMaxRetries();
+}
+
+// Email Notification
+class EmailNotification implements Notification, Schedulable, Retryable {
+    private String sender;
+    private String recipient;
+    private String subject;
+    private String priority;
+    private int retryCount;
+    private boolean isScheduled;
+    private String scheduledTime;
+    private static final int MAX_RETRIES = 3;
+
+    public EmailNotification(String sender, String recipient, String subject, String priority) {
+        this.sender = sender;
+        this.recipient = recipient;
+        this.subject = subject;
+        this.priority = priority;
+        this.retryCount = 0;
+        this.isScheduled = false;
+    }
+
+    @Override
+    public void send(String recipient, String message) {
+        System.out.println("Connecting to SMTP server...");
+        System.out.println("Sending email notification...");
+        System.out.println("From: " + sender);
+        System.out.println("To: " + recipient);
+        System.out.println("Subject: " + subject);
+        System.out.println("Priority: " + priority);
+        System.out.println("Message: " + message);
+        System.out.println("Email sent successfully!");
+    }
+
+    @Override
+    public String getNotificationType() {
+        return "Email";
+    }
+
+    @Override
+    public void schedule(String dateTime) {
+        this.scheduledTime = dateTime;
+        this.isScheduled = true;
+        System.out.println("Notification scheduled for: " + dateTime);
+    }
+
+    @Override
+    public void cancelSchedule() {
+        this.isScheduled = false;
+        System.out.println("Schedule cancelled for: " + scheduledTime);
+    }
+
+    @Override
+    public boolean retry() {
+        if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            System.out.println("Retrying email notification... (Attempt " + retryCount + "/" + MAX_RETRIES + ")");
+            return true;
+        }
+        System.out.println("Max retries reached!");
+        return false;
+    }
+
+    @Override
+    public int getMaxRetries() {
+        return MAX_RETRIES;
+    }
+}
+
+// Push Notification
+class PushNotification implements Notification, Schedulable {
+    private String appName;
+    private String deviceToken;
+    private boolean isScheduled;
+    private String scheduledTime;
+
+    public PushNotification(String appName, String deviceToken) {
+        this.appName = appName;
+        this.deviceToken = deviceToken;
+        this.isScheduled = false;
+    }
+
+    @Override
+    public void send(String recipient, String message) {
+        System.out.println("Connecting to push notification service...");
+        System.out.println("Sending push notification...");
+        System.out.println("App: " + appName);
+        System.out.println("Device Token: " + recipient);
+        System.out.println("Message: " + message);
+        System.out.println("Push notification sent successfully!");
+    }
+
+    @Override
+    public String getNotificationType() {
+        return "Push";
+    }
+
+    @Override
+    public void schedule(String dateTime) {
+        this.scheduledTime = dateTime;
+        this.isScheduled = true;
+        System.out.println("Notification scheduled for: " + dateTime);
+    }
+
+    @Override
+    public void cancelSchedule() {
+        this.isScheduled = false;
+        System.out.println("Schedule cancelled for: " + scheduledTime);
+    }
+}
+
+// SMS Notification
+class SMSNotification implements Notification {
+    private String phoneNumber;
+    private String carrierCode;
+
+    public SMSNotification(String phoneNumber, String carrierCode) {
+        this.phoneNumber = phoneNumber;
+        this.carrierCode = carrierCode;
+    }
+
+    @Override
+    public void send(String recipient, String message) {
+        System.out.println("Connecting to SMS gateway...");
+        System.out.println("Sending SMS notification...");
+        System.out.println("Phone Number: " + recipient);
+        System.out.println("Carrier: " + carrierCode);
+        System.out.println("Message: " + message);
+        System.out.println("SMS sent successfully!");
+    }
+
+    @Override
+    public String getNotificationType() {
+        return "SMS";
+    }
+}
+
+// Notification Service
+class NotificationService {
+    public void sendNotification(Notification notification, String recipient, String message) {
+        notification.send(recipient, message);
+
+        System.out.println("\nNotification Type: " + notification.getNotificationType());
+
+        // Check if schedulable
+        if (notification instanceof Schedulable) {
+            System.out.println("This notification can be scheduled");
+        }
+
+        // Check if retryable
+        if (notification instanceof Retryable) {
+            Retryable retryable = (Retryable) notification;
+            System.out.println("This notification supports retry (Max retries: " + retryable.getMaxRetries() + ")");
+        }
+    }
+
+    public void sendBatch(Notification[] notifications, String[] recipients, String[] messages) {
+        System.out.println("=== Sending Batch Notifications ===");
+        for (int i = 0; i < notifications.length; i++) {
+            sendNotification(notifications[i], recipients[i], messages[i]);
+            System.out.println("---");
+        }
+    }
+}
+
+public class TestNotification {
+    public static void main(String[] args) {
+        NotificationService service = new NotificationService();
+
+        // Create different notification types
+        EmailNotification email = new EmailNotification("admin@example.com", "john@example.com",
+                                                         "Account Alert", "HIGH");
+        PushNotification push = new PushNotification("MyApp", "device_token_12345");
+        SMSNotification sms = new SMSNotification("+1234567890", "ATT");
+
+        // Send individual notifications
+        service.sendNotification(email, "john@example.com", "Your password was changed");
+        System.out.println();
+
+        // Schedule push notification
+        push.schedule("2024-02-15 10:00");
+        service.sendNotification(push, "device_token_12345", "New message received");
+        System.out.println();
+
+        service.sendNotification(sms, "+1234567890", "Your verification code is 123456");
+        System.out.println();
+
+        // Demonstrate retry
+        System.out.println("=== Testing Retry Feature ===");
+        if (email instanceof Retryable) {
+            ((Retryable) email).retry();
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Notification interface defines common contract for all notification types (send, getNotificationType)
+- Interface Segregation Principle demonstrated: EmailNotification implements 3 interfaces, PushNotification implements 2, SMSNotification implements only 1
+- Multiple interface implementation: EmailNotification implements Notification + Schedulable + Retryable (shows flexibility)
+- instanceof checks enable conditional feature usage: if (notification instanceof Schedulable) only schedules when supported
+- Strategy pattern: different notification strategies (Email, SMS, Push) implement same Notification interface
+- Retryable interface with MAX_RETRIES constant demonstrates retry logic with attempt counting
+- Schedulable interface separates scheduling concern - not all notifications need scheduling
+- EmailNotification tracks retryCount state demonstrating stateful retry logic
+- Cast after instanceof: Retryable retryable = (Retryable) notification enables calling retry-specific methods
+- Polymorphic array Notification[] can hold mixed notification types processed uniformly
+- Send method signature consistent across all types but implementation differs (SMTP vs SMS Gateway vs Push Service)
+- Interface segregation prevents forcing unnecessary methods - SMSNotification doesn't need schedule/retry methods
+
+---
+
+### Exercise 5: Report Generator System
+
+**📝 Problem Statement:**
+Create a report generator system using abstract classes and interfaces to demonstrate abstraction. The system should use an abstract Report base class with concrete implementations for Sales, Inventory, and Financial reports, plus Exportable and Printable interfaces for reports that support these features.
+
+**Requirements:**
+- Create abstract Report class with protected fields: reportId, reportName, generatedDate, data
+- Define abstract methods: generateReport(), analyze(), getReportType()
+- Implement displaySummary() method in Report showing report header information
+- Create Exportable interface with methods: exportToPDF(), exportToExcel()
+- Create Printable interface with methods: print(), getPageCount()
+- Implement SalesReport class extending Report and implementing Exportable and Printable
+- SalesReport has fields: totalSales, numberOfOrders, topProduct
+- Override generateReport() in SalesReport calculating sales metrics from data
+- Override analyze() in SalesReport showing sales trends and insights
+- Implement InventoryReport class extending Report and implementing Exportable only
+- InventoryReport has fields: totalItems, lowStockItems, outOfStockItems
+- Override generateReport() in InventoryReport calculating inventory metrics
+- Override analyze() in InventoryReport showing stock level alerts
+- Implement FinancialReport class extending Report and implementing Printable only
+- FinancialReport has fields: revenue, expenses, profit, profitMargin
+- Override generateReport() in FinancialReport calculating financial ratios
+- Override analyze() in FinancialReport showing financial health indicators
+- Create ReportManager class with processReport(Report report) method
+- Use instanceof to conditionally export and print reports based on interface implementation
+- Demonstrate polymorphism with Report[] array containing different report types
+
+**Sample Test Cases:**
+```
+Input: SalesReport("SR-001", "Q1 Sales Report", "2024-01-31", salesData)
+Expected Output:
+Generating Sales Report...
+Analyzing sales data...
+Processing 150 orders...
+Total Sales: $125,000.00
+Average Order Value: $833.33
+Top Product: Laptop Pro
+
+=== Report Summary ===
+Report ID: SR-001
+Report Name: Q1 Sales Report
+Generated Date: 2024-01-31
+Type: Sales Report
+
+Analysis:
+- Sales increased by 15% compared to last quarter
+- Top performing product: Laptop Pro
+- Peak sales day: Friday
+
+Exporting to PDF...
+Sales Report exported to: SR-001.pdf
+
+Exporting to Excel...
+Sales Report exported to: SR-001.xlsx
+
+Preparing to print...
+Printing 5 pages...
+Sales Report printed successfully!
+
+Input: InventoryReport("IR-002", "Monthly Inventory", "2024-01-31", inventoryData)
+Expected Output:
+Generating Inventory Report...
+Analyzing inventory data...
+Checking stock levels...
+Total Items: 1,250
+Low Stock Items: 23
+Out of Stock Items: 5
+
+=== Report Summary ===
+Report ID: IR-002
+Report Name: Monthly Inventory
+Generated Date: 2024-01-31
+Type: Inventory Report
+
+Analysis:
+- 5 items need immediate restock
+- 23 items approaching low stock threshold
+- Recommend ordering: Product A, Product B, Product C
+
+Exporting to PDF...
+Inventory Report exported to: IR-002.pdf
+
+Exporting to Excel...
+Inventory Report exported to: IR-002.xlsx
+
+[No print option - InventoryReport doesn't implement Printable]
+
+Input: FinancialReport("FR-003", "Annual Financial Report", "2024-01-31", financialData)
+Expected Output:
+Generating Financial Report...
+Analyzing financial data...
+Calculating financial metrics...
+Revenue: $500,000.00
+Expenses: $350,000.00
+Profit: $150,000.00
+Profit Margin: 30.0%
+
+=== Report Summary ===
+Report ID: FR-003
+Report Name: Annual Financial Report
+Generated Date: 2024-01-31
+Type: Financial Report
+
+Analysis:
+- Healthy profit margin of 30%
+- Revenue growth: 20% year-over-year
+- Expense ratio: 70% (within target)
+
+Preparing to print...
+Printing 15 pages...
+Financial Report printed successfully!
+
+[No export option - FinancialReport doesn't implement Exportable]
+```
+
+**Solution:**
+```java
+// Exportable interface
+interface Exportable {
+    void exportToPDF();
+    void exportToExcel();
+}
+
+// Printable interface
+interface Printable {
+    void print();
+    int getPageCount();
+}
+
+// Abstract Report class
+abstract class Report {
+    protected String reportId;
+    protected String reportName;
+    protected String generatedDate;
+    protected String data;
+
+    public Report(String reportId, String reportName, String generatedDate, String data) {
+        this.reportId = reportId;
+        this.reportName = reportName;
+        this.generatedDate = generatedDate;
+        this.data = data;
+    }
+
+    // Abstract methods
+    public abstract void generateReport();
+    public abstract void analyze();
+    public abstract String getReportType();
+
+    // Concrete method
+    public void displaySummary() {
+        System.out.println("\n=== Report Summary ===");
+        System.out.println("Report ID: " + reportId);
+        System.out.println("Report Name: " + reportName);
+        System.out.println("Generated Date: " + generatedDate);
+        System.out.println("Type: " + getReportType());
+    }
+}
+
+// Sales Report
+class SalesReport extends Report implements Exportable, Printable {
+    private double totalSales;
+    private int numberOfOrders;
+    private String topProduct;
+    private int pageCount;
+
+    public SalesReport(String reportId, String reportName, String generatedDate, String data) {
+        super(reportId, reportName, generatedDate, data);
+        this.pageCount = 5;
+    }
+
+    @Override
+    public void generateReport() {
+        System.out.println("Generating Sales Report...");
+        System.out.println("Analyzing sales data...");
+
+        // Simulate data processing
+        this.numberOfOrders = 150;
+        this.totalSales = 125000.00;
+        this.topProduct = "Laptop Pro";
+
+        System.out.println("Processing " + numberOfOrders + " orders...");
+        System.out.println("Total Sales: $" + String.format("%.2f", totalSales));
+        System.out.println("Average Order Value: $" + String.format("%.2f", totalSales / numberOfOrders));
+        System.out.println("Top Product: " + topProduct);
+    }
+
+    @Override
+    public void analyze() {
+        System.out.println("\nAnalysis:");
+        System.out.println("- Sales increased by 15% compared to last quarter");
+        System.out.println("- Top performing product: " + topProduct);
+        System.out.println("- Peak sales day: Friday");
+    }
+
+    @Override
+    public String getReportType() {
+        return "Sales Report";
+    }
+
+    @Override
+    public void exportToPDF() {
+        System.out.println("\nExporting to PDF...");
+        System.out.println("Sales Report exported to: " + reportId + ".pdf");
+    }
+
+    @Override
+    public void exportToExcel() {
+        System.out.println("\nExporting to Excel...");
+        System.out.println("Sales Report exported to: " + reportId + ".xlsx");
+    }
+
+    @Override
+    public void print() {
+        System.out.println("\nPreparing to print...");
+        System.out.println("Printing " + pageCount + " pages...");
+        System.out.println("Sales Report printed successfully!");
+    }
+
+    @Override
+    public int getPageCount() {
+        return pageCount;
+    }
+}
+
+// Inventory Report
+class InventoryReport extends Report implements Exportable {
+    private int totalItems;
+    private int lowStockItems;
+    private int outOfStockItems;
+
+    public InventoryReport(String reportId, String reportName, String generatedDate, String data) {
+        super(reportId, reportName, generatedDate, data);
+    }
+
+    @Override
+    public void generateReport() {
+        System.out.println("Generating Inventory Report...");
+        System.out.println("Analyzing inventory data...");
+
+        // Simulate data processing
+        this.totalItems = 1250;
+        this.lowStockItems = 23;
+        this.outOfStockItems = 5;
+
+        System.out.println("Checking stock levels...");
+        System.out.println("Total Items: " + totalItems);
+        System.out.println("Low Stock Items: " + lowStockItems);
+        System.out.println("Out of Stock Items: " + outOfStockItems);
+    }
+
+    @Override
+    public void analyze() {
+        System.out.println("\nAnalysis:");
+        System.out.println("- " + outOfStockItems + " items need immediate restock");
+        System.out.println("- " + lowStockItems + " items approaching low stock threshold");
+        System.out.println("- Recommend ordering: Product A, Product B, Product C");
+    }
+
+    @Override
+    public String getReportType() {
+        return "Inventory Report";
+    }
+
+    @Override
+    public void exportToPDF() {
+        System.out.println("\nExporting to PDF...");
+        System.out.println("Inventory Report exported to: " + reportId + ".pdf");
+    }
+
+    @Override
+    public void exportToExcel() {
+        System.out.println("\nExporting to Excel...");
+        System.out.println("Inventory Report exported to: " + reportId + ".xlsx");
+    }
+}
+
+// Financial Report
+class FinancialReport extends Report implements Printable {
+    private double revenue;
+    private double expenses;
+    private double profit;
+    private double profitMargin;
+    private int pageCount;
+
+    public FinancialReport(String reportId, String reportName, String generatedDate, String data) {
+        super(reportId, reportName, generatedDate, data);
+        this.pageCount = 15;
+    }
+
+    @Override
+    public void generateReport() {
+        System.out.println("Generating Financial Report...");
+        System.out.println("Analyzing financial data...");
+
+        // Simulate data processing
+        this.revenue = 500000.00;
+        this.expenses = 350000.00;
+        this.profit = revenue - expenses;
+        this.profitMargin = (profit / revenue) * 100;
+
+        System.out.println("Calculating financial metrics...");
+        System.out.println("Revenue: $" + String.format("%.2f", revenue));
+        System.out.println("Expenses: $" + String.format("%.2f", expenses));
+        System.out.println("Profit: $" + String.format("%.2f", profit));
+        System.out.println("Profit Margin: " + String.format("%.1f", profitMargin) + "%");
+    }
+
+    @Override
+    public void analyze() {
+        System.out.println("\nAnalysis:");
+        System.out.println("- Healthy profit margin of " + String.format("%.0f", profitMargin) + "%");
+        System.out.println("- Revenue growth: 20% year-over-year");
+        System.out.println("- Expense ratio: 70% (within target)");
+    }
+
+    @Override
+    public String getReportType() {
+        return "Financial Report";
+    }
+
+    @Override
+    public void print() {
+        System.out.println("\nPreparing to print...");
+        System.out.println("Printing " + pageCount + " pages...");
+        System.out.println("Financial Report printed successfully!");
+    }
+
+    @Override
+    public int getPageCount() {
+        return pageCount;
+    }
+}
+
+// Report Manager
+class ReportManager {
+    public void processReport(Report report) {
+        report.generateReport();
+        report.displaySummary();
+        report.analyze();
+
+        // Check if exportable
+        if (report instanceof Exportable) {
+            Exportable exportable = (Exportable) report;
+            exportable.exportToPDF();
+            exportable.exportToExcel();
+        }
+
+        // Check if printable
+        if (report instanceof Printable) {
+            Printable printable = (Printable) report;
+            printable.print();
+        }
+    }
+
+    public void processMultiple(Report[] reports) {
+        System.out.println("=== Processing Multiple Reports ===");
+        for (Report report : reports) {
+            processReport(report);
+            System.out.println("\n" + "=".repeat(50) + "\n");
+        }
+    }
+}
+
+public class TestReport {
+    public static void main(String[] args) {
+        ReportManager manager = new ReportManager();
+
+        Report[] reports = {
+            new SalesReport("SR-001", "Q1 Sales Report", "2024-01-31", "sales_data"),
+            new InventoryReport("IR-002", "Monthly Inventory", "2024-01-31", "inventory_data"),
+            new FinancialReport("FR-003", "Annual Financial Report", "2024-01-31", "financial_data")
+        };
+
+        manager.processMultiple(reports);
+    }
+}
+```
+
+**💡 Tips:**
+- Abstract Report class provides common structure (reportId, reportName, generatedDate) and behavior (displaySummary)
+- Abstract methods (generateReport, analyze, getReportType) force each report type to provide specific implementations
+- Interface segregation: SalesReport implements both Exportable and Printable, InventoryReport only Exportable, FinancialReport only Printable
+- Demonstrates that different reports have different capabilities based on business needs (not all reports need printing, not all need exporting)
+- instanceof checks in ReportManager enable conditional feature usage based on interface implementation
+- Exportable interface groups export-related methods (exportToPDF, exportToExcel) - cohesive interface design
+- Printable interface groups print-related methods (print, getPageCount) - single responsibility
+- Each report type has domain-specific fields: SalesReport (totalSales, numberOfOrders), InventoryReport (stockLevels), FinancialReport (revenue, expenses, profit)
+- Template Method pattern: processReport() workflow calls generateReport(), displaySummary(), analyze() in sequence
+- Polymorphic Report[] array holds different report types processed uniformly through common interface
+- analyze() abstract method demonstrates domain-specific analysis: sales trends, stock alerts, financial health
+- String.format("%.2f") ensures consistent currency formatting across all report types
+- ReportManager uses composition: "has-a" Report, not "is-a" Report - demonstrates proper OOP design
 
 ---
 

@@ -416,183 +416,336 @@ float result2 = b + f;  // byte promoted to float
 
 ## 💻 Practical Exercises
 
-```exercise
-title: Exercise 1: Simple Calculator
-description: Create a Java program that performs all five basic arithmetic operations (addition, subtraction, multiplication, division, and modulus) on two numbers entered by the user. This exercise demonstrates the use of arithmetic operators and user input handling.
-requirements:
+### Exercise 1: Simple Calculator
+
+**📝 Problem Statement:**
+Create a Java program that performs all five basic arithmetic operations (addition, subtraction, multiplication, division, and modulus) on two numbers entered by the user.
+
+**Requirements:**
 - Import Scanner class for user input
 - Accept two numbers from the user (use double for decimal support)
 - Perform all five arithmetic operations: +, -, *, /, %
 - Display results for each operation with clear labels
 - Close the Scanner resource after use
-testcases:
-- input: "num1 = 10, num2 = 3"
-  output: "Addition: 13.0\nSubtraction: 7.0\nMultiplication: 30.0\nDivision: 3.333...\nModulus: 1.0"
-- input: "num1 = 20, num2 = 4"
-  output: "Addition: 24.0\nSubtraction: 16.0\nMultiplication: 80.0\nDivision: 5.0\nModulus: 0.0"
-- input: "num1 = 15.5, num2 = 2.5"
-  output: "Addition: 18.0\nSubtraction: 13.0\nMultiplication: 38.75\nDivision: 6.2\nModulus: 0.5"
-hints:
-- Use Scanner's nextDouble() method to read decimal numbers
-- Remember to import java.util.Scanner
-- Use parentheses in println to ensure arithmetic happens before concatenation
-- Division by zero will cause an error - consider adding a check
-solution:
+
+**Sample Test Cases:**
+```
+Input: num1 = 10, num2 = 3
+Expected Output:
+Results:
+Addition: 13.0
+Subtraction: 7.0
+Multiplication: 30.0
+Division: 3.3333333333333335
+Modulus: 1.0
+
+Input: num1 = 20, num2 = 4
+Expected Output:
+Results:
+Addition: 24.0
+Subtraction: 16.0
+Multiplication: 80.0
+Division: 5.0
+Modulus: 0.0
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class SimpleCalculator {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter first number: ");
         double num1 = scanner.nextDouble();
-        
+
         System.out.print("Enter second number: ");
         double num2 = scanner.nextDouble();
-        
+
         System.out.println("\nResults:");
         System.out.println("Addition: " + (num1 + num2));
         System.out.println("Subtraction: " + (num1 - num2));
         System.out.println("Multiplication: " + (num1 * num2));
         System.out.println("Division: " + (num1 / num2));
         System.out.println("Modulus: " + (num1 % num2));
-        
+
         scanner.close();
     }
 }
 ```
-```
+
+**💡 Tips:**
+- Use Scanner's `nextDouble()` method to read decimal numbers
+- Use parentheses in println to ensure arithmetic happens before concatenation
+- Division by zero will cause an error - consider adding a check
+- Remember that the modulus operator returns the remainder of division
 
 ---
 
-```exercise
-title: Exercise 2: Even/Odd Checker
-description: Write a program that determines whether a number entered by the user is even or odd using the modulus operator. This demonstrates the practical use of the modulus operator (%) and conditional logic.
-requirements:
+### Exercise 2: Even/Odd Checker
+
+**📝 Problem Statement:**
+Write a program that determines whether a number entered by the user is even or odd using the modulus operator.
+
+**Requirements:**
 - Accept an integer input from the user
 - Use the modulus operator (%) to check if the number is divisible by 2
 - Display whether the number is EVEN or ODD
 - Use proper conditional statements (if-else)
 - Close the Scanner resource
-testcases:
-- input: "number = 10"
-  output: "10 is EVEN"
-- input: "number = 7"
-  output: "7 is ODD"
-- input: "number = 0"
-  output: "0 is EVEN"
-- input: "number = -5"
-  output: "-5 is ODD"
-hints:
-- A number is even if number % 2 == 0
-- A number is odd if number % 2 != 0 (or == 1)
-- The modulus operator returns the remainder of division
-- Even zero is considered even
-solution:
+
+**Sample Test Cases:**
+```
+Input: number = 10
+Expected Output:
+10 is EVEN
+
+Input: number = 7
+Expected Output:
+7 is ODD
+
+Input: number = 0
+Expected Output:
+0 is EVEN
+
+Input: number = -5
+Expected Output:
+-5 is ODD
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class EvenOddChecker {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter a number: ");
         int number = scanner.nextInt();
-        
+
         if (number % 2 == 0) {
             System.out.println(number + " is EVEN");
         } else {
             System.out.println(number + " is ODD");
         }
-        
+
         scanner.close();
     }
 }
 ```
-```
+
+**💡 Tips:**
+- A number is even if `number % 2 == 0`
+- A number is odd if `number % 2 != 0` (or `== 1`)
+- The modulus operator returns the remainder of division
+- Even zero is considered even
 
 ---
 
-```exercise
-title: Exercise 3: Temperature Converter
-description: Create a program that converts temperature from Celsius to Fahrenheit using the conversion formula. This exercise demonstrates arithmetic operators, formula implementation, and working with floating-point numbers.
-requirements:
+### Exercise 3: Temperature Converter
+
+**📝 Problem Statement:**
+Create a program that converts temperature from Celsius to Fahrenheit using the conversion formula: F = (C × 9/5) + 32
+
+**Requirements:**
 - Accept temperature in Celsius from the user
 - Use the formula: F = (C × 9/5) + 32
 - Display the result in Fahrenheit with proper formatting
 - Use double data type for decimal precision
 - Close the Scanner resource
-testcases:
-- input: "celsius = 0"
-  output: "0.0°C = 32.0°F"
-- input: "celsius = 100"
-  output: "100.0°C = 212.0°F"
-- input: "celsius = 37"
-  output: "37.0°C = 98.6°F"
-- input: "celsius = -40"
-  output: "-40.0°C = -40.0°F"
-hints:
-- Use 9.0 and 5.0 (not 9 and 5) to ensure floating-point division
-- The formula is: (celsius * 9.0 / 5.0) + 32
-- Remember operator precedence: multiplication and division before addition
-- -40°C equals -40°F (interesting fact!)
-solution:
+
+**Sample Test Cases:**
+```
+Input: celsius = 0
+Expected Output:
+0.0°C = 32.0°F
+
+Input: celsius = 100
+Expected Output:
+100.0°C = 212.0°F
+
+Input: celsius = 37
+Expected Output:
+37.0°C = 98.6°F
+
+Input: celsius = -40
+Expected Output:
+-40.0°C = -40.0°F
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class TemperatureConverter {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter temperature in Celsius: ");
         double celsius = scanner.nextDouble();
-        
+
         // Formula: F = (C × 9/5) + 32
         double fahrenheit = (celsius * 9.0 / 5.0) + 32;
-        
+
         System.out.println(celsius + "°C = " + fahrenheit + "°F");
-        
+
         scanner.close();
     }
 }
 ```
-```
+
+**💡 Tips:**
+- Use 9.0 and 5.0 (not 9 and 5) to ensure floating-point division
+- Remember operator precedence: multiplication and division before addition
+- -40°C equals -40°F (interesting fact!)
+- You can format output using `String.format("%.2f", value)` for 2 decimal places
 
 ---
 
 ### Exercise 4: Swap Two Numbers
+
+**📝 Problem Statement:**
+Write a program that swaps two numbers using both temporary variable and arithmetic methods.
+
+**Requirements:**
+- Declare two integer variables with initial values
+- Display values before swapping
+- Swap using Method 1: temporary variable
+- Display values after first swap
+- Reset values and swap using Method 2: arithmetic operations
+- Display values after second swap
+
+**Sample Test Cases:**
+```
+Input: a = 10, b = 20
+Expected Output:
+Before swap: a = 10, b = 20
+After swap: a = 20, b = 10
+After arithmetic swap: a = 20, b = 10
+```
+
+**Solution:**
 ```java
 public class SwapNumbers {
     public static void main(String[] args) {
         int a = 10, b = 20;
-        
+
         System.out.println("Before swap: a = " + a + ", b = " + b);
-        
+
         // Method 1: Using temporary variable
         int temp = a;
         a = b;
         b = temp;
-        
+
         System.out.println("After swap: a = " + a + ", b = " + b);
-        
+
         // Method 2: Without temporary variable (arithmetic)
         a = 10; b = 20;  // Reset
         a = a + b;  // a = 30
         b = a - b;  // b = 10
         a = a - b;  // a = 20
-        
+
         System.out.println("After arithmetic swap: a = " + a + ", b = " + b);
     }
 }
 ```
 
+**💡 Tips:**
+- The temporary variable method is clearer and safer
+- Arithmetic method can cause overflow with large numbers
+- There's also an XOR method using bitwise operators: `a ^= b; b ^= a; a ^= b;`
+- Always prefer clarity over cleverness in production code
+
+---
+
+### Exercise 5: Comparison Operators Demo
+
+**📝 Problem Statement:**
+Create a program that demonstrates all relational (comparison) operators with two numbers.
+
+**Requirements:**
+- Accept two integers from the user
+- Perform all six comparison operations: ==, !=, >, <, >=, <=
+- Display the result of each comparison with clear labels
+- Use proper formatting for output
+- Close the Scanner resource
+
+**Sample Test Cases:**
+```
+Input: x = 10, y = 20
+Expected Output:
+Comparing x = 10 and y = 20
+x == y: false
+x != y: true
+x > y: false
+x < y: true
+x >= y: false
+x <= y: true
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class ComparisonDemo {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter first number (x): ");
+        int x = scanner.nextInt();
+
+        System.out.print("Enter second number (y): ");
+        int y = scanner.nextInt();
+
+        System.out.println("\nComparing x = " + x + " and y = " + y);
+        System.out.println("x == y: " + (x == y));
+        System.out.println("x != y: " + (x != y));
+        System.out.println("x > y: " + (x > y));
+        System.out.println("x < y: " + (x < y));
+        System.out.println("x >= y: " + (x >= y));
+        System.out.println("x <= y: " + (x <= y));
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Relational operators always return boolean (true or false)
+- Use parentheses around comparisons in print statements
+- == checks equality, = is assignment (common mistake!)
+- For comparing objects like Strings, use `.equals()` method instead of ==
 
 ---
 
 ### Exercise 6: Compound Interest Calculator
-Calculate compound interest using operators.
 
+**📝 Problem Statement:**
+Calculate compound interest using the compound interest formula: A = P(1 + r/n)^(nt)
+
+**Requirements:**
+- Set principal amount, annual interest rate, time period, and compounding frequency
+- Use the compound interest formula correctly
+- Calculate the final amount and interest earned
+- Display all input values and calculated results
+- Format monetary values to 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: Principal = $10000, Rate = 5%, Time = 3 years, Compounding = 4 (quarterly)
+Expected Output:
+Principal: $10000.0
+Rate: 5.0%
+Time: 3 years
+Compounded: 4 times per year
+
+Final Amount: $11614.72
+Interest Earned: $1614.72
+```
+
+**Solution:**
 ```java
 public class CompoundInterest {
     public static void main(String[] args) {
@@ -600,11 +753,11 @@ public class CompoundInterest {
         double rate = 5.0;  // 5% annual interest
         int time = 3;       // 3 years
         int n = 4;          // Compounded quarterly
-        
+
         // Formula: A = P(1 + r/n)^(nt)
         double amount = principal * Math.pow((1 + rate/(100*n)), n*time);
         double interest = amount - principal;
-        
+
         System.out.println("Principal: $" + principal);
         System.out.println("Rate: " + rate + "%");
         System.out.println("Time: " + time + " years");
@@ -615,47 +768,122 @@ public class CompoundInterest {
 }
 ```
 
+**💡 Tips:**
+- Use `Math.pow()` for exponential calculations
+- Divide rate by 100 to convert percentage to decimal
+- Common compounding frequencies: yearly (1), semi-annually (2), quarterly (4), monthly (12)
+- Use `String.format("%.2f", value)` to format to 2 decimal places
+- Formula breakdown: P = principal, r = rate, n = compounding frequency, t = time
+
 ---
 
-### Exercise 7: Bitwise Operators
-Practice with bitwise operators.
+### Exercise 7: Logical Operators Demo
 
+**📝 Problem Statement:**
+Create a program that demonstrates logical operators (AND, OR, NOT) with practical examples.
+
+**Requirements:**
+- Accept age and license status from user
+- Use logical AND to check if person can drive (age >= 18 AND has license)
+- Use logical OR for alternative conditions
+- Use logical NOT to invert boolean values
+- Display results of all logical operations with clear explanations
+
+**Sample Test Cases:**
+```
+Input: age = 25, hasLicense = true
+Expected Output:
+Age: 25
+Has License: true
+
+Can drive (age >= 18 && hasLicense): true
+Is teenager OR senior (age < 20 || age > 60): false
+Does NOT have license: false
+```
+
+**Solution:**
 ```java
-public class BitwiseOperators {
+import java.util.Scanner;
+
+public class LogicalOperatorsDemo {
     public static void main(String[] args) {
-        int a = 5;   // Binary: 0101
-        int b = 3;   // Binary: 0011
-        
-        System.out.println("a = " + a + " (Binary: " + Integer.toBinaryString(a) + ")");
-        System.out.println("b = " + b + " (Binary: " + Integer.toBinaryString(b) + ")");
-        
-        System.out.println("\nBitwise AND (a & b): " + (a & b));  // 0001 = 1
-        System.out.println("Bitwise OR (a | b): " + (a | b));     // 0111 = 7
-        System.out.println("Bitwise XOR (a ^ b): " + (a ^ b));    // 0110 = 6
-        System.out.println("Bitwise NOT (~a): " + (~a));          // Inverts bits
-        System.out.println("Left Shift (a << 1): " + (a << 1));   // 1010 = 10
-        System.out.println("Right Shift (a >> 1): " + (a >> 1));  // 0010 = 2
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter age: ");
+        int age = scanner.nextInt();
+
+        System.out.print("Has driving license (true/false): ");
+        boolean hasLicense = scanner.nextBoolean();
+
+        System.out.println("\nAge: " + age);
+        System.out.println("Has License: " + hasLicense);
+
+        // Logical AND (&&)
+        boolean canDrive = (age >= 18) && hasLicense;
+        System.out.println("\nCan drive (age >= 18 && hasLicense): " + canDrive);
+
+        // Logical OR (||)
+        boolean isTeenagerOrSenior = (age < 20) || (age > 60);
+        System.out.println("Is teenager OR senior (age < 20 || age > 60): " + isTeenagerOrSenior);
+
+        // Logical NOT (!)
+        boolean noLicense = !hasLicense;
+        System.out.println("Does NOT have license: " + noLicense);
+
+        scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- AND (&&) requires both conditions to be true
+- OR (||) requires at least one condition to be true
+- NOT (!) inverts the boolean value
+- Java uses short-circuit evaluation: && stops if first is false, || stops if first is true
+- Use parentheses to make complex conditions clearer
+
 ---
 
 ### Exercise 8: Distance Calculator
-Calculate distance between two points.
 
+**📝 Problem Statement:**
+Calculate the distance between two points in a 2D plane using the distance formula: d = √[(x2-x1)² + (y2-y1)²]
+
+**Requirements:**
+- Define two points with their x and y coordinates
+- Use the distance formula correctly
+- Calculate the distance using Math.sqrt() and Math.pow()
+- Display both points and the calculated distance
+- Format the distance to 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: Point1 (3.0, 4.0), Point2 (6.0, 8.0)
+Expected Output:
+Point 1: (3.0, 4.0)
+Point 2: (6.0, 8.0)
+Distance: 5.00
+
+Input: Point1 (0.0, 0.0), Point2 (3.0, 4.0)
+Expected Output:
+Point 1: (0.0, 0.0)
+Point 2: (3.0, 4.0)
+Distance: 5.00
+```
+
+**Solution:**
 ```java
 public class DistanceCalculator {
     public static void main(String[] args) {
         // Point 1: (x1, y1)
         double x1 = 3.0, y1 = 4.0;
-        
+
         // Point 2: (x2, y2)
         double x2 = 6.0, y2 = 8.0;
-        
+
         // Distance formula: sqrt((x2-x1)² + (y2-y1)²)
         double distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        
+
         System.out.println("Point 1: (" + x1 + ", " + y1 + ")");
         System.out.println("Point 2: (" + x2 + ", " + y2 + ")");
         System.out.println("Distance: " + String.format("%.2f", distance));
@@ -663,41 +891,111 @@ public class DistanceCalculator {
 }
 ```
 
+**💡 Tips:**
+- `Math.pow(base, exponent)` calculates power (e.g., x²)
+- `Math.sqrt()` calculates square root
+- Distance formula comes from Pythagorean theorem
+- Can extend to 3D by adding z-coordinates
+- Format output with `String.format("%.2f", value)` for readability
+
 ---
 
 ### Exercise 9: Time Converter
-Convert seconds to hours, minutes, and seconds.
 
+**📝 Problem Statement:**
+Convert a given number of seconds into hours, minutes, and remaining seconds.
+
+**Requirements:**
+- Accept or define total seconds as input
+- Calculate hours by dividing total seconds by 3600
+- Calculate remaining minutes by dividing remaining seconds by 60
+- Calculate remaining seconds using modulus operator
+- Display the converted time in hours:minutes:seconds format
+
+**Sample Test Cases:**
+```
+Input: totalSeconds = 3665
+Expected Output:
+Total seconds: 3665
+Converted: 1 hours, 1 minutes, 5 seconds
+
+Input: totalSeconds = 7384
+Expected Output:
+Total seconds: 7384
+Converted: 2 hours, 3 minutes, 4 seconds
+```
+
+**Solution:**
 ```java
 public class TimeConverter {
     public static void main(String[] args) {
         int totalSeconds = 3665;
-        
+
         int hours = totalSeconds / 3600;
         int minutes = (totalSeconds % 3600) / 60;
         int seconds = totalSeconds % 60;
-        
+
         System.out.println("Total seconds: " + totalSeconds);
-        System.out.println("Converted: " + hours + " hours, " + 
+        System.out.println("Converted: " + hours + " hours, " +
                           minutes + " minutes, " + seconds + " seconds");
     }
 }
 ```
 
+**💡 Tips:**
+- 1 hour = 3600 seconds
+- 1 minute = 60 seconds
+- Use integer division (/) to get whole hours
+- Use modulus (%) to get remaining seconds
+- Can enhance by accepting user input with Scanner
+- Remember: totalSeconds % 3600 gives seconds after removing complete hours
+
 ---
 
 ### Exercise 10: Quadratic Equation Solver
-Solve quadratic equation ax² + bx + c = 0.
 
+**📝 Problem Statement:**
+Solve a quadratic equation of the form ax² + bx + c = 0 using the quadratic formula.
+
+**Requirements:**
+- Define coefficients a, b, and c
+- Calculate the discriminant: b² - 4ac
+- If discriminant > 0: Calculate two real roots
+- If discriminant = 0: Calculate one real root
+- If discriminant < 0: Display "No real roots"
+- Use Math.sqrt() for square root calculation
+- Display the equation and all roots
+
+**Sample Test Cases:**
+```
+Input: a = 1, b = -5, c = 6  (x² - 5x + 6 = 0)
+Expected Output:
+Equation: 1.0x² + -5.0x + 6.0 = 0
+Two real roots:
+Root 1: 3.0
+Root 2: 2.0
+
+Input: a = 1, b = -2, c = 1  (x² - 2x + 1 = 0)
+Expected Output:
+Equation: 1.0x² + -2.0x + 1.0 = 0
+One real root: 1.0
+
+Input: a = 1, b = 0, c = 1  (x² + 1 = 0)
+Expected Output:
+Equation: 1.0x² + 0.0x + 1.0 = 0
+No real roots (complex roots)
+```
+
+**Solution:**
 ```java
 public class QuadraticSolver {
     public static void main(String[] args) {
         double a = 1, b = -5, c = 6;  // x² - 5x + 6 = 0
-        
+
         System.out.println("Equation: " + a + "x² + " + b + "x + " + c + " = 0");
-        
+
         double discriminant = b * b - 4 * a * c;
-        
+
         if (discriminant > 0) {
             double root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
             double root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
@@ -714,93 +1012,184 @@ public class QuadraticSolver {
 }
 ```
 
+**💡 Tips:**
+- Discriminant determines the nature of roots: > 0 (two roots), = 0 (one root), < 0 (no real roots)
+- Quadratic formula: x = (-b ± √(b² - 4ac)) / 2a
+- Use `Math.sqrt()` only when discriminant >= 0
+- Can enhance by accepting user input for coefficients
+- For complex roots, you'd need to calculate real and imaginary parts separately
+
 ---
 
-### Exercise 11: Percentage Calculator
-Calculate percentage and grade.
+### Exercise 11: BMI Calculator with Category
 
-```java
-public class PercentageCalculator {
-    public static void main(String[] args) {
-        int totalMarks = 500;
-        int obtainedMarks = 425;
-        
-        double percentage = (double) obtainedMarks / totalMarks * 100;
-        
-        System.out.println("Total Marks: " + totalMarks);
-        System.out.println("Obtained Marks: " + obtainedMarks);
-        System.out.println("Percentage: " + String.format("%.2f", percentage) + "%");
-        
-        String grade = (percentage >= 90) ? "A+" :
-                      (percentage >= 80) ? "A" :
-                      (percentage >= 70) ? "B" :
-                      (percentage >= 60) ? "C" :
-                      (percentage >= 50) ? "D" : "F";
-        
-        System.out.println("Grade: " + grade);
-    }
-}
+**📝 Problem Statement:**
+Create a Body Mass Index (BMI) calculator that calculates BMI and determines the weight category.
+
+**Requirements:**
+- Accept weight in kilograms and height in meters from user
+- Calculate BMI using formula: BMI = weight / (height * height)
+- Determine category based on BMI:
+  - Underweight: BMI < 18.5
+  - Normal weight: 18.5 <= BMI < 25
+  - Overweight: 25 <= BMI < 30
+  - Obese: BMI >= 30
+- Display BMI value and category
+- Format BMI to 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: weight = 70 kg, height = 1.75 m
+Expected Output:
+Weight: 70.0 kg
+Height: 1.75 m
+BMI: 22.86
+Category: Normal weight
+
+Input: weight = 85 kg, height = 1.70 m
+Expected Output:
+Weight: 85.0 kg
+Height: 1.7 m
+BMI: 29.41
+Category: Overweight
 ```
 
----
-
-### Exercise 12: Electricity Bill Calculator
-Calculate electricity bill based on units consumed.
-
-```java
-public class ElectricityBill {
-    public static void main(String[] args) {
-        int units = 350;
-        double billAmount = 0;
-        
-        // Rate structure
-        // 0-100: $1 per unit
-        // 101-200: $1.5 per unit
-        // 201-300: $2 per unit
-        // Above 300: $2.5 per unit
-        
-        if (units <= 100) {
-            billAmount = units * 1.0;
-        } else if (units <= 200) {
-            billAmount = 100 * 1.0 + (units - 100) * 1.5;
-        } else if (units <= 300) {
-            billAmount = 100 * 1.0 + 100 * 1.5 + (units - 200) * 2.0;
-        } else {
-            billAmount = 100 * 1.0 + 100 * 1.5 + 100 * 2.0 + (units - 300) * 2.5;
-        }
-        
-        System.out.println("Units Consumed: " + units);
-        System.out.println("Bill Amount: $" + String.format("%.2f", billAmount));
-    }
-}
-```
-
----
-
-### Exercise 5: Leap Year Checker
+**Solution:**
 ```java
 import java.util.Scanner;
 
-public class LeapYearChecker {
+public class BMICalculator {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("Enter a year: ");
-        int year = scanner.nextInt();
-        
-        // Leap year if: divisible by 4 AND (not divisible by 100 OR divisible by 400)
-        boolean isLeapYear = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
-        
-        if (isLeapYear) {
-            System.out.println(year + " is a LEAP YEAR");
+
+        System.out.print("Enter weight in kg: ");
+        double weight = scanner.nextDouble();
+
+        System.out.print("Enter height in meters: ");
+        double height = scanner.nextDouble();
+
+        // Calculate BMI
+        double bmi = weight / (height * height);
+
+        // Determine category
+        String category;
+        if (bmi < 18.5) {
+            category = "Underweight";
+        } else if (bmi < 25) {
+            category = "Normal weight";
+        } else if (bmi < 30) {
+            category = "Overweight";
         } else {
-            System.out.println(year + " is NOT a leap year");
+            category = "Obese";
         }
-        
+
+        System.out.println("\nWeight: " + weight + " kg");
+        System.out.println("Height: " + height + " m");
+        System.out.println("BMI: " + String.format("%.2f", bmi));
+        System.out.println("Category: " + category);
+
         scanner.close();
     }
 }
 ```
+
+**💡 Tips:**
+- BMI formula: weight(kg) / height²(m)
+- Use if-else ladder to determine category
+- BMI categories are based on WHO standards
+- Can enhance by adding health advice for each category
+- Consider input validation (weight > 0, height > 0)
+
+---
+
+### Exercise 12: Increment/Decrement Operators Demo
+
+**📝 Problem Statement:**
+Demonstrate the difference between pre-increment (++i), post-increment (i++), pre-decrement (--i), and post-decrement (i--) operators.
+
+**Requirements:**
+- Show pre-increment operation with clear output
+- Show post-increment operation with clear output
+- Show pre-decrement operation with clear output
+- Show post-decrement operation with clear output
+- Explain the difference in behavior for each
+- Use separate examples for each operator type
+
+**Sample Test Cases:**
+```
+Expected Output:
+=== Pre-increment (++i) ===
+Initial value: 5
+After ++i: 6
+Result of ++i: 6
+
+=== Post-increment (i++) ===
+Initial value: 5
+Result of i++: 5
+After i++: 6
+
+=== Pre-decrement (--i) ===
+Initial value: 5
+After --i: 4
+Result of --i: 4
+
+=== Post-decrement (i--) ===
+Initial value: 5
+Result of i--: 5
+After i--: 4
+```
+
+**Solution:**
+```java
+public class IncrementDecrementDemo {
+    public static void main(String[] args) {
+        // Pre-increment (++i)
+        System.out.println("=== Pre-increment (++i) ===");
+        int i = 5;
+        System.out.println("Initial value: " + i);
+        int result1 = ++i;  // Increment first, then use value
+        System.out.println("After ++i: " + i);
+        System.out.println("Result of ++i: " + result1);
+
+        System.out.println("\n=== Post-increment (i++) ===");
+        i = 5;
+        System.out.println("Initial value: " + i);
+        int result2 = i++;  // Use value first, then increment
+        System.out.println("Result of i++: " + result2);
+        System.out.println("After i++: " + i);
+
+        // Pre-decrement (--i)
+        System.out.println("\n=== Pre-decrement (--i) ===");
+        i = 5;
+        System.out.println("Initial value: " + i);
+        int result3 = --i;  // Decrement first, then use value
+        System.out.println("After --i: " + i);
+        System.out.println("Result of --i: " + result3);
+
+        // Post-decrement (i--)
+        System.out.println("\n=== Post-decrement (i--) ===");
+        i = 5;
+        System.out.println("Initial value: " + i);
+        int result4 = i--;  // Use value first, then decrement
+        System.out.println("Result of i--: " + result4);
+        System.out.println("After i--: " + i);
+
+        // Comparison
+        System.out.println("\n=== Comparison ===");
+        int a = 5, b = 5;
+        System.out.println("++a = " + (++a));  // 6
+        System.out.println("b++ = " + (b++));  // 5
+        System.out.println("Final: a = " + a + ", b = " + b);  // a = 6, b = 6
+    }
+}
+```
+
+**💡 Tips:**
+- Pre-increment (++i): Increment first, then return new value
+- Post-increment (i++): Return current value first, then increment
+- Same logic applies to decrement operators
+- When used alone (not in expression), ++i and i++ have same effect
+- Avoid using increment/decrement in complex expressions for clarity
 
 ---
 

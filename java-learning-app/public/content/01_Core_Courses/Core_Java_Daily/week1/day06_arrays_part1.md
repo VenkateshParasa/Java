@@ -429,18 +429,48 @@ public class CopyArray {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Initialize and Print Array
+
+**📝 Problem Statement:**
+Create a program that demonstrates array initialization and printing using both indexed loop and for-each loop.
+
+**Requirements:**
+- Initialize an integer array with 10 predefined values
+- Print all elements with their indices using a standard for loop
+- Print all elements using an enhanced for-each loop
+- Display appropriate labels for each output section
+
+**Sample Test Cases:**
+```
+Expected Output:
+Array elements:
+Index 0: 5
+Index 1: 12
+Index 2: 8
+Index 3: 23
+Index 4: 17
+Index 5: 9
+Index 6: 14
+Index 7: 6
+Index 8: 20
+Index 9: 11
+
+Using for-each:
+5 12 8 23 17 9 14 6 20 11
+```
+
+**Solution:**
 ```java
 public class ArrayBasics {
     public static void main(String[] args) {
         // Create array of 10 integers
         int[] numbers = {5, 12, 8, 23, 17, 9, 14, 6, 20, 11};
-        
-        // Print all elements
+
+        // Print all elements with index
         System.out.println("Array elements:");
         for (int i = 0; i < numbers.length; i++) {
             System.out.println("Index " + i + ": " + numbers[i]);
         }
-        
+
         // Print using for-each
         System.out.println("\nUsing for-each:");
         for (int num : numbers) {
@@ -450,63 +480,135 @@ public class ArrayBasics {
 }
 ```
 
+**💡 Tips:**
+- Use standard for loop when you need index numbers
+- Use for-each loop for simpler iteration when index isn't needed
+- Array indices always start at 0
+- `array.length` gives total number of elements (no parentheses)
+
 ---
 
 ### Exercise 2: Find Largest and Smallest
+
+**📝 Problem Statement:**
+Write a program that accepts an array of numbers from the user and finds both the largest and smallest elements.
+
+**Requirements:**
+- Accept array size from user
+- Input elements into the array
+- Find the minimum element
+- Find the maximum element
+- Display both minimum and maximum values
+- Handle arrays with at least one element
+
+**Sample Test Cases:**
+```
+Input: size = 5, elements = [45, 12, 89, 23, 67]
+Expected Output:
+Smallest: 12
+Largest: 89
+
+Input: size = 7, elements = [100, 50, 75, 25, 90, 10, 60]
+Expected Output:
+Smallest: 10
+Largest: 100
+
+Input: size = 3, elements = [5, 5, 5]
+Expected Output:
+Smallest: 5
+Largest: 5
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class FindMinMax {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter array size: ");
         int size = scanner.nextInt();
-        
+
         int[] numbers = new int[size];
-        
+
         // Input elements
         System.out.println("Enter " + size + " numbers:");
         for (int i = 0; i < size; i++) {
             numbers[i] = scanner.nextInt();
         }
-        
+
         // Find min and max
         int min = numbers[0];
         int max = numbers[0];
-        
+
         for (int num : numbers) {
             if (num < min) min = num;
             if (num > max) max = num;
         }
-        
+
         System.out.println("Smallest: " + min);
         System.out.println("Largest: " + max);
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Initialize min and max to first element, not to 0
+- Use for-each loop for simpler element-by-element comparison
+- Handle edge case: if array has only one element, min equals max
+- For unsorted arrays, time complexity is O(n)
+
 ---
 
 ### Exercise 3: Calculate Sum and Average
+
+**📝 Problem Statement:**
+Create a program that calculates the sum, average, and count of scores above average from a predefined array of test scores.
+
+**Requirements:**
+- Use a predefined array of integer scores
+- Calculate the sum of all scores
+- Calculate the average (ensure proper decimal division)
+- Count how many scores are above the average
+- Display all calculated values with appropriate labels
+
+**Sample Test Cases:**
+```
+Input: scores = [85, 90, 78, 92, 88, 76, 95, 82]
+Expected Output:
+Number of scores: 8
+Total sum: 686
+Average: 85.75
+Scores above average: 4
+
+Input: scores = [100, 95, 90, 85, 80]
+Expected Output:
+Number of scores: 5
+Total sum: 450
+Average: 90.0
+Scores above average: 2
+```
+
+**Solution:**
 ```java
 public class SumAndAverage {
     public static void main(String[] args) {
         int[] scores = {85, 90, 78, 92, 88, 76, 95, 82};
-        
+
         int sum = 0;
         for (int score : scores) {
             sum += score;
         }
-        
+
         double average = (double) sum / scores.length;
-        
+
         System.out.println("Number of scores: " + scores.length);
         System.out.println("Total sum: " + sum);
         System.out.println("Average: " + average);
-        
+
         // Count above average
         int aboveAverage = 0;
         for (int score : scores) {
@@ -514,15 +616,49 @@ public class SumAndAverage {
                 aboveAverage++;
             }
         }
-        
+
         System.out.println("Scores above average: " + aboveAverage);
     }
 }
 ```
 
+**💡 Tips:**
+- Cast sum to `double` before division to get decimal result
+- Use `scores.length` to get array size dynamically
+- Two-pass approach: first calculate average, then count above average
+- For-each loop is perfect for summing array elements
+
 ---
 
 ### Exercise 4: Search for Element
+
+**📝 Problem Statement:**
+Implement a linear search algorithm that finds a target element in an array and returns its index position.
+
+**Requirements:**
+- Use a predefined integer array
+- Accept target value from user input
+- Search for the target using linear search
+- Display index if found
+- Display "not found" message if target doesn't exist
+- Use `break` to exit loop once element is found
+
+**Sample Test Cases:**
+```
+Input: array = [10, 25, 30, 45, 50, 60, 75, 80], target = 50
+Expected Output:
+50 found at index 4
+
+Input: array = [10, 25, 30, 45, 50, 60, 75, 80], target = 100
+Expected Output:
+100 not found in array
+
+Input: array = [10, 25, 30, 45, 50, 60, 75, 80], target = 10
+Expected Output:
+10 found at index 0
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
@@ -530,13 +666,13 @@ public class SearchArray {
     public static void main(String[] args) {
         int[] numbers = {10, 25, 30, 45, 50, 60, 75, 80};
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter number to search: ");
         int target = scanner.nextInt();
-        
+
         boolean found = false;
         int index = -1;
-        
+
         for (int i = 0; i < numbers.length; i++) {
             if (numbers[i] == target) {
                 found = true;
@@ -544,40 +680,73 @@ public class SearchArray {
                 break;
             }
         }
-        
+
         if (found) {
             System.out.println(target + " found at index " + index);
         } else {
             System.out.println(target + " not found in array");
         }
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Linear search checks each element sequentially
+- Time complexity: O(n) in worst case
+- Use `break` to stop searching once element is found
+- Initialize index to -1 to indicate "not found" state
+- For sorted arrays, binary search would be more efficient
+
 ---
 
 ### Exercise 5: Reverse Array
+
+**📝 Problem Statement:**
+Write a program that reverses an array in place by swapping elements from both ends moving toward the center.
+
+**Requirements:**
+- Initialize an array with sequential numbers
+- Display the original array
+- Reverse the array in place (no new array)
+- Use swapping technique with temporary variable
+- Only iterate through half the array
+- Display the reversed array
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Expected Output:
+Original array: 1 2 3 4 5 6 7 8 9 10
+Reversed array: 10 9 8 7 6 5 4 3 2 1
+
+Input: array = [5, 10, 15, 20, 25]
+Expected Output:
+Original array: 5 10 15 20 25
+Reversed array: 25 20 15 10 5
+```
+
+**Solution:**
 ```java
 public class ReverseArray {
     public static void main(String[] args) {
         int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        
+
         System.out.print("Original array: ");
         printArray(numbers);
-        
-        // Reverse
+
+        // Reverse - swap elements from ends toward center
         for (int i = 0; i < numbers.length / 2; i++) {
             int temp = numbers[i];
             numbers[i] = numbers[numbers.length - 1 - i];
             numbers[numbers.length - 1 - i] = temp;
         }
-        
+
         System.out.print("Reversed array: ");
         printArray(numbers);
     }
-    
+
     public static void printArray(int[] arr) {
         for (int num : arr) {
             System.out.print(num + " ");
@@ -587,17 +756,57 @@ public class ReverseArray {
 }
 ```
 
+**💡 Tips:**
+- Only loop through `array.length / 2` to avoid swapping twice
+- Opposite index formula: `length - 1 - i`
+- Use temporary variable for swapping
+- Time complexity: O(n/2) = O(n)
+- Space complexity: O(1) - in-place reversal
+
 ---
 
 ### Exercise 6: Count Even and Odd Numbers
+
+**📝 Problem Statement:**
+Create a program that counts how many even and odd numbers exist in an array.
+
+**Requirements:**
+- Initialize an array with mixed even and odd integers
+- Count even numbers (divisible by 2)
+- Count odd numbers (not divisible by 2)
+- Display total count, even count, and odd count
+- Verify that even count + odd count equals total count
+
+**Sample Test Cases:**
+```
+Input: array = [12, 7, 23, 8, 15, 20, 9, 14, 6, 11]
+Expected Output:
+Total numbers: 10
+Even numbers: 5
+Odd numbers: 5
+
+Input: array = [2, 4, 6, 8, 10]
+Expected Output:
+Total numbers: 5
+Even numbers: 5
+Odd numbers: 0
+
+Input: array = [1, 3, 5, 7, 9]
+Expected Output:
+Total numbers: 5
+Even numbers: 0
+Odd numbers: 5
+```
+
+**Solution:**
 ```java
 public class CountEvenOdd {
     public static void main(String[] args) {
         int[] numbers = {12, 7, 23, 8, 15, 20, 9, 14, 6, 11};
-        
+
         int evenCount = 0;
         int oddCount = 0;
-        
+
         for (int num : numbers) {
             if (num % 2 == 0) {
                 evenCount++;
@@ -605,7 +814,7 @@ public class CountEvenOdd {
                 oddCount++;
             }
         }
-        
+
         System.out.println("Total numbers: " + numbers.length);
         System.out.println("Even numbers: " + evenCount);
         System.out.println("Odd numbers: " + oddCount);
@@ -613,21 +822,60 @@ public class CountEvenOdd {
 }
 ```
 
+**💡 Tips:**
+- Use modulus operator `%` to check divisibility by 2
+- Even numbers: `num % 2 == 0`
+- Odd numbers: `num % 2 != 0` or just `else`
+- For-each loop is perfect for this counting task
+- Verification: evenCount + oddCount should equal array length
+
 ---
+
 ### Exercise 7: Second Largest Element
+
+**📝 Problem Statement:**
+Find the second largest element in an array without sorting it.
+
+**Requirements:**
+- Use a predefined array of at least 2 elements
+- Check that array has at least 2 elements
+- Find both the largest and second largest elements in one pass
+- Handle duplicate values correctly (second largest must be different from largest)
+- Use `Integer.MIN_VALUE` for initialization
+- Display both largest and second largest
+
+**Sample Test Cases:**
+```
+Input: array = [45, 23, 67, 12, 89, 34, 78]
+Expected Output:
+Largest: 89
+Second Largest: 78
+
+Input: array = [100, 50, 100, 75, 25]
+Expected Output:
+Largest: 100
+Second Largest: 75
+
+Input: array = [10, 20]
+Expected Output:
+Largest: 20
+Second Largest: 10
+```
+
+**Solution:**
 ```java
 public class SecondLargest {
     public static void main(String[] args) {
         int[] numbers = {45, 23, 67, 12, 89, 34, 78};
-        
+
         if (numbers.length < 2) {
             System.out.println("Array must have at least 2 elements");
             return;
         }
-        
+
         int largest = Integer.MIN_VALUE;
         int secondLargest = Integer.MIN_VALUE;
-        
+
         for (int num : numbers) {
             if (num > largest) {
                 secondLargest = largest;
@@ -636,24 +884,62 @@ public class SecondLargest {
                 secondLargest = num;
             }
         }
-        
+
         System.out.println("Largest: " + largest);
         System.out.println("Second Largest: " + secondLargest);
     }
 }
 ```
 
+**💡 Tips:**
+- Initialize both variables to `Integer.MIN_VALUE`
+- When new largest found, shift old largest to second largest
+- Condition `num != largest` prevents duplicates from being second largest
+- Single pass solution: O(n) time complexity
+- Handles arrays with duplicate values correctly
+
 ---
 
 ### Exercise 8: Remove Duplicates
+
+**📝 Problem Statement:**
+Create a program that removes duplicate elements from an array and returns a new array containing only unique elements.
+
+**Requirements:**
+- Start with an array containing duplicate values
+- Count unique elements using nested loops
+- Create a new array with only unique elements
+- Maintain the order of first occurrence
+- Display both original and deduplicated arrays
+- Use a helper method to print arrays
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 2, 4, 1, 5, 3, 6]
+Expected Output:
+Original array: 1 2 3 2 4 1 5 3 6
+Array without duplicates: 1 2 3 4 5 6
+
+Input: array = [5, 5, 5, 5, 5]
+Expected Output:
+Original array: 5 5 5 5 5
+Array without duplicates: 5
+
+Input: array = [10, 20, 30, 40, 50]
+Expected Output:
+Original array: 10 20 30 40 50
+Array without duplicates: 10 20 30 40 50
+```
+
+**Solution:**
 ```java
 public class RemoveDuplicates {
     public static void main(String[] args) {
         int[] numbers = {1, 2, 3, 2, 4, 1, 5, 3, 6};
-        
+
         System.out.print("Original array: ");
         printArray(numbers);
-        
+
         // Count unique elements
         int uniqueCount = 0;
         for (int i = 0; i < numbers.length; i++) {
@@ -668,7 +954,7 @@ public class RemoveDuplicates {
                 uniqueCount++;
             }
         }
-        
+
         // Create array with unique elements
         int[] unique = new int[uniqueCount];
         int index = 0;
@@ -684,11 +970,11 @@ public class RemoveDuplicates {
                 unique[index++] = numbers[i];
             }
         }
-        
+
         System.out.print("Array without duplicates: ");
         printArray(unique);
     }
-    
+
     public static void printArray(int[] arr) {
         for (int num : arr) {
             System.out.print(num + " ");
@@ -698,38 +984,73 @@ public class RemoveDuplicates {
 }
 ```
 
+**💡 Tips:**
+- Two-pass approach: first count unique, then build new array
+- Check each element against all previous elements for duplicates
+- Time complexity: O(n²) due to nested loops
+- Maintains insertion order of unique elements
+- Alternative: Use Set for O(n) solution (covered in later topics)
+
 ---
 
 ### Exercise 9: Merge Two Arrays
+
+**📝 Problem Statement:**
+Write a program that merges two arrays into a single array containing all elements from both arrays.
+
+**Requirements:**
+- Start with two predefined integer arrays
+- Create a new array large enough to hold all elements
+- Copy all elements from the first array
+- Copy all elements from the second array
+- Display all three arrays with labels
+- Use a helper method for printing arrays
+
+**Sample Test Cases:**
+```
+Input: arr1 = [1, 3, 5, 7, 9], arr2 = [2, 4, 6, 8, 10]
+Expected Output:
+Array 1: 1 3 5 7 9
+Array 2: 2 4 6 8 10
+Merged array: 1 3 5 7 9 2 4 6 8 10
+
+Input: arr1 = [10, 20], arr2 = [30, 40, 50, 60]
+Expected Output:
+Array 1: 10 20
+Array 2: 30 40 50 60
+Merged array: 10 20 30 40 50 60
+```
+
+**Solution:**
 ```java
 public class MergeArrays {
     public static void main(String[] args) {
         int[] arr1 = {1, 3, 5, 7, 9};
         int[] arr2 = {2, 4, 6, 8, 10};
-        
+
         // Create merged array
         int[] merged = new int[arr1.length + arr2.length];
-        
+
         // Copy first array
         for (int i = 0; i < arr1.length; i++) {
             merged[i] = arr1[i];
         }
-        
+
         // Copy second array
         for (int i = 0; i < arr2.length; i++) {
             merged[arr1.length + i] = arr2[i];
         }
-        
+
         System.out.print("Array 1: ");
         printArray(arr1);
-        
+
         System.out.print("Array 2: ");
         printArray(arr2);
-        
+
         System.out.print("Merged array: ");
         printArray(merged);
     }
-    
+
     public static void printArray(int[] arr) {
         for (int num : arr) {
             System.out.print(num + " ");
@@ -739,18 +1060,56 @@ public class MergeArrays {
 }
 ```
 
+**💡 Tips:**
+- Merged array size = arr1.length + arr2.length
+- Copy first array starting at index 0
+- Copy second array starting at index arr1.length
+- This is simple concatenation, not sorted merge
+- Time complexity: O(n + m) where n, m are array lengths
+
 ---
 
 ### Exercise 10: Rotate Array
+
+**📝 Problem Statement:**
+Implement array rotation that shifts all elements to the right by a specified number of positions, with elements at the end wrapping around to the beginning.
+
+**Requirements:**
+- Initialize an array with sequential numbers
+- Accept or set the number of rotations
+- Perform right rotation (elements shift right, last becomes first)
+- Display original array before rotation
+- Display array after rotation
+- Use nested loops for rotation
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 4, 5, 6, 7], rotations = 3
+Expected Output:
+Original array: 1 2 3 4 5 6 7
+After 3 rotations: 5 6 7 1 2 3 4
+
+Input: array = [10, 20, 30, 40, 50], rotations = 2
+Expected Output:
+Original array: 10 20 30 40 50
+After 2 rotations: 40 50 10 20 30
+
+Input: array = [1, 2, 3, 4, 5], rotations = 5
+Expected Output:
+Original array: 1 2 3 4 5
+After 5 rotations: 1 2 3 4 5
+```
+
+**Solution:**
 ```java
 public class RotateArray {
     public static void main(String[] args) {
         int[] numbers = {1, 2, 3, 4, 5, 6, 7};
         int rotations = 3;
-        
+
         System.out.print("Original array: ");
         printArray(numbers);
-        
+
         // Rotate right by 'rotations' positions
         for (int r = 0; r < rotations; r++) {
             int last = numbers[numbers.length - 1];
@@ -759,11 +1118,11 @@ public class RotateArray {
             }
             numbers[0] = last;
         }
-        
+
         System.out.print("After " + rotations + " rotations: ");
         printArray(numbers);
     }
-    
+
     public static void printArray(int[] arr) {
         for (int num : arr) {
             System.out.print(num + " ");
@@ -773,44 +1132,118 @@ public class RotateArray {
 }
 ```
 
+**💡 Tips:**
+- Right rotation: save last element, shift all right, place saved at start
+- Each rotation is O(n), total time: O(k×n) where k is rotations
+- Optimization: `rotations % array.length` handles rotations > length
+- Left rotation: save first, shift all left, place saved at end
+- Advanced: Use reversal algorithm for O(n) solution
+
 ---
 
 ### Exercise 11: Find Missing Number
+
+**📝 Problem Statement:**
+Given an array containing numbers from 1 to n with one number missing, find the missing number using the mathematical sum formula.
+
+**Requirements:**
+- Array contains numbers 1 to n with exactly one missing
+- Calculate expected sum using formula: n × (n + 1) / 2
+- Calculate actual sum of array elements
+- Missing number = expected sum - actual sum
+- Display the missing number
+- Works for any range of consecutive numbers
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 4, 5, 6, 7, 8, 9, 10], n = 10
+Expected Output:
+Missing number: 3
+
+Input: array = [1, 3, 4, 5], n = 5
+Expected Output:
+Missing number: 2
+
+Input: array = [2, 3, 4, 5, 6, 7, 8, 9, 10], n = 10
+Expected Output:
+Missing number: 1
+```
+
+**Solution:**
 ```java
 public class FindMissingNumber {
     public static void main(String[] args) {
         // Array contains numbers from 1 to n with one missing
         int[] numbers = {1, 2, 4, 5, 6, 7, 8, 9, 10};
         int n = 10; // Expected range: 1 to 10
-        
+
         // Sum of first n natural numbers: n * (n + 1) / 2
         int expectedSum = n * (n + 1) / 2;
-        
+
         int actualSum = 0;
         for (int num : numbers) {
             actualSum += num;
         }
-        
+
         int missingNumber = expectedSum - actualSum;
-        
+
         System.out.println("Missing number: " + missingNumber);
     }
 }
 ```
 
+**💡 Tips:**
+- Formula for sum of 1 to n: n × (n + 1) / 2
+- Time complexity: O(n) - single pass through array
+- Space complexity: O(1) - only uses few variables
+- Works only when exactly one number is missing
+- Alternative: Use XOR for bitwise solution
+
 ---
 
 ### Exercise 12: Check if Array is Sorted
+
+**📝 Problem Statement:**
+Write a program that checks whether an array is sorted in ascending order.
+
+**Requirements:**
+- Create a helper method that returns boolean
+- Check each adjacent pair of elements
+- If any element is greater than the next, array is not sorted
+- Return true only if all adjacent pairs are in order
+- Test with both sorted and unsorted arrays
+- Display results for multiple test arrays
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 4, 5]
+Expected Output:
+Array 1 is sorted: true
+
+Input: array = [1, 3, 2, 4, 5]
+Expected Output:
+Array 2 is sorted: false
+
+Input: array = [5, 5, 5, 5, 5]
+Expected Output:
+Array 3 is sorted: true
+
+Input: array = [10, 9, 8, 7, 6]
+Expected Output:
+Array 4 is sorted: false
+```
+
+**Solution:**
 ```java
 public class CheckSorted {
     public static void main(String[] args) {
         int[] arr1 = {1, 2, 3, 4, 5};
         int[] arr2 = {1, 3, 2, 4, 5};
-        
+
         System.out.println("Array 1 is sorted: " + isSorted(arr1));
         System.out.println("Array 2 is sorted: " + isSorted(arr2));
     }
-    
+
     public static boolean isSorted(int[] arr) {
         for (int i = 0; i < arr.length - 1; i++) {
             if (arr[i] > arr[i + 1]) {
@@ -822,24 +1255,61 @@ public class CheckSorted {
 }
 ```
 
+**💡 Tips:**
+- Loop to `arr.length - 1` to avoid out of bounds when accessing `arr[i + 1]`
+- Use `>` for strictly ascending, `>=` for strictly ascending (no duplicates)
+- Return false immediately when unsorted pair found
+- Time complexity: O(n) in worst case
+- Can modify to check descending order by changing comparison
+
 ---
 
 ### Exercise 13: Frequency of Elements
+
+**📝 Problem Statement:**
+Count how many times each unique element appears in an array and display the frequency of each element.
+
+**Requirements:**
+- Use an array with duplicate values
+- Track which elements have been counted
+- For each unique element, count its occurrences
+- Display element and its frequency
+- Skip already counted elements
+- Use boolean array to track counted elements
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 2, 4, 1, 5, 3, 2, 1]
+Expected Output:
+Element Frequencies:
+1 appears 3 time(s)
+2 appears 3 time(s)
+3 appears 2 time(s)
+4 appears 1 time(s)
+5 appears 1 time(s)
+
+Input: array = [5, 5, 5, 5]
+Expected Output:
+Element Frequencies:
+5 appears 4 time(s)
+```
+
+**Solution:**
 ```java
 public class ElementFrequency {
     public static void main(String[] args) {
         int[] numbers = {1, 2, 3, 2, 4, 1, 5, 3, 2, 1};
-        
+
         System.out.println("Element Frequencies:");
-        
+
         // Track which elements we've already counted
         boolean[] counted = new boolean[numbers.length];
-        
+
         for (int i = 0; i < numbers.length; i++) {
             if (counted[i]) {
                 continue;
             }
-            
+
             int count = 1;
             for (int j = i + 1; j < numbers.length; j++) {
                 if (numbers[i] == numbers[j]) {
@@ -847,29 +1317,69 @@ public class ElementFrequency {
                     counted[j] = true;
                 }
             }
-            
+
             System.out.println(numbers[i] + " appears " + count + " time(s)");
         }
     }
 }
 ```
 
+**💡 Tips:**
+- Boolean array tracks which positions have been counted
+- Inner loop counts occurrences of current element
+- Skip already-counted elements using `continue`
+- Time complexity: O(n²) due to nested loops
+- Alternative: Use HashMap for O(n) solution (covered later)
+
 ---
 
 ### Exercise 14: Left and Right Sum
+
+**📝 Problem Statement:**
+For each index in an array, calculate the sum of elements to its left and the sum of elements to its right, then display both sums.
+
+**Requirements:**
+- Initialize an array with integer values
+- Calculate total sum of all elements
+- For each index, calculate left sum and right sum
+- Left sum = sum of all elements before current index
+- Right sum = sum of all elements after current index
+- Display results in tabular format
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 4, 5, 6]
+Expected Output:
+Index	Left Sum	Right Sum
+0	0		21
+1	1		20
+2	3		18
+3	6		15
+4	10		11
+5	15		6
+
+Input: array = [10, 20, 30]
+Expected Output:
+Index	Left Sum	Right Sum
+0	0		50
+1	10		30
+2	30		0
+```
+
+**Solution:**
 ```java
 public class LeftRightSum {
     public static void main(String[] args) {
         int[] numbers = {1, 2, 3, 4, 5, 6};
-        
+
         int totalSum = 0;
         for (int num : numbers) {
             totalSum += num;
         }
-        
+
         int leftSum = 0;
         System.out.println("Index\tLeft Sum\tRight Sum");
-        
+
         for (int i = 0; i < numbers.length; i++) {
             int rightSum = totalSum - leftSum - numbers[i];
             System.out.println(i + "\t" + leftSum + "\t\t" + rightSum);
@@ -879,23 +1389,62 @@ public class LeftRightSum {
 }
 ```
 
+**💡 Tips:**
+- Formula: rightSum = totalSum - leftSum - current element
+- Update leftSum after each iteration
+- At first index, leftSum is 0
+- At last index, rightSum is 0
+- Useful for finding equilibrium index in arrays
+
 ---
 
 ### Exercise 15: Array Palindrome Check
+
+**📝 Problem Statement:**
+Determine if an array is a palindrome by checking if it reads the same forwards and backwards.
+
+**Requirements:**
+- Create a helper method that returns boolean
+- Use two pointers: one at start, one at end
+- Compare elements from both ends moving toward center
+- Return false if any pair doesn't match
+- Return true if all pairs match
+- Test with both palindrome and non-palindrome arrays
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 2, 1]
+Expected Output:
+Array 1 is palindrome: true
+
+Input: array = [1, 2, 3, 4, 5]
+Expected Output:
+Array 2 is palindrome: false
+
+Input: array = [5, 5, 5, 5, 5]
+Expected Output:
+Array 3 is palindrome: true
+
+Input: array = [1, 2, 2, 1]
+Expected Output:
+Array 4 is palindrome: true
+```
+
+**Solution:**
 ```java
 public class ArrayPalindrome {
     public static void main(String[] args) {
         int[] arr1 = {1, 2, 3, 2, 1};
         int[] arr2 = {1, 2, 3, 4, 5};
-        
+
         System.out.println("Array 1 is palindrome: " + isPalindrome(arr1));
         System.out.println("Array 2 is palindrome: " + isPalindrome(arr2));
     }
-    
+
     public static boolean isPalindrome(int[] arr) {
         int left = 0;
         int right = arr.length - 1;
-        
+
         while (left < right) {
             if (arr[left] != arr[right]) {
                 return false;
@@ -907,6 +1456,255 @@ public class ArrayPalindrome {
     }
 }
 ```
+
+**💡 Tips:**
+- Two-pointer technique: start from both ends
+- Only need to check half the array
+- Time complexity: O(n/2) = O(n)
+- Space complexity: O(1)
+- Similar to checking if a string is a palindrome
+
+---
+
+### Exercise 16: Copy Array Elements
+
+**📝 Problem Statement:**
+Create a program that demonstrates proper array copying techniques, including manual copying and using the clone method.
+
+**Requirements:**
+- Create an original array with sample values
+- Demonstrate incorrect copying (reference assignment)
+- Demonstrate correct manual copying using loop
+- Demonstrate using clone() method
+- Show that modifying copy doesn't affect original
+- Display all arrays to verify independence
+
+**Sample Test Cases:**
+```
+Input: original = [1, 2, 3, 4, 5]
+Expected Output:
+Original array: 1 2 3 4 5
+Incorrectly copied (reference): 100 2 3 4 5
+Manual copy: 1 2 3 4 5
+Cloned array: 1 2 3 4 5
+After modifying manual copy: 200 2 3 4 5
+Original still unchanged: 1 2 3 4 5
+```
+
+**Solution:**
+```java
+public class CopyArray {
+    public static void main(String[] args) {
+        int[] original = {1, 2, 3, 4, 5};
+
+        // Wrong way - just copies reference
+        int[] wrongCopy = original;
+        wrongCopy[0] = 100;  // Modifies original too!
+
+        System.out.print("Original after wrong copy: ");
+        printArray(original);  // Shows 100!
+
+        // Reset original
+        original[0] = 1;
+
+        // Correct way 1 - Manual copy
+        int[] manualCopy = new int[original.length];
+        for (int i = 0; i < original.length; i++) {
+            manualCopy[i] = original[i];
+        }
+
+        // Correct way 2 - Using clone()
+        int[] clonedCopy = original.clone();
+
+        // Test independence
+        manualCopy[0] = 200;
+        clonedCopy[0] = 300;
+
+        System.out.print("Original array: ");
+        printArray(original);  // Still 1 2 3 4 5
+
+        System.out.print("Manual copy: ");
+        printArray(manualCopy);  // Shows 200 2 3 4 5
+
+        System.out.print("Cloned copy: ");
+        printArray(clonedCopy);  // Shows 300 2 3 4 5
+    }
+
+    public static void printArray(int[] arr) {
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+    }
+}
+```
+
+**💡 Tips:**
+- Assignment (`=`) copies reference, not array contents
+- Manual copy: create new array, loop through and copy elements
+- `clone()` method creates shallow copy efficiently
+- Always create new array for independent copy
+- For 2D arrays, clone() only copies references (shallow copy)
+
+---
+
+### Exercise 17: Linear Search with Count
+
+**📝 Problem Statement:**
+Implement a linear search that counts how many times a target element appears in an array and returns all index positions where it's found.
+
+**Requirements:**
+- Accept an array and target value
+- Search through entire array (don't stop at first match)
+- Count total occurrences of target
+- Store all matching indices
+- Display count and all positions
+- Handle case when element is not found
+
+**Sample Test Cases:**
+```
+Input: array = [10, 25, 10, 45, 10, 60, 10, 80], target = 10
+Expected Output:
+Target 10 found 4 times
+Positions: 0, 2, 4, 6
+
+Input: array = [5, 10, 15, 20, 25], target = 30
+Expected Output:
+Target 30 not found in array
+
+Input: array = [7, 7, 7, 7, 7], target = 7
+Expected Output:
+Target 7 found 5 times
+Positions: 0, 1, 2, 3, 4
+```
+
+**Solution:**
+```java
+import java.util.Scanner;
+
+public class LinearSearchWithCount {
+    public static void main(String[] args) {
+        int[] numbers = {10, 25, 10, 45, 10, 60, 10, 80};
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter number to search: ");
+        int target = scanner.nextInt();
+
+        // First pass: count occurrences
+        int count = 0;
+        for (int num : numbers) {
+            if (num == target) {
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            System.out.println("Target " + target + " not found in array");
+        } else {
+            System.out.println("Target " + target + " found " + count + " time(s)");
+
+            // Second pass: collect positions
+            System.out.print("Positions: ");
+            boolean first = true;
+            for (int i = 0; i < numbers.length; i++) {
+                if (numbers[i] == target) {
+                    if (!first) System.out.print(", ");
+                    System.out.print(i);
+                    first = false;
+                }
+            }
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**💡 Tips:**
+- Two-pass approach: first count, then collect indices
+- Use boolean flag for comma formatting
+- Time complexity: O(n) - two passes through array
+- Useful for finding all matches, not just first
+- Can store indices in separate array for later use
+
+---
+
+### Exercise 18: Find Duplicate Elements
+
+**📝 Problem Statement:**
+Find and display all elements that appear more than once in an array, along with their frequency.
+
+**Requirements:**
+- Use an array with duplicate values
+- Identify elements that appear 2 or more times
+- Display each duplicate element only once
+- Show how many times each duplicate appears
+- Skip elements that appear only once
+- Use tracking to avoid duplicate reporting
+
+**Sample Test Cases:**
+```
+Input: array = [1, 2, 3, 2, 4, 1, 5, 3, 2, 6]
+Expected Output:
+Duplicate Elements:
+1 appears 2 time(s)
+2 appears 3 time(s)
+3 appears 2 time(s)
+
+Input: array = [10, 20, 30, 40, 50]
+Expected Output:
+No duplicate elements found
+
+Input: array = [5, 5, 5, 5, 5]
+Expected Output:
+Duplicate Elements:
+5 appears 5 time(s)
+```
+
+**Solution:**
+```java
+public class FindDuplicates {
+    public static void main(String[] args) {
+        int[] numbers = {1, 2, 3, 2, 4, 1, 5, 3, 2, 6};
+
+        boolean[] checked = new boolean[numbers.length];
+        boolean foundDuplicate = false;
+
+        System.out.println("Duplicate Elements:");
+
+        for (int i = 0; i < numbers.length; i++) {
+            if (checked[i]) {
+                continue;
+            }
+
+            int count = 1;
+            for (int j = i + 1; j < numbers.length; j++) {
+                if (numbers[i] == numbers[j]) {
+                    count++;
+                    checked[j] = true;
+                }
+            }
+
+            if (count > 1) {
+                System.out.println(numbers[i] + " appears " + count + " time(s)");
+                foundDuplicate = true;
+            }
+        }
+
+        if (!foundDuplicate) {
+            System.out.println("No duplicate elements found");
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Similar to frequency counting but only show duplicates
+- Boolean array prevents duplicate reporting
+- Only display elements with count > 1
+- Time complexity: O(n²) with nested loops
+- Alternative: Use HashMap for O(n) solution (covered later)
 
 ---
 

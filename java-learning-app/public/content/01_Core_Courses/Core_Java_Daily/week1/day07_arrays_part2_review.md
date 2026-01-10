@@ -531,38 +531,695 @@ System.out.println(original[0][0]);  // Still 1
 ## 💻 Practical Exercises
 
 ### Exercise 1: 2D Array Operations
+
+**📝 Problem Statement:**
+Create a program that performs various operations on a 2D array (matrix), including calculating the sum of all elements, finding maximum and minimum values, and computing row and column sums.
+
+**Requirements:**
+- Create a 3x3 matrix with predefined values
+- Calculate and display the sum of all elements in the matrix
+- Find and display the maximum element
+- Find and display the minimum element
+- Calculate and display the sum of each row
+- Calculate and display the sum of each column
+- Use helper methods for each operation
+
+**Sample Test Cases:**
+```
+Input: matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+Expected Output:
+Original Matrix:
+[1, 2, 3]
+[4, 5, 6]
+[7, 8, 9]
+
+Sum of all elements: 45
+Maximum element: 9
+Minimum element: 1
+
+Row Sums:
+Row 0: 6
+Row 1: 15
+Row 2: 24
+
+Column Sums:
+Column 0: 12
+Column 1: 15
+Column 2: 18
+```
+
+**Solution:**
 ```java
 import java.util.Arrays;
 
-public class Matrix Operations {
+public class MatrixOperations {
     public static void main(String[] args) {
         int[][] matrix = {
             {1, 2, 3},
             {4, 5, 6},
             {7, 8, 9}
         };
-        
+
         System.out.println("Original Matrix:");
         printMatrix(matrix);
-        
+
         System.out.println("\nSum of all elements: " + sumAll(matrix));
         System.out.println("Maximum element: " + findMax(matrix));
         System.out.println("Minimum element: " + findMin(matrix));
-        
+
         System.out.println("\nRow Sums:");
         printRowSums(matrix);
-        
+
         System.out.println("\nColumn Sums:");
         printColumnSums(matrix);
     }
-    
+
     public static void printMatrix(int[][] matrix) {
+        for (int[] row : matrix) {
+            System.out.println(Arrays.toString(row));
+        }
+    }
+
+    public static int sumAll(int[][] matrix) {
+        int sum = 0;
+        for (int[] row : matrix) {
+            for (int element : row) {
+                sum += element;
+            }
+        }
+        return sum;
+    }
+
+    public static int findMax(int[][] matrix) {
+        int max = matrix[0][0];
+        for (int[] row : matrix) {
+            for (int element : row) {
+                if (element > max) {
+                    max = element;
+                }
+            }
+        }
+        return max;
+    }
+
+    public static int findMin(int[][] matrix) {
+        int min = matrix[0][0];
+        for (int[] row : matrix) {
+            for (int element : row) {
+                if (element < min) {
+                    min = element;
+                }
+            }
+        }
+        return min;
+    }
+
+    public static void printRowSums(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            int sum = 0;
+            for (int j = 0; j < matrix[i].length; j++) {
+                sum += matrix[i][j];
+            }
+            System.out.println("Row " + i + ": " + sum);
+        }
+    }
+
+    public static void printColumnSums(int[][] matrix) {
+        for (int j = 0; j < matrix[0].length; j++) {
+            int sum = 0;
+            for (int i = 0; i < matrix.length; i++) {
+                sum += matrix[i][j];
+            }
+            System.out.println("Column " + j + ": " + sum);
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Initialize max and min to first element matrix[0][0], not to 0
+- For row sums: outer loop iterates rows, inner loop sums elements in that row
+- For column sums: outer loop iterates columns, inner loop iterates rows for that column
+- Use enhanced for loop where possible for cleaner code
+- Helper methods make the code more modular and reusable
+
+---
+
+### Exercise 2: Matrix Addition
+
+**📝 Problem Statement:**
+Add two matrices of the same dimensions and display all three matrices (the two input matrices and their sum).
+
+**Requirements:**
+- Create two 3x3 matrices with predefined values
+- Create a helper method to add two matrices
+- Check that matrices have same dimensions (implicitly assumed here)
+- Display the first matrix, second matrix, and their sum
+- Use a helper method to print matrices
+
+**Sample Test Cases:**
+```
+Input: matrix1 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+       matrix2 = [[9, 8, 7], [6, 5, 4], [3, 2, 1]]
+Expected Output:
+Matrix 1:
+1	2	3
+4	5	6
+7	8	9
+
+Matrix 2:
+9	8	7
+6	5	4
+3	2	1
+
+Sum:
+10	10	10
+10	10	10
+10	10	10
+```
+
+**Solution:**
+```java
+public class MatrixAddition {
+    public static void main(String[] args) {
+        int[][] matrix1 = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 9}
+        };
+
+        int[][] matrix2 = {
+            {9, 8, 7},
+            {6, 5, 4},
+            {3, 2, 1}
+        };
+
+        int[][] result = addMatrices(matrix1, matrix2);
+
+        System.out.println("Matrix 1:");
+        printMatrix(matrix1);
+
+        System.out.println("\nMatrix 2:");
+        printMatrix(matrix2);
+
+        System.out.println("\nSum:");
+        printMatrix(result);
+    }
+
+    public static int[][] addMatrices(int[][] m1, int[][] m2) {
+        int rows = m1.length;
+        int cols = m1[0].length;
+        int[][] result = new int[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result[i][j] = m1[i][j] + m2[i][j];
+            }
+        }
+
+        return result;
+    }
+
+    public static void printMatrix(int[][] matrix) {
+        for (int[] row : matrix) {
+            for (int element : row) {
+                System.out.print(element + "\t");
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Matrix addition requires both matrices to have same dimensions
+- Add corresponding elements: result[i][j] = m1[i][j] + m2[i][j]
+- Create new result matrix with same dimensions as input matrices
+- Use tabs (\t) for better alignment in output
+- Can enhance by adding dimension check before addition
+
+---
+
+### Exercise 3: Matrix Multiplication
+
+**📝 Problem Statement:**
+Multiply two matrices using the standard matrix multiplication algorithm and display the input matrices and their product.
+
+**Requirements:**
+- Create a 2x3 matrix (matrix1) and a 3x2 matrix (matrix2)
+- Implement matrix multiplication algorithm
+- Ensure dimensions are compatible (columns of m1 = rows of m2)
+- Display both input matrices and the resulting product matrix
+- Use proper formatting for output
+
+**Sample Test Cases:**
+```
+Input: matrix1 (2x3) = [[1, 2, 3], [4, 5, 6]]
+       matrix2 (3x2) = [[7, 8], [9, 10], [11, 12]]
+Expected Output:
+Matrix 1 (2x3):
+1	2	3
+4	5	6
+
+Matrix 2 (3x2):
+7	8
+9	10
+11	12
+
+Product (2x2):
+58	64
+139	154
+```
+
+**Solution:**
+```java
+public class MatrixMultiplication {
+    public static void main(String[] args) {
+        int[][] matrix1 = {
+            {1, 2, 3},
+            {4, 5, 6}
+        };  // 2x3
+
+        int[][] matrix2 = {
+            {7, 8},
+            {9, 10},
+            {11, 12}
+        };  // 3x2
+
+        int[][] result = multiplyMatrices(matrix1, matrix2);
+
+        System.out.println("Matrix 1 (2x3):");
+        printMatrix(matrix1);
+
+        System.out.println("\nMatrix 2 (3x2):");
+        printMatrix(matrix2);
+
+        System.out.println("\nProduct (2x2):");
+        printMatrix(result);
+    }
+
+    public static int[][] multiplyMatrices(int[][] m1, int[][] m2) {
+        int rows1 = m1.length;
+        int cols1 = m1[0].length;
+        int cols2 = m2[0].length;
+
+        int[][] result = new int[rows1][cols2];
+
+        for (int i = 0; i < rows1; i++) {
+            for (int j = 0; j < cols2; j++) {
+                for (int k = 0; k < cols1; k++) {
+                    result[i][j] += m1[i][k] * m2[k][j];
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public static void printMatrix(int[][] matrix) {
+        for (int[] row : matrix) {
+            for (int element : row) {
+                System.out.print(element + "\t");
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Matrix multiplication formula: result[i][j] = Σ(m1[i][k] × m2[k][j]) for all k
+- Result dimensions: (m1 rows) × (m2 columns)
+- Multiplication is only possible if: m1 columns = m2 rows
+- Triple nested loop required: i for rows, j for columns, k for multiplication
+- Result matrix dimensions: rows1 × cols2
+
+---
+
+### Exercise 4: Arrays Utility Methods
+
+**📝 Problem Statement:**
+Demonstrate all important utility methods from the java.util.Arrays class including sort, binarySearch, fill, copy, copyOfRange, equals, and toString.
+
+**Requirements:**
+- Use Arrays.sort() to sort an array
+- Use Arrays.binarySearch() to find an element in sorted array
+- Use Arrays.fill() to fill an array with a value
+- Use Arrays.copyOf() to copy an entire array
+- Use Arrays.copyOfRange() to copy a portion of an array
+- Use Arrays.equals() to compare two arrays
+- Use Arrays.deepToString() for multi-dimensional arrays
+- Display results of each operation
+
+**Sample Test Cases:**
+```
+Expected Output:
+Original: [5, 2, 8, 1, 9, 3, 7, 4, 6]
+Sorted: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+7 found at index: 6
+
+Filled array: [10, 10, 10, 10, 10]
+
+Copied array: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+Range [2-7): [3, 4, 5, 6, 7]
+
+Arrays equal: true
+
+2D Array: [[1, 2, 3], [4, 5, 6]]
+```
+
+**Solution:**
+```java
+import java.util.Arrays;
+
+public class ArraysUtilityDemo {
+    public static void main(String[] args) {
+        // Sort
+        int[] numbers = {5, 2, 8, 1, 9, 3, 7, 4, 6};
+        System.out.println("Original: " + Arrays.toString(numbers));
+        Arrays.sort(numbers);
+        System.out.println("Sorted: " + Arrays.toString(numbers));
+
+        // Binary Search
+        int index = Arrays.binarySearch(numbers, 7);
+        System.out.println("\n7 found at index: " + index);
+
+        // Fill
+        int[] filled = new int[5];
+        Arrays.fill(filled, 10);
+        System.out.println("\nFilled array: " + Arrays.toString(filled));
+
+        // Copy
+        int[] copy = Arrays.copyOf(numbers, numbers.length);
+        System.out.println("\nCopied array: " + Arrays.toString(copy));
+
+        // Copy Range
+        int[] range = Arrays.copyOfRange(numbers, 2, 7);
+        System.out.println("Range [2-7): " + Arrays.toString(range));
+
+        // Equals
+        System.out.println("\nArrays equal: " + Arrays.equals(numbers, copy));
+
+        // 2D Array toString
+        int[][] matrix = {{1, 2, 3}, {4, 5, 6}};
+        System.out.println("\n2D Array: " + Arrays.deepToString(matrix));
+    }
+}
+```
+
+**💡 Tips:**
+- Always sort array before using binarySearch()
+- copyOfRange() uses exclusive end index: [start, end)
+- For 2D arrays: use deepToString() and deepEquals()
+- Arrays.fill() can fill entire array or a range
+- Arrays.sort() sorts in-place, modifying original array
+
+---
+
+### Exercise 5: Jagged Array - Student Grades
+
+**📝 Problem Statement:**
+Create a jagged array to store student grades where each student has a different number of subjects. Calculate and display statistics for each student including average, highest, and lowest grades.
+
+**Requirements:**
+- Create a jagged array with 4 students having different numbers of subjects
+- Display grades for each student
+- Calculate and display number of subjects per student
+- Calculate and display average grade for each student
+- Find and display highest grade for each student
+- Find and display lowest grade for each student
+- Format output with clear headers and sections
+
+**Sample Test Cases:**
+```
+Expected Output:
+Student Grade Report:
+==================================================
+
+Student 1:
+Grades: [85, 90, 78, 92]
+Number of subjects: 4
+Average: 86.25
+Highest: 92
+Lowest: 78
+
+Student 2:
+Grades: [88, 95, 87]
+Number of subjects: 3
+Average: 90.00
+Highest: 95
+Lowest: 87
+
+[Similar output for students 3 and 4]
+```
+
+**Solution:**
+```java
+import java.util.Arrays;
+
+public class StudentGrades {
+    public static void main(String[] args) {
+        // Jagged array - different students have different number of subjects
+        int[][] grades = {
+            {85, 90, 78, 92},           // Student 1: 4 subjects
+            {88, 95, 87},               // Student 2: 3 subjects
+            {76, 82, 91, 88, 85},       // Student 3: 5 subjects
+            {92, 89}                    // Student 4: 2 subjects
+        };
+
+        System.out.println("Student Grade Report:");
+        System.out.println("=".repeat(50));
+
+        for (int i = 0; i < grades.length; i++) {
+            System.out.println("\nStudent " + (i + 1) + ":");
+            System.out.println("Grades: " + Arrays.toString(grades[i]));
+
+            int sum = 0;
+            int max = grades[i][0];
+            int min = grades[i][0];
+
+            for (int grade : grades[i]) {
+                sum += grade;
+                if (grade > max) max = grade;
+                if (grade < min) min = grade;
+            }
+
+            double average = (double) sum / grades[i].length;
+
+            System.out.println("Number of subjects: " + grades[i].length);
+            System.out.println("Average: " + String.format("%.2f", average));
+            System.out.println("Highest: " + max);
+            System.out.println("Lowest: " + min);
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Jagged arrays allow different row lengths: perfect for variable data
+- Each row must be accessed individually: grades[i].length
+- Use enhanced for loop to iterate through each student's grades
+- Initialize max and min to first element of each row
+- String.format("%.2f", value) formats to 2 decimal places
+
+---
+
+### Exercise 6: Identity Matrix
+
+**📝 Problem Statement:**
+Create a program that generates and displays an identity matrix of a given size. An identity matrix has 1s on the main diagonal and 0s everywhere else.
+
+**Requirements:**
+- Accept or define the size of the identity matrix
+- Create a helper method to generate identity matrix
+- Set diagonal elements (where row index = column index) to 1
+- Set all other elements to 0 (default)
+- Display the generated identity matrix
+- Use proper formatting for output
+
+**Sample Test Cases:**
+```
+Input: size = 5
+Expected Output:
+Identity Matrix (5x5):
+1 0 0 0 0
+0 1 0 0 0
+0 0 1 0 0
+0 0 0 1 0
+0 0 0 0 1
+```
+
+**Solution:**
+```java
+public class IdentityMatrix {
+    public static void main(String[] args) {
+        int size = 5;
+        int[][] identity = createIdentityMatrix(size);
+
+        System.out.println("Identity Matrix (" + size + "x" + size + "):");
+        printMatrix(identity);
+    }
+
+    public static int[][] createIdentityMatrix(int size) {
+        int[][] matrix = new int[size][size];
+
+        for (int i = 0; i < size; i++) {
+            matrix[i][i] = 1;  // Diagonal elements = 1
+        }
+
+        return matrix;
+    }
+
+    public static void printMatrix(int[][] matrix) {
+        for (int[] row : matrix) {
+            for (int element : row) {
+                System.out.print(element + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Identity matrix is always square (n × n)
+- Only need to set diagonal elements to 1: matrix[i][i] = 1
+- All other elements are 0 by default in Java
+- Main diagonal: elements where row index equals column index
+- Identity matrix is used in linear algebra and matrix operations
+
+---
+
+### Exercise 7: Spiral Matrix Print
+
+**📝 Problem Statement:**
+Print a 2D matrix in spiral order, starting from the top-left corner and moving in a clockwise spiral pattern (right → down → left → up).
+
+**Requirements:**
+- Create a 4x4 matrix with sequential numbers
+- Display the original matrix
+- Print elements in spiral order using four directional passes
+- Use four boundary variables: top, bottom, left, right
+- Adjust boundaries after each directional pass
+- Continue until all elements are printed
+
+**Sample Test Cases:**
+```
+Input: matrix = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
+Expected Output:
+Matrix:
+  1   2   3   4
+  5   6   7   8
+  9  10  11  12
+ 13  14  15  16
+
+Spiral Order:
+1 2 3 4 8 12 16 15 14 13 9 5 6 7 11 10
+```
+
+**Solution:**
+```java
+public class SpiralMatrix {
+    public static void main(String[] args) {
+        int[][] matrix = {
+            {1, 2, 3, 4},
+            {5, 6, 7, 8},
+            {9, 10, 11, 12},
+            {13, 14, 15, 16}
+        };
+
+        System.out.println("Matrix:");
+        printMatrix(matrix);
+
+        System.out.println("\nSpiral Order:");
+        printSpiral(matrix);
+    }
+
+    public static void printSpiral(int[][] matrix) {
+        int top = 0, bottom = matrix.length - 1;
+        int left = 0, right = matrix[0].length - 1;
+
+        while (top <= bottom && left <= right) {
+            // Print top row
+            for (int i = left; i <= right; i++) {
+                System.out.print(matrix[top][i] + " ");
+            }
+            top++;
+
+            // Print right column
+            for (int i = top; i <= bottom; i++) {
+                System.out.print(matrix[i][right] + " ");
+            }
+            right--;
+
+            // Print bottom row
+            if (top <= bottom) {
+                for (int i = right; i >= left; i--) {
+                    System.out.print(matrix[bottom][i] + " ");
+                }
+                bottom--;
+            }
+
+            // Print left column
+            if (left <= right) {
+                for (int i = bottom; i >= top; i--) {
+                    System.out.print(matrix[i][left] + " ");
+                }
+                left++;
+            }
+        }
+        System.out.println();
+    }
+
+    public static void printMatrix(int[][] matrix) {
+        for (int[] row : matrix) {
+            for (int element : row) {
+                System.out.printf("%3d ", element);
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Four boundaries track unprocessed area: top, bottom, left, right
+- Process in order: top row → right column → bottom row → left column
+- Adjust boundaries after each pass: top++, right--, bottom--, left++
+- Check boundaries before bottom and left passes to avoid double-printing
+- Stop when top > bottom or left > right
 
 ---
 
 ### Exercise 8: Diagonal Sum of Matrix
-Calculate the sum of diagonal elements in a square matrix.
 
+**📝 Problem Statement:**
+Calculate the sum of both diagonal elements in a square matrix: primary diagonal (top-left to bottom-right) and secondary diagonal (top-right to bottom-left).
+
+**Requirements:**
+- Create a 4x4 square matrix with predefined values
+- Display the original matrix
+- Calculate sum of primary diagonal elements (where i == j)
+- Calculate sum of secondary diagonal elements (where i + j == n - 1)
+- Display both diagonal sums with clear labels
+- Use a helper method to print the matrix
+
+**Sample Test Cases:**
+```
+Input: matrix = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
+Expected Output:
+Matrix:
+  1   2   3   4
+  5   6   7   8
+  9  10  11  12
+ 13  14  15  16
+
+Primary Diagonal Sum: 34  (1 + 6 + 11 + 16)
+Secondary Diagonal Sum: 34  (4 + 7 + 10 + 13)
+```
+
+**Solution:**
 ```java
 public class DiagonalSum {
     public static void main(String[] args) {
@@ -572,23 +1229,23 @@ public class DiagonalSum {
             {9, 10, 11, 12},
             {13, 14, 15, 16}
         };
-        
+
         int primaryDiagonalSum = 0;
         int secondaryDiagonalSum = 0;
         int n = matrix.length;
-        
+
         for (int i = 0; i < n; i++) {
             primaryDiagonalSum += matrix[i][i];
             secondaryDiagonalSum += matrix[i][n - 1 - i];
         }
-        
+
         System.out.println("Matrix:");
         printMatrix(matrix);
-        
+
         System.out.println("\nPrimary Diagonal Sum: " + primaryDiagonalSum);
         System.out.println("Secondary Diagonal Sum: " + secondaryDiagonalSum);
     }
-    
+
     public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
@@ -600,11 +1257,50 @@ public class DiagonalSum {
 }
 ```
 
+**💡 Tips:**
+- Primary diagonal: elements where row index = column index (i == j)
+- Secondary diagonal: elements where i + j = n - 1 (or matrix[i][n-1-i])
+- Only works for square matrices (rows = columns)
+- Can calculate both sums in single loop for efficiency
+- For odd-sized matrices, center element is counted in both diagonals
+
 ---
 
 ### Exercise 9: Matrix Subtraction
-Subtract two matrices.
 
+**📝 Problem Statement:**
+Subtract one matrix from another and display both input matrices and the resulting difference matrix.
+
+**Requirements:**
+- Create two 3x3 matrices with predefined values
+- Create a helper method to subtract matrices
+- Ensure matrices have same dimensions
+- Calculate difference: result[i][j] = m1[i][j] - m2[i][j]
+- Display matrix1, matrix2, and the difference matrix
+- Use proper formatting for output
+
+**Sample Test Cases:**
+```
+Input: matrix1 = [[10, 20, 30], [40, 50, 60], [70, 80, 90]]
+       matrix2 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+Expected Output:
+Matrix 1:
+ 10  20  30
+ 40  50  60
+ 70  80  90
+
+Matrix 2:
+  1   2   3
+  4   5   6
+  7   8   9
+
+Difference (Matrix1 - Matrix2):
+  9  18  27
+ 36  45  54
+ 63  72  81
+```
+
+**Solution:**
 ```java
 public class MatrixSubtraction {
     public static void main(String[] args) {
@@ -613,39 +1309,39 @@ public class MatrixSubtraction {
             {40, 50, 60},
             {70, 80, 90}
         };
-        
+
         int[][] matrix2 = {
             {1, 2, 3},
             {4, 5, 6},
             {7, 8, 9}
         };
-        
+
         int[][] result = subtractMatrices(matrix1, matrix2);
-        
+
         System.out.println("Matrix 1:");
         printMatrix(matrix1);
-        
+
         System.out.println("\nMatrix 2:");
         printMatrix(matrix2);
-        
+
         System.out.println("\nDifference (Matrix1 - Matrix2):");
         printMatrix(result);
     }
-    
+
     public static int[][] subtractMatrices(int[][] m1, int[][] m2) {
         int rows = m1.length;
         int cols = m1[0].length;
         int[][] result = new int[rows][cols];
-        
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 result[i][j] = m1[i][j] - m2[i][j];
             }
         }
-        
+
         return result;
     }
-    
+
     public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
@@ -657,11 +1353,46 @@ public class MatrixSubtraction {
 }
 ```
 
+**💡 Tips:**
+- Matrix subtraction requires same dimensions
+- Subtract corresponding elements: result[i][j] = m1[i][j] - m2[i][j]
+- Order matters: m1 - m2 ≠ m2 - m1
+- Use printf with width specifier for aligned output
+- Can enhance by adding dimension validation
+
 ---
 
 ### Exercise 10: Symmetric Matrix Checker
-Check if a matrix is symmetric.
 
+**📝 Problem Statement:**
+Check if a square matrix is symmetric. A matrix is symmetric if it equals its transpose (matrix[i][j] == matrix[j][i] for all i, j).
+
+**Requirements:**
+- Create two square matrices (one symmetric, one not)
+- Create a helper method to check if a matrix is symmetric
+- Compare each element with its transpose position
+- Display each matrix and whether it's symmetric
+- Use proper formatting for matrix display
+
+**Sample Test Cases:**
+```
+Input: matrix1 = [[1, 2, 3], [2, 4, 5], [3, 5, 6]]  (symmetric)
+       matrix2 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]  (not symmetric)
+Expected Output:
+Matrix 1:
+  1   2   3
+  2   4   5
+  3   5   6
+Is Symmetric: true
+
+Matrix 2:
+  1   2   3
+  4   5   6
+  7   8   9
+Is Symmetric: false
+```
+
+**Solution:**
 ```java
 public class SymmetricMatrix {
     public static void main(String[] args) {
@@ -670,25 +1401,25 @@ public class SymmetricMatrix {
             {2, 4, 5},
             {3, 5, 6}
         };
-        
+
         int[][] matrix2 = {
             {1, 2, 3},
             {4, 5, 6},
             {7, 8, 9}
         };
-        
+
         System.out.println("Matrix 1:");
         printMatrix(matrix1);
         System.out.println("Is Symmetric: " + isSymmetric(matrix1));
-        
+
         System.out.println("\nMatrix 2:");
         printMatrix(matrix2);
         System.out.println("Is Symmetric: " + isSymmetric(matrix2));
     }
-    
+
     public static boolean isSymmetric(int[][] matrix) {
         int n = matrix.length;
-        
+
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (matrix[i][j] != matrix[j][i]) {
@@ -698,7 +1429,7 @@ public class SymmetricMatrix {
         }
         return true;
     }
-    
+
     public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
@@ -710,11 +1441,49 @@ public class SymmetricMatrix {
 }
 ```
 
+**💡 Tips:**
+- Symmetric matrix: matrix[i][j] = matrix[j][i] for all i, j
+- Only works for square matrices (n × n)
+- Can optimize by only checking upper/lower triangle
+- Example symmetric matrices: identity matrix, covariance matrix
+- Used in linear algebra and data analysis
+
 ---
 
 ### Exercise 11: Search in 2D Array
-Search for an element in a 2D array.
 
+**📝 Problem Statement:**
+Search for an element in a 2D array and display its position (row and column indices) if found.
+
+**Requirements:**
+- Create a 4x4 matrix with predefined values
+- Display the matrix
+- Accept a target value from user input
+- Search through the entire matrix using nested loops
+- Display the position [row][col] if element is found
+- Display "not found" message if element doesn't exist
+- Close Scanner after use
+
+**Sample Test Cases:**
+```
+Input: matrix = [[10, 20, 30, 40], [15, 25, 35, 45], [27, 29, 37, 48], [32, 33, 39, 50]]
+       target = 37
+Expected Output:
+Matrix:
+ 10  20  30  40
+ 15  25  35  45
+ 27  29  37  48
+ 32  33  39  50
+
+Enter element to search: 37
+37 found at position [2][2]
+
+Input: target = 100
+Expected Output:
+100 not found in the matrix
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
@@ -726,18 +1495,18 @@ public class Search2DArray {
             {27, 29, 37, 48},
             {32, 33, 39, 50}
         };
-        
+
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.println("Matrix:");
         printMatrix(matrix);
-        
+
         System.out.print("\nEnter element to search: ");
         int target = scanner.nextInt();
-        
+
         boolean found = false;
         int row = -1, col = -1;
-        
+
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] == target) {
@@ -749,16 +1518,16 @@ public class Search2DArray {
             }
             if (found) break;
         }
-        
+
         if (found) {
             System.out.println(target + " found at position [" + row + "][" + col + "]");
         } else {
             System.out.println(target + " not found in the matrix");
         }
-        
+
         scanner.close();
     }
-    
+
     public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
@@ -770,56 +1539,117 @@ public class Search2DArray {
 }
 ```
 
+**💡 Tips:**
+- Linear search through 2D array: check each element sequentially
+- Use break to exit both loops when element is found
+- Initialize row and col to -1 to indicate "not found" state
+- Time complexity: O(rows × cols) in worst case
+- For sorted matrix, can use more efficient search algorithms
+
 ---
 
 ### Exercise 12: Pascal's Triangle
-Generate Pascal's triangle using 2D array.
 
+**📝 Problem Statement:**
+Generate Pascal's Triangle using a jagged array. Each row contains binomial coefficients where each element is the sum of the two elements above it.
+
+**Requirements:**
+- Accept number of rows from user input
+- Use jagged array (each row has different length)
+- Set first and last elements of each row to 1
+- Calculate middle elements as sum of two elements from previous row
+- Display the triangle with proper spacing for pyramid shape
+- Close Scanner after use
+
+**Sample Test Cases:**
+```
+Input: rows = 5
+Expected Output:
+Enter number of rows: 5
+
+Pascal's Triangle:
+        1
+      1   1
+    1   2   1
+  1   3   3   1
+1   4   6   4   1
+```
+
+**Solution:**
 ```java
 import java.util.Scanner;
 
 public class PascalsTriangle {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.print("Enter number of rows: ");
         int rows = scanner.nextInt();
-        
+
         int[][] triangle = new int[rows][];
-        
+
         for (int i = 0; i < rows; i++) {
             triangle[i] = new int[i + 1];
             triangle[i][0] = 1;
             triangle[i][i] = 1;
-            
+
             for (int j = 1; j < i; j++) {
                 triangle[i][j] = triangle[i-1][j-1] + triangle[i-1][j];
             }
         }
-        
+
         System.out.println("\nPascal's Triangle:");
         for (int i = 0; i < rows; i++) {
             // Print spaces for formatting
             for (int k = 0; k < rows - i; k++) {
                 System.out.print("  ");
             }
-            
+
             for (int j = 0; j <= i; j++) {
                 System.out.printf("%4d", triangle[i][j]);
             }
             System.out.println();
         }
-        
+
         scanner.close();
     }
 }
 ```
 
+**💡 Tips:**
+- Row i has (i + 1) elements (0 to i)
+- First and last elements are always 1
+- Formula: triangle[i][j] = triangle[i-1][j-1] + triangle[i-1][j]
+- Perfect use case for jagged arrays
+- Used in combinatorics: element at row n, position k is C(n, k)
+
 ---
 
 ### Exercise 13: Array Sorting Comparison
-Compare different array sorting approaches.
 
+**📝 Problem Statement:**
+Compare three different sorting approaches: bubble sort, selection sort, and Arrays.sort(). Display the original array and results from each sorting method.
+
+**Requirements:**
+- Create an unsorted array with predefined values
+- Clone the array for each sorting method
+- Implement bubble sort algorithm
+- Implement selection sort algorithm
+- Use Arrays.sort() for built-in sorting
+- Display original array and all three sorted results
+- Use Arrays.toString() for clean output
+
+**Sample Test Cases:**
+```
+Input: array = [64, 34, 25, 12, 22, 11, 90]
+Expected Output:
+Original array: [64, 34, 25, 12, 22, 11, 90]
+Bubble Sort: [11, 12, 22, 25, 34, 64, 90]
+Selection Sort: [11, 12, 22, 25, 34, 64, 90]
+Arrays.sort(): [11, 12, 22, 25, 34, 64, 90]
+```
+
+**Solution:**
 ```java
 import java.util.Arrays;
 
@@ -828,22 +1658,22 @@ public class SortingComparison {
         int[] arr1 = {64, 34, 25, 12, 22, 11, 90};
         int[] arr2 = arr1.clone();
         int[] arr3 = arr1.clone();
-        
+
         System.out.println("Original array: " + Arrays.toString(arr1));
-        
+
         // Method 1: Bubble Sort
         bubbleSort(arr1);
         System.out.println("Bubble Sort: " + Arrays.toString(arr1));
-        
+
         // Method 2: Selection Sort
         selectionSort(arr2);
         System.out.println("Selection Sort: " + Arrays.toString(arr2));
-        
+
         // Method 3: Arrays.sort()
         Arrays.sort(arr3);
         System.out.println("Arrays.sort(): " + Arrays.toString(arr3));
     }
-    
+
     public static void bubbleSort(int[] arr) {
         int n = arr.length;
         for (int i = 0; i < n - 1; i++) {
@@ -856,7 +1686,7 @@ public class SortingComparison {
             }
         }
     }
-    
+
     public static void selectionSort(int[] arr) {
         int n = arr.length;
         for (int i = 0; i < n - 1; i++) {
@@ -874,11 +1704,43 @@ public class SortingComparison {
 }
 ```
 
+**💡 Tips:**
+- Bubble sort: O(n²) - repeatedly swaps adjacent elements
+- Selection sort: O(n²) - finds minimum and places it in position
+- Arrays.sort(): O(n log n) - uses optimized dual-pivot quicksort
+- Clone arrays to preserve original for comparison
+- For production code, always use Arrays.sort()
+
 ---
 
 ### Exercise 14: Zig-Zag Pattern Print
-Print 2D array in zig-zag pattern.
 
+**📝 Problem Statement:**
+Print a 2D array in zig-zag pattern where even rows are printed left-to-right and odd rows are printed right-to-left.
+
+**Requirements:**
+- Create a 4x4 matrix with sequential numbers
+- Display the original matrix in standard format
+- Print elements in zig-zag pattern
+- For even-indexed rows (0, 2, 4...): print left to right
+- For odd-indexed rows (1, 3, 5...): print right to left
+- Display the zig-zag pattern on a single line
+
+**Sample Test Cases:**
+```
+Input: matrix = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
+Expected Output:
+Matrix:
+  1   2   3   4
+  5   6   7   8
+  9  10  11  12
+ 13  14  15  16
+
+Zig-Zag Pattern:
+1 2 3 4 8 7 6 5 9 10 11 12 16 15 14 13
+```
+
+**Solution:**
 ```java
 public class ZigZagPattern {
     public static void main(String[] args) {
@@ -888,14 +1750,14 @@ public class ZigZagPattern {
             {9, 10, 11, 12},
             {13, 14, 15, 16}
         };
-        
+
         System.out.println("Matrix:");
         printMatrix(matrix);
-        
+
         System.out.println("\nZig-Zag Pattern:");
         printZigZag(matrix);
     }
-    
+
     public static void printZigZag(int[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             if (i % 2 == 0) {
@@ -912,7 +1774,7 @@ public class ZigZagPattern {
         }
         System.out.println();
     }
-    
+
     public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
@@ -924,35 +1786,73 @@ public class ZigZagPattern {
 }
 ```
 
+**💡 Tips:**
+- Use modulus operator to determine direction: i % 2 == 0 for even rows
+- Even rows: iterate j from 0 to length-1 (left to right)
+- Odd rows: iterate j from length-1 to 0 (right to left)
+- Pattern creates a snake-like traversal
+- Useful for certain image processing algorithms
+
 ---
 
 ### Exercise 15: Array Statistics
-Calculate comprehensive statistics for an array.
 
+**📝 Problem Statement:**
+Calculate comprehensive statistics for an array including count, sum, average, min, max, range, median, and count of elements above/below average.
+
+**Requirements:**
+- Create an array with predefined integer values
+- Calculate and display count (length)
+- Calculate and display sum of all elements
+- Calculate and display average
+- Find and display minimum and maximum values
+- Calculate and display range (max - min)
+- Calculate and display median (requires sorting a copy)
+- Count and display elements above and below average
+
+**Sample Test Cases:**
+```
+Input: array = [45, 23, 67, 12, 89, 34, 78, 56, 90, 21]
+Expected Output:
+Array: [45, 23, 67, 12, 89, 34, 78, 56, 90, 21]
+
+=== Statistics ===
+Count: 10
+Sum: 515
+Average: 51.50
+Minimum: 12
+Maximum: 90
+Range: 78
+Median: 50.5
+Above Average: 5
+Below Average: 5
+```
+
+**Solution:**
 ```java
 import java.util.Arrays;
 
 public class ArrayStatistics {
     public static void main(String[] args) {
         int[] numbers = {45, 23, 67, 12, 89, 34, 78, 56, 90, 21};
-        
+
         System.out.println("Array: " + Arrays.toString(numbers));
         System.out.println("\n=== Statistics ===");
-        
+
         // Count
         System.out.println("Count: " + numbers.length);
-        
+
         // Sum
         int sum = 0;
         for (int num : numbers) {
             sum += num;
         }
         System.out.println("Sum: " + sum);
-        
+
         // Average
         double average = (double) sum / numbers.length;
         System.out.println("Average: " + String.format("%.2f", average));
-        
+
         // Min and Max
         int min = numbers[0], max = numbers[0];
         for (int num : numbers) {
@@ -962,7 +1862,7 @@ public class ArrayStatistics {
         System.out.println("Minimum: " + min);
         System.out.println("Maximum: " + max);
         System.out.println("Range: " + (max - min));
-        
+
         // Median (requires sorting)
         int[] sorted = numbers.clone();
         Arrays.sort(sorted);
@@ -973,7 +1873,7 @@ public class ArrayStatistics {
             median = sorted[sorted.length/2];
         }
         System.out.println("Median: " + median);
-        
+
         // Count above and below average
         int aboveAvg = 0, belowAvg = 0;
         for (int num : numbers) {
@@ -986,115 +1886,157 @@ public class ArrayStatistics {
 }
 ```
 
-        for (int[] row : matrix) {
-            System.out.println(Arrays.toString(row));
-        }
+**💡 Tips:**
+- Clone array before sorting to preserve original order
+- Median for even-length arrays: average of two middle elements
+- Median for odd-length arrays: middle element
+- Range = max - min (spread of data)
+- Cast sum to double before division for accurate average
+
+---
+
+### Exercise 16: Matrix Transpose
+
+**📝 Problem Statement:**
+Create the transpose of a matrix by swapping rows and columns. Display both the original matrix and its transpose.
+
+**Requirements:**
+- Create a rectangular matrix (e.g., 2x3)
+- Create transpose matrix with swapped dimensions (3x2)
+- Use nested loops to copy elements with swapped indices
+- Display both original and transposed matrices
+- Use proper formatting for matrix display
+
+**Sample Test Cases:**
+```
+Input: matrix (2x3) = [[1, 2, 3], [4, 5, 6]]
+Expected Output:
+Original Matrix (2x3):
+1  2  3
+4  5  6
+
+Transpose Matrix (3x2):
+1  4
+2  5
+3  6
+```
+
+**Solution:**
+```java
+public class MatrixTranspose {
+    public static void main(String[] args) {
+        int[][] matrix = {
+            {1, 2, 3},
+            {4, 5, 6}
+        };  // 2x3
+
+        System.out.println("Original Matrix (" + matrix.length + "x" + matrix[0].length + "):");
+        printMatrix(matrix);
+
+        int[][] transpose = createTranspose(matrix);
+
+        System.out.println("\nTranspose Matrix (" + transpose.length + "x" + transpose[0].length + "):");
+        printMatrix(transpose);
     }
-    
-    public static int sumAll(int[][] matrix) {
-        int sum = 0;
+
+    public static int[][] createTranspose(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+
+        int[][] transpose = new int[cols][rows];  // Swap dimensions
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                transpose[j][i] = matrix[i][j];  // Swap indices
+            }
+        }
+
+        return transpose;
+    }
+
+    public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
-                sum += element;
+                System.out.print(element + "  ");
             }
-        }
-        return sum;
-    }
-    
-    public static int findMax(int[][] matrix) {
-        int max = matrix[0][0];
-        for (int[] row : matrix) {
-            for (int element : row) {
-                if (element > max) {
-                    max = element;
-                }
-            }
-        }
-        return max;
-    }
-    
-    public static int findMin(int[][] matrix) {
-        int min = matrix[0][0];
-        for (int[] row : matrix) {
-            for (int element : row) {
-                if (element < min) {
-                    min = element;
-                }
-            }
-        }
-        return min;
-    }
-    
-    public static void printRowSums(int[][] matrix) {
-        for (int i = 0; i < matrix.length; i++) {
-            int sum = 0;
-            for (int j = 0; j < matrix[i].length; j++) {
-                sum += matrix[i][j];
-            }
-            System.out.println("Row " + i + ": " + sum);
-        }
-    }
-    
-    public static void printColumnSums(int[][] matrix) {
-        for (int j = 0; j < matrix[0].length; j++) {
-            int sum = 0;
-            for (int i = 0; i < matrix.length; i++) {
-                sum += matrix[i][j];
-            }
-            System.out.println("Column " + j + ": " + sum);
+            System.out.println();
         }
     }
 }
 ```
 
+**💡 Tips:**
+- Transpose dimensions: (m × n) becomes (n × m)
+- Swap indices when copying: transpose[j][i] = matrix[i][j]
+- Works for rectangular matrices, not just square
+- Transpose of transpose returns original matrix
+- Used in linear algebra and matrix operations
+
 ---
 
-### Exercise 2: Matrix Addition
+### Exercise 17: Rotate Matrix 90 Degrees
+
+**📝 Problem Statement:**
+Rotate a square matrix 90 degrees clockwise. Display both the original matrix and the rotated matrix.
+
+**Requirements:**
+- Create a square matrix (3x3 or 4x4)
+- Create a rotated matrix with same dimensions
+- Use formula: rotated[j][n-1-i] = matrix[i][j]
+- Display both original and rotated matrices
+- Use proper formatting for matrix display
+
+**Sample Test Cases:**
+```
+Input: matrix (3x3) = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+Expected Output:
+Original Matrix:
+1  2  3
+4  5  6
+7  8  9
+
+Rotated 90° Clockwise:
+7  4  1
+8  5  2
+9  6  3
+```
+
+**Solution:**
 ```java
-public class MatrixAddition {
+public class RotateMatrix {
     public static void main(String[] args) {
-        int[][] matrix1 = {
+        int[][] matrix = {
             {1, 2, 3},
             {4, 5, 6},
             {7, 8, 9}
         };
-        
-        int[][] matrix2 = {
-            {9, 8, 7},
-            {6, 5, 4},
-            {3, 2, 1}
-        };
-        
-        int[][] result = addMatrices(matrix1, matrix2);
-        
-        System.out.println("Matrix 1:");
-        printMatrix(matrix1);
-        
-        System.out.println("\nMatrix 2:");
-        printMatrix(matrix2);
-        
-        System.out.println("\nSum:");
-        printMatrix(result);
+
+        System.out.println("Original Matrix:");
+        printMatrix(matrix);
+
+        int[][] rotated = rotateClockwise(matrix);
+
+        System.out.println("\nRotated 90° Clockwise:");
+        printMatrix(rotated);
     }
-    
-    public static int[][] addMatrices(int[][] m1, int[][] m2) {
-        int rows = m1.length;
-        int cols = m1[0].length;
-        int[][] result = new int[rows][cols];
-        
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                result[i][j] = m1[i][j] + m2[i][j];
+
+    public static int[][] rotateClockwise(int[][] matrix) {
+        int n = matrix.length;
+        int[][] rotated = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                rotated[j][n - 1 - i] = matrix[i][j];
             }
         }
-        
-        return result;
+
+        return rotated;
     }
-    
+
     public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
-                System.out.print(element + "\t");
+                System.out.print(element + "  ");
             }
             System.out.println();
         }
@@ -1102,239 +2044,102 @@ public class MatrixAddition {
 }
 ```
 
+**💡 Tips:**
+- Rotation formula (90° clockwise): rotated[j][n-1-i] = matrix[i][j]
+- Only works for square matrices (n × n)
+- For 90° counter-clockwise: rotated[n-1-j][i] = matrix[i][j]
+- 180° rotation = two 90° rotations
+- Used in image processing and graphics
+
 ---
 
-### Exercise 3: Matrix Multiplication
-```java
-public class MatrixMultiplication {
-    public static void main(String[] args) {
-        int[][] matrix1 = {
-            {1, 2, 3},
-            {4, 5, 6}
-        };  // 2x3
-        
-        int[][] matrix2 = {
-            {7, 8},
-            {9, 10},
-            {11, 12}
-        };  // 3x2
-        
-        int[][] result = multiplyMatrices(matrix1, matrix2);
-        
-        System.out.println("Matrix 1 (2x3):");
-        printMatrix(matrix1);
-        
-        System.out.println("\nMatrix 2 (3x2):");
-        printMatrix(matrix2);
-        
-        System.out.println("\nProduct (2x2):");
-        printMatrix(result);
-    }
-    
-    public static int[][] multiplyMatrices(int[][] m1, int[][] m2) {
-        int rows1 = m1.length;
-        int cols1 = m1[0].length;
-        int cols2 = m2[0].length;
-        
-        int[][] result = new int[rows1][cols2];
-        
-        for (int i = 0; i < rows1; i++) {
-            for (int j = 0; j < cols2; j++) {
-                for (int k = 0; k < cols1; k++) {
-                    result[i][j] += m1[i][k] * m2[k][j];
-                }
-            }
-        }
-        
-        return result;
-    }
-    
-    public static void printMatrix(int[][] matrix) {
-        for (int[] row : matrix) {
-            for (int element : row) {
-                System.out.print(element + "\t");
-            }
-            System.out.println();
-        }
-    }
-}
+### Exercise 18: Matrix Boundary Traversal
+
+**📝 Problem Statement:**
+Print only the boundary elements of a matrix in clockwise order (top row → right column → bottom row → left column).
+
+**Requirements:**
+- Create a rectangular matrix with predefined values
+- Display the original matrix
+- Print boundary elements in clockwise order
+- Handle edge cases (single row, single column, 1x1 matrix)
+- Print boundary elements on a single line
+
+**Sample Test Cases:**
+```
+Input: matrix (4x5) = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15], [16, 17, 18, 19, 20]]
+Expected Output:
+Matrix:
+  1   2   3   4   5
+  6   7   8   9  10
+ 11  12  13  14  15
+ 16  17  18  19  20
+
+Boundary Elements (Clockwise):
+1 2 3 4 5 10 15 20 19 18 17 16 11 6
 ```
 
----
-
-### Exercise 4: Arrays Utility Methods
+**Solution:**
 ```java
-import java.util.Arrays;
-
-public class ArraysUtilityDemo {
-    public static void main(String[] args) {
-        // Sort
-        int[] numbers = {5, 2, 8, 1, 9, 3, 7, 4, 6};
-        System.out.println("Original: " + Arrays.toString(numbers));
-        Arrays.sort(numbers);
-        System.out.println("Sorted: " + Arrays.toString(numbers));
-        
-        // Binary Search
-        int index = Arrays.binarySearch(numbers, 7);
-        System.out.println("\n7 found at index: " + index);
-        
-        // Fill
-        int[] filled = new int[5];
-        Arrays.fill(filled, 10);
-        System.out.println("\nFilled array: " + Arrays.toString(filled));
-        
-        // Copy
-        int[] copy = Arrays.copyOf(numbers, numbers.length);
-        System.out.println("\nCopied array: " + Arrays.toString(copy));
-        
-        // Copy Range
-        int[] range = Arrays.copyOfRange(numbers, 2, 7);
-        System.out.println("Range [2-7): " + Arrays.toString(range));
-        
-        // Equals
-        System.out.println("\nArrays equal: " + Arrays.equals(numbers, copy));
-        
-        // 2D Array toString
-        int[][] matrix = {{1, 2, 3}, {4, 5, 6}};
-        System.out.println("\n2D Array: " + Arrays.deepToString(matrix));
-    }
-}
-```
-
----
-
-### Exercise 5: Jagged Array - Student Grades
-```java
-import java.util.Arrays;
-
-public class StudentGrades {
-    public static void main(String[] args) {
-        // Jagged array - different students have different number of subjects
-        int[][] grades = {
-            {85, 90, 78, 92},           // Student 1: 4 subjects
-            {88, 95, 87},               // Student 2: 3 subjects
-            {76, 82, 91, 88, 85},       // Student 3: 5 subjects
-            {92, 89}                    // Student 4: 2 subjects
-        };
-        
-        System.out.println("Student Grade Report:");
-        System.out.println("=" .repeat(50));
-        
-        for (int i = 0; i < grades.length; i++) {
-            System.out.println("\nStudent " + (i + 1) + ":");
-            System.out.println("Grades: " + Arrays.toString(grades[i]));
-            
-            int sum = 0;
-            int max = grades[i][0];
-            int min = grades[i][0];
-            
-            for (int grade : grades[i]) {
-                sum += grade;
-                if (grade > max) max = grade;
-                if (grade < min) min = grade;
-            }
-            
-            double average = (double) sum / grades[i].length;
-            
-            System.out.println("Number of subjects: " + grades[i].length);
-            System.out.println("Average: " + String.format("%.2f", average));
-            System.out.println("Highest: " + max);
-            System.out.println("Lowest: " + min);
-        }
-    }
-}
-```
-
----
-
-### Exercise 6: Identity Matrix
-```java
-public class IdentityMatrix {
-    public static void main(String[] args) {
-        int size = 5;
-        int[][] identity = createIdentityMatrix(size);
-        
-        System.out.println("Identity Matrix (" + size + "x" + size + "):");
-        printMatrix(identity);
-    }
-    
-    public static int[][] createIdentityMatrix(int size) {
-        int[][] matrix = new int[size][size];
-        
-        for (int i = 0; i < size; i++) {
-            matrix[i][i] = 1;  // Diagonal elements = 1
-        }
-        
-        return matrix;
-    }
-    
-    public static void printMatrix(int[][] matrix) {
-        for (int[] row : matrix) {
-            for (int element : row) {
-                System.out.print(element + " ");
-            }
-            System.out.println();
-        }
-    }
-}
-```
-
----
-
-### Exercise 7: Spiral Matrix Print
-```java
-public class SpiralMatrix {
+public class MatrixBoundary {
     public static void main(String[] args) {
         int[][] matrix = {
-            {1, 2, 3, 4},
-            {5, 6, 7, 8},
-            {9, 10, 11, 12},
-            {13, 14, 15, 16}
+            {1, 2, 3, 4, 5},
+            {6, 7, 8, 9, 10},
+            {11, 12, 13, 14, 15},
+            {16, 17, 18, 19, 20}
         };
-        
+
         System.out.println("Matrix:");
         printMatrix(matrix);
-        
-        System.out.println("\nSpiral Order:");
-        printSpiral(matrix);
+
+        System.out.println("\nBoundary Elements (Clockwise):");
+        printBoundary(matrix);
     }
-    
-    public static void printSpiral(int[][] matrix) {
-        int top = 0, bottom = matrix.length - 1;
-        int left = 0, right = matrix[0].length - 1;
-        
-        while (top <= bottom && left <= right) {
-            // Print top row
-            for (int i = left; i <= right; i++) {
-                System.out.print(matrix[top][i] + " ");
+
+    public static void printBoundary(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+
+        // Single row
+        if (rows == 1) {
+            for (int j = 0; j < cols; j++) {
+                System.out.print(matrix[0][j] + " ");
             }
-            top++;
-            
-            // Print right column
-            for (int i = top; i <= bottom; i++) {
-                System.out.print(matrix[i][right] + " ");
-            }
-            right--;
-            
-            // Print bottom row
-            if (top <= bottom) {
-                for (int i = right; i >= left; i--) {
-                    System.out.print(matrix[bottom][i] + " ");
-                }
-                bottom--;
-            }
-            
-            // Print left column
-            if (left <= right) {
-                for (int i = bottom; i >= top; i--) {
-                    System.out.print(matrix[i][left] + " ");
-                }
-                left++;
-            }
+            return;
         }
+
+        // Single column
+        if (cols == 1) {
+            for (int i = 0; i < rows; i++) {
+                System.out.print(matrix[i][0] + " ");
+            }
+            return;
+        }
+
+        // Top row
+        for (int j = 0; j < cols; j++) {
+            System.out.print(matrix[0][j] + " ");
+        }
+
+        // Right column (excluding top corner)
+        for (int i = 1; i < rows; i++) {
+            System.out.print(matrix[i][cols - 1] + " ");
+        }
+
+        // Bottom row (excluding right corner, right to left)
+        for (int j = cols - 2; j >= 0; j--) {
+            System.out.print(matrix[rows - 1][j] + " ");
+        }
+
+        // Left column (excluding bottom and top corners, bottom to top)
+        for (int i = rows - 2; i > 0; i--) {
+            System.out.print(matrix[i][0] + " ");
+        }
+
         System.out.println();
     }
-    
+
     public static void printMatrix(int[][] matrix) {
         for (int[] row : matrix) {
             for (int element : row) {
@@ -1345,6 +2150,15 @@ public class SpiralMatrix {
     }
 }
 ```
+
+**💡 Tips:**
+- Handle edge cases: single row, single column, 1x1 matrix
+- Print in order: top → right → bottom → left
+- Avoid printing corner elements multiple times
+- Top row: all columns
+- Right column: rows 1 to last (excluding top corner)
+- Bottom row: cols-2 to 0 (excluding right corner, reverse order)
+- Left column: rows-2 to 1 (excluding corners, reverse order)
 
 ---
 
