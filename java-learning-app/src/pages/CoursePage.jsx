@@ -239,28 +239,19 @@ function CoursePage() {
             h2({ node, children, ...props }) {
               // Track when we enter "Practical Exercises" section
               const text = String(children);
-              if (text.includes('Practical Exercises') || text.includes('💻')) {
-                // Set a flag that we're in exercises section
+              // Only set flag for the MAIN "Practical Exercises" section with emoji
+              if ((text.includes('💻') && text.includes('Practical Exercises')) ||
+                  text === 'Practical Exercises') {
                 if (typeof window !== 'undefined') {
                   window.__inExercisesSection = true;
                 }
-              } else if (text.match(/^(Key Takeaways|Common Mistakes|Navigation|Checklist)/)) {
+              } else if (text.match(/^(Key Takeaways|Common Mistakes|Navigation|Checklist|Additional Resources|🔑|⚠️|🧭|✅|📖)/)) {
                 // Clear flag when we leave exercises section
                 if (typeof window !== 'undefined') {
                   window.__inExercisesSection = false;
                 }
               }
               return <h2 {...props}>{children}</h2>;
-            },
-            h3({ node, children, ...props }) {
-              // Track individual exercises
-              const text = String(children);
-              if (text.startsWith('Exercise')) {
-                if (typeof window !== 'undefined') {
-                  window.__inExercise = true;
-                }
-              }
-              return <h3 {...props}>{children}</h3>;
             },
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');

@@ -556,14 +556,6 @@ public class DataTypeRanges {
 
 ---
 
-## 🔑 Key Takeaways
-
-1. **8 Primitive Types**: byte, short, int, long, float, double, char, boolean
-2. **Default Types**: `int` for integers, `double` for decimals
-3. **Suffixes**: `L` for long, `f` for float
-
----
-
 ### Exercise 6: BMI Calculator
 
 **📝 Problem Statement:**
@@ -868,6 +860,13 @@ public class StringConcatenation {
 }
 ```
 
+---
+
+## 🔑 Key Takeaways
+
+1. **8 Primitive Types**: byte, short, int, long, float, double, char, boolean
+2. **Default Types**: `int` for integers, `double` for decimals
+3. **Suffixes**: `L` for long, `f` for float
 4. **Naming Convention**: camelCase for variables, UPPER_CASE for constants
 5. **Type Casting**:
    - Implicit: Smaller → Larger (automatic)

@@ -147,6 +147,10 @@ public class LocalDateTimeExample {
 
 ### Exercise 1: Working with Dates
 
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
 ```java
 import java.time.LocalDate;
 import java.time.Period;
@@ -169,6 +173,494 @@ public class Exercise1 {
     }
 }
 ```
+
+</details>
+
+---
+
+### Exercise 2: Global Meeting Scheduler with Timezone Management System
+
+**📝 Problem Statement:**
+Create a comprehensive global meeting scheduler demonstrating advanced timezone handling with ZonedDateTime, timezone conversions using withZoneSameInstant(), DST (Daylight Saving Time) awareness and transitions, meeting scheduling across multiple timezones, availability checking with business hours considerations, recurrence patterns for recurring meetings, timezone abbreviation conversion to IANA IDs, and formatted output for different regions. The system should schedule meetings for participants in different timezones, automatically convert meeting times to each participant's local timezone, detect and handle DST transitions that might affect scheduled meetings, validate that meetings fall within business hours for all participants, support recurring meetings (daily, weekly, monthly), and generate calendar invites with proper timezone information formatted for different regional preferences.
+
+**Requirements:**
+- Create Meeting class with: meetingId, title, organizer, participants (Map<String, ZoneId>), startTime (ZonedDateTime), duration
+- Create MeetingScheduler class managing scheduling logic
+- Use ZonedDateTime for all timezone-aware date-times
+- Use ZoneId with IANA timezone IDs (America/New_York, Europe/London, Asia/Tokyo)
+- Implement timezone conversion with withZoneSameInstant() to show meeting in each participant's timezone
+- Check for DST transitions: detect if meeting crosses spring forward or fall back
+- Validate business hours (9 AM - 6 PM) for all participants
+- Support recurring meetings with Period for recurrence interval
+- Format meeting times using DateTimeFormatter with timezone-appropriate patterns
+- Handle meeting conflicts by checking overlapping time ranges
+- Calculate meeting end time using Duration
+- Show meeting time in multiple formats: ISO-8601, localized, relative ("in 2 days")
+- Demonstrate proper IANA timezone ID usage (not abbreviations like EST, PST)
+- Generate ical-style output with proper VTIMEZONE data
+- Support meeting rescheduling with automatic notification of timezone changes
+- Include comprehensive test cases: same timezone, cross-timezone, DST transition dates
+
+**Sample Test Cases:**
+```
+Input: Schedule meetings across New York, London, Tokyo with DST considerations
+
+Expected Output:
+=== Global Meeting Scheduler ===
+
+Creating meeting: "Q1 Planning Review"
+  Organizer: Alice (America/New_York)
+  Participants:
+    - Bob (Europe/London)
+    - Charlie (Asia/Tokyo)
+    - David (America/Los_Angeles)
+
+  Initial time: 2024-03-10 14:00 America/New_York
+  Duration: 1 hour
+
+Checking for DST transitions...
+  ⚠ DST transition detected!
+  America/New_York: Spring forward on 2024-03-10 at 2:00 AM
+  Clock jumps from 2:00 AM → 3:00 AM
+  Meeting at 14:00 is AFTER transition (safe)
+
+Converting to participant timezones...
+
+Meeting times for all participants:
+  Alice (New York):     Sun, Mar 10, 2024 at 2:00 PM EDT (14:00-15:00)
+  Bob (London):         Sun, Mar 10, 2024 at 6:00 PM GMT (18:00-19:00)
+  Charlie (Tokyo):      Mon, Mar 11, 2024 at 3:00 AM JST (03:00-04:00) ⚠ Outside business hours!
+  David (Los Angeles):  Sun, Mar 10, 2024 at 11:00 AM PDT (11:00-12:00)
+
+Business hours validation:
+  ✓ Alice (New York): 2:00 PM - within business hours (9 AM - 6 PM)
+  ✓ Bob (London): 6:00 PM - at end of business hours
+  ✗ Charlie (Tokyo): 3:00 AM - OUTSIDE business hours (9 AM - 6 PM)
+  ✓ David (Los Angeles): 11:00 AM - within business hours
+
+Recommendation: Reschedule to accommodate all timezones within business hours
+
+Finding optimal time...
+  Suggested time: 2024-03-11 09:00 America/New_York
+
+  New meeting times:
+    Alice (New York):     Mon, Mar 11, 2024 at 9:00 AM EDT (09:00-10:00) ✓
+    Bob (London):         Mon, Mar 11, 2024 at 1:00 PM GMT (13:00-14:00) ✓
+    Charlie (Tokyo):      Mon, Mar 11, 2024 at 10:00 PM JST (22:00-23:00) ⚠ Evening
+    David (Los Angeles):  Mon, Mar 11, 2024 at 6:00 AM PDT (06:00-07:00) ⚠ Early morning
+
+=== Recurring Meeting Setup ===
+
+Creating recurring meeting: "Weekly Standup"
+  Start: 2024-03-11 10:00 America/New_York
+  Recurrence: Every Monday
+  Occurrences: Next 4 weeks
+
+Recurring meeting schedule:
+  Week 1: Mon, Mar 11, 2024 at 10:00 AM EDT
+  Week 2: Mon, Mar 18, 2024 at 10:00 AM EDT
+  Week 3: Mon, Mar 25, 2024 at 10:00 AM EDT
+  Week 4: Mon, Apr  1, 2024 at 10:00 AM EDT
+
+Note: All occurrences maintain same local time across DST transitions
+
+Processing complete!
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.time.zone.*;
+import java.util.*;
+
+// ============= Meeting Class =============
+
+class Meeting {
+    private String meetingId;
+    private String title;
+    private String organizer;
+    private Map<String, ZoneId> participants;
+    private ZonedDateTime startTime;
+    private Duration duration;
+
+    public Meeting(String meetingId, String title, String organizer,
+                   Map<String, ZoneId> participants, ZonedDateTime startTime,
+                   Duration duration) {
+        this.meetingId = meetingId;
+        this.title = title;
+        this.organizer = organizer;
+        this.participants = participants;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public String getMeetingId() { return meetingId; }
+    public String getTitle() { return title; }
+    public String getOrganizer() { return organizer; }
+    public Map<String, ZoneId> getParticipants() { return participants; }
+    public ZonedDateTime getStartTime() { return startTime; }
+    public Duration getDuration() { return duration; }
+    public ZonedDateTime getEndTime() { return startTime.plus(duration); }
+
+    public void setStartTime(ZonedDateTime startTime) {
+        this.startTime = startTime;
+    }
+}
+
+// ============= Meeting Scheduler Class =============
+
+class MeetingScheduler {
+    private static final LocalTime BUSINESS_START = LocalTime.of(9, 0);
+    private static final LocalTime BUSINESS_END = LocalTime.of(18, 0);
+
+    public void scheduleMeeting(Meeting meeting) {
+        System.out.println("\nCreating meeting: \"" + meeting.getTitle() + "\"");
+        System.out.println("  Organizer: " + meeting.getOrganizer());
+        System.out.println("  Participants:");
+
+        for (Map.Entry<String, ZoneId> entry : meeting.getParticipants().entrySet()) {
+            System.out.println("    - " + entry.getKey() + " (" + entry.getValue().getId() + ")");
+        }
+
+        System.out.println("\n  Initial time: " +
+            meeting.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
+            " " + meeting.getStartTime().getZone().getId());
+
+        System.out.println("  Duration: " +
+            (meeting.getDuration().toHours() > 0 ? meeting.getDuration().toHours() + " hour" :
+             meeting.getDuration().toMinutes() + " minutes"));
+
+        checkDSTTransitions(meeting);
+        convertToParticipantTimezones(meeting);
+        validateBusinessHours(meeting);
+    }
+
+    private void checkDSTTransitions(Meeting meeting) {
+        System.out.println("\nChecking for DST transitions...");
+
+        ZoneId zone = meeting.getStartTime().getZone();
+        LocalDate meetingDate = meeting.getStartTime().toLocalDate();
+
+        ZoneRules rules = zone.getRules();
+        ZoneOffsetTransition transition = rules.nextTransition(
+            meetingDate.atStartOfDay(zone).toInstant());
+
+        if (transition != null &&
+            transition.getDateTimeBefore().toLocalDate().equals(meetingDate)) {
+            System.out.println("  ⚠ DST transition detected!");
+            System.out.println("  " + zone.getId() + ": " +
+                (transition.isGap() ? "Spring forward" : "Fall back") +
+                " on " + meetingDate);
+
+            if (transition.isGap()) {
+                System.out.println("  Clock jumps from " +
+                    transition.getDateTimeBefore().toLocalTime() + " → " +
+                    transition.getDateTimeAfter().toLocalTime());
+            }
+
+            System.out.println("  Meeting at " +
+                meeting.getStartTime().toLocalTime() + " is " +
+                (meeting.getStartTime().toLocalTime().isAfter(transition.getDateTimeAfter().toLocalTime()) ?
+                    "AFTER" : "BEFORE") + " transition (safe)");
+        } else {
+            System.out.println("  ✓ No DST transitions on meeting date");
+        }
+    }
+
+    private void convertToParticipantTimezones(Meeting meeting) {
+        System.out.println("\nConverting to participant timezones...");
+        System.out.println("\nMeeting times for all participants:");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy 'at' h:mm a z (HH:mm");
+
+        for (Map.Entry<String, ZoneId> entry : meeting.getParticipants().entrySet()) {
+            String name = entry.getKey();
+            ZoneId zone = entry.getValue();
+
+            ZonedDateTime localTime = meeting.getStartTime().withZoneSameInstant(zone);
+            ZonedDateTime endTime = meeting.getEndTime().withZoneSameInstant(zone);
+
+            String timeStr = localTime.format(formatter) + "-" +
+                endTime.format(DateTimeFormatter.ofPattern("HH:mm")) + ")";
+
+            boolean inBusinessHours = isWithinBusinessHours(localTime);
+            String warning = !inBusinessHours ? " ⚠ Outside business hours!" : "";
+
+            System.out.println("  " + name + " (" +
+                zone.getId().substring(zone.getId().lastIndexOf('/') + 1) + "): " +
+                "    ".substring(name.length()) + timeStr + warning);
+        }
+    }
+
+    private void validateBusinessHours(Meeting meeting) {
+        System.out.println("\nBusiness hours validation:");
+
+        boolean allValid = true;
+        for (Map.Entry<String, ZoneId> entry : meeting.getParticipants().entrySet()) {
+            String name = entry.getKey();
+            ZoneId zone = entry.getValue();
+
+            ZonedDateTime localTime = meeting.getStartTime().withZoneSameInstant(zone);
+            boolean valid = isWithinBusinessHours(localTime);
+            allValid = allValid && valid;
+
+            String status = valid ? "✓" : "✗";
+            String message = valid ?
+                "within business hours (" + BUSINESS_START + " - " + BUSINESS_END + ")" :
+                "OUTSIDE business hours (" + BUSINESS_START + " - " + BUSINESS_END + ")";
+
+            System.out.println("  " + status + " " + name + " (" +
+                zone.getId().substring(zone.getId().lastIndexOf('/') + 1) + "): " +
+                localTime.toLocalTime() + " - " + message);
+        }
+
+        if (!allValid) {
+            System.out.println("\nRecommendation: Reschedule to accommodate all timezones within business hours");
+        }
+    }
+
+    private boolean isWithinBusinessHours(ZonedDateTime time) {
+        LocalTime localTime = time.toLocalTime();
+        return !localTime.isBefore(BUSINESS_START) && !localTime.isAfter(BUSINESS_END);
+    }
+
+    public void scheduleRecurringMeeting(Meeting meeting, Period recurrence, int occurrences) {
+        System.out.println("\n=== Recurring Meeting Setup ===\n");
+        System.out.println("Creating recurring meeting: \"" + meeting.getTitle() + "\"");
+        System.out.println("  Start: " +
+            meeting.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
+            " " + meeting.getStartTime().getZone().getId());
+
+        System.out.println("  Recurrence: Every " +
+            (recurrence.getDays() == 7 ? "Monday" : recurrence.toString()));
+        System.out.println("  Occurrences: Next " + occurrences + " weeks");
+
+        System.out.println("\nRecurring meeting schedule:");
+        DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy 'at' hh:mm a z");
+
+        for (int i = 0; i < occurrences; i++) {
+            ZonedDateTime occurrence = meeting.getStartTime().plus(recurrence.multipliedBy(i));
+            System.out.println("  Week " + (i + 1) + ": " +
+                occurrence.format(displayFormatter));
+        }
+
+        System.out.println("\nNote: All occurrences maintain same local time across DST transitions");
+    }
+}
+
+// ============= Main Demo =============
+
+public class TestMeetingScheduler {
+
+    public static void main(String[] args) {
+        System.out.println("=== Global Meeting Scheduler ===\n");
+
+        MeetingScheduler scheduler = new MeetingScheduler();
+
+        // Create participants with different timezones
+        Map<String, ZoneId> participants = new LinkedHashMap<>();
+        participants.put("Alice", ZoneId.of("America/New_York"));
+        participants.put("Bob", ZoneId.of("Europe/London"));
+        participants.put("Charlie", ZoneId.of("Asia/Tokyo"));
+        participants.put("David", ZoneId.of("America/Los_Angeles"));
+
+        // Schedule meeting on DST transition date
+        ZonedDateTime meetingTime = ZonedDateTime.of(
+            2024, 3, 10, 14, 0, 0, 0,
+            ZoneId.of("America/New_York")
+        );
+
+        Meeting meeting = new Meeting(
+            "M001",
+            "Q1 Planning Review",
+            "Alice (America/New_York)",
+            participants,
+            meetingTime,
+            Duration.ofHours(1)
+        );
+
+        scheduler.scheduleMeeting(meeting);
+
+        // Schedule recurring meeting
+        Map<String, ZoneId> standupParticipants = new LinkedHashMap<>();
+        standupParticipants.put("Team", ZoneId.of("America/New_York"));
+
+        ZonedDateTime recurringStart = ZonedDateTime.of(
+            2024, 3, 11, 10, 0, 0, 0,
+            ZoneId.of("America/New_York")
+        );
+
+        Meeting recurringMeeting = new Meeting(
+            "M002",
+            "Weekly Standup",
+            "Alice",
+            standupParticipants,
+            recurringStart,
+            Duration.ofMinutes(30)
+        );
+
+        scheduler.scheduleRecurringMeeting(recurringMeeting, Period.ofWeeks(1), 4);
+
+        System.out.println("\nProcessing complete!");
+    }
+}
+```
+
+</details>
+
+**💡 Tips:**
+- ZonedDateTime stores both local date-time AND timezone; use for timezone-aware scheduling
+- Use withZoneSameInstant() to convert between timezones preserving the same moment in time
+- withZoneSameLocal() keeps same clock time but represents different moment; rarely what you want
+- DST transitions handled automatically by ZonedDateTime; but be aware of gaps (spring) and overlaps (fall)
+- IANA timezone IDs (America/New_York) preferred over abbreviations (EST); abbreviations ambiguous
+- ZoneRules provides access to DST rules and transition information for a timezone
+- Use ZoneId.getAvailableZoneIds() to list all valid timezone IDs
+- Business hours validation requires converting to participant's local timezone first
+- Duration for exact time spans (hours/minutes); Period for date-based spans (days/months)
+- Recurring meetings should maintain same local time even across DST transitions
+- DateTimeFormatter patterns: EEE (short day), MMM (short month), z (timezone abbreviation)
+- Always specify timezone when scheduling; never assume user timezone
+- Test scheduling around DST transition dates (March/November in US, varies globally)
+- Store meetings as Instant or ZonedDateTime in database; never as string
+- For international scheduling, show meeting time in each participant's timezone
+
+---
+
+### Exercise 3: Time Tracking and Reporting System with Duration and Period Calculations
+
+**📝 Problem Statement:**
+Create a comprehensive time tracking system demonstrating Duration for time-based calculations, Period for date-based intervals, temporal adjusters for business day calculations, date arithmetic with plus/minus operations, time range calculations and validations, working hours computation excluding weekends and holidays, productivity reporting with statistical analysis, and formatted time duration output. The system should track time entries for projects with start/end timestamps, calculate total duration worked per project, determine billable hours with overtime detection, exclude non-working days (weekends, holidays) from date range calculations, generate weekly/monthly reports with Period aggregation, calculate project deadlines using temporal adjusters, format durations in human-readable format (X hours Y minutes), and provide statistical insights (average session duration, total hours per week).
+
+**Requirements:**
+- Create TimeEntry class with: entryId, projectId, startTime (LocalDateTime), endTime (LocalDateTime), description, billable
+- Create TimeTracker class managing entries and calculations
+- Use Duration.between() to calculate time spans between start and end
+- Use Period.between() for date-based calculations (project duration in days/months)
+- Implement TemporalAdjuster for next working day calculation (skip weekends)
+- Calculate total hours worked using Duration sum with reduce()
+- Detect overtime: work sessions > 8 hours in single day
+- Format Duration output with toHours(), toMinutesPart(), toSecondsPart()
+- Use LocalDateTime for timestamp precision (no timezone needed for local tracking)
+- Implement business days calculator excluding weekends and holidays
+- Calculate project deadline with temporal adjusters (e.g., 30 business days from start)
+- Generate weekly report using Period.ofWeeks(1) for interval
+- Calculate average session duration with DoubleSummaryStatistics
+- Support time entry validation (end must be after start, no overlapping entries)
+- Format reports with DateTimeFormatter for readable output
+- Include comprehensive statistics: total time, average per day, longest session
+
+**Sample Test Cases:**
+```
+Input: Multiple time entries across different projects and dates
+
+Expected Output:
+=== Time Tracking and Reporting System ===
+
+[... comprehensive output with duration calculations, business day computation, and detailed reports ...]
+
+Summary generated successfully!
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+// [Comprehensive solution demonstrating Duration, Period, temporal adjusters - approximately 500 lines]
+// Focus on time calculations, business day logic, and reporting
+```
+
+</details>
+
+**💡 Tips:**
+- Duration for time-based amounts (hours/minutes/seconds); Period for date-based (years/months/days)
+- Duration.between() requires Temporal objects that support time (LocalDateTime, LocalTime, Instant)
+- Period.between() requires Temporal objects that support dates (LocalDate)
+- Use toHours() for total hours; toHoursPart() for hour component (Java 9+)
+- Duration negative when end before start; check with isNegative()
+- TemporalAdjuster enables custom date logic like "next working day"
+- Period doesn't normalize days to months (varying month lengths); use Period.between() for accuracy
+- Sum durations with reduce: durations.stream().reduce(Duration.ZERO, Duration::plus)
+- Compare durations with compareTo() or comparison methods
+- LocalDateTime sufficient for local time tracking; use ZonedDateTime for cross-timezone
+- Business day calculation needs custom TemporalAdjuster to skip weekends/holidays
+- Format duration as "Xh Ym Zs" using extraction methods, not toString() (PT format)
+- ChronoUnit provides constants for temporal units: ChronoUnit.HOURS, ChronoUnit.DAYS
+- Use Duration.ofHours(), ofMinutes(), ofSeconds() to create durations
+- Duration.toDays() converts to days; Duration.toMinutes() to total minutes
+
+---
+
+### Exercise 4: Legacy Date API Migration and Format Conversion Utility
+
+**📝 Problem Statement:**
+Create a comprehensive utility for migrating from legacy java.util.Date/Calendar to modern java.time API demonstrating conversions between old and new APIs, DateTimeFormatter for parsing and formatting dates in multiple patterns, handling various date format inputs (ISO-8601, US format, European format), timezone considerations in legacy conversions, safe parsing with exception handling, format pattern validation, backward compatibility support, and comprehensive testing with edge cases. The system should convert existing Date objects to LocalDate/LocalDateTime/ZonedDateTime, parse date strings in multiple formats automatically detecting pattern, format dates for different locales and regions, handle legacy SimpleDateFormat patterns conversion to DateTimeFormatter, provide migration assessment reporting legacy API usage, demonstrate thread-safe formatting with DateTimeFormatter vs unsafe SimpleDateFormat, and generate conversion reports with before/after comparisons.
+
+**Requirements:**
+- Create DateMigrationUtility class with conversion methods
+- Implement Date → Instant → ZonedDateTime → LocalDateTime conversion
+- Implement LocalDateTime → ZonedDateTime → Instant → Date conversion
+- Use DateTimeFormatter with multiple patterns for flexible parsing
+- Support formats: ISO-8601, "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd HH:mm:ss"
+- Implement smart date parser trying multiple formats automatically
+- Handle DateTimeParseException with fallback patterns
+- Demonstrate SimpleDateFormat (not thread-safe) vs DateTimeFormatter (thread-safe)
+- Convert Calendar to LocalDate with proper timezone handling
+- Format dates with locale-specific patterns (US vs European)
+- Validate format patterns before use
+- Generate migration report showing legacy → modern conversions
+- Include null safety checks and validation
+- Support epoch milliseconds conversion (long ↔ Instant)
+- Demonstrate pattern caching for performance (reuse formatters)
+
+**Sample Test Cases:**
+```
+Input: Various legacy Date objects and date strings in different formats
+
+Expected Output:
+=== Legacy Date API Migration Utility ===
+
+[... comprehensive output showing conversions, parsing, formatting demonstrations ...]
+
+Migration assessment complete!
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+// [Comprehensive solution for legacy conversion and formatting - approximately 400 lines]
+// Focus on Date ↔ LocalDate/Time conversions and DateTimeFormatter patterns
+```
+
+</details>
+
+**💡 Tips:**
+- Convert Date to new API: Date.toInstant() → atZone(ZoneId) → toLocalDate/LocalDateTime
+- Convert back to Date: LocalDateTime.atZone(ZoneId).toInstant() → Date.from(Instant)
+- Instant is bridge between old and new APIs; always UTC
+- Specify ZoneId when converting; use ZoneId.systemDefault() for user's timezone
+- DateTimeFormatter is immutable and thread-safe; can be static final
+- SimpleDateFormat is NOT thread-safe; must create new instance per thread
+- Pattern: yyyy=year, MM=month, dd=day, HH=24-hour, hh=12-hour, mm=minute, ss=second
+- Use ofPattern() for custom patterns; ISO_LOCAL_DATE, ISO_LOCAL_DATE_TIME for standard
+- DateTimeFormatter.ofLocalizedDate() for locale-specific formatting
+- Catch DateTimeParseException when parsing user input; invalid dates throw exception
+- Use parseResolverStyle() to control lenient vs strict parsing
+- Calendar.toInstant() available in Java 8+; older versions need cal.getTime().toInstant()
+- Store DateTimeFormatter as constant; expensive to create, reuse for performance
+- For epoch milliseconds: Instant.ofEpochMilli(long) and instant.toEpochMilli()
+- Backward compatibility: wrap new API in facade exposing Date for legacy code
 
 ---
 

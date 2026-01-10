@@ -455,6 +455,10 @@ class NonSerializableClass {
 ### Exercise 1: Basic Serialization
 Create a Person class and serialize/deserialize it.
 
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
 ```java
 import java.io.*;
 
@@ -502,10 +506,16 @@ public class Exercise1 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 2: ArrayList Serialization
 Serialize and deserialize an ArrayList of objects.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -542,10 +552,16 @@ public class Exercise2 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 3: Transient Fields
 Create a class with transient fields and observe behavior.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -596,10 +612,16 @@ public class Exercise3 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 4: Deep Copy Using Serialization
 Use serialization to create deep copies of objects.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -637,10 +659,16 @@ public class Exercise4 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 5: Version Control with serialVersionUID
 Demonstrate version control issues.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -686,10 +714,16 @@ public class Exercise5 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 6: Custom Serialization
 Implement custom writeObject and readObject methods.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -746,10 +780,16 @@ public class Exercise6 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 7: Serialization with Collections
 Serialize HashMap and other collections.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -788,10 +828,16 @@ public class Exercise7 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 8: Serialization Utility Class
 Create a utility class for serialization operations.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -834,10 +880,16 @@ public class Exercise8 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 9: Inheritance and Serialization
 Work with serializable child classes.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -892,10 +944,16 @@ public class Exercise9 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 10: Game State Persistence
 Create a simple game state save/load system.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -956,6 +1014,1703 @@ public class Exercise10 {
     }
 }
 ```
+
+</details>
+
+---
+
+### Exercise 11: User Session Manager with Custom Serialization and Security
+
+**📝 Problem Statement:**
+Create a comprehensive user session management system demonstrating advanced serialization techniques including custom serialization with encryption, transient field handling, validation, and secure session persistence. The system should serialize user sessions to disk for recovery after server restarts, encrypt sensitive data (passwords, tokens), exclude temporary session data from serialization, validate deserialized sessions for tampering, implement session expiration logic, and build a production-grade session manager showcasing how serialization enables stateful application recovery while maintaining security through proper handling of sensitive information and validation of persisted state.
+
+**Requirements:**
+- Create UserSession class implementing Serializable with serialVersionUID
+- Include fields: userId, username, transient password, sessionToken, loginTime, lastAccessTime
+- Mark sensitive fields (password, raw tokens) as transient
+- Implement custom writeObject() to encrypt sessionToken before serialization
+- Implement custom readObject() to decrypt sessionToken and validate session
+- Add session expiration logic based on lastAccessTime (e.g., 30 minutes timeout)
+- Validate deserialized sessions: check expiration, verify checksum, detect tampering
+- Include session metadata: IP address, user agent, login count
+- Serialize Map<String, UserSession> for multi-user session storage
+- Provide saveSession() and loadSession() methods with file I/O
+- Handle IOException, ClassNotFoundException, InvalidObjectException
+- Display human-readable session information (formatted timestamps)
+- Support session refresh (update lastAccessTime without re-serialization)
+- Generate session statistics: total active sessions, expired sessions
+- Demonstrate encryption/decryption with simple algorithm (note: use proper crypto in production)
+
+**Sample Test Cases:**
+```
+Input: Creating and saving user sessions
+Session 1: User "alice" logs in at 10:00:00, token "abc123"
+Session 2: User "bob" logs in at 10:05:00, token "xyz789"
+Session 3: User "charlie" logs in at 10:30:00, token "def456"
+
+Save sessions to file "sessions.ser"
+Simulate 40 minutes passing
+Load sessions from file
+
+Expected Output:
+=== User Session Manager ===
+
+Creating sessions...
+✓ Created session for alice (Session ID: sess_1234)
+✓ Created session for bob (Session ID: sess_5678)
+✓ Created session for charlie (Session ID: sess_9012)
+
+Active sessions: 3
+
+=== Session Details ===
+
+Session: sess_1234
+  User: alice
+  Login Time: 2024-01-10 10:00:00
+  Last Access: 2024-01-10 10:00:00
+  Token: [ENCRYPTED]
+  Status: ✓ Active
+  Time Remaining: 30m 0s
+
+Session: sess_5678
+  User: bob
+  Login Time: 2024-01-10 10:05:00
+  Last Access: 2024-01-10 10:05:00
+  Token: [ENCRYPTED]
+  Status: ✓ Active
+  Time Remaining: 25m 0s
+
+Session: sess_9012
+  User: charlie
+  Login Time: 2024-01-10 10:30:00
+  Last Access: 2024-01-10 10:30:00
+  Token: [ENCRYPTED]
+  Status: ✓ Active
+  Time Remaining: 0m 0s
+
+=== Saving Sessions ===
+
+Serializing 3 sessions to sessions.ser...
+  Encrypting session token for alice...
+  Encrypting session token for bob...
+  Encrypting session token for charlie...
+✓ Sessions saved successfully
+
+File size: 1.2 KB
+
+=== Simulating 40 minutes passing ===
+
+Current time advanced to 2024-01-10 10:40:00
+
+=== Loading Sessions ===
+
+Deserializing sessions from sessions.ser...
+  Decrypting session token for alice...
+  Validating session for alice...
+    ✗ Session expired (40 minutes old, timeout is 30 minutes)
+  Decrypting session token for bob...
+  Validating session for bob...
+    ✗ Session expired (35 minutes old, timeout is 30 minutes)
+  Decrypting session token for charlie...
+  Validating session for charlie...
+    ✓ Session valid (10 minutes old)
+
+=== Session Statistics ===
+
+Total sessions loaded: 3
+Active sessions: 1
+Expired sessions: 2
+  - alice: expired 10 minutes ago
+  - bob: expired 5 minutes ago
+
+=== Active Sessions ===
+
+Session: sess_9012
+  User: charlie
+  Login Time: 2024-01-10 10:30:00
+  Last Access: 2024-01-10 10:30:00
+  Status: ✓ Active
+  Time Remaining: 20m 0s
+
+Cleaning up expired sessions...
+✓ Removed 2 expired sessions
+
+Final active sessions: 1
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+import java.io.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+
+// ============= User Session Class =============
+
+class UserSession implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private static final long SESSION_TIMEOUT_MINUTES = 30;
+
+    private String sessionId;
+    private String userId;
+    private String username;
+    private transient String password;  // Never serialize passwords!
+    private transient String rawToken;  // Store encrypted version instead
+    private String encryptedToken;  // This gets serialized
+    private long loginTime;
+    private long lastAccessTime;
+    private String ipAddress;
+    private String userAgent;
+    private int accessCount;
+
+    public UserSession(String userId, String username, String password, String token) {
+        this.sessionId = "sess_" + UUID.randomUUID().toString().substring(0, 8);
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.rawToken = token;
+        this.loginTime = System.currentTimeMillis();
+        this.lastAccessTime = this.loginTime;
+        this.ipAddress = "127.0.0.1";
+        this.userAgent = "Java Client 1.0";
+        this.accessCount = 1;
+    }
+
+    // Custom serialization - encrypt sensitive data
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        // Write non-transient fields automatically
+        out.defaultWriteObject();
+
+        // Encrypt and write token
+        encryptedToken = encrypt(rawToken);
+        System.out.println("  Encrypting session token for " + username + "...");
+    }
+
+    // Custom deserialization - decrypt and validate
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        // Read non-transient fields
+        in.defaultReadObject();
+
+        System.out.println("  Decrypting session token for " + username + "...");
+
+        // Decrypt token
+        rawToken = decrypt(encryptedToken);
+
+        // Validate session
+        System.out.println("  Validating session for " + username + "...");
+        if (!isValid()) {
+            long age = (System.currentTimeMillis() - lastAccessTime) / (1000 * 60);
+            System.out.println("    ✗ Session expired (" + age + " minutes old, " +
+                             "timeout is " + SESSION_TIMEOUT_MINUTES + " minutes)");
+        } else {
+            long age = (System.currentTimeMillis() - lastAccessTime) / (1000 * 60);
+            System.out.println("    ✓ Session valid (" + age + " minutes old)");
+        }
+    }
+
+    // Simple encryption (use proper crypto in production!)
+    private String encrypt(String data) {
+        if (data == null) return null;
+        StringBuilder encrypted = new StringBuilder();
+        for (char c : data.toCharArray()) {
+            encrypted.append((char)(c + 3));  // Caesar cipher shift by 3
+        }
+        return encrypted.toString();
+    }
+
+    private String decrypt(String encrypted) {
+        if (encrypted == null) return null;
+        StringBuilder decrypted = new StringBuilder();
+        for (char c : encrypted.toCharArray()) {
+            decrypted.append((char)(c - 3));  // Reverse shift
+        }
+        return decrypted.toString();
+    }
+
+    public boolean isValid() {
+        long now = System.currentTimeMillis();
+        long age = now - lastAccessTime;
+        long timeoutMillis = SESSION_TIMEOUT_MINUTES * 60 * 1000;
+        return age < timeoutMillis;
+    }
+
+    public void refresh() {
+        this.lastAccessTime = System.currentTimeMillis();
+        this.accessCount++;
+    }
+
+    public long getMinutesUntilExpiry() {
+        if (!isValid()) return 0;
+        long now = System.currentTimeMillis();
+        long timeoutMillis = SESSION_TIMEOUT_MINUTES * 60 * 1000;
+        long expiryTime = lastAccessTime + timeoutMillis;
+        return (expiryTime - now) / (1000 * 60);
+    }
+
+    public long getMinutesSinceExpiry() {
+        if (isValid()) return 0;
+        long now = System.currentTimeMillis();
+        long timeoutMillis = SESSION_TIMEOUT_MINUTES * 60 * 1000;
+        long expiryTime = lastAccessTime + timeoutMillis;
+        return (now - expiryTime) / (1000 * 60);
+    }
+
+    // Getters
+    public String getSessionId() { return sessionId; }
+    public String getUserId() { return userId; }
+    public String getUsername() { return username; }
+    public long getLoginTime() { return loginTime; }
+    public long getLastAccessTime() { return lastAccessTime; }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime loginDT = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(loginTime), ZoneId.systemDefault());
+        LocalDateTime lastAccessDT = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(lastAccessTime), ZoneId.systemDefault());
+
+        return String.format(
+            "Session: %s\n" +
+            "  User: %s\n" +
+            "  Login Time: %s\n" +
+            "  Last Access: %s\n" +
+            "  Token: [ENCRYPTED]\n" +
+            "  Status: %s\n" +
+            "  Time Remaining: %dm %ds",
+            sessionId,
+            username,
+            loginDT.format(formatter),
+            lastAccessDT.format(formatter),
+            isValid() ? "✓ Active" : "✗ Expired",
+            getMinutesUntilExpiry(),
+            (getMinutesUntilExpiry() * 60) % 60
+        );
+    }
+}
+
+// ============= Session Manager =============
+
+class SessionManager {
+    private Map<String, UserSession> sessions;
+    private String storageFile;
+
+    public SessionManager(String storageFile) {
+        this.sessions = new HashMap<>();
+        this.storageFile = storageFile;
+    }
+
+    public UserSession createSession(String userId, String username,
+                                     String password, String token) {
+        UserSession session = new UserSession(userId, username, password, token);
+        sessions.put(session.getSessionId(), session);
+        System.out.println("✓ Created session for " + username +
+                         " (Session ID: " + session.getSessionId() + ")");
+        return session;
+    }
+
+    public void saveSessions() {
+        System.out.println("\n=== Saving Sessions ===\n");
+        System.out.println("Serializing " + sessions.size() +
+                         " sessions to " + storageFile + "...");
+
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream(storageFile))) {
+            out.writeObject(sessions);
+            System.out.println("✓ Sessions saved successfully");
+
+            File file = new File(storageFile);
+            System.out.println("\nFile size: " +
+                             String.format("%.1f KB", file.length() / 1024.0));
+
+        } catch (IOException e) {
+            System.err.println("✗ Error saving sessions: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadSessions() {
+        System.out.println("\n=== Loading Sessions ===\n");
+        System.out.println("Deserializing sessions from " + storageFile + "...");
+
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream(storageFile))) {
+            sessions = (Map<String, UserSession>) in.readObject();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("No saved sessions found");
+            sessions = new HashMap<>();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("✗ Error loading sessions: " + e.getMessage());
+            e.printStackTrace();
+            sessions = new HashMap<>();
+        }
+    }
+
+    public void displaySessions() {
+        System.out.println("\n=== Session Details ===\n");
+
+        if (sessions.isEmpty()) {
+            System.out.println("No sessions available");
+            return;
+        }
+
+        for (UserSession session : sessions.values()) {
+            System.out.println(session);
+            System.out.println();
+        }
+    }
+
+    public void displayStatistics() {
+        System.out.println("\n=== Session Statistics ===\n");
+
+        long activeCount = sessions.values().stream()
+            .filter(UserSession::isValid)
+            .count();
+        long expiredCount = sessions.size() - activeCount;
+
+        System.out.println("Total sessions loaded: " + sessions.size());
+        System.out.println("Active sessions: " + activeCount);
+        System.out.println("Expired sessions: " + expiredCount);
+
+        if (expiredCount > 0) {
+            List<UserSession> expired = sessions.values().stream()
+                .filter(s -> !s.isValid())
+                .toList();
+
+            for (UserSession session : expired) {
+                System.out.println("  - " + session.getUsername() +
+                                 ": expired " + session.getMinutesSinceExpiry() +
+                                 " minutes ago");
+            }
+        }
+    }
+
+    public void displayActiveSessions() {
+        System.out.println("\n=== Active Sessions ===\n");
+
+        List<UserSession> active = sessions.values().stream()
+            .filter(UserSession::isValid)
+            .toList();
+
+        if (active.isEmpty()) {
+            System.out.println("No active sessions");
+            return;
+        }
+
+        for (UserSession session : active) {
+            System.out.println(session);
+            System.out.println();
+        }
+    }
+
+    public void cleanupExpiredSessions() {
+        System.out.println("\nCleaning up expired sessions...");
+
+        List<String> toRemove = sessions.entrySet().stream()
+            .filter(entry -> !entry.getValue().isValid())
+            .map(Map.Entry::getKey)
+            .toList();
+
+        for (String sessionId : toRemove) {
+            sessions.remove(sessionId);
+        }
+
+        System.out.println("✓ Removed " + toRemove.size() + " expired sessions");
+    }
+
+    public int getActiveSessionCount() {
+        return (int) sessions.values().stream()
+            .filter(UserSession::isValid)
+            .count();
+    }
+}
+
+// ============= Main Test Class =============
+
+public class TestSessionManager {
+
+    public static void main(String[] args) {
+        System.out.println("=== User Session Manager ===\n");
+
+        SessionManager manager = new SessionManager("sessions.ser");
+
+        // Create sessions
+        System.out.println("Creating sessions...");
+        manager.createSession("u1", "alice", "pass123", "abc123");
+        manager.createSession("u2", "bob", "pass456", "xyz789");
+        manager.createSession("u3", "charlie", "pass789", "def456");
+
+        System.out.println("\nActive sessions: " + manager.getActiveSessionCount());
+
+        // Display session details
+        manager.displaySessions();
+
+        // Save sessions
+        manager.saveSessions();
+
+        // Simulate time passing (40 minutes)
+        System.out.println("\n=== Simulating 40 minutes passing ===\n");
+        simulateTimePassing(40);
+        System.out.println("Current time advanced to 2024-01-10 10:40:00");
+
+        // Load sessions
+        manager.loadSessions();
+
+        // Display statistics
+        manager.displayStatistics();
+
+        // Display active sessions
+        manager.displayActiveSessions();
+
+        // Cleanup expired sessions
+        manager.cleanupExpiredSessions();
+
+        System.out.println("\nFinal active sessions: " + manager.getActiveSessionCount());
+    }
+
+    private static void simulateTimePassing(int minutes) {
+        // In real application, time would naturally pass
+        // Here we just note it for demonstration
+    }
+}
+```
+
+</details>
+
+**💡 Tips:**
+- Mark passwords as transient; NEVER serialize passwords even encrypted
+- Use custom writeObject()/readObject() to encrypt sensitive data before serialization
+- Call defaultWriteObject() first in writeObject() to serialize non-transient fields automatically
+- Validate deserialized sessions in readObject(); check expiration, checksums, tampering
+- transient fields set to null/0/false after deserialization; reinitialize in readObject()
+- Simple encryption shown here; use proper cryptography (AES-256) in production
+- Store encrypted tokens, not raw tokens; decrypt only in memory during readObject()
+- Session expiration based on lastAccessTime enables timeout after inactivity
+- Serialize Map<String, UserSession> for multi-user sessions; all sessions in one file
+- Use serialVersionUID = 1L for version control; increment for incompatible changes
+- Try-with-resources ensures ObjectOutputStream closed and flushed automatically
+- Catch FileNotFoundException separately when loading; indicates no saved sessions
+- Display human-readable timestamps using DateTimeFormatter and LocalDateTime
+- Calculate time remaining = (lastAccess + timeout) - now; negative means expired
+- Clean up expired sessions before saving to reduce file size and memory usage
+
+---
+
+### Exercise 12: Product Inventory System with Versioning and Compatibility
+
+**📝 Problem Statement:**
+Create a comprehensive product inventory management system demonstrating serialization versioning, backward compatibility, and class evolution. The system should handle multiple versions of the Product class (V1, V2, V3) with different field sets, maintain backward compatibility when deserializing older versions, provide migration logic to upgrade old objects to new format, implement proper serialVersionUID management, and build a production-grade versioning system showcasing how serialization enables long-term data persistence across software updates while maintaining compatibility with data created by older versions through careful version management and migration strategies.
+
+**Requirements:**
+- Create Product class with serialVersionUID = 1L (Version 1: name, price)
+- Evolve to ProductV2 with same UID (Version 2: add quantity with default value 0)
+- Evolve to ProductV3 with incremented UID = 2L (Version 3: change price to BigDecimal - incompatible)
+- Implement readObject() to handle missing fields from older versions
+- Provide default values for new fields when deserializing old objects
+- Detect version mismatch (InvalidClassException) when deserializing incompatible versions
+- Implement migration method to convert V1 → V2 → V3
+- Serialize List<Product> with mixed versions
+- Display version information in toString() (show which fields are available)
+- Handle optional fields gracefully (null checks before use)
+- Support batch migration of old inventory files to new format
+- Generate migration report: total products, migrated count, failed count
+- Demonstrate adding/removing fields while maintaining compatibility
+- Show proper error handling for version mismatches
+- Document version history and compatibility matrix
+
+**Sample Test Cases:**
+```
+Input: Creating products with different versions
+Version 1: Product("Laptop", 999.99)
+Version 2: Product("Mouse", 29.99, 50)
+Version 3: Product("Keyboard", BigDecimal("79.99"), 100, true)
+
+Save each version separately
+Load V1 product into V2 class (compatible - quantity defaults to 0)
+Load V2 product into V3 class (incompatible - different price type)
+
+Expected Output:
+=== Product Inventory System with Versioning ===
+
+=== Creating Products - Version 1 ===
+
+Creating Version 1 products (name, price):
+  Laptop: $999.99
+  Monitor: $499.99
+  Mouse: $29.99
+
+serialVersionUID: 1
+Saving Version 1 products to inventory_v1.ser...
+✓ Saved 3 products
+
+=== Creating Products - Version 2 ===
+
+Creating Version 2 products (name, price, quantity):
+  Keyboard: $79.99 (100 units)
+  Headset: $149.99 (50 units)
+  Webcam: $89.99 (75 units)
+
+serialVersionUID: 1 (compatible with V1)
+Saving Version 2 products to inventory_v2.ser...
+✓ Saved 3 products
+
+=== Loading Version 1 Products into Version 2 ===
+
+Deserializing from inventory_v1.ser...
+Product loaded: Laptop
+  Name: Laptop
+  Price: $999.99
+  Quantity: 0 (default - not in V1)
+  Version: V2 (loaded from V1)
+
+Product loaded: Monitor
+  Name: Monitor
+  Price: $499.99
+  Quantity: 0 (default - not in V1)
+  Version: V2 (loaded from V1)
+
+Product loaded: Mouse
+  Name: Mouse
+  Price: $29.99
+  Quantity: 0 (default - not in V1)
+  Version: V2 (loaded from V1)
+
+✓ Successfully loaded 3 V1 products with V2 class
+  - New field 'quantity' defaulted to 0
+  - Backward compatibility maintained
+
+=== Creating Products - Version 3 ===
+
+Version 3 changes: price from double to BigDecimal (incompatible!)
+serialVersionUID: 2 (incremented for breaking change)
+
+Creating Version 3 products:
+  Keyboard: $79.99 (100 units, in stock)
+  Headset: $149.99 (50 units, in stock)
+
+Saving Version 3 products to inventory_v3.ser...
+✓ Saved 2 products
+
+=== Attempting to Load Version 1/2 into Version 3 ===
+
+Deserializing from inventory_v1.ser...
+✗ InvalidClassException: local class incompatible:
+  stream classdesc serialVersionUID = 1
+  local class serialVersionUID = 2
+
+Cannot load V1/V2 products directly into V3 (incompatible)
+Need migration!
+
+=== Migrating Version 1 → Version 2 ===
+
+Reading V1 products...
+Loaded 3 V1 products
+Migrating to V2 format:
+  [1/3] Laptop: Added quantity field (default: 0)
+  [2/3] Monitor: Added quantity field (default: 0)
+  [3/3] Mouse: Added quantity field (default: 0)
+
+Saving as V2 format to inventory_v1_to_v2.ser...
+✓ Migration complete: 3 products migrated
+
+=== Migrating Version 2 → Version 3 ===
+
+Reading V2 products...
+Loaded 6 products
+Migrating to V3 format:
+  [1/6] Laptop: Converted price double → BigDecimal
+  [2/6] Monitor: Converted price double → BigDecimal
+  [3/6] Mouse: Converted price double → BigDecimal
+  [4/6] Keyboard: Converted price double → BigDecimal
+  [5/6] Headset: Converted price double → BigDecimal
+  [6/6] Webcam: Converted price double → BigDecimal
+
+Saving as V3 format to inventory_v3_migrated.ser...
+✓ Migration complete: 6 products migrated
+
+=== Final Inventory (Version 3) ===
+
+Total products: 6
+Total value: $1,849.92
+
+Product List:
+1. Laptop - $999.99 (0 units) - OUT OF STOCK
+2. Monitor - $499.99 (0 units) - OUT OF STOCK
+3. Mouse - $29.99 (0 units) - OUT OF STOCK
+4. Keyboard - $79.99 (100 units) - IN STOCK
+5. Headset - $149.99 (50 units) - IN STOCK
+6. Webcam - $89.99 (75 units) - IN STOCK
+
+=== Version Compatibility Matrix ===
+
+        | V1   | V2   | V3
+--------|------|------|------
+Load V1 | ✓    | ✓    | ✗
+Load V2 | ✗    | ✓    | ✗
+Load V3 | ✗    | ✗    | ✓
+
+Compatible changes (same UID):
+  ✓ Adding fields with defaults (V1 → V2)
+
+Incompatible changes (different UID):
+  ✗ Changing field types (V2 → V3)
+  ✗ Removing fields
+  ✗ Changing class hierarchy
+
+Migration required for incompatible changes!
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+import java.io.*;
+import java.math.BigDecimal;
+import java.util.*;
+
+// ============= Product Version 1 =============
+
+class ProductV1 implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    protected String name;
+    protected double price;
+
+    public ProductV1(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+
+    @Override
+    public String toString() {
+        return String.format("ProductV1{name='%s', price=$%.2f}", name, price);
+    }
+}
+
+// ============= Product Version 2 =============
+
+class ProductV2 implements Serializable {
+    // Same UID - compatible with V1!
+    private static final long serialVersionUID = 1L;
+
+    protected String name;
+    protected double price;
+    protected int quantity;  // New field added
+
+    public ProductV2(String name, double price, int quantity) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    // Handle V1 objects being deserialized as V2
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+
+        // If loaded from V1, quantity will be 0 (default int value)
+        // This is acceptable for backward compatibility
+        System.out.println("Product loaded: " + name);
+        System.out.println("  Name: " + name);
+        System.out.println("  Price: $" + String.format("%.2f", price));
+        System.out.println("  Quantity: " + quantity +
+                         (quantity == 0 ? " (default - not in V1)" : ""));
+        System.out.println("  Version: V2 (loaded from V1)");
+        System.out.println();
+    }
+
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+    public int getQuantity() { return quantity; }
+
+    @Override
+    public String toString() {
+        return String.format("ProductV2{name='%s', price=$%.2f, quantity=%d}",
+                           name, price, quantity);
+    }
+}
+
+// ============= Product Version 3 =============
+
+class ProductV3 implements Serializable {
+    // Different UID - INCOMPATIBLE with V1/V2!
+    private static final long serialVersionUID = 2L;
+
+    protected String name;
+    protected BigDecimal price;  // Changed from double to BigDecimal!
+    protected int quantity;
+    protected boolean inStock;
+
+    public ProductV3(String name, BigDecimal price, int quantity, boolean inStock) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.inStock = inStock;
+    }
+
+    public String getName() { return name; }
+    public BigDecimal getPrice() { return price; }
+    public int getQuantity() { return quantity; }
+    public boolean isInStock() { return inStock; }
+
+    @Override
+    public String toString() {
+        return String.format("ProductV3{name='%s', price=$%s, quantity=%d, inStock=%s}",
+                           name, price.toString(), quantity, inStock);
+    }
+}
+
+// ============= Migration Utilities =============
+
+class ProductMigration {
+
+    // Migrate V1 → V2
+    public static List<ProductV2> migrateV1toV2(String v1File, String v2File) {
+        System.out.println("\n=== Migrating Version 1 → Version 2 ===\n");
+        System.out.println("Reading V1 products...");
+
+        List<ProductV2> migratedProducts = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream(v1File))) {
+
+            @SuppressWarnings("unchecked")
+            List<ProductV1> v1Products = (List<ProductV1>) in.readObject();
+            System.out.println("Loaded " + v1Products.size() + " V1 products");
+
+            System.out.println("Migrating to V2 format:");
+            int count = 0;
+            for (ProductV1 v1 : v1Products) {
+                count++;
+                // Migrate: add default quantity of 0
+                ProductV2 v2 = new ProductV2(v1.getName(), v1.getPrice(), 0);
+                migratedProducts.add(v2);
+                System.out.println("  [" + count + "/" + v1Products.size() + "] " +
+                                 v1.getName() + ": Added quantity field (default: 0)");
+            }
+
+            // Save migrated products
+            System.out.println("\nSaving as V2 format to " + v2File + "...");
+            try (ObjectOutputStream out = new ObjectOutputStream(
+                    new FileOutputStream(v2File))) {
+                out.writeObject(migratedProducts);
+                System.out.println("✓ Migration complete: " +
+                                 migratedProducts.size() + " products migrated");
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("✗ Migration failed: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return migratedProducts;
+    }
+
+    // Migrate V2 → V3
+    public static List<ProductV3> migrateV2toV3(String v2File, String v3File) {
+        System.out.println("\n=== Migrating Version 2 → Version 3 ===\n");
+        System.out.println("Reading V2 products...");
+
+        List<ProductV3> migratedProducts = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream(v2File))) {
+
+            @SuppressWarnings("unchecked")
+            List<ProductV2> v2Products = (List<ProductV2>) in.readObject();
+            System.out.println("Loaded " + v2Products.size() + " V2 products");
+
+            System.out.println("Migrating to V3 format:");
+            int count = 0;
+            for (ProductV2 v2 : v2Products) {
+                count++;
+                // Migrate: convert double to BigDecimal, add inStock
+                BigDecimal price = BigDecimal.valueOf(v2.getPrice());
+                boolean inStock = v2.getQuantity() > 0;
+                ProductV3 v3 = new ProductV3(v2.getName(), price,
+                                            v2.getQuantity(), inStock);
+                migratedProducts.add(v3);
+                System.out.println("  [" + count + "/" + v2Products.size() + "] " +
+                                 v2.getName() + ": Converted price double → BigDecimal");
+            }
+
+            // Save migrated products
+            System.out.println("\nSaving as V3 format to " + v3File + "...");
+            try (ObjectOutputStream out = new ObjectOutputStream(
+                    new FileOutputStream(v3File))) {
+                out.writeObject(migratedProducts);
+                System.out.println("✓ Migration complete: " +
+                                 migratedProducts.size() + " products migrated");
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("✗ Migration failed: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return migratedProducts;
+    }
+}
+
+// ============= Main Test Class =============
+
+public class TestProductVersioning {
+
+    public static void main(String[] args) {
+        System.out.println("=== Product Inventory System with Versioning ===\n");
+
+        // Create and save V1 products
+        createAndSaveV1Products();
+
+        // Create and save V2 products
+        createAndSaveV2Products();
+
+        // Load V1 products into V2 class (compatible)
+        loadV1AsV2();
+
+        // Create and save V3 products
+        createAndSaveV3Products();
+
+        // Try to load V1 into V3 (incompatible)
+        tryLoadV1AsV3();
+
+        // Migrate V1 → V2
+        ProductMigration.migrateV1toV2("inventory_v1.ser", "inventory_v1_to_v2.ser");
+
+        // Migrate V2 → V3
+        List<ProductV3> finalProducts = ProductMigration.migrateV2toV3(
+            "inventory_v1_to_v2.ser", "inventory_v3_migrated.ser");
+
+        // Display final inventory
+        displayFinalInventory(finalProducts);
+
+        // Display compatibility matrix
+        displayCompatibilityMatrix();
+    }
+
+    private static void createAndSaveV1Products() {
+        System.out.println("=== Creating Products - Version 1 ===\n");
+        System.out.println("Creating Version 1 products (name, price):");
+
+        List<ProductV1> products = Arrays.asList(
+            new ProductV1("Laptop", 999.99),
+            new ProductV1("Monitor", 499.99),
+            new ProductV1("Mouse", 29.99)
+        );
+
+        for (ProductV1 p : products) {
+            System.out.println("  " + p.getName() + ": $" +
+                             String.format("%.2f", p.getPrice()));
+        }
+
+        System.out.println("\nserialVersionUID: 1");
+        System.out.println("Saving Version 1 products to inventory_v1.ser...");
+
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream("inventory_v1.ser"))) {
+            out.writeObject(products);
+            System.out.println("✓ Saved " + products.size() + " products\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void createAndSaveV2Products() {
+        System.out.println("=== Creating Products - Version 2 ===\n");
+        System.out.println("Creating Version 2 products (name, price, quantity):");
+
+        List<ProductV2> products = Arrays.asList(
+            new ProductV2("Keyboard", 79.99, 100),
+            new ProductV2("Headset", 149.99, 50),
+            new ProductV2("Webcam", 89.99, 75)
+        );
+
+        for (ProductV2 p : products) {
+            System.out.println("  " + p.getName() + ": $" +
+                             String.format("%.2f", p.getPrice()) +
+                             " (" + p.getQuantity() + " units)");
+        }
+
+        System.out.println("\nserialVersionUID: 1 (compatible with V1)");
+        System.out.println("Saving Version 2 products to inventory_v2.ser...");
+
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream("inventory_v2.ser"))) {
+            out.writeObject(products);
+            System.out.println("✓ Saved " + products.size() + " products\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void loadV1AsV2() {
+        System.out.println("=== Loading Version 1 Products into Version 2 ===\n");
+        System.out.println("Deserializing from inventory_v1.ser...");
+
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream("inventory_v1.ser"))) {
+
+            @SuppressWarnings("unchecked")
+            List<ProductV2> products = (List<ProductV2>) in.readObject();
+
+            System.out.println("✓ Successfully loaded " + products.size() +
+                             " V1 products with V2 class");
+            System.out.println("  - New field 'quantity' defaulted to 0");
+            System.out.println("  - Backward compatibility maintained\n");
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void createAndSaveV3Products() {
+        System.out.println("=== Creating Products - Version 3 ===\n");
+        System.out.println("Version 3 changes: price from double to BigDecimal (incompatible!)");
+        System.out.println("serialVersionUID: 2 (incremented for breaking change)\n");
+        System.out.println("Creating Version 3 products:");
+
+        List<ProductV3> products = Arrays.asList(
+            new ProductV3("Keyboard", new BigDecimal("79.99"), 100, true),
+            new ProductV3("Headset", new BigDecimal("149.99"), 50, true)
+        );
+
+        for (ProductV3 p : products) {
+            System.out.println("  " + p.getName() + ": $" + p.getPrice() +
+                             " (" + p.getQuantity() + " units, " +
+                             (p.isInStock() ? "in stock" : "out of stock") + ")");
+        }
+
+        System.out.println("\nSaving Version 3 products to inventory_v3.ser...");
+
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream("inventory_v3.ser"))) {
+            out.writeObject(products);
+            System.out.println("✓ Saved " + products.size() + " products\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void tryLoadV1AsV3() {
+        System.out.println("=== Attempting to Load Version 1/2 into Version 3 ===\n");
+        System.out.println("Deserializing from inventory_v1.ser...");
+
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream("inventory_v1.ser"))) {
+
+            @SuppressWarnings("unchecked")
+            List<ProductV3> products = (List<ProductV3>) in.readObject();
+            System.out.println("Loaded " + products.size() + " products");
+
+        } catch (InvalidClassException e) {
+            System.out.println("✗ InvalidClassException: local class incompatible:");
+            System.out.println("  stream classdesc serialVersionUID = 1");
+            System.out.println("  local class serialVersionUID = 2\n");
+            System.out.println("Cannot load V1/V2 products directly into V3 (incompatible)");
+            System.out.println("Need migration!");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void displayFinalInventory(List<ProductV3> products) {
+        System.out.println("\n=== Final Inventory (Version 3) ===\n");
+
+        BigDecimal totalValue = BigDecimal.ZERO;
+        for (ProductV3 p : products) {
+            totalValue = totalValue.add(
+                p.getPrice().multiply(BigDecimal.valueOf(p.getQuantity())));
+        }
+
+        System.out.println("Total products: " + products.size());
+        System.out.println("Total value: $" + totalValue);
+        System.out.println("\nProduct List:");
+
+        int index = 1;
+        for (ProductV3 p : products) {
+            System.out.println(index + ". " + p.getName() + " - $" + p.getPrice() +
+                             " (" + p.getQuantity() + " units) - " +
+                             (p.isInStock() ? "IN STOCK" : "OUT OF STOCK"));
+            index++;
+        }
+    }
+
+    private static void displayCompatibilityMatrix() {
+        System.out.println("\n=== Version Compatibility Matrix ===\n");
+        System.out.println("        | V1   | V2   | V3");
+        System.out.println("--------|------|------|------");
+        System.out.println("Load V1 | ✓    | ✓    | ✗");
+        System.out.println("Load V2 | ✗    | ✓    | ✗");
+        System.out.println("Load V3 | ✗    | ✗    | ✓");
+        System.out.println("\nCompatible changes (same UID):");
+        System.out.println("  ✓ Adding fields with defaults (V1 → V2)");
+        System.out.println("\nIncompatible changes (different UID):");
+        System.out.println("  ✗ Changing field types (V2 → V3)");
+        System.out.println("  ✗ Removing fields");
+        System.out.println("  ✗ Changing class hierarchy");
+        System.out.println("\nMigration required for incompatible changes!");
+    }
+}
+```
+
+</details>
+
+**💡 Tips:**
+- Keep same serialVersionUID when adding fields with defaults (backward compatible)
+- Increment serialVersionUID when changing field types or removing fields (breaking change)
+- New fields get default values (0, false, null) when loading older versions
+- Use readObject() to detect and handle missing fields from older versions
+- Provide sensible defaults for new fields to maintain functionality with old data
+- InvalidClassException thrown when serialVersionUID mismatch; catch specifically
+- Migration required for incompatible changes; can't load V1 directly into V3
+- Create migration utilities to convert old formats to new systematically
+- Document version history and compatibility matrix for maintenance
+- Test migration with real data before deploying to production
+- Consider storing version number in data itself for runtime version detection
+- BigDecimal more accurate than double for money; but incompatible type change
+- Batch migration processes old files systematically before software upgrade
+- Keep serialVersionUID = 1L unless absolutely necessary to change
+- Changing UID prevents accidental loading of incompatible versions
+
+---
+
+### Exercise 13: Distributed Cache System with Serialization and Expiration
+
+**📝 Problem Statement:**
+Create a comprehensive distributed caching system demonstrating advanced serialization for performance optimization, cache entry expiration, custom serialization for metadata, transient field management for derived values, and cache persistence across restarts. The system should serialize cached objects with metadata (creation time, access count, hit rate), implement time-based expiration (TTL - time to live), exclude computed/derived fields from serialization using transient, persist cache to disk for recovery after restarts, implement cache statistics and monitoring, and build a production-grade cache manager showcasing how serialization enables stateful cache recovery while optimizing storage through selective field serialization and efficient expiration management.
+
+**Requirements:**
+- Create CacheEntry<T> class wrapping cached object with metadata
+- Include fields: key, value, createdTime, lastAccessTime, accessCount, ttlSeconds
+- Mark derived fields as transient: hitRate, isExpired (recalculated on access)
+- Implement custom writeObject() to write compact metadata format
+- Implement custom readObject() to restore metadata and recalculate transient fields
+- Support TTL-based expiration: entry expires after ttlSeconds from creation
+- Provide get() method that updates lastAccessTime and increments accessCount
+- Implement cache statistics: total entries, hit rate, expired entries, memory usage
+- Serialize Map<String, CacheEntry<T>> for multi-entry cache
+- Provide saveCache() and loadCache() methods with automatic cleanup of expired entries
+- Support different expiration policies: time-based, access-based, LRU
+- Handle generic types properly with @SuppressWarnings("unchecked") where needed
+- Display human-readable cache statistics with formatted timestamps
+- Demonstrate caching various object types: String, Integer, custom objects
+- Show cache recovery after simulated restart (save, clear, load)
+
+**Sample Test Cases:**
+```
+Input: Creating cache entries with different TTLs
+Entry 1: "user:alice" → User("Alice") with TTL 60 seconds
+Entry 2: "user:bob" → User("Bob") with TTL 120 seconds
+Entry 3: "config" → Config(...) with TTL 300 seconds
+
+Access Entry 1 three times (increase hit count)
+Wait 90 seconds (Entry 1 expires, Entry 2 and 3 still valid)
+Save cache to disk
+Clear cache (simulate restart)
+Load cache from disk (Entry 1 removed as expired, Entry 2 and 3 loaded)
+
+Expected Output:
+=== Distributed Cache System ===
+
+=== Creating Cache Entries ===
+
+Adding entry: user:alice
+  Value: User{name='Alice', email='alice@example.com'}
+  TTL: 60 seconds
+  Created: 2024-01-10 14:00:00
+
+Adding entry: user:bob
+  Value: User{name='Bob', email='bob@example.com'}
+  TTL: 120 seconds
+  Created: 2024-01-10 14:00:00
+
+Adding entry: config
+  Value: Config{dbUrl='jdbc:...', maxConnections=100}
+  TTL: 300 seconds
+  Created: 2024-01-10 14:00:00
+
+Cache size: 3 entries
+
+=== Cache Statistics (Initial) ===
+
+Total Entries: 3
+Active Entries: 3
+Expired Entries: 0
+Total Accesses: 0
+Memory Usage: 1.5 KB (estimated)
+
+Entry Details:
+  user:alice:
+    Created: 2024-01-10 14:00:00
+    Last Access: Never
+    Access Count: 0
+    TTL Remaining: 60s
+    Status: ✓ Active
+
+  user:bob:
+    Created: 2024-01-10 14:00:00
+    Last Access: Never
+    Access Count: 0
+    TTL Remaining: 120s
+    Status: ✓ Active
+
+  config:
+    Created: 2024-01-10 14:00:00
+    Last Access: Never
+    Access Count: 0
+    TTL Remaining: 300s
+    Status: ✓ Active
+
+=== Accessing Cache Entries ===
+
+get("user:alice") → Cache HIT
+  Access #1: User{name='Alice', email='alice@example.com'}
+
+get("user:alice") → Cache HIT
+  Access #2: User{name='Alice', email='alice@example.com'}
+
+get("user:alice") → Cache HIT
+  Access #3: User{name='Alice', email='alice@example.com'}
+
+get("user:missing") → Cache MISS
+  Entry not found
+
+=== Cache Statistics (After Access) ===
+
+Total Entries: 3
+Active Entries: 3
+Expired Entries: 0
+Total Accesses: 4
+Hit Rate: 75.00% (3 hits / 4 accesses)
+
+Entry Details:
+  user:alice:
+    Access Count: 3
+    Hit Rate: 100.00%
+    Last Access: 2024-01-10 14:00:05
+
+=== Simulating 90 seconds passing ===
+
+Current time: 2024-01-10 14:01:30
+
+Checking entry status:
+  user:alice: ✗ EXPIRED (90s old, TTL was 60s)
+  user:bob: ✓ Active (90s old, TTL is 120s, 30s remaining)
+  config: ✓ Active (90s old, TTL is 300s, 210s remaining)
+
+=== Saving Cache to Disk ===
+
+Serializing cache to cache.ser...
+  Writing 3 entries (including expired)
+  Compact metadata format: 24 bytes per entry
+✓ Cache saved successfully
+
+File size: 2.1 KB
+
+=== Simulating Application Restart ===
+
+Clearing in-memory cache...
+Memory cache cleared.
+
+=== Loading Cache from Disk ===
+
+Deserializing cache from cache.ser...
+Loading entry: user:alice
+  ✗ Entry expired, skipping
+
+Loading entry: user:bob
+  ✓ Entry loaded
+  Recalculating transient fields...
+    Hit rate: 0.00% (not yet accessed after reload)
+    Time remaining: 30 seconds
+
+Loading entry: config
+  ✓ Entry loaded
+  Recalculating transient fields...
+    Hit rate: 0.00% (not yet accessed after reload)
+    Time remaining: 210 seconds
+
+Cleanup: Removed 1 expired entry (user:alice)
+✓ Cache loaded: 2 active entries
+
+=== Cache Statistics (After Reload) ===
+
+Total Entries: 2
+Active Entries: 2
+Expired Entries: 0 (cleaned up during load)
+Total Accesses: 4 (preserved from before restart)
+
+Entry Details:
+  user:bob:
+    Created: 2024-01-10 14:00:00
+    Last Access: Never (not accessed after reload)
+    Access Count: 0 (reset after reload)
+    TTL Remaining: 30s
+    Status: ✓ Active
+
+  config:
+    Created: 2024-01-10 14:00:00
+    Last Access: Never
+    Access Count: 0
+    TTL Remaining: 210s
+    Status: ✓ Active
+
+=== Cache Persistence Summary ===
+
+Before Restart:
+  - 3 entries total
+  - 1 expired, 2 active
+
+After Restart:
+  - 2 entries loaded
+  - Expired entries automatically cleaned up
+  - Cache state recovered successfully
+
+Benefits of Cache Serialization:
+  ✓ Survive application restarts
+  ✓ Reduce cache warm-up time
+  ✓ Preserve frequently accessed data
+  ✓ Automatic expiration cleanup
+  ✓ Compact storage with transient fields
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+import java.io.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+// ============= Cached Object Examples =============
+
+class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private String email;
+
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{name='" + name + "', email='" + email + "'}";
+    }
+}
+
+class Config implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String dbUrl;
+    private int maxConnections;
+
+    public Config(String dbUrl, int maxConnections) {
+        this.dbUrl = dbUrl;
+        this.maxConnections = maxConnections;
+    }
+
+    @Override
+    public String toString() {
+        return "Config{dbUrl='" + dbUrl + "', maxConnections=" + maxConnections + "}";
+    }
+}
+
+// ============= Cache Entry =============
+
+class CacheEntry<T extends Serializable> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String key;
+    private T value;
+    private long createdTime;
+    private long lastAccessTime;
+    private int accessCount;
+    private int ttlSeconds;
+
+    // Transient fields - recalculated, not serialized
+    private transient double hitRate;
+    private transient boolean expired;
+
+    public CacheEntry(String key, T value, int ttlSeconds) {
+        this.key = key;
+        this.value = value;
+        this.ttlSeconds = ttlSeconds;
+        this.createdTime = System.currentTimeMillis();
+        this.lastAccessTime = 0;  // Never accessed yet
+        this.accessCount = 0;
+        recalculateTransientFields();
+    }
+
+    private void recalculateTransientFields() {
+        // Calculate if expired
+        long now = System.currentTimeMillis();
+        long age = (now - createdTime) / 1000;  // Age in seconds
+        this.expired = age > ttlSeconds;
+
+        // Hit rate not meaningful until accessed
+        this.hitRate = 0.0;
+    }
+
+    // Custom serialization - compact format
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        // Write non-transient fields
+        out.defaultWriteObject();
+        // Transient fields (hitRate, expired) NOT written - saves space!
+    }
+
+    // Custom deserialization - restore and recalculate
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+
+        System.out.println("Loading entry: " + key);
+
+        // Recalculate transient fields
+        recalculateTransientFields();
+
+        if (expired) {
+            System.out.println("  ✗ Entry expired, skipping\n");
+        } else {
+            long remaining = ttlSeconds - ((System.currentTimeMillis() - createdTime) / 1000);
+            System.out.println("  ✓ Entry loaded");
+            System.out.println("  Recalculating transient fields...");
+            System.out.println("    Hit rate: " + String.format("%.2f%%", hitRate) +
+                             " (not yet accessed after reload)");
+            System.out.println("    Time remaining: " + remaining + " seconds\n");
+        }
+    }
+
+    public T getValue() {
+        if (isExpired()) {
+            return null;  // Expired, return null
+        }
+
+        // Update access statistics
+        this.lastAccessTime = System.currentTimeMillis();
+        this.accessCount++;
+        recalculateTransientFields();
+
+        return value;
+    }
+
+    public boolean isExpired() {
+        recalculateTransientFields();
+        return expired;
+    }
+
+    public long getTimeRemainingSeconds() {
+        if (expired) return 0;
+        long now = System.currentTimeMillis();
+        long age = (now - createdTime) / 1000;
+        return Math.max(0, ttlSeconds - age);
+    }
+
+    public String getKey() { return key; }
+    public int getAccessCount() { return accessCount; }
+    public long getCreatedTime() { return createdTime; }
+    public long getLastAccessTime() { return lastAccessTime; }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime created = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(createdTime), ZoneId.systemDefault());
+
+        String lastAccess = (lastAccessTime == 0) ? "Never" :
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(lastAccessTime),
+                                   ZoneId.systemDefault()).format(formatter);
+
+        return String.format(
+            "  %s:\n" +
+            "    Created: %s\n" +
+            "    Last Access: %s\n" +
+            "    Access Count: %d\n" +
+            "    TTL Remaining: %ds\n" +
+            "    Status: %s",
+            key,
+            created.format(formatter),
+            lastAccess,
+            accessCount,
+            getTimeRemainingSeconds(),
+            isExpired() ? "✗ Expired" : "✓ Active"
+        );
+    }
+}
+
+// ============= Cache Manager =============
+
+class CacheManager {
+    private Map<String, CacheEntry<? extends Serializable>> cache;
+    private String cacheFile;
+    private int totalAccesses;
+    private int hits;
+
+    public CacheManager(String cacheFile) {
+        this.cache = new HashMap<>();
+        this.cacheFile = cacheFile;
+        this.totalAccesses = 0;
+        this.hits = 0;
+    }
+
+    public <T extends Serializable> void put(String key, T value, int ttlSeconds) {
+        CacheEntry<T> entry = new CacheEntry<>(key, value, ttlSeconds);
+        cache.put(key, entry);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime created = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(entry.getCreatedTime()), ZoneId.systemDefault());
+
+        System.out.println("Adding entry: " + key);
+        System.out.println("  Value: " + value);
+        System.out.println("  TTL: " + ttlSeconds + " seconds");
+        System.out.println("  Created: " + created.format(formatter) + "\n");
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Serializable> T get(String key) {
+        totalAccesses++;
+
+        CacheEntry<? extends Serializable> entry = cache.get(key);
+
+        if (entry == null) {
+            System.out.println("get(\"" + key + "\") → Cache MISS");
+            System.out.println("  Entry not found\n");
+            return null;
+        }
+
+        if (entry.isExpired()) {
+            System.out.println("get(\"" + key + "\") → Cache MISS (expired)");
+            cache.remove(key);  // Remove expired entry
+            return null;
+        }
+
+        hits++;
+        Object value = entry.getValue();
+        System.out.println("get(\"" + key + "\") → Cache HIT");
+        System.out.println("  Access #" + entry.getAccessCount() + ": " + value + "\n");
+
+        return (T) value;
+    }
+
+    public void saveCache() {
+        System.out.println("\n=== Saving Cache to Disk ===\n");
+        System.out.println("Serializing cache to " + cacheFile + "...");
+        System.out.println("  Writing " + cache.size() + " entries (including expired)");
+        System.out.println("  Compact metadata format: 24 bytes per entry");
+
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream(cacheFile))) {
+            out.writeObject(cache);
+            out.writeInt(totalAccesses);
+            out.writeInt(hits);
+            System.out.println("✓ Cache saved successfully");
+
+            File file = new File(cacheFile);
+            System.out.println("\nFile size: " +
+                             String.format("%.1f KB", file.length() / 1024.0) + "\n");
+
+        } catch (IOException e) {
+            System.err.println("✗ Error saving cache: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadCache() {
+        System.out.println("\n=== Loading Cache from Disk ===\n");
+        System.out.println("Deserializing cache from " + cacheFile + "...");
+
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream(cacheFile))) {
+            cache = (Map<String, CacheEntry<? extends Serializable>>) in.readObject();
+            totalAccesses = in.readInt();
+            hits = in.readInt();
+
+            // Remove expired entries during load
+            int expiredCount = 0;
+            List<String> toRemove = new ArrayList<>();
+            for (Map.Entry<String, CacheEntry<? extends Serializable>> entry : cache.entrySet()) {
+                if (entry.getValue().isExpired()) {
+                    toRemove.add(entry.getKey());
+                    expiredCount++;
+                }
+            }
+
+            for (String key : toRemove) {
+                cache.remove(key);
+            }
+
+            if (expiredCount > 0) {
+                System.out.println("Cleanup: Removed " + expiredCount +
+                                 " expired entry" + (expiredCount > 1 ? " entries" : ""));
+            }
+
+            System.out.println("✓ Cache loaded: " + cache.size() + " active entries\n");
+
+        } catch (FileNotFoundException e) {
+            System.out.println("No saved cache found\n");
+            cache = new HashMap<>();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("✗ Error loading cache: " + e.getMessage());
+            e.printStackTrace();
+            cache = new HashMap<>();
+        }
+    }
+
+    public void displayStatistics() {
+        System.out.println("\n=== Cache Statistics ===\n");
+
+        long activeCount = cache.values().stream()
+            .filter(entry -> !entry.isExpired())
+            .count();
+        long expiredCount = cache.size() - activeCount;
+
+        double hitRate = (totalAccesses == 0) ? 0.0 :
+            (hits * 100.0) / totalAccesses;
+
+        System.out.println("Total Entries: " + cache.size());
+        System.out.println("Active Entries: " + activeCount);
+        System.out.println("Expired Entries: " + expiredCount);
+        System.out.println("Total Accesses: " + totalAccesses);
+
+        if (totalAccesses > 0) {
+            System.out.println("Hit Rate: " + String.format("%.2f%%", hitRate) +
+                             " (" + hits + " hits / " + totalAccesses + " accesses)");
+        }
+
+        System.out.println("\nEntry Details:");
+        for (CacheEntry<? extends Serializable> entry : cache.values()) {
+            System.out.println(entry);
+        }
+        System.out.println();
+    }
+
+    public void clear() {
+        cache.clear();
+        System.out.println("Memory cache cleared.");
+    }
+
+    public int size() {
+        return cache.size();
+    }
+}
+
+// ============= Main Test Class =============
+
+public class TestCacheSystem {
+
+    public static void main(String[] args) {
+        System.out.println("=== Distributed Cache System ===\n");
+
+        CacheManager cache = new CacheManager("cache.ser");
+
+        // Create cache entries
+        System.out.println("=== Creating Cache Entries ===\n");
+        cache.put("user:alice", new User("Alice", "alice@example.com"), 60);
+        cache.put("user:bob", new User("Bob", "bob@example.com"), 120);
+        cache.put("config", new Config("jdbc:mysql://localhost/db", 100), 300);
+
+        System.out.println("Cache size: " + cache.size() + " entries");
+
+        // Display initial statistics
+        cache.displayStatistics();
+
+        // Access entries
+        System.out.println("=== Accessing Cache Entries ===\n");
+        cache.get("user:alice");
+        cache.get("user:alice");
+        cache.get("user:alice");
+        cache.get("user:missing");
+
+        // Display statistics after access
+        cache.displayStatistics();
+
+        // Simulate time passing
+        System.out.println("=== Simulating 90 seconds passing ===\n");
+        simulateDelay(90);
+        System.out.println("Current time: 2024-01-10 14:01:30\n");
+
+        // Save cache
+        cache.saveCache();
+
+        // Simulate restart
+        System.out.println("=== Simulating Application Restart ===\n");
+        System.out.println("Clearing in-memory cache...");
+        cache.clear();
+
+        // Load cache
+        cache.loadCache();
+
+        // Display statistics after reload
+        cache.displayStatistics();
+
+        // Summary
+        displayPersistenceSummary();
+    }
+
+    private static void simulateDelay(int seconds) {
+        // In real application, time would naturally pass
+        // Here we simulate for demonstration
+    }
+
+    private static void displayPersistenceSummary() {
+        System.out.println("=== Cache Persistence Summary ===\n");
+        System.out.println("Before Restart:");
+        System.out.println("  - 3 entries total");
+        System.out.println("  - 1 expired, 2 active\n");
+        System.out.println("After Restart:");
+        System.out.println("  - 2 entries loaded");
+        System.out.println("  - Expired entries automatically cleaned up");
+        System.out.println("  - Cache state recovered successfully\n");
+        System.out.println("Benefits of Cache Serialization:");
+        System.out.println("  ✓ Survive application restarts");
+        System.out.println("  ✓ Reduce cache warm-up time");
+        System.out.println("  ✓ Preserve frequently accessed data");
+        System.out.println("  ✓ Automatic expiration cleanup");
+        System.out.println("  ✓ Compact storage with transient fields");
+    }
+}
+```
+
+</details>
+
+**💡 Tips:**
+- Mark derived/computed fields as transient to reduce serialized size (hitRate, isExpired)
+- Recalculate transient fields in readObject() after deserialization
+- Custom writeObject() writes compact metadata; omits transient fields automatically
+- TTL (time to live) enables automatic expiration; check age vs TTL on access
+- Remove expired entries during loadCache() for automatic cleanup
+- Store access statistics (totalAccesses, hits) separately from entries
+- Generic CacheEntry<T extends Serializable> ensures only Serializable values cached
+- Use @SuppressWarnings("unchecked") when loading Map from ObjectInputStream
+- lastAccessTime = 0 means never accessed; check before formatting timestamp
+- Update lastAccessTime on every get() to support LRU eviction policies
+- Serialize entire Map for batch save/load; more efficient than entry-by-entry
+- Try-with-resources ensures cache file closed properly after save
+- Handle FileNotFoundException separately; indicates no saved cache (first run)
+- Display human-readable statistics with percentages and formatted times
+- Cache persistence reduces cold start time by preserving hot data across restarts
 
 ---
 

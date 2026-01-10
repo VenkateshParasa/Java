@@ -277,3 +277,5 @@ export const day22Assessment = {
     }
   ]
 };
+
+export default day22Assessment;

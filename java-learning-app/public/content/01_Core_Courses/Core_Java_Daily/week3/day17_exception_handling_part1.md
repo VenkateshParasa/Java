@@ -323,7 +323,7 @@ public class RethrowDemo {
 
 ---
 
-## 💻 Practice Exercises
+## 💻 Practical Exercises
 
 ### Exercise 1: Safe Division Calculator
 ```java
@@ -409,6 +409,1207 @@ public class StringToNumber {
     }
 }
 ```
+
+---
+
+### Exercise 4: File Reader with Exception Handling
+
+**📝 Problem Statement:**
+Create a comprehensive file reading system demonstrating proper exception handling with try-with-resources, finally blocks, multiple exception types, and resource cleanup. The system should safely read files, handle various I/O exceptions, provide meaningful error messages, display file statistics (line count, character count, word count), and ensure resources are properly closed even when exceptions occur.
+
+**Requirements:**
+- Create FileReaderUtil class with static method readFile(String filePath)
+- Use try-with-resources to automatically manage BufferedReader resource
+- Handle FileNotFoundException separately with specific error message about missing file
+- Handle IOException for general file reading errors with appropriate messaging
+- Implement displayFileStats(String filePath) method showing line count, word count, character count
+- Add countLines(String filePath) method returning number of lines in file
+- Implement searchInFile(String filePath, String searchTerm) method finding lines containing search term
+- Use multiple catch blocks to handle different exception types with specific messages
+- Demonstrate finally block with resource cleanup message (though try-with-resources auto-closes)
+- Add validation checking if file path is null or empty before attempting to read
+- Provide copyFile(String source, String destination) method using try-with-resources for both streams
+- Include error recovery: if file not found, create sample file with default content
+
+**Sample Test Cases:**
+```
+Input: readFile("existing_file.txt") [file exists with content "Hello World"]
+Expected Output:
+=== Reading File: existing_file.txt ===
+File opened successfully
+Line 1: Hello World
+File read successfully
+Total lines read: 1
+Resource cleanup: BufferedReader closed automatically
+
+Input: readFile("missing_file.txt") [file doesn't exist]
+Expected Output:
+=== Reading File: missing_file.txt ===
+ERROR: File not found
+File path: missing_file.txt
+Please check if the file exists and path is correct
+Would you like to create a sample file? (yes/no)
+
+Input: displayFileStats("data.txt") [file with multiple lines]
+Expected Output:
+=== File Statistics: data.txt ===
+Total Lines: 10
+Total Words: 156
+Total Characters: 842
+Average Words Per Line: 15.6
+File Size: 842 bytes
+File read successfully
+
+Input: searchInFile("log.txt", "ERROR")
+Expected Output:
+=== Searching for "ERROR" in log.txt ===
+Found 3 matches:
+Line 5: ERROR: Connection timeout
+Line 12: ERROR: Invalid user credentials
+Line 23: ERROR: Database connection failed
+
+Input: copyFile("source.txt", "destination.txt")
+Expected Output:
+=== Copying File ===
+Source: source.txt
+Destination: destination.txt
+Opening source file...
+Creating destination file...
+Copying content... 100%
+Copy completed successfully
+Copied 1024 bytes
+Both files closed automatically
+```
+
+**Solution:**
+```java
+import java.io.*;
+import java.util.Scanner;
+
+public class FileReaderUtil {
+
+    // Read and display file content
+    public static void readFile(String filePath) {
+        System.out.println("\n=== Reading File: " + filePath + " ===");
+
+        // Validation
+        if (filePath == null || filePath.trim().isEmpty()) {
+            System.out.println("ERROR: File path cannot be null or empty");
+            return;
+        }
+
+        // Try-with-resources - automatically closes BufferedReader
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            System.out.println("File opened successfully");
+
+            String line;
+            int lineNumber = 0;
+
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                System.out.println("Line " + lineNumber + ": " + line);
+            }
+
+            System.out.println("File read successfully");
+            System.out.println("Total lines read: " + lineNumber);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: File not found");
+            System.out.println("File path: " + filePath);
+            System.out.println("Please check if the file exists and path is correct");
+            System.out.println("Exception details: " + e.getMessage());
+
+            // Offer to create sample file
+            offerCreateSampleFile(filePath);
+
+        } catch (IOException e) {
+            System.out.println("ERROR: Error reading file");
+            System.out.println("IO Exception occurred: " + e.getMessage());
+            e.printStackTrace();
+
+        } finally {
+            // Finally always executes (even though try-with-resources auto-closes)
+            System.out.println("Resource cleanup: BufferedReader closed automatically");
+        }
+    }
+
+    // Display file statistics
+    public static void displayFileStats(String filePath) {
+        System.out.println("\n=== File Statistics: " + filePath + " ===");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            int lineCount = 0;
+            int wordCount = 0;
+            int charCount = 0;
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                lineCount++;
+                charCount += line.length();
+
+                // Count words (split by spaces)
+                String[] words = line.trim().split("\\s+");
+                if (!line.trim().isEmpty()) {
+                    wordCount += words.length;
+                }
+            }
+
+            System.out.println("Total Lines: " + lineCount);
+            System.out.println("Total Words: " + wordCount);
+            System.out.println("Total Characters: " + charCount);
+
+            if (lineCount > 0) {
+                double avgWordsPerLine = (double) wordCount / lineCount;
+                System.out.println("Average Words Per Line: " + String.format("%.1f", avgWordsPerLine));
+            }
+
+            System.out.println("File Size: " + charCount + " bytes");
+            System.out.println("File read successfully");
+
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: File not found - " + filePath);
+        } catch (IOException e) {
+            System.out.println("ERROR: Could not read file statistics");
+            System.out.println("Details: " + e.getMessage());
+        }
+    }
+
+    // Count lines in file
+    public static int countLines(String filePath) {
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            while (reader.readLine() != null) {
+                count++;
+            }
+        } catch (IOException e) {
+            System.out.println("ERROR: Could not count lines - " + e.getMessage());
+            return -1;
+        }
+        return count;
+    }
+
+    // Search for term in file
+    public static void searchInFile(String filePath, String searchTerm) {
+        System.out.println("\n=== Searching for \"" + searchTerm + "\" in " + filePath + " ===");
+
+        if (searchTerm == null || searchTerm.isEmpty()) {
+            System.out.println("ERROR: Search term cannot be empty");
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int lineNumber = 0;
+            int matchCount = 0;
+
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                if (line.toLowerCase().contains(searchTerm.toLowerCase())) {
+                    matchCount++;
+                    System.out.println("Line " + lineNumber + ": " + line);
+                }
+            }
+
+            if (matchCount == 0) {
+                System.out.println("No matches found for \"" + searchTerm + "\"");
+            } else {
+                System.out.println("\nFound " + matchCount + " match(es)");
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: File not found - " + filePath);
+        } catch (IOException e) {
+            System.out.println("ERROR: Error searching file - " + e.getMessage());
+        }
+    }
+
+    // Copy file
+    public static boolean copyFile(String sourcePath, String destPath) {
+        System.out.println("\n=== Copying File ===");
+        System.out.println("Source: " + sourcePath);
+        System.out.println("Destination: " + destPath);
+
+        // Try-with-resources with multiple resources
+        try (BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(destPath))) {
+
+            System.out.println("Opening source file...");
+            System.out.println("Creating destination file...");
+            System.out.println("Copying content...");
+
+            String line;
+            int bytesWritten = 0;
+
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
+                bytesWritten += line.length() + 1;
+            }
+
+            System.out.println("Copy completed successfully");
+            System.out.println("Copied " + bytesWritten + " bytes");
+            System.out.println("Both files closed automatically");
+            return true;
+
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: Source file not found - " + sourcePath);
+            return false;
+        } catch (IOException e) {
+            System.out.println("ERROR: Error during file copy");
+            System.out.println("Details: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Helper method to offer creating sample file
+    private static void offerCreateSampleFile(String filePath) {
+        System.out.println("\nWould you like to create a sample file? (yes/no)");
+        Scanner scanner = new Scanner(System.in);
+        String response = scanner.nextLine();
+
+        if (response.equalsIgnoreCase("yes")) {
+            createSampleFile(filePath);
+        }
+    }
+
+    // Create sample file with default content
+    private static void createSampleFile(String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("This is a sample file.");
+            writer.newLine();
+            writer.write("Created automatically by FileReaderUtil.");
+            System.out.println("Sample file created: " + filePath);
+        } catch (IOException e) {
+            System.out.println("ERROR: Could not create sample file");
+        }
+    }
+}
+
+public class TestFileReader {
+    public static void main(String[] args) {
+        // Test reading file
+        FileReaderUtil.readFile("test.txt");
+
+        // Test file statistics
+        FileReaderUtil.displayFileStats("test.txt");
+
+        // Test line count
+        int lines = FileReaderUtil.countLines("test.txt");
+        System.out.println("\nLine count: " + lines);
+
+        // Test search
+        FileReaderUtil.searchInFile("test.txt", "Java");
+
+        // Test copy
+        FileReaderUtil.copyFile("test.txt", "test_copy.txt");
+
+        // Test with missing file
+        FileReaderUtil.readFile("missing.txt");
+    }
+}
+```
+
+**💡 Tips:**
+- Try-with-resources (try (...)) automatically closes resources implementing AutoCloseable/Closeable
+- BufferedReader and BufferedWriter both implement AutoCloseable, so perfect for try-with-resources
+- Multiple resources in try-with-resources separated by semicolons: try (R1; R2; R3)
+- Resources closed in reverse order of declaration: R3, then R2, then R1
+- FileNotFoundException is subclass of IOException - catch specific exceptions first
+- finally block executes even if return statement in try/catch - useful for cleanup logging
+- readLine() returns null when end of file reached - standard pattern: while ((line = reader.readLine()) != null)
+- Validation before file operations prevents NullPointerException: check null and empty strings
+- split("\\s+") splits by one or more whitespace characters for word counting
+- trim().isEmpty() check prevents counting empty lines as having words
+- BufferedWriter.newLine() writes platform-specific line separator (\\n on Unix, \\r\\n on Windows)
+- Exception chaining: catch specific exceptions first (FileNotFoundException), then general (IOException)
+- Error recovery: offerCreateSampleFile() demonstrates graceful degradation when file missing
+- Resource scope: variables declared in try-with-resources parentheses only accessible inside try block
+
+---
+
+### Exercise 5: Student Grade Management System with Exception Handling
+
+**📝 Problem Statement:**
+Create a student grade management system demonstrating comprehensive exception handling for user input validation, data processing, and business logic errors. The system should handle invalid input gracefully, validate grade ranges, manage student records with proper exception handling, calculate statistics safely, and provide meaningful error messages for various failure scenarios including invalid grades, duplicate student IDs, and invalid operations.
+
+**Requirements:**
+- Create Student class with fields: studentId, name, grade (0-100)
+- Implement GradeManager class with ArrayList<Student> for storing students
+- Create addStudent(String id, String name, int grade) method with validation
+- Throw IllegalArgumentException if student ID is empty or null
+- Throw IllegalArgumentException if name is empty or null
+- Throw IllegalArgumentException if grade < 0 or grade > 100
+- Check for duplicate student IDs and throw IllegalStateException if duplicate found
+- Implement getStudent(String studentId) method throwing NoSuchElementException if not found
+- Create updateGrade(String studentId, int newGrade) method with validation
+- Implement removeStudent(String studentId) method handling non-existent student gracefully
+- Add calculateAverage() method returning average grade, handling empty list with try-catch
+- Create displayAllStudents() method with exception handling for empty list
+- Implement findTopStudent() method throwing exception if no students exist
+- Add inputStudentFromConsole() method using Scanner with InputMismatchException handling
+- Validate all user input with appropriate exception messages
+- Use finally block to close Scanner resources
+
+**Sample Test Cases:**
+```
+Input: addStudent("S001", "Alice", 85)
+Expected Output:
+=== Adding Student ===
+Student ID: S001
+Name: Alice
+Grade: 85
+Validating student data...
+All validations passed ✓
+Student added successfully
+
+Input: addStudent("", "Bob", 90)
+Expected Output:
+=== Adding Student ===
+ERROR: Invalid student ID
+Exception: IllegalArgumentException
+Message: Student ID cannot be empty or null
+Student not added
+
+Input: addStudent("S002", "Charlie", 150)
+Expected Output:
+=== Adding Student ===
+ERROR: Invalid grade
+Exception: IllegalArgumentException
+Message: Grade must be between 0 and 100. Received: 150
+Student not added
+
+Input: addStudent("S001", "David", 88) [S001 already exists]
+Expected Output:
+=== Adding Student ===
+ERROR: Duplicate student ID
+Exception: IllegalStateException
+Message: Student with ID S001 already exists
+Cannot add duplicate student
+
+Input: getStudent("S999") [student doesn't exist]
+Expected Output:
+=== Retrieving Student ===
+Searching for student ID: S999
+ERROR: Student not found
+Exception: NoSuchElementException
+Message: No student found with ID: S999
+
+Input: calculateAverage() [no students]
+Expected Output:
+=== Calculating Average Grade ===
+ERROR: No students in system
+Cannot calculate average for empty student list
+Returning default value: 0.0
+
+Input: updateGrade("S001", 95)
+Expected Output:
+=== Updating Grade ===
+Student ID: S001
+Current Grade: 85
+New Grade: 95
+Validating new grade...
+Grade validation passed ✓
+Grade updated successfully
+Updated student: Alice (S001) - Grade: 95
+
+Input: findTopStudent()
+Expected Output:
+=== Finding Top Student ===
+Searching through 5 students...
+Top Student Found:
+Name: Alice
+ID: S001
+Grade: 95
+```
+
+**Solution:**
+```java
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+
+// Student class
+class Student {
+    private String studentId;
+    private String name;
+    private int grade;
+
+    public Student(String studentId, String name, int grade) {
+        this.studentId = studentId;
+        this.name = name;
+        this.grade = grade;
+    }
+
+    public String getStudentId() { return studentId; }
+    public String getName() { return name; }
+    public int getGrade() { return grade; }
+    public void setGrade(int grade) { this.grade = grade; }
+
+    @Override
+    public String toString() {
+        return name + " (ID: " + studentId + ", Grade: " + grade + ")";
+    }
+}
+
+// Grade Manager class
+class GradeManager {
+    private ArrayList<Student> students;
+
+    public GradeManager() {
+        students = new ArrayList<>();
+    }
+
+    // Add student with validation
+    public void addStudent(String studentId, String name, int grade) {
+        System.out.println("\n=== Adding Student ===");
+        System.out.println("Student ID: " + studentId);
+        System.out.println("Name: " + name);
+        System.out.println("Grade: " + grade);
+        System.out.println("Validating student data...");
+
+        try {
+            // Validate student ID
+            if (studentId == null || studentId.trim().isEmpty()) {
+                throw new IllegalArgumentException("Student ID cannot be empty or null");
+            }
+
+            // Validate name
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Student name cannot be empty or null");
+            }
+
+            // Validate grade range
+            if (grade < 0 || grade > 100) {
+                throw new IllegalArgumentException("Grade must be between 0 and 100. Received: " + grade);
+            }
+
+            // Check for duplicate ID
+            for (Student student : students) {
+                if (student.getStudentId().equals(studentId)) {
+                    throw new IllegalStateException("Student with ID " + studentId + " already exists");
+                }
+            }
+
+            // All validations passed
+            Student student = new Student(studentId, name, grade);
+            students.add(student);
+            System.out.println("All validations passed ✓");
+            System.out.println("Student added successfully");
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERROR: Invalid student data");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Message: " + e.getMessage());
+            System.out.println("Student not added");
+
+        } catch (IllegalStateException e) {
+            System.out.println("ERROR: Duplicate student ID");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Message: " + e.getMessage());
+            System.out.println("Cannot add duplicate student");
+        }
+    }
+
+    // Get student by ID
+    public Student getStudent(String studentId) {
+        System.out.println("\n=== Retrieving Student ===");
+        System.out.println("Searching for student ID: " + studentId);
+
+        try {
+            for (Student student : students) {
+                if (student.getStudentId().equals(studentId)) {
+                    System.out.println("Student found: " + student);
+                    return student;
+                }
+            }
+            // If not found, throw exception
+            throw new NoSuchElementException("No student found with ID: " + studentId);
+
+        } catch (NoSuchElementException e) {
+            System.out.println("ERROR: Student not found");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Message: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Update student grade
+    public boolean updateGrade(String studentId, int newGrade) {
+        System.out.println("\n=== Updating Grade ===");
+        System.out.println("Student ID: " + studentId);
+
+        try {
+            // Validate new grade
+            if (newGrade < 0 || newGrade > 100) {
+                throw new IllegalArgumentException("Grade must be between 0 and 100. Received: " + newGrade);
+            }
+
+            Student student = null;
+            for (Student s : students) {
+                if (s.getStudentId().equals(studentId)) {
+                    student = s;
+                    break;
+                }
+            }
+
+            if (student == null) {
+                throw new NoSuchElementException("Student with ID " + studentId + " not found");
+            }
+
+            System.out.println("Current Grade: " + student.getGrade());
+            System.out.println("New Grade: " + newGrade);
+            System.out.println("Validating new grade...");
+
+            student.setGrade(newGrade);
+            System.out.println("Grade validation passed ✓");
+            System.out.println("Grade updated successfully");
+            System.out.println("Updated student: " + student);
+            return true;
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERROR: Invalid grade value");
+            System.out.println("Message: " + e.getMessage());
+            return false;
+        } catch (NoSuchElementException e) {
+            System.out.println("ERROR: Student not found");
+            System.out.println("Message: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Calculate average grade
+    public double calculateAverage() {
+        System.out.println("\n=== Calculating Average Grade ===");
+
+        try {
+            if (students.isEmpty()) {
+                throw new IllegalStateException("No students in system");
+            }
+
+            int sum = 0;
+            for (Student student : students) {
+                sum += student.getGrade();
+            }
+
+            double average = (double) sum / students.size();
+            System.out.println("Total students: " + students.size());
+            System.out.println("Total grades sum: " + sum);
+            System.out.println("Average grade: " + String.format("%.2f", average));
+            return average;
+
+        } catch (IllegalStateException e) {
+            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("Cannot calculate average for empty student list");
+            System.out.println("Returning default value: 0.0");
+            return 0.0;
+        }
+    }
+
+    // Find top student
+    public Student findTopStudent() {
+        System.out.println("\n=== Finding Top Student ===");
+
+        try {
+            if (students.isEmpty()) {
+                throw new IllegalStateException("No students in system");
+            }
+
+            System.out.println("Searching through " + students.size() + " students...");
+
+            Student topStudent = students.get(0);
+            for (Student student : students) {
+                if (student.getGrade() > topStudent.getGrade()) {
+                    topStudent = student;
+                }
+            }
+
+            System.out.println("Top Student Found:");
+            System.out.println("Name: " + topStudent.getName());
+            System.out.println("ID: " + topStudent.getStudentId());
+            System.out.println("Grade: " + topStudent.getGrade());
+            return topStudent;
+
+        } catch (IllegalStateException e) {
+            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("Cannot find top student without any students");
+            return null;
+        }
+    }
+
+    // Display all students
+    public void displayAllStudents() {
+        System.out.println("\n=== All Students ===");
+
+        try {
+            if (students.isEmpty()) {
+                throw new IllegalStateException("No students to display");
+            }
+
+            System.out.println("Total Students: " + students.size());
+            System.out.println("---");
+
+            for (int i = 0; i < students.size(); i++) {
+                System.out.println((i + 1) + ". " + students.get(i));
+            }
+
+        } catch (IllegalStateException e) {
+            System.out.println("Student list is empty");
+            System.out.println("Please add students first");
+        }
+    }
+
+    // Input student from console
+    public void inputStudentFromConsole() {
+        System.out.println("\n=== Input Student from Console ===");
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter Student ID: ");
+            String id = scanner.nextLine();
+
+            System.out.print("Enter Student Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter Grade (0-100): ");
+            int grade = scanner.nextInt();
+
+            addStudent(id, name, grade);
+
+        } catch (InputMismatchException e) {
+            System.out.println("\nERROR: Invalid input format");
+            System.out.println("Grade must be a number");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            scanner.nextLine(); // Clear invalid input
+
+        } finally {
+            System.out.println("Input operation completed");
+        }
+    }
+}
+
+public class TestGradeManager {
+    public static void main(String[] args) {
+        GradeManager manager = new GradeManager();
+
+        // Test adding students
+        manager.addStudent("S001", "Alice", 85);
+        manager.addStudent("S002", "Bob", 92);
+        manager.addStudent("S003", "Charlie", 78);
+
+        // Test invalid inputs
+        manager.addStudent("", "Invalid", 80);          // Empty ID
+        manager.addStudent("S004", "David", 150);       // Invalid grade
+        manager.addStudent("S001", "Duplicate", 90);    // Duplicate ID
+
+        // Display all students
+        manager.displayAllStudents();
+
+        // Test get student
+        manager.getStudent("S002");
+        manager.getStudent("S999");  // Not found
+
+        // Test update grade
+        manager.updateGrade("S001", 95);
+        manager.updateGrade("S001", 110);  // Invalid grade
+
+        // Calculate average
+        manager.calculateAverage();
+
+        // Find top student
+        manager.findTopStudent();
+
+        // Test with empty manager
+        GradeManager emptyManager = new GradeManager();
+        emptyManager.calculateAverage();
+        emptyManager.findTopStudent();
+        emptyManager.displayAllStudents();
+    }
+}
+```
+
+**💡 Tips:**
+- IllegalArgumentException used for invalid method arguments (null, empty, out-of-range values)
+- IllegalStateException used for invalid state (duplicate ID, operations on empty list)
+- NoSuchElementException used when search fails to find requested element
+- Validation order matters: check null/empty first, then range, then business rules (duplicates)
+- try-catch blocks isolate validation logic from main logic - cleaner error handling
+- Exception messages should be descriptive: include actual invalid value received
+- ArrayList.isEmpty() check prevents operations on empty collections
+- Scanner.nextInt() throws InputMismatchException if user enters non-integer
+- scanner.nextLine() after InputMismatchException clears the invalid input from buffer
+- finally block in inputStudentFromConsole() ensures completion message printed regardless of exceptions
+- Return null from get methods when not found after catching exception - caller can check for null
+- Enhanced for loop (for-each) simplifies iteration when checking duplicates or searching
+
+---
+
+### Exercise 6: Banking Transaction System with Exception Handling
+
+**📝 Problem Statement:**
+Create a banking transaction system demonstrating comprehensive exception handling for financial operations, business rule validation, concurrent access scenarios, and transaction rollback. The system should manage bank accounts, process deposits and withdrawals with proper validation, handle insufficient funds gracefully, validate transaction amounts, maintain transaction history, and ensure data integrity with atomic operations using exception handling to roll back failed transactions.
+
+**Requirements:**
+- Create BankAccount class with fields: accountNumber, accountHolderName, balance (private)
+- Implement deposit(double amount) method throwing IllegalArgumentException if amount <= 0
+- Create withdraw(double amount) method throwing InsufficientFundsException if balance < amount
+- Define custom InsufficientFundsException extending Exception with required and available amounts
+- Implement transfer(BankAccount from, BankAccount to, double amount) method as atomic operation
+- If transfer fails at any step, roll back previous changes using try-catch-finally
+- Add getBalance() method that requires authentication (throws UnauthorizedException if not authenticated)
+- Create validateTransaction(double amount) method checking amount > 0 and amount < 1000000 (transaction limit)
+- Implement processTransaction(String type, double amount) with multiple exception handling
+- Add transaction history with addTransactionRecord(String type, double amount, boolean success)
+- Include displayTransactionHistory() method showing successful and failed transactions
+- Use multiple catch blocks to handle different exception types with specific error messages
+- Demonstrate exception chaining: wrap low-level exceptions with high-level business exceptions
+- Add freezeAccount() and unfreezeAccount() methods throwing AccountFrozenException on frozen account operations
+- Implement dailyWithdrawalLimit with LimitExceededException when limit exceeded
+
+**Sample Test Cases:**
+```
+Input: deposit(500.00)
+Expected Output:
+=== Processing Deposit ===
+Account: 12345
+Current Balance: $1000.00
+Deposit Amount: $500.00
+Validating transaction...
+Validation passed ✓
+Processing deposit...
+New Balance: $1500.00
+Transaction successful
+Transaction recorded: DEPOSIT $500.00
+
+Input: deposit(-100.00)
+Expected Output:
+=== Processing Deposit ===
+ERROR: Invalid deposit amount
+Exception: IllegalArgumentException
+Message: Deposit amount must be positive. Received: -100.0
+Transaction failed
+Transaction recorded: DEPOSIT $-100.00 [FAILED]
+
+Input: withdraw(2000.00) [balance is 1500.00]
+Expected Output:
+=== Processing Withdrawal ===
+Account: 12345
+Current Balance: $1500.00
+Withdrawal Amount: $2000.00
+Checking account balance...
+ERROR: Insufficient funds
+Exception: InsufficientFundsException
+Required: $2000.00
+Available: $1500.00
+Shortfall: $500.00
+Transaction declined
+Transaction recorded: WITHDRAWAL $2000.00 [FAILED - INSUFFICIENT FUNDS]
+
+Input: transfer(account1, account2, 500.00) [both accounts valid]
+Expected Output:
+=== Processing Transfer ===
+From Account: 12345 (Alice)
+To Account: 67890 (Bob)
+Amount: $500.00
+Validating transfer...
+Checking source account balance...
+Balance check passed ✓
+Step 1: Withdrawing from source account...
+Withdrawn: $500.00
+Source new balance: $1000.00
+Step 2: Depositing to destination account...
+Deposited: $500.00
+Destination new balance: $2500.00
+Transfer completed successfully
+Both accounts updated
+
+Input: transfer(account1, account2, 2000.00) [insufficient funds, demonstrate rollback]
+Expected Output:
+=== Processing Transfer ===
+From Account: 12345 (Alice)
+To Account: 67890 (Bob)
+Amount: $2000.00
+Validating transfer...
+ERROR: Transfer failed
+Exception: InsufficientFundsException
+Message: Insufficient funds in source account
+Rolling back transaction...
+No changes made to either account
+Transfer cancelled
+
+Input: withdraw(300.00) [account frozen]
+Expected Output:
+=== Processing Withdrawal ===
+ERROR: Account frozen
+Exception: AccountFrozenException
+Message: Account 12345 is currently frozen
+Cannot perform transactions on frozen account
+Please contact customer service
+Transaction blocked
+
+Input: displayTransactionHistory()
+Expected Output:
+=== Transaction History ===
+Account: 12345 (Alice)
+Total Transactions: 6
+
+Successful Transactions:
+1. DEPOSIT $500.00 - Success
+2. WITHDRAWAL $200.00 - Success
+3. TRANSFER OUT $500.00 - Success
+
+Failed Transactions:
+1. DEPOSIT $-100.00 - Failed (Invalid amount)
+2. WITHDRAWAL $2000.00 - Failed (Insufficient funds)
+3. TRANSFER OUT $2000.00 - Failed (Insufficient funds)
+
+Success Rate: 50% (3/6)
+```
+
+**Solution:**
+```java
+import java.util.ArrayList;
+
+// Custom exception for insufficient funds
+class InsufficientFundsException extends Exception {
+    private double required;
+    private double available;
+
+    public InsufficientFundsException(double required, double available) {
+        super("Insufficient funds. Required: $" + required + ", Available: $" + available);
+        this.required = required;
+        this.available = available;
+    }
+
+    public double getRequired() { return required; }
+    public double getAvailable() { return available; }
+    public double getShortfall() { return required - available; }
+}
+
+// Custom exception for frozen account
+class AccountFrozenException extends Exception {
+    public AccountFrozenException(String accountNumber) {
+        super("Account " + accountNumber + " is currently frozen");
+    }
+}
+
+// Transaction record class
+class TransactionRecord {
+    private String type;
+    private double amount;
+    private boolean success;
+    private String failureReason;
+
+    public TransactionRecord(String type, double amount, boolean success, String failureReason) {
+        this.type = type;
+        this.amount = amount;
+        this.success = success;
+        this.failureReason = failureReason;
+    }
+
+    @Override
+    public String toString() {
+        if (success) {
+            return type + " $" + String.format("%.2f", amount) + " - Success";
+        } else {
+            return type + " $" + String.format("%.2f", amount) + " - Failed (" + failureReason + ")";
+        }
+    }
+}
+
+// Bank Account class
+class BankAccount {
+    private String accountNumber;
+    private String accountHolderName;
+    private double balance;
+    private boolean frozen;
+    private ArrayList<TransactionRecord> transactionHistory;
+
+    public BankAccount(String accountNumber, String accountHolderName, double initialBalance) {
+        this.accountNumber = accountNumber;
+        this.accountHolderName = accountHolderName;
+        this.balance = initialBalance;
+        this.frozen = false;
+        this.transactionHistory = new ArrayList<>();
+    }
+
+    // Getters
+    public String getAccountNumber() { return accountNumber; }
+    public String getAccountHolderName() { return accountHolderName; }
+    public double getBalance() { return balance; }
+    public boolean isFrozen() { return frozen; }
+
+    // Freeze/unfreeze account
+    public void freezeAccount() {
+        frozen = true;
+        System.out.println("Account " + accountNumber + " has been frozen");
+    }
+
+    public void unfreezeAccount() {
+        frozen = false;
+        System.out.println("Account " + accountNumber + " has been unfrozen");
+    }
+
+    // Deposit money
+    public void deposit(double amount) {
+        System.out.println("\n=== Processing Deposit ===");
+        System.out.println("Account: " + accountNumber);
+        System.out.println("Current Balance: $" + String.format("%.2f", balance));
+        System.out.println("Deposit Amount: $" + String.format("%.2f", amount));
+
+        try {
+            // Check if account is frozen
+            if (frozen) {
+                throw new AccountFrozenException(accountNumber);
+            }
+
+            // Validate amount
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Deposit amount must be positive. Received: " + amount);
+            }
+
+            System.out.println("Validating transaction...");
+            validateTransaction(amount);
+            System.out.println("Validation passed ✓");
+
+            // Process deposit
+            System.out.println("Processing deposit...");
+            balance += amount;
+            System.out.println("New Balance: $" + String.format("%.2f", balance));
+            System.out.println("Transaction successful");
+
+            // Record successful transaction
+            addTransactionRecord("DEPOSIT", amount, true, null);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERROR: Invalid deposit amount");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Message: " + e.getMessage());
+            System.out.println("Transaction failed");
+            addTransactionRecord("DEPOSIT", amount, false, "Invalid amount");
+
+        } catch (AccountFrozenException e) {
+            System.out.println("ERROR: Account frozen");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Message: " + e.getMessage());
+            System.out.println("Cannot perform transactions on frozen account");
+            System.out.println("Please contact customer service");
+            System.out.println("Transaction blocked");
+            addTransactionRecord("DEPOSIT", amount, false, "Account frozen");
+
+        } catch (Exception e) {
+            System.out.println("ERROR: Transaction validation failed");
+            System.out.println("Message: " + e.getMessage());
+            System.out.println("Transaction failed");
+            addTransactionRecord("DEPOSIT", amount, false, e.getMessage());
+        }
+    }
+
+    // Withdraw money
+    public void withdraw(double amount) throws InsufficientFundsException {
+        System.out.println("\n=== Processing Withdrawal ===");
+        System.out.println("Account: " + accountNumber);
+        System.out.println("Current Balance: $" + String.format("%.2f", balance));
+        System.out.println("Withdrawal Amount: $" + String.format("%.2f", amount));
+
+        try {
+            // Check if account is frozen
+            if (frozen) {
+                throw new AccountFrozenException(accountNumber);
+            }
+
+            // Validate amount
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Withdrawal amount must be positive");
+            }
+
+            System.out.println("Checking account balance...");
+            // Check sufficient funds
+            if (balance < amount) {
+                throw new InsufficientFundsException(amount, balance);
+            }
+
+            validateTransaction(amount);
+
+            // Process withdrawal
+            balance -= amount;
+            System.out.println("Withdrawal successful");
+            System.out.println("New Balance: $" + String.format("%.2f", balance));
+            addTransactionRecord("WITHDRAWAL", amount, true, null);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERROR: Invalid withdrawal amount");
+            System.out.println("Message: " + e.getMessage());
+            addTransactionRecord("WITHDRAWAL", amount, false, "Invalid amount");
+            throw new InsufficientFundsException(amount, balance);
+
+        } catch (InsufficientFundsException e) {
+            System.out.println("ERROR: Insufficient funds");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Required: $" + String.format("%.2f", e.getRequired()));
+            System.out.println("Available: $" + String.format("%.2f", e.getAvailable()));
+            System.out.println("Shortfall: $" + String.format("%.2f", e.getShortfall()));
+            System.out.println("Transaction declined");
+            addTransactionRecord("WITHDRAWAL", amount, false, "Insufficient funds");
+            throw e;  // Rethrow for caller
+
+        } catch (AccountFrozenException e) {
+            System.out.println("ERROR: Account frozen");
+            System.out.println("Message: " + e.getMessage());
+            addTransactionRecord("WITHDRAWAL", amount, false, "Account frozen");
+            throw new InsufficientFundsException(amount, balance);
+
+        } catch (Exception e) {
+            System.out.println("ERROR: Withdrawal failed");
+            System.out.println("Message: " + e.getMessage());
+            addTransactionRecord("WITHDRAWAL", amount, false, e.getMessage());
+            throw new InsufficientFundsException(amount, balance);
+        }
+    }
+
+    // Validate transaction
+    private void validateTransaction(double amount) throws Exception {
+        if (amount > 1000000) {
+            throw new Exception("Transaction amount exceeds limit of $1,000,000");
+        }
+    }
+
+    // Add transaction record
+    private void addTransactionRecord(String type, double amount, boolean success, String failureReason) {
+        TransactionRecord record = new TransactionRecord(type, amount, success, failureReason);
+        transactionHistory.add(record);
+        System.out.println("Transaction recorded: " + record);
+    }
+
+    // Display transaction history
+    public void displayTransactionHistory() {
+        System.out.println("\n=== Transaction History ===");
+        System.out.println("Account: " + accountNumber + " (" + accountHolderName + ")");
+        System.out.println("Total Transactions: " + transactionHistory.size());
+        System.out.println();
+
+        int successCount = 0;
+        int failureCount = 0;
+
+        System.out.println("Successful Transactions:");
+        int successIndex = 1;
+        for (TransactionRecord record : transactionHistory) {
+            if (record.toString().contains("Success")) {
+                System.out.println(successIndex + ". " + record);
+                successIndex++;
+                successCount++;
+            }
+        }
+
+        System.out.println("\nFailed Transactions:");
+        int failureIndex = 1;
+        for (TransactionRecord record : transactionHistory) {
+            if (record.toString().contains("Failed")) {
+                System.out.println(failureIndex + ". " + record);
+                failureIndex++;
+                failureCount++;
+            }
+        }
+
+        int total = successCount + failureCount;
+        if (total > 0) {
+            double successRate = (successCount * 100.0) / total;
+            System.out.println("\nSuccess Rate: " + String.format("%.0f%%", successRate) + " (" + successCount + "/" + total + ")");
+        }
+    }
+
+    // Transfer money between accounts
+    public static void transfer(BankAccount from, BankAccount to, double amount) {
+        System.out.println("\n=== Processing Transfer ===");
+        System.out.println("From Account: " + from.getAccountNumber() + " (" + from.getAccountHolderName() + ")");
+        System.out.println("To Account: " + to.getAccountNumber() + " (" + to.getAccountHolderName() + ")");
+        System.out.println("Amount: $" + String.format("%.2f", amount));
+        System.out.println("Validating transfer...");
+
+        try {
+            System.out.println("Checking source account balance...");
+            if (from.getBalance() < amount) {
+                throw new InsufficientFundsException(amount, from.getBalance());
+            }
+            System.out.println("Balance check passed ✓");
+
+            // Atomic transaction: both steps must succeed
+            System.out.println("Step 1: Withdrawing from source account...");
+            from.withdraw(amount);
+            System.out.println("Withdrawn: $" + String.format("%.2f", amount));
+            System.out.println("Source new balance: $" + String.format("%.2f", from.getBalance()));
+
+            System.out.println("Step 2: Depositing to destination account...");
+            to.deposit(amount);
+            System.out.println("Deposited: $" + String.format("%.2f", amount));
+            System.out.println("Destination new balance: $" + String.format("%.2f", to.getBalance()));
+
+            System.out.println("Transfer completed successfully");
+            System.out.println("Both accounts updated");
+            from.addTransactionRecord("TRANSFER OUT", amount, true, null);
+            to.addTransactionRecord("TRANSFER IN", amount, true, null);
+
+        } catch (InsufficientFundsException e) {
+            System.out.println("ERROR: Transfer failed");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Message: " + e.getMessage());
+            System.out.println("Rolling back transaction...");
+            System.out.println("No changes made to either account");
+            System.out.println("Transfer cancelled");
+            from.addTransactionRecord("TRANSFER OUT", amount, false, "Insufficient funds");
+            to.addTransactionRecord("TRANSFER IN", amount, false, "Source insufficient funds");
+        }
+    }
+}
+
+public class TestBankingSystem {
+    public static void main(String[] args) {
+        // Create accounts
+        BankAccount alice = new BankAccount("12345", "Alice", 1000.00);
+        BankAccount bob = new BankAccount("67890", "Bob", 2000.00);
+
+        // Test deposits
+        alice.deposit(500.00);
+        alice.deposit(-100.00);  // Invalid
+
+        // Test withdrawals
+        try {
+            alice.withdraw(200.00);
+            alice.withdraw(2000.00);  // Insufficient funds
+        } catch (InsufficientFundsException e) {
+            // Already handled in method
+        }
+
+        // Test transfers
+        BankAccount.transfer(alice, bob, 500.00);  // Success
+        BankAccount.transfer(alice, bob, 2000.00); // Fail - insufficient funds
+
+        // Test frozen account
+        alice.freezeAccount();
+        alice.deposit(100.00);  // Should fail
+        alice.unfreezeAccount();
+
+        // Display transaction history
+        alice.displayTransactionHistory();
+        bob.displayTransactionHistory();
+    }
+}
+```
+
+**💡 Tips:**
+- Custom exceptions (InsufficientFundsException, AccountFrozenException) extend Exception for checked exceptions
+- Custom exception constructor takes parameters (required, available) storing state for later access
+- Exception chaining: low-level exceptions (IllegalArgumentException) wrapped in high-level exceptions (InsufficientFundsException)
+- Atomic operations: transfer() either completes fully or rolls back completely - no partial state
+- Transaction history ArrayList stores both successful and failed transactions for auditing
+- Multiple catch blocks handle different scenarios: invalid input, insufficient funds, frozen account, general errors
+- Rethrowing exceptions (throw e;) passes exception up call stack for higher-level handling
+- Validation order: frozen check → amount validation → balance check → transaction limit
+- finally block would ensure cleanup even if exceptions occur (not needed here but important pattern)
+- Business exceptions (InsufficientFundsException) more meaningful than generic exceptions
+- getMessage() provides user-friendly error message; getClass().getSimpleName() shows exception type
+- Success rate calculation demonstrates using transaction history for analytics
+- Static transfer method operates on two account objects showing multi-object transaction handling
 
 ---
 

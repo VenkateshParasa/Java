@@ -347,9 +347,57 @@ for (int i = 0; i < array.length; i++) {
 
 ---
 
-## 💻 Practice Exercises
+## 💻 Practical Exercises
 
 ### Exercise 1: Custom Validation Framework
+
+**📝 Problem Statement:**
+Create a user registration validation system demonstrating custom checked exceptions for different validation failures, multi-catch exception handling, and proper exception message formatting. The system should validate email format and password strength, throwing specific custom exceptions for each validation rule violation with detailed error messages.
+
+**Requirements:**
+- Create EmailValidationException extending Exception (checked exception)
+- Create PasswordValidationException extending Exception (checked exception)
+- EmailValidationException should include the invalid email in the message
+- PasswordValidationException should specify which validation rule failed
+- Implement validateEmail(String email) method throwing EmailValidationException if:
+  - Email is null
+  - Email doesn't contain "@" symbol
+  - Email doesn't contain "." (dot)
+- Implement validatePassword(String password) method throwing PasswordValidationException if:
+  - Password is null or less than 8 characters
+  - Password doesn't contain at least one uppercase letter
+  - Password doesn't contain at least one digit
+- Create registerUser(String email, String password) method that:
+  - Calls both validation methods
+  - Uses multi-catch to handle both exception types
+  - Prints success message if validation passes
+  - Prints failure message with exception details if validation fails
+- Test with valid credentials, invalid email, and weak password
+
+**Sample Test Cases:**
+```
+Input: registerUser("test@email.com", "Password123")
+Expected Output:
+User registered successfully!
+
+Input: registerUser("invalid-email", "Password123")
+Expected Output:
+Registration failed: Invalid email format: invalid-email
+
+Input: registerUser("test@email.com", "weak")
+Expected Output:
+Registration failed: Password validation failed: Must be at least 8 characters
+
+Input: registerUser("test@email.com", "password")
+Expected Output:
+Registration failed: Password validation failed: Must contain uppercase letter
+
+Input: registerUser("test@email.com", "Password")
+Expected Output:
+Registration failed: Password validation failed: Must contain digit
+```
+
+**Solution:**
 ```java
 class EmailValidationException extends Exception {
     public EmailValidationException(String email) {
@@ -364,14 +412,14 @@ class PasswordValidationException extends Exception {
 }
 
 public class UserRegistration {
-    public static void validateEmail(String email) 
+    public static void validateEmail(String email)
             throws EmailValidationException {
         if (email == null || !email.contains("@") || !email.contains(".")) {
             throw new EmailValidationException(email);
         }
     }
     
-    public static void validatePassword(String password) 
+    public static void validatePassword(String password)
             throws PasswordValidationException {
         if (password == null || password.length() < 8) {
             throw new PasswordValidationException("Must be at least 8 characters");
@@ -402,7 +450,65 @@ public class UserRegistration {
 }
 ```
 
+**💡 Tips:**
+- Custom checked exceptions: Extend Exception for validation errors that caller should handle
+- Exception constructors: Pass descriptive messages to super() constructor for clear error reporting
+- Multi-catch syntax: Use `catch (Exception1 | Exception2 e)` to handle multiple exception types with same logic
+- throws keyword: Methods declare checked exceptions they might throw using throws clause
+- Validation order: validateEmail first, then validatePassword - fails fast on first error
+- Regular expressions: Use matches() with regex patterns to check for uppercase letters and digits
+- Exception messages: Include context (invalid value, specific rule violated) for debugging
+- Method separation: Separate validation logic into dedicated methods for reusability and clarity
+
 ### Exercise 2: File Processing with Exception Handling
+
+**📝 Problem Statement:**
+Create a file processing system demonstrating exception wrapping, exception chaining with causes, proper resource cleanup in finally blocks, and handling multiple exception types. The system should read lines from an input file, transform them (add line numbers and convert to uppercase), and write to an output file, properly handling all potential I/O errors with custom exceptions that preserve the original cause.
+
+**Requirements:**
+- Create FileProcessingException extending Exception (checked exception)
+- FileProcessingException must have constructor accepting message and cause (Throwable)
+- Implement processFile(String inputFile, String outputFile) method that:
+  - Reads from inputFile using BufferedReader
+  - Writes to outputFile using BufferedWriter
+  - Transforms each line: adds line number prefix and converts to uppercase
+  - Wraps FileNotFoundException in FileProcessingException with specific message
+  - Wraps other IOExceptions in FileProcessingException with generic message
+  - Preserves original exception as cause for debugging
+  - Closes both reader and writer in finally block
+  - Handles close() exceptions separately without masking original exception
+- Main method should catch FileProcessingException and display both message and cause
+- Demonstrate exception chaining: FileProcessingException → IOException/FileNotFoundException
+- Use finally block for resource cleanup (not try-with-resources for this exercise)
+
+**Sample Test Cases:**
+```
+Input: processFile("input.txt", "output.txt") [input.txt exists with content]
+File content:
+hello world
+java programming
+exception handling
+
+Expected Output:
+File processed successfully
+
+Output file content:
+1: HELLO WORLD
+2: JAVA PROGRAMMING
+3: EXCEPTION HANDLING
+
+Input: processFile("missing.txt", "output.txt") [file doesn't exist]
+Expected Output:
+Processing failed: Input file not found: missing.txt
+Caused by: missing.txt (No such file or directory)
+
+Input: processFile("input.txt", "/readonly/output.txt") [write permission denied]
+Expected Output:
+Processing failed: Error processing file
+Caused by: /readonly/output.txt (Permission denied)
+```
+
+**Solution:**
 ```java
 import java.io.*;
 
@@ -413,15 +519,15 @@ class FileProcessingException extends Exception {
 }
 
 public class FileProcessor {
-    public static void processFile(String inputFile, String outputFile) 
+    public static void processFile(String inputFile, String outputFile)
             throws FileProcessingException {
         BufferedReader reader = null;
         BufferedWriter writer = null;
-        
+
         try {
             reader = new BufferedReader(new FileReader(inputFile));
             writer = new BufferedWriter(new FileWriter(outputFile));
-            
+
             String line;
             int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
@@ -429,9 +535,9 @@ public class FileProcessor {
                 writer.write(lineNumber + ": " + line.toUpperCase());
                 writer.newLine();
             }
-            
+
             System.out.println("File processed successfully");
-            
+
         } catch (FileNotFoundException e) {
             throw new FileProcessingException(
                 "Input file not found: " + inputFile, e);
@@ -447,7 +553,7 @@ public class FileProcessor {
             }
         }
     }
-    
+
     public static void main(String[] args) {
         try {
             processFile("input.txt", "output.txt");
@@ -460,6 +566,1728 @@ public class FileProcessor {
     }
 }
 ```
+
+**💡 Tips:**
+- Exception wrapping: Catch low-level IOException and wrap in domain-specific FileProcessingException
+- Exception chaining: Pass original exception as cause to preserve full error context and stack trace
+- getCause() method: Access wrapped exception to display or handle root cause separately
+- finally block: Executes regardless of exception, ensuring resources always closed
+- Null checks in finally: Check if resources initialized before closing to avoid NullPointerException
+- Nested try-catch in finally: Catch close() exceptions separately to avoid masking original exception
+- Specific vs generic catch: FileNotFoundException caught separately for specific error message
+- Resource cleanup order: Close in reverse order of creation (writer before reader)
+- Exception message context: Include filename in exception message for debugging
+- throws declaration: Method declares FileProcessingException forcing caller to handle
+
+---
+
+### Exercise 3: E-Commerce Order Processing with Custom Exception Hierarchy
+
+**📝 Problem Statement:**
+Create an e-commerce order processing system demonstrating custom exception hierarchy with both checked and unchecked exceptions, exception inheritance, specific error handling for different business scenarios, and proper exception propagation through multiple layers. The system should handle inventory management, payment processing, order validation, and shipping operations with appropriate custom exceptions for each domain.
+
+**Requirements:**
+- Create base exception OrderProcessingException extending Exception (checked)
+- Define specific checked exceptions: InsufficientStockException, PaymentFailedException, ShippingException
+- Create unchecked exception InvalidOrderException extending RuntimeException for validation errors
+- InsufficientStockException should include: productId, requestedQuantity, availableQuantity
+- PaymentFailedException should include: transactionId, amount, paymentMethod, failureReason
+- ShippingException should include: orderId, destination, carrier
+- InvalidOrderException should include: orderId, validationErrors (List<String>)
+- Implement Order class with fields: orderId, customerId, items (Map<String, Integer>), totalAmount
+- Create InventoryManager with checkStock(String productId, int quantity) throwing InsufficientStockException
+- Implement PaymentProcessor with processPayment(String customerId, double amount) throwing PaymentFailedException
+- Add ShippingService with scheduleShipment(Order order) throwing ShippingException
+- Create OrderService orchestrating full order processing: validateOrder → checkInventory → processPayment → scheduleShipping
+- Each layer should catch lower-level exceptions, add context, and rethrow wrapped exceptions
+- Demonstrate exception chaining preserving original causes throughout call stack
+- Include comprehensive error messages with all relevant context for debugging
+
+**Sample Test Cases:**
+```
+Input: processOrder(order) [order with invalid items]
+Expected Output:
+=== Processing Order: ORD-001 ===
+ERROR: Order validation failed
+Exception: InvalidOrderException
+Validation Errors:
+- Order must have at least one item
+- Customer ID cannot be empty
+Order processing aborted
+
+Input: processOrder(order) [insufficient stock for product]
+Expected Output:
+=== Processing Order: ORD-002 ===
+Validating order...
+Order validation passed ✓
+Checking inventory...
+ERROR: Insufficient stock
+Exception: InsufficientStockException
+Product ID: PROD-123
+Requested: 10 units
+Available: 5 units
+Shortfall: 5 units
+Order processing failed: Cannot fulfill order due to stock shortage
+
+Input: processOrder(order) [payment failure]
+Expected Output:
+=== Processing Order: ORD-003 ===
+Validating order...
+Order validation passed ✓
+Checking inventory...
+Inventory check passed ✓
+Processing payment...
+ERROR: Payment failed
+Exception: PaymentFailedException
+Transaction ID: TXN-456
+Amount: $125.50
+Payment Method: Credit Card
+Reason: Card declined by issuer
+Caused by: ConnectionException: Bank API connection timeout
+Order processing failed: Payment could not be completed
+
+Input: processOrder(order) [shipping failure]
+Expected Output:
+=== Processing Order: ORD-004 ===
+Validating order...
+Order validation passed ✓
+Checking inventory...
+Inventory check passed ✓
+Processing payment...
+Payment successful: TXN-789 ($125.50)
+Scheduling shipment...
+ERROR: Shipping failed
+Exception: ShippingException
+Order ID: ORD-004
+Destination: 123 Main St, City, State 12345
+Carrier: FastShip Express
+Reason: No available carrier for destination
+Order partially completed: Payment processed, shipping pending
+Manual intervention required
+
+Input: processOrder(order) [successful processing]
+Expected Output:
+=== Processing Order: ORD-005 ===
+Validating order...
+Order validation passed ✓
+Checking inventory...
+Inventory check passed ✓
+Processing payment...
+Payment successful: TXN-790 ($89.99)
+Scheduling shipment...
+Shipment scheduled: SHIP-101 via FastShip Express
+Expected delivery: 2024-01-15
+Order processing completed successfully!
+```
+
+**Solution:**
+```java
+import java.util.*;
+
+// ============= Custom Exception Hierarchy =============
+
+// Base checked exception for order processing
+class OrderProcessingException extends Exception {
+    public OrderProcessingException(String message) {
+        super(message);
+    }
+
+    public OrderProcessingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
+// Specific checked exception for stock issues
+class InsufficientStockException extends OrderProcessingException {
+    private final String productId;
+    private final int requestedQuantity;
+    private final int availableQuantity;
+
+    public InsufficientStockException(String productId, int requested, int available) {
+        super(String.format("Insufficient stock for product %s. Requested: %d, Available: %d",
+            productId, requested, available));
+        this.productId = productId;
+        this.requestedQuantity = requested;
+        this.availableQuantity = available;
+    }
+
+    public String getProductId() { return productId; }
+    public int getRequestedQuantity() { return requestedQuantity; }
+    public int getAvailableQuantity() { return availableQuantity; }
+    public int getShortfall() { return requestedQuantity - availableQuantity; }
+}
+
+// Specific checked exception for payment failures
+class PaymentFailedException extends OrderProcessingException {
+    private final String transactionId;
+    private final double amount;
+    private final String paymentMethod;
+    private final String failureReason;
+
+    public PaymentFailedException(String txnId, double amount, String method, String reason, Throwable cause) {
+        super(String.format("Payment failed. Transaction: %s, Amount: $%.2f, Method: %s, Reason: %s",
+            txnId, amount, method, reason), cause);
+        this.transactionId = txnId;
+        this.amount = amount;
+        this.paymentMethod = method;
+        this.failureReason = reason;
+    }
+
+    public String getTransactionId() { return transactionId; }
+    public double getAmount() { return amount; }
+    public String getPaymentMethod() { return paymentMethod; }
+    public String getFailureReason() { return failureReason; }
+}
+
+// Specific checked exception for shipping issues
+class ShippingException extends OrderProcessingException {
+    private final String orderId;
+    private final String destination;
+    private final String carrier;
+
+    public ShippingException(String orderId, String destination, String carrier, String reason) {
+        super(String.format("Shipping failed for order %s to %s via %s. Reason: %s",
+            orderId, destination, carrier, reason));
+        this.orderId = orderId;
+        this.destination = destination;
+        this.carrier = carrier;
+    }
+
+    public String getOrderId() { return orderId; }
+    public String getDestination() { return destination; }
+    public String getCarrier() { return carrier; }
+}
+
+// Unchecked exception for validation errors (programming errors)
+class InvalidOrderException extends RuntimeException {
+    private final String orderId;
+    private final List<String> validationErrors;
+
+    public InvalidOrderException(String orderId, List<String> errors) {
+        super("Order validation failed for order: " + orderId);
+        this.orderId = orderId;
+        this.validationErrors = new ArrayList<>(errors);
+    }
+
+    public String getOrderId() { return orderId; }
+    public List<String> getValidationErrors() {
+        return Collections.unmodifiableList(validationErrors);
+    }
+}
+
+// ============= Domain Classes =============
+
+class Order {
+    private String orderId;
+    private String customerId;
+    private Map<String, Integer> items;  // productId -> quantity
+    private double totalAmount;
+    private String shippingAddress;
+
+    public Order(String orderId, String customerId, String shippingAddress) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.shippingAddress = shippingAddress;
+        this.items = new HashMap<>();
+        this.totalAmount = 0.0;
+    }
+
+    public void addItem(String productId, int quantity, double price) {
+        items.put(productId, quantity);
+        totalAmount += quantity * price;
+    }
+
+    public String getOrderId() { return orderId; }
+    public String getCustomerId() { return customerId; }
+    public Map<String, Integer> getItems() { return items; }
+    public double getTotalAmount() { return totalAmount; }
+    public String getShippingAddress() { return shippingAddress; }
+}
+
+// ============= Service Layer Classes =============
+
+class InventoryManager {
+    private Map<String, Integer> stock;  // productId -> quantity
+
+    public InventoryManager() {
+        this.stock = new HashMap<>();
+        // Initialize with some stock
+        stock.put("PROD-001", 10);
+        stock.put("PROD-002", 5);
+        stock.put("PROD-003", 0);
+    }
+
+    public void checkStock(String productId, int quantity) throws InsufficientStockException {
+        int available = stock.getOrDefault(productId, 0);
+        if (available < quantity) {
+            throw new InsufficientStockException(productId, quantity, available);
+        }
+    }
+
+    public void reserveStock(String productId, int quantity) {
+        int current = stock.get(productId);
+        stock.put(productId, current - quantity);
+    }
+}
+
+class PaymentProcessor {
+    private Random random = new Random();
+
+    public String processPayment(String customerId, double amount) throws PaymentFailedException {
+        String transactionId = "TXN-" + (random.nextInt(900) + 100);
+
+        // Simulate payment processing
+        if (random.nextInt(10) < 2) {  // 20% failure rate for demo
+            Throwable cause = new Exception("Bank API connection timeout");
+            throw new PaymentFailedException(
+                transactionId,
+                amount,
+                "Credit Card",
+                "Card declined by issuer",
+                cause
+            );
+        }
+
+        return transactionId;
+    }
+}
+
+class ShippingService {
+    public String scheduleShipment(Order order) throws ShippingException {
+        // Simulate shipping scheduling
+        if (order.getShippingAddress() == null || order.getShippingAddress().isEmpty()) {
+            throw new ShippingException(
+                order.getOrderId(),
+                order.getShippingAddress(),
+                "FastShip Express",
+                "Invalid shipping address"
+            );
+        }
+
+        return "SHIP-" + (new Random().nextInt(900) + 100);
+    }
+}
+
+class OrderService {
+    private InventoryManager inventoryManager;
+    private PaymentProcessor paymentProcessor;
+    private ShippingService shippingService;
+
+    public OrderService() {
+        this.inventoryManager = new InventoryManager();
+        this.paymentProcessor = new PaymentProcessor();
+        this.shippingService = new ShippingService();
+    }
+
+    public void processOrder(Order order) throws OrderProcessingException {
+        System.out.println("\n=== Processing Order: " + order.getOrderId() + " ===");
+
+        try {
+            // Step 1: Validate order (throws unchecked exception)
+            System.out.println("Validating order...");
+            validateOrder(order);
+            System.out.println("Order validation passed ✓");
+
+            // Step 2: Check inventory (throws InsufficientStockException)
+            System.out.println("Checking inventory...");
+            checkInventory(order);
+            System.out.println("Inventory check passed ✓");
+
+            // Step 3: Process payment (throws PaymentFailedException)
+            System.out.println("Processing payment...");
+            String transactionId = paymentProcessor.processPayment(
+                order.getCustomerId(),
+                order.getTotalAmount()
+            );
+            System.out.println("Payment successful: " + transactionId +
+                " ($" + String.format("%.2f", order.getTotalAmount()) + ")");
+
+            // Step 4: Schedule shipment (throws ShippingException)
+            System.out.println("Scheduling shipment...");
+            String shipmentId = shippingService.scheduleShipment(order);
+            System.out.println("Shipment scheduled: " + shipmentId + " via FastShip Express");
+            System.out.println("Expected delivery: 2024-01-15");
+
+            System.out.println("Order processing completed successfully!");
+
+        } catch (InvalidOrderException e) {
+            System.out.println("ERROR: Order validation failed");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Validation Errors:");
+            for (String error : e.getValidationErrors()) {
+                System.out.println("- " + error);
+            }
+            System.out.println("Order processing aborted");
+            throw new OrderProcessingException("Order validation failed", e);
+
+        } catch (InsufficientStockException e) {
+            System.out.println("ERROR: Insufficient stock");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Product ID: " + e.getProductId());
+            System.out.println("Requested: " + e.getRequestedQuantity() + " units");
+            System.out.println("Available: " + e.getAvailableQuantity() + " units");
+            System.out.println("Shortfall: " + e.getShortfall() + " units");
+            System.out.println("Order processing failed: Cannot fulfill order due to stock shortage");
+            throw e;  // Rethrow
+
+        } catch (PaymentFailedException e) {
+            System.out.println("ERROR: Payment failed");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Transaction ID: " + e.getTransactionId());
+            System.out.println("Amount: $" + String.format("%.2f", e.getAmount()));
+            System.out.println("Payment Method: " + e.getPaymentMethod());
+            System.out.println("Reason: " + e.getFailureReason());
+            if (e.getCause() != null) {
+                System.out.println("Caused by: " + e.getCause().getClass().getSimpleName() +
+                    ": " + e.getCause().getMessage());
+            }
+            System.out.println("Order processing failed: Payment could not be completed");
+            throw e;  // Rethrow
+
+        } catch (ShippingException e) {
+            System.out.println("ERROR: Shipping failed");
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Order ID: " + e.getOrderId());
+            System.out.println("Destination: " + e.getDestination());
+            System.out.println("Carrier: " + e.getCarrier());
+            System.out.println("Reason: " + e.getMessage());
+            System.out.println("Order partially completed: Payment processed, shipping pending");
+            System.out.println("Manual intervention required");
+            throw e;  // Rethrow
+        }
+    }
+
+    private void validateOrder(Order order) {
+        List<String> errors = new ArrayList<>();
+
+        if (order.getItems().isEmpty()) {
+            errors.add("Order must have at least one item");
+        }
+        if (order.getCustomerId() == null || order.getCustomerId().isEmpty()) {
+            errors.add("Customer ID cannot be empty");
+        }
+        if (order.getTotalAmount() <= 0) {
+            errors.add("Order total must be greater than zero");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new InvalidOrderException(order.getOrderId(), errors);
+        }
+    }
+
+    private void checkInventory(Order order) throws InsufficientStockException {
+        for (Map.Entry<String, Integer> item : order.getItems().entrySet()) {
+            inventoryManager.checkStock(item.getKey(), item.getValue());
+        }
+    }
+}
+
+public class TestOrderProcessing {
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+
+        // Test 1: Valid order
+        Order order1 = new Order("ORD-001", "CUST-123", "123 Main St, City, State 12345");
+        order1.addItem("PROD-001", 2, 25.99);
+        order1.addItem("PROD-002", 1, 37.99);
+
+        try {
+            orderService.processOrder(order1);
+        } catch (OrderProcessingException e) {
+            System.out.println("\nOrder processing exception occurred");
+        }
+
+        // Test 2: Invalid order (no items)
+        Order order2 = new Order("ORD-002", "CUST-124", "456 Elm St");
+
+        try {
+            orderService.processOrder(order2);
+        } catch (OrderProcessingException e) {
+            System.out.println("\nExpected exception for invalid order");
+        }
+
+        // Test 3: Insufficient stock
+        Order order3 = new Order("ORD-003", "CUST-125", "789 Oak Ave");
+        order3.addItem("PROD-003", 10, 15.99);  // PROD-003 has 0 stock
+
+        try {
+            orderService.processOrder(order3);
+        } catch (OrderProcessingException e) {
+            System.out.println("\nExpected exception for insufficient stock");
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Custom exception hierarchy: base exception (OrderProcessingException) with specific subclasses for different error types
+- Checked vs unchecked: OrderProcessingException checked (recoverable), InvalidOrderException unchecked (programming error)
+- Exception chaining: PaymentFailedException wraps ConnectionException preserving root cause with getCause()
+- Exception state: Each custom exception carries domain-specific data (productId, transactionId, etc.) for debugging
+- Exception propagation: OrderService catches, logs, adds context, and rethrows exceptions up the call stack
+- Multi-catch not used here - each exception type handled separately for specific error messages
+- throws declaration: Each method declares specific checked exceptions it might throw
+- Validation errors: InvalidOrderException uses List<String> to accumulate multiple validation failures
+- Exception messages: Include all relevant context (IDs, amounts, reasons) for effective debugging
+- finally not needed here - no resources to clean up, but demonstrate exception handling patterns
+- Defensive copying: getValidationErrors() returns unmodifiable list preventing external modification
+- RuntimeException for validation: Programming errors (empty order) shouldn't require throws declaration
+
+---
+
+### Exercise 4: Multi-Tier Application with Exception Propagation
+
+**📝 Problem Statement:**
+Create a multi-tier application architecture (Presentation → Business → Data layers) demonstrating proper exception handling at each tier, exception propagation through layers using throws keyword, exception wrapping for layer boundaries, and proper use of checked vs unchecked exceptions. The system should show how exceptions flow from data access layer through business logic to presentation layer with appropriate transformations and context additions at each level.
+
+**Requirements:**
+- Create three layers: DataAccessLayer, BusinessLogicLayer, PresentationLayer
+- **Data Access Layer**: UserDAO with methods getUserById, saveUser, deleteUser throwing DataAccessException (checked)
+- DataAccessException should include: operation, entityType, entityId, rootCause
+- Simulate database exceptions: DatabaseConnectionException, RecordNotFoundException, DuplicateKeyException
+- **Business Logic Layer**: UserService with methods: registerUser, loginUser, updateProfile
+- Business layer wraps DataAccessException in BusinessException with business context
+- BusinessException should include: operation, userId, businessReason, underlyingCause
+- Implement business rules throwing BusinessValidationException (unchecked) for invalid inputs
+- **Presentation Layer**: UserController processing requests and displaying user-friendly error messages
+- Each layer should: catch exceptions from lower layer, add layer-specific context, decide whether to handle or propagate
+- Demonstrate throws keyword usage: methods declare checked exceptions they propagate
+- Show exception transformation: DataAccessException → BusinessException → User-facing message
+- Include proper exception chaining maintaining full stack trace throughout layers
+- Log exceptions at each layer with layer-specific details
+- Handle both recoverable (checked) and programming errors (unchecked) appropriately
+
+**Sample Test Cases:**
+```
+Input: userController.registerUser("alice@example.com", "password123")
+Expected Output:
+=== Registration Request ===
+[Presentation Layer] Processing registration for: alice@example.com
+[Business Layer] Validating user data...
+[Business Layer] Validation passed
+[Business Layer] Saving user to database...
+[Data Access Layer] Executing INSERT for User: alice@example.com
+[Data Access Layer] User saved successfully
+[Business Layer] User registered successfully
+[Presentation Layer] SUCCESS: User registered
+User ID: USER-001
+Welcome email sent
+
+Input: userController.registerUser("", "weak") [invalid input]
+Expected Output:
+=== Registration Request ===
+[Presentation Layer] Processing registration for:
+[Business Layer] Validating user data...
+ERROR: Validation failed
+Exception: BusinessValidationException (Unchecked)
+Validation errors:
+- Email cannot be empty
+- Password too short (minimum 8 characters)
+[Presentation Layer] Registration failed
+Error: Invalid user data provided
+Please correct the errors and try again
+
+Input: userController.registerUser("alice@example.com", "password") [duplicate email]
+Expected Output:
+=== Registration Request ===
+[Presentation Layer] Processing registration for: alice@example.com
+[Business Layer] Validating user data...
+[Business Layer] Validation passed
+[Business Layer] Saving user to database...
+[Data Access Layer] Executing INSERT for User: alice@example.com
+[Data Access Layer] ERROR: Duplicate key
+Exception: DuplicateKeyException
+Entity: User
+Key: alice@example.com
+[Business Layer] ERROR: User already exists
+Exception: BusinessException
+Operation: REGISTER_USER
+User: alice@example.com
+Reason: Email already registered in system
+Caused by: DuplicateKeyException
+[Presentation Layer] Registration failed
+Error: Email address already in use
+Please use a different email or try logging in
+
+Input: userController.loginUser("bob@example.com", "password") [user not found]
+Expected Output:
+=== Login Request ===
+[Presentation Layer] Processing login for: bob@example.com
+[Business Layer] Authenticating user...
+[Business Layer] Fetching user from database...
+[Data Access Layer] Executing SELECT for User: bob@example.com
+[Data Access Layer] ERROR: Record not found
+Exception: RecordNotFoundException
+Entity: User
+ID: bob@example.com
+[Business Layer] ERROR: Authentication failed
+Exception: BusinessException
+Operation: LOGIN
+User: bob@example.com
+Reason: User not found in system
+Caused by: RecordNotFoundException
+[Presentation Layer] Login failed
+Error: Invalid email or password
+Please check your credentials and try again
+
+Input: userController.getUserProfile("USER-123") [database connection failure]
+Expected Output:
+=== Get Profile Request ===
+[Presentation Layer] Fetching profile for: USER-123
+[Business Layer] Retrieving user profile...
+[Data Access Layer] Executing SELECT for User: USER-123
+[Data Access Layer] ERROR: Database connection failed
+Exception: DatabaseConnectionException
+Server: localhost:5432
+Database: userdb
+Reason: Connection timeout after 30 seconds
+[Business Layer] ERROR: Data access failed
+Exception: BusinessException
+Operation: GET_PROFILE
+User: USER-123
+Reason: Unable to retrieve user data from database
+Caused by: DatabaseConnectionException
+[Presentation Layer] Profile retrieval failed
+Error: Service temporarily unavailable
+Please try again in a few moments
+```
+
+**Solution:**
+```java
+import java.util.*;
+
+// ============= Data Access Layer Exceptions =============
+
+class DataAccessException extends Exception {
+    private final String operation;
+    private final String entityType;
+    private final String entityId;
+
+    public DataAccessException(String operation, String entityType, String entityId, String message) {
+        super(message);
+        this.operation = operation;
+        this.entityType = entityType;
+        this.entityId = entityId;
+    }
+
+    public DataAccessException(String operation, String entityType, String entityId, String message, Throwable cause) {
+        super(message, cause);
+        this.operation = operation;
+        this.entityType = entityType;
+        this.entityId = entityId;
+    }
+
+    public String getOperation() { return operation; }
+    public String getEntityType() { return entityType; }
+    public String getEntityId() { return entityId; }
+}
+
+class DatabaseConnectionException extends DataAccessException {
+    private final String server;
+    private final String database;
+
+    public DatabaseConnectionException(String server, String database, String reason) {
+        super("CONNECT", "Database", database, "Database connection failed: " + reason);
+        this.server = server;
+        this.database = database;
+    }
+
+    public String getServer() { return server; }
+    public String getDatabase() { return database; }
+}
+
+class RecordNotFoundException extends DataAccessException {
+    public RecordNotFoundException(String entityType, String entityId) {
+        super("SELECT", entityType, entityId,
+            String.format("Record not found: %s with ID %s", entityType, entityId));
+    }
+}
+
+class DuplicateKeyException extends DataAccessException {
+    public DuplicateKeyException(String entityType, String key) {
+        super("INSERT", entityType, key,
+            String.format("Duplicate key violation: %s already exists with key %s", entityType, key));
+    }
+}
+
+// ============= Business Layer Exceptions =============
+
+class BusinessException extends Exception {
+    private final String operation;
+    private final String userId;
+    private final String businessReason;
+
+    public BusinessException(String operation, String userId, String businessReason, Throwable cause) {
+        super(String.format("Business operation failed: %s for user %s. Reason: %s",
+            operation, userId, businessReason), cause);
+        this.operation = operation;
+        this.userId = userId;
+        this.businessReason = businessReason;
+    }
+
+    public String getOperation() { return operation; }
+    public String getUserId() { return userId; }
+    public String getBusinessReason() { return businessReason; }
+}
+
+class BusinessValidationException extends RuntimeException {
+    private final List<String> validationErrors;
+
+    public BusinessValidationException(List<String> errors) {
+        super("Business validation failed");
+        this.validationErrors = new ArrayList<>(errors);
+    }
+
+    public List<String> getValidationErrors() {
+        return Collections.unmodifiableList(validationErrors);
+    }
+}
+
+// ============= Domain Model =============
+
+class User {
+    private String userId;
+    private String email;
+    private String password;
+    private String name;
+
+    public User(String userId, String email, String password) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+    }
+
+    public String getUserId() { return userId; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+}
+
+// ============= Data Access Layer =============
+
+class UserDAO {
+    private Map<String, User> database = new HashMap<>();
+    private Random random = new Random();
+
+    public User getUserById(String userId) throws DataAccessException {
+        System.out.println("[Data Access Layer] Executing SELECT for User: " + userId);
+
+        // Simulate occasional connection failures (10% chance)
+        if (random.nextInt(10) == 0) {
+            System.out.println("[Data Access Layer] ERROR: Database connection failed");
+            throw new DatabaseConnectionException(
+                "localhost:5432",
+                "userdb",
+                "Connection timeout after 30 seconds"
+            );
+        }
+
+        User user = database.get(userId);
+        if (user == null) {
+            System.out.println("[Data Access Layer] ERROR: Record not found");
+            throw new RecordNotFoundException("User", userId);
+        }
+
+        System.out.println("[Data Access Layer] User retrieved successfully");
+        return user;
+    }
+
+    public void saveUser(User user) throws DataAccessException {
+        System.out.println("[Data Access Layer] Executing INSERT for User: " + user.getEmail());
+
+        // Check for duplicate email
+        for (User existingUser : database.values()) {
+            if (existingUser.getEmail().equals(user.getEmail())) {
+                System.out.println("[Data Access Layer] ERROR: Duplicate key");
+                throw new DuplicateKeyException("User", user.getEmail());
+            }
+        }
+
+        database.put(user.getUserId(), user);
+        System.out.println("[Data Access Layer] User saved successfully");
+    }
+
+    public void deleteUser(String userId) throws DataAccessException {
+        System.out.println("[Data Access Layer] Executing DELETE for User: " + userId);
+
+        if (!database.containsKey(userId)) {
+            throw new RecordNotFoundException("User", userId);
+        }
+
+        database.remove(userId);
+        System.out.println("[Data Access Layer] User deleted successfully");
+    }
+
+    public User getUserByEmail(String email) throws DataAccessException {
+        System.out.println("[Data Access Layer] Executing SELECT for User: " + email);
+
+        for (User user : database.values()) {
+            if (user.getEmail().equals(email)) {
+                System.out.println("[Data Access Layer] User found");
+                return user;
+            }
+        }
+
+        System.out.println("[Data Access Layer] ERROR: Record not found");
+        throw new RecordNotFoundException("User", email);
+    }
+}
+
+// ============= Business Logic Layer =============
+
+class UserService {
+    private UserDAO userDAO;
+    private int userCounter = 1;
+
+    public UserService() {
+        this.userDAO = new UserDAO();
+    }
+
+    public String registerUser(String email, String password) throws BusinessException {
+        System.out.println("[Business Layer] Validating user data...");
+
+        // Validate input (throws unchecked exception for programming errors)
+        validateRegistrationData(email, password);
+        System.out.println("[Business Layer] Validation passed");
+
+        try {
+            System.out.println("[Business Layer] Saving user to database...");
+
+            String userId = "USER-" + String.format("%03d", userCounter++);
+            User user = new User(userId, email, password);
+
+            userDAO.saveUser(user);
+
+            System.out.println("[Business Layer] User registered successfully");
+            return userId;
+
+        } catch (DuplicateKeyException e) {
+            System.out.println("[Business Layer] ERROR: User already exists");
+            throw new BusinessException(
+                "REGISTER_USER",
+                email,
+                "Email already registered in system",
+                e
+            );
+        } catch (DataAccessException e) {
+            System.out.println("[Business Layer] ERROR: Data access failed");
+            throw new BusinessException(
+                "REGISTER_USER",
+                email,
+                "Unable to save user to database",
+                e
+            );
+        }
+    }
+
+    public User loginUser(String email, String password) throws BusinessException {
+        System.out.println("[Business Layer] Authenticating user...");
+        System.out.println("[Business Layer] Fetching user from database...");
+
+        try {
+            User user = userDAO.getUserByEmail(email);
+
+            if (!user.getPassword().equals(password)) {
+                System.out.println("[Business Layer] ERROR: Invalid password");
+                throw new BusinessException(
+                    "LOGIN",
+                    email,
+                    "Invalid credentials provided",
+                    null
+                );
+            }
+
+            System.out.println("[Business Layer] Authentication successful");
+            return user;
+
+        } catch (RecordNotFoundException e) {
+            System.out.println("[Business Layer] ERROR: Authentication failed");
+            throw new BusinessException(
+                "LOGIN",
+                email,
+                "User not found in system",
+                e
+            );
+        } catch (DataAccessException e) {
+            System.out.println("[Business Layer] ERROR: Data access failed");
+            throw new BusinessException(
+                "LOGIN",
+                email,
+                "Unable to authenticate user",
+                e
+            );
+        }
+    }
+
+    public User getUserProfile(String userId) throws BusinessException {
+        System.out.println("[Business Layer] Retrieving user profile...");
+
+        try {
+            User user = userDAO.getUserById(userId);
+            System.out.println("[Business Layer] Profile retrieved successfully");
+            return user;
+
+        } catch (DataAccessException e) {
+            System.out.println("[Business Layer] ERROR: Data access failed");
+            throw new BusinessException(
+                "GET_PROFILE",
+                userId,
+                "Unable to retrieve user data from database",
+                e
+            );
+        }
+    }
+
+    private void validateRegistrationData(String email, String password) {
+        List<String> errors = new ArrayList<>();
+
+        if (email == null || email.trim().isEmpty()) {
+            errors.add("Email cannot be empty");
+        } else if (!email.contains("@")) {
+            errors.add("Email must contain @ symbol");
+        }
+
+        if (password == null || password.length() < 8) {
+            errors.add("Password too short (minimum 8 characters)");
+        }
+
+        if (!errors.isEmpty()) {
+            System.out.println("ERROR: Validation failed");
+            throw new BusinessValidationException(errors);
+        }
+    }
+}
+
+// ============= Presentation Layer =============
+
+class UserController {
+    private UserService userService;
+
+    public UserController() {
+        this.userService = new UserService();
+    }
+
+    public void registerUser(String email, String password) {
+        System.out.println("\n=== Registration Request ===");
+        System.out.println("[Presentation Layer] Processing registration for: " + email);
+
+        try {
+            String userId = userService.registerUser(email, password);
+
+            System.out.println("[Presentation Layer] SUCCESS: User registered");
+            System.out.println("User ID: " + userId);
+            System.out.println("Welcome email sent");
+
+        } catch (BusinessValidationException e) {
+            System.out.println("Exception: " + e.getClass().getSimpleName() + " (Unchecked)");
+            System.out.println("Validation errors:");
+            for (String error : e.getValidationErrors()) {
+                System.out.println("- " + error);
+            }
+            System.out.println("[Presentation Layer] Registration failed");
+            System.out.println("Error: Invalid user data provided");
+            System.out.println("Please correct the errors and try again");
+
+        } catch (BusinessException e) {
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Operation: " + e.getOperation());
+            System.out.println("User: " + e.getUserId());
+            System.out.println("Reason: " + e.getBusinessReason());
+
+            if (e.getCause() != null) {
+                System.out.println("Caused by: " + e.getCause().getClass().getSimpleName());
+            }
+
+            System.out.println("[Presentation Layer] Registration failed");
+
+            // User-friendly message
+            if (e.getCause() instanceof DuplicateKeyException) {
+                System.out.println("Error: Email address already in use");
+                System.out.println("Please use a different email or try logging in");
+            } else {
+                System.out.println("Error: Unable to complete registration");
+                System.out.println("Please try again later");
+            }
+        }
+    }
+
+    public void loginUser(String email, String password) {
+        System.out.println("\n=== Login Request ===");
+        System.out.println("[Presentation Layer] Processing login for: " + email);
+
+        try {
+            User user = userService.loginUser(email, password);
+
+            System.out.println("[Presentation Layer] SUCCESS: Login successful");
+            System.out.println("Welcome back, " + user.getEmail());
+            System.out.println("Session created");
+
+        } catch (BusinessException e) {
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Operation: " + e.getOperation());
+            System.out.println("User: " + e.getUserId());
+            System.out.println("Reason: " + e.getBusinessReason());
+
+            if (e.getCause() != null) {
+                System.out.println("Caused by: " + e.getCause().getClass().getSimpleName());
+            }
+
+            System.out.println("[Presentation Layer] Login failed");
+            System.out.println("Error: Invalid email or password");
+            System.out.println("Please check your credentials and try again");
+        }
+    }
+
+    public void getUserProfile(String userId) {
+        System.out.println("\n=== Get Profile Request ===");
+        System.out.println("[Presentation Layer] Fetching profile for: " + userId);
+
+        try {
+            User user = userService.getUserProfile(userId);
+
+            System.out.println("[Presentation Layer] SUCCESS: Profile retrieved");
+            System.out.println("User: " + user.getEmail());
+            System.out.println("User ID: " + user.getUserId());
+
+        } catch (BusinessException e) {
+            System.out.println("Exception: " + e.getClass().getSimpleName());
+            System.out.println("Operation: " + e.getOperation());
+            System.out.println("User: " + e.getUserId());
+            System.out.println("Reason: " + e.getBusinessReason());
+
+            if (e.getCause() != null) {
+                Throwable cause = e.getCause();
+                System.out.println("Caused by: " + cause.getClass().getSimpleName());
+
+                if (cause instanceof DatabaseConnectionException) {
+                    DatabaseConnectionException dbEx = (DatabaseConnectionException) cause;
+                    System.out.println("Server: " + dbEx.getServer());
+                    System.out.println("Database: " + dbEx.getDatabase());
+                }
+            }
+
+            System.out.println("[Presentation Layer] Profile retrieval failed");
+
+            // User-friendly message based on exception type
+            if (e.getCause() instanceof RecordNotFoundException) {
+                System.out.println("Error: User not found");
+                System.out.println("Please verify the user ID");
+            } else if (e.getCause() instanceof DatabaseConnectionException) {
+                System.out.println("Error: Service temporarily unavailable");
+                System.out.println("Please try again in a few moments");
+            } else {
+                System.out.println("Error: Unable to retrieve profile");
+                System.out.println("Please contact support if the problem persists");
+            }
+        }
+    }
+}
+
+public class TestMultiTierApp {
+    public static void main(String[] args) {
+        UserController controller = new UserController();
+
+        // Test 1: Successful registration
+        controller.registerUser("alice@example.com", "password123");
+
+        // Test 2: Invalid input (validation error)
+        controller.registerUser("", "weak");
+
+        // Test 3: Duplicate email
+        controller.registerUser("alice@example.com", "anotherpassword");
+
+        // Test 4: Successful login
+        controller.loginUser("alice@example.com", "password123");
+
+        // Test 5: Login with non-existent user
+        controller.loginUser("bob@example.com", "password");
+
+        // Test 6: Get profile (might fail with connection error due to simulation)
+        controller.getUserProfile("USER-001");
+    }
+}
+```
+
+**💡 Tips:**
+- Layer separation: Each tier has specific responsibilities and exception types (DataAccessException, BusinessException)
+- throws keyword: Methods declare checked exceptions propagated to caller (throws DataAccessException, throws BusinessException)
+- Exception wrapping: Higher layers catch lower-level exceptions and wrap in layer-appropriate exceptions
+- Exception chaining: Always preserve original cause when wrapping: new BusinessException(..., e)
+- Checked exceptions: Used for recoverable errors that caller should handle (database failures, business logic errors)
+- Unchecked exceptions: Used for programming errors that indicate bugs (BusinessValidationException for invalid input)
+- Context addition: Each layer adds layer-specific context (operation, userId, business reason) to exceptions
+- Exception transformation: Technical exceptions (DatabaseConnectionException) become user-friendly messages at presentation layer
+- printStackTrace shows full chain: BusinessException → DataAccessException → DatabaseConnectionException
+- getCause() accesses wrapped exception: useful for conditional handling based on root cause type
+- Layer logging: Each layer logs exceptions with layer-specific details for troubleshooting
+- User-friendly messages: Presentation layer translates technical exceptions to messages users understand
+- Exception hierarchies: DataAccessException subclasses (RecordNotFoundException, DuplicateKeyException) enable specific handling
+
+---
+
+### Exercise 5: Advanced Configuration Management System with Complex Exception Handling
+
+**📝 Problem Statement:**
+Create an advanced configuration management system demonstrating sophisticated exception handling including custom exception hierarchies, error codes with enums, exception recovery strategies, multiple exception sources, configuration validation with detailed error reporting, and proper exception wrapping for external API calls. The system should handle configuration loading from multiple sources (files, environment variables, remote servers), validate configurations against schemas, handle parsing errors, and provide comprehensive error diagnostics.
+
+**Requirements:**
+- Create ConfigurationException hierarchy: base ConfigurationException, subclasses for specific errors
+- Define ConfigurationErrorCode enum: INVALID_FORMAT, MISSING_REQUIRED, TYPE_MISMATCH, PARSE_ERROR, SOURCE_UNAVAILABLE, VALIDATION_FAILED
+- Implement ConfigurationSource interface with methods: load() throws ConfigurationException
+- Create multiple sources: FileConfigSource, EnvironmentConfigSource, RemoteConfigSource
+- Each source should throw specific exceptions with error codes and detailed context
+- ConfigurationManager orchestrates loading from multiple sources with fallback strategy
+- Implement ConfigurationValidator with validate() method checking required fields, data types, value ranges
+- ValidationException should aggregate multiple validation errors with field names and reasons
+- RemoteConfigSource simulates network failures throwing NetworkException (checked) wrapping IOException
+- FileConfigSource handles FileNotFoundException, IOException with appropriate wrapping
+- Create ConfigurationParser parsing different formats (JSON-style, properties) throwing ParseException
+- ParseException should include: line number, column number, expected format, actual content
+- Implement retry logic for RemoteConfigSource with exponential backoff catching and handling failures
+- ConfigurationManager should try multiple sources in priority order, falling back on failures
+- Log all exception details at appropriate levels (ERROR for failures, WARN for fallbacks, INFO for recovery)
+- Provide getDetailedErrorReport() method generating comprehensive error diagnostic including all failed attempts
+
+**Sample Test Cases:**
+```
+Input: configManager.loadConfiguration() [all sources succeed]
+Expected Output:
+=== Loading Configuration ===
+[Config Manager] Attempting to load from multiple sources...
+[Config Manager] Source 1: FileConfigSource
+[File Source] Reading configuration from file: config.json
+[File Source] File loaded successfully
+[Parser] Parsing JSON configuration...
+[Parser] Parse successful
+[Validator] Validating configuration...
+[Validator] All validations passed ✓
+[Config Manager] Configuration loaded successfully from FileConfigSource
+Configuration ready: 5 properties loaded
+
+Input: configManager.loadConfiguration() [file source fails, fallback to environment]
+Expected Output:
+=== Loading Configuration ===
+[Config Manager] Attempting to load from multiple sources...
+[Config Manager] Source 1: FileConfigSource
+[File Source] Reading configuration from file: config.json
+[File Source] ERROR: File not found
+Exception: ConfigurationException
+Error Code: SOURCE_UNAVAILABLE
+Source: FileConfigSource
+Message: Configuration file not found: config.json
+[Config Manager] FileConfigSource failed, trying next source...
+[Config Manager] Source 2: EnvironmentConfigSource
+[Env Source] Reading environment variables...
+[Env Source] Loaded 5 variables
+[Parser] Parsing environment configuration...
+[Parser] Parse successful
+[Validator] Validating configuration...
+[Validator] All validations passed ✓
+[Config Manager] Configuration loaded successfully from EnvironmentConfigSource
+Warning: Using fallback source
+Configuration ready: 5 properties loaded
+
+Input: configManager.loadConfiguration() [parse error in file]
+Expected Output:
+=== Loading Configuration ===
+[Config Manager] Attempting to load from multiple sources...
+[Config Manager] Source 1: FileConfigSource
+[File Source] Reading configuration from file: config.json
+[File Source] File loaded successfully
+[Parser] Parsing JSON configuration...
+[Parser] ERROR: Parse failed
+Exception: ParseException
+Error Code: PARSE_ERROR
+Line: 12
+Column: 45
+Expected: closing brace '}'
+Found: comma ','
+Context: "server": { "port": 8080, , }
+[Config Manager] Parse error in FileConfigSource
+[Config Manager] Source 2: EnvironmentConfigSource
+[Env Source] Loaded configuration
+[Config Manager] Configuration loaded from fallback source
+Configuration ready with warnings
+
+Input: configManager.loadConfiguration() [validation failures]
+Expected Output:
+=== Loading Configuration ===
+[Config Manager] Attempting to load from multiple sources...
+[Config Manager] Source 1: FileConfigSource
+[File Source] File loaded and parsed successfully
+[Validator] Validating configuration...
+[Validator] ERROR: Validation failed
+Exception: ValidationException
+Error Code: VALIDATION_FAILED
+Validation Errors:
+1. Field: server.port
+   Error: Value out of range
+   Expected: 1024-65535
+   Found: 999999
+
+2. Field: database.url
+   Error: Missing required field
+   Required: true
+
+3. Field: timeout
+   Error: Type mismatch
+   Expected: integer
+   Found: string ("thirty")
+
+Configuration load failed: 3 validation errors
+[Config Manager] All sources exhausted
+Error: Unable to load valid configuration
+
+Input: configManager.loadConfiguration() [remote source with retries]
+Expected Output:
+=== Loading Configuration ===
+[Config Manager] Source: RemoteConfigSource
+[Remote Source] Connecting to: https://config-server.example.com/config
+[Remote Source] Attempt 1/3...
+[Remote Source] ERROR: Connection timeout
+Exception: NetworkException
+Error Code: SOURCE_UNAVAILABLE
+Server: config-server.example.com
+Timeout: 30 seconds
+[Remote Source] Retry 1: Waiting 2 seconds...
+[Remote Source] Attempt 2/3...
+[Remote Source] ERROR: Connection refused
+[Remote Source] Retry 2: Waiting 4 seconds...
+[Remote Source] Attempt 3/3...
+[Remote Source] Connected successfully
+[Remote Source] Configuration downloaded
+[Config Manager] Configuration loaded after 3 attempts
+Configuration ready
+```
+
+**Solution:**
+```java
+import java.util.*;
+import java.io.*;
+
+// ============= Error Codes =============
+
+enum ConfigurationErrorCode {
+    INVALID_FORMAT("Invalid configuration format"),
+    MISSING_REQUIRED("Required field missing"),
+    TYPE_MISMATCH("Type mismatch in configuration"),
+    PARSE_ERROR("Configuration parsing failed"),
+    SOURCE_UNAVAILABLE("Configuration source unavailable"),
+    VALIDATION_FAILED("Configuration validation failed");
+
+    private final String description;
+
+    ConfigurationErrorCode(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+}
+
+// ============= Custom Exceptions =============
+
+class ConfigurationException extends Exception {
+    private final ConfigurationErrorCode errorCode;
+    private final String source;
+
+    public ConfigurationException(ConfigurationErrorCode errorCode, String source, String message) {
+        super(message);
+        this.errorCode = errorCode;
+        this.source = source;
+    }
+
+    public ConfigurationException(ConfigurationErrorCode errorCode, String source, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+        this.source = source;
+    }
+
+    public ConfigurationErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s [%s]: %s (Source: %s)",
+            getClass().getSimpleName(),
+            errorCode,
+            getMessage(),
+            source);
+    }
+}
+
+class ParseException extends ConfigurationException {
+    private final int lineNumber;
+    private final int columnNumber;
+    private final String expected;
+    private final String found;
+    private final String context;
+
+    public ParseException(String source, int line, int column, String expected, String found, String context) {
+        super(ConfigurationErrorCode.PARSE_ERROR, source,
+            String.format("Parse error at line %d, column %d. Expected: %s, Found: %s",
+                line, column, expected, found));
+        this.lineNumber = line;
+        this.columnNumber = column;
+        this.expected = expected;
+        this.found = found;
+        this.context = context;
+    }
+
+    public int getLineNumber() { return lineNumber; }
+    public int getColumnNumber() { return columnNumber; }
+    public String getExpected() { return expected; }
+    public String getFound() { return found; }
+    public String getContext() { return context; }
+}
+
+class ValidationException extends ConfigurationException {
+    private final List<ValidationError> validationErrors;
+
+    public ValidationException(String source, List<ValidationError> errors) {
+        super(ConfigurationErrorCode.VALIDATION_FAILED, source,
+            String.format("Configuration validation failed with %d error(s)", errors.size()));
+        this.validationErrors = new ArrayList<>(errors);
+    }
+
+    public List<ValidationError> getValidationErrors() {
+        return Collections.unmodifiableList(validationErrors);
+    }
+}
+
+class NetworkException extends ConfigurationException {
+    private final String server;
+    private final int timeout;
+
+    public NetworkException(String server, int timeout, String message, Throwable cause) {
+        super(ConfigurationErrorCode.SOURCE_UNAVAILABLE, "RemoteConfigSource", message, cause);
+        this.server = server;
+        this.timeout = timeout;
+    }
+
+    public String getServer() { return server; }
+    public int getTimeout() { return timeout; }
+}
+
+// ============= Supporting Classes =============
+
+class ValidationError {
+    private final String fieldName;
+    private final String errorMessage;
+    private final String expected;
+    private final String found;
+
+    public ValidationError(String fieldName, String errorMessage, String expected, String found) {
+        this.fieldName = fieldName;
+        this.errorMessage = errorMessage;
+        this.expected = expected;
+        this.found = found;
+    }
+
+    public String getFieldName() { return fieldName; }
+    public String getErrorMessage() { return errorMessage; }
+    public String getExpected() { return expected; }
+    public String getFound() { return found; }
+
+    @Override
+    public String toString() {
+        return String.format("Field: %s\n   Error: %s\n   Expected: %s\n   Found: %s",
+            fieldName, errorMessage, expected, found);
+    }
+}
+
+class Configuration {
+    private Map<String, Object> properties;
+
+    public Configuration() {
+        this.properties = new HashMap<>();
+    }
+
+    public void setProperty(String key, Object value) {
+        properties.put(key, value);
+    }
+
+    public Object getProperty(String key) {
+        return properties.get(key);
+    }
+
+    public Map<String, Object> getAllProperties() {
+        return new HashMap<>(properties);
+    }
+
+    public int size() {
+        return properties.size();
+    }
+}
+
+// ============= Configuration Sources =============
+
+interface ConfigurationSource {
+    Configuration load() throws ConfigurationException;
+    String getSourceName();
+}
+
+class FileConfigSource implements ConfigurationSource {
+    private String filename;
+    private Random random = new Random();
+
+    public FileConfigSource(String filename) {
+        this.filename = filename;
+    }
+
+    @Override
+    public Configuration load() throws ConfigurationException {
+        System.out.println("[File Source] Reading configuration from file: " + filename);
+
+        try {
+            // Simulate file reading (20% chance of file not found)
+            if (random.nextInt(5) == 0) {
+                System.out.println("[File Source] ERROR: File not found");
+                throw new ConfigurationException(
+                    ConfigurationErrorCode.SOURCE_UNAVAILABLE,
+                    "FileConfigSource",
+                    "Configuration file not found: " + filename
+                );
+            }
+
+            System.out.println("[File Source] File loaded successfully");
+
+            // Simulate parsing (10% chance of parse error)
+            if (random.nextInt(10) == 0) {
+                System.out.println("[Parser] ERROR: Parse failed");
+                throw new ParseException(
+                    "FileConfigSource",
+                    12,
+                    45,
+                    "closing brace '}'",
+                    "comma ','",
+                    "\"server\": { \"port\": 8080, , }"
+                );
+            }
+
+            System.out.println("[Parser] Parsing JSON configuration...");
+            System.out.println("[Parser] Parse successful");
+
+            Configuration config = new Configuration();
+            config.setProperty("server.port", 8080);
+            config.setProperty("server.host", "localhost");
+            config.setProperty("database.url", "jdbc:mysql://localhost/db");
+            config.setProperty("timeout", 30);
+            config.setProperty("debug", true);
+
+            return config;
+
+        } catch (ParseException e) {
+            throw e;  // Rethrow parse exception
+        }
+    }
+
+    @Override
+    public String getSourceName() {
+        return "FileConfigSource";
+    }
+}
+
+class EnvironmentConfigSource implements ConfigurationSource {
+    @Override
+    public Configuration load() throws ConfigurationException {
+        System.out.println("[Env Source] Reading environment variables...");
+        System.out.println("[Env Source] Loaded 5 variables");
+
+        Configuration config = new Configuration();
+        config.setProperty("server.port", 9090);
+        config.setProperty("server.host", "0.0.0.0");
+        config.setProperty("database.url", "jdbc:postgresql://localhost/db");
+        config.setProperty("timeout", 60);
+        config.setProperty("debug", false);
+
+        System.out.println("[Parser] Parsing environment configuration...");
+        System.out.println("[Parser] Parse successful");
+
+        return config;
+    }
+
+    @Override
+    public String getSourceName() {
+        return "EnvironmentConfigSource";
+    }
+}
+
+class RemoteConfigSource implements ConfigurationSource {
+    private String serverUrl;
+    private int maxRetries = 3;
+    private int baseDelay = 2000;  // milliseconds
+    private Random random = new Random();
+
+    public RemoteConfigSource(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+
+    @Override
+    public Configuration load() throws ConfigurationException {
+        System.out.println("[Remote Source] Connecting to: " + serverUrl);
+
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                System.out.println("[Remote Source] Attempt " + attempt + "/" + maxRetries + "...");
+
+                // Simulate network call (fails first 2 attempts, succeeds on 3rd)
+                if (attempt < maxRetries) {
+                    String errorMsg = (attempt == 1) ? "Connection timeout" : "Connection refused";
+                    System.out.println("[Remote Source] ERROR: " + errorMsg);
+
+                    IOException cause = new IOException(errorMsg);
+                    throw new NetworkException(
+                        "config-server.example.com",
+                        30,
+                        "Failed to connect to remote configuration server",
+                        cause
+                    );
+                }
+
+                System.out.println("[Remote Source] Connected successfully");
+                System.out.println("[Remote Source] Configuration downloaded");
+
+                Configuration config = new Configuration();
+                config.setProperty("server.port", 7070);
+                config.setProperty("server.host", "remote-host");
+                config.setProperty("database.url", "jdbc:oracle://remote/db");
+                config.setProperty("timeout", 45);
+                config.setProperty("debug", false);
+
+                return config;
+
+            } catch (NetworkException e) {
+                if (attempt < maxRetries) {
+                    int delay = baseDelay * (int)Math.pow(2, attempt - 1);
+                    System.out.println("[Remote Source] Retry " + attempt + ": Waiting " + (delay/1000) + " seconds...");
+                    try {
+                        Thread.sleep(delay);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    throw e;  // Last attempt failed, rethrow
+                }
+            }
+        }
+
+        throw new ConfigurationException(
+            ConfigurationErrorCode.SOURCE_UNAVAILABLE,
+            "RemoteConfigSource",
+            "Failed to load configuration after " + maxRetries + " attempts"
+        );
+    }
+
+    @Override
+    public String getSourceName() {
+        return "RemoteConfigSource";
+    }
+}
+
+// ============= Configuration Validator =============
+
+class ConfigurationValidator {
+    public void validate(Configuration config) throws ValidationException {
+        System.out.println("[Validator] Validating configuration...");
+        List<ValidationError> errors = new ArrayList<>();
+
+        // Validate server.port
+        Object port = config.getProperty("server.port");
+        if (port == null) {
+            errors.add(new ValidationError(
+                "server.port",
+                "Missing required field",
+                "integer (1024-65535)",
+                "null"
+            ));
+        } else if (port instanceof Integer) {
+            int portNum = (Integer) port;
+            if (portNum < 1024 || portNum > 65535) {
+                errors.add(new ValidationError(
+                    "server.port",
+                    "Value out of range",
+                    "1024-65535",
+                    String.valueOf(portNum)
+                ));
+            }
+        } else {
+            errors.add(new ValidationError(
+                "server.port",
+                "Type mismatch",
+                "integer",
+                port.getClass().getSimpleName()
+            ));
+        }
+
+        // Validate database.url
+        Object dbUrl = config.getProperty("database.url");
+        if (dbUrl == null) {
+            errors.add(new ValidationError(
+                "database.url",
+                "Missing required field",
+                "string (jdbc:...)",
+                "null"
+            ));
+        }
+
+        if (!errors.isEmpty()) {
+            System.out.println("[Validator] ERROR: Validation failed");
+            throw new ValidationException("ConfigurationValidator", errors);
+        }
+
+        System.out.println("[Validator] All validations passed ✓");
+    }
+}
+
+// ============= Configuration Manager =============
+
+class ConfigurationManager {
+    private List<ConfigurationSource> sources;
+    private ConfigurationValidator validator;
+    private StringBuilder errorLog;
+
+    public ConfigurationManager() {
+        this.sources = new ArrayList<>();
+        this.validator = new ConfigurationValidator();
+        this.errorLog = new StringBuilder();
+    }
+
+    public void addSource(ConfigurationSource source) {
+        sources.add(source);
+    }
+
+    public Configuration loadConfiguration() throws ConfigurationException {
+        System.out.println("\n=== Loading Configuration ===");
+        System.out.println("[Config Manager] Attempting to load from multiple sources...");
+
+        errorLog.setLength(0);  // Clear previous logs
+
+        for (int i = 0; i < sources.size(); i++) {
+            ConfigurationSource source = sources.get(i);
+            System.out.println("[Config Manager] Source " + (i + 1) + ": " + source.getSourceName());
+
+            try {
+                Configuration config = source.load();
+                validator.validate(config);
+
+                System.out.println("[Config Manager] Configuration loaded successfully from " + source.getSourceName());
+
+                if (i > 0) {
+                    System.out.println("Warning: Using fallback source");
+                }
+
+                System.out.println("Configuration ready: " + config.size() + " properties loaded");
+                return config;
+
+            } catch (ParseException e) {
+                System.out.println("Exception: " + e.getClass().getSimpleName());
+                System.out.println("Error Code: " + e.getErrorCode());
+                System.out.println("Line: " + e.getLineNumber());
+                System.out.println("Column: " + e.getColumnNumber());
+                System.out.println("Expected: " + e.getExpected());
+                System.out.println("Found: " + e.getFound());
+                System.out.println("Context: " + e.getContext());
+                System.out.println("[Config Manager] Parse error in " + source.getSourceName());
+
+                errorLog.append(source.getSourceName()).append(": ").append(e.getMessage()).append("\n");
+
+                if (i < sources.size() - 1) {
+                    System.out.println("[Config Manager] Trying next source...");
+                }
+
+            } catch (ValidationException e) {
+                System.out.println("Exception: " + e.getClass().getSimpleName());
+                System.out.println("Error Code: " + e.getErrorCode());
+                System.out.println("Validation Errors:");
+                int errorNum = 1;
+                for (ValidationError error : e.getValidationErrors()) {
+                    System.out.println(errorNum + ". " + error);
+                    errorNum++;
+                }
+                System.out.println("\nConfiguration load failed: " + e.getValidationErrors().size() + " validation errors");
+
+                errorLog.append(source.getSourceName()).append(": Validation failed\n");
+
+            } catch (ConfigurationException e) {
+                System.out.println("Exception: " + e.getClass().getSimpleName());
+                System.out.println("Error Code: " + e.getErrorCode());
+                System.out.println("Source: " + e.getSource());
+                System.out.println("Message: " + e.getMessage());
+
+                if (e instanceof NetworkException) {
+                    NetworkException ne = (NetworkException) e;
+                    System.out.println("Server: " + ne.getServer());
+                    System.out.println("Timeout: " + ne.getTimeout() + " seconds");
+                }
+
+                System.out.println("[Config Manager] " + source.getSourceName() + " failed, trying next source...");
+
+                errorLog.append(source.getSourceName()).append(": ").append(e.getMessage()).append("\n");
+            }
+        }
+
+        System.out.println("[Config Manager] All sources exhausted");
+        System.out.println("Error: Unable to load valid configuration");
+
+        throw new ConfigurationException(
+            ConfigurationErrorCode.SOURCE_UNAVAILABLE,
+            "ConfigurationManager",
+            "Failed to load configuration from any source. Errors:\n" + errorLog.toString()
+        );
+    }
+
+    public String getDetailedErrorReport() {
+        return errorLog.toString();
+    }
+}
+
+public class TestConfigurationSystem {
+    public static void main(String[] args) {
+        ConfigurationManager configManager = new ConfigurationManager();
+
+        // Add sources in priority order
+        configManager.addSource(new FileConfigSource("config.json"));
+        configManager.addSource(new EnvironmentConfigSource());
+        configManager.addSource(new RemoteConfigSource("https://config-server.example.com/config"));
+
+        try {
+            Configuration config = configManager.loadConfiguration();
+            System.out.println("\n=== Configuration Loaded Successfully ===");
+            System.out.println("Properties: " + config.getAllProperties());
+        } catch (ConfigurationException e) {
+            System.out.println("\n=== Configuration Load Failed ===");
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("\nDetailed Error Report:");
+            System.out.println(configManager.getDetailedErrorReport());
+        }
+    }
+}
+```
+
+**💡 Tips:**
+- Error codes enum: Provides standardized error classification enabling programmatic error handling
+- Custom exception hierarchy: Base ConfigurationException with specialized subclasses (ParseException, ValidationException, NetworkException)
+- Exception state: Each exception type carries relevant context (line/column for parse errors, field names for validation errors)
+- Multiple exception sources: System handles exceptions from file I/O, network calls, parsing, and validation
+- Exception chaining: NetworkException wraps IOException preserving original cause for debugging
+- Retry logic: RemoteConfigSource demonstrates exception handling in retry scenarios with exponential backoff
+- Fallback strategy: ConfigurationManager tries sources in order, catching exceptions and trying next source
+- Error aggregation: ValidationException accumulates multiple validation errors instead of failing on first error
+- Comprehensive error reporting: getDetailedErrorReport() provides full diagnostic of all failed attempts
+- Exception wrapping: Low-level IOException wrapped in domain-specific NetworkException adding business context
+- Logging at exception points: Each layer logs exceptions with layer-specific details
+- Recovery strategies: System gracefully handles failures by falling back to alternative sources
+- Error context preservation: ParseException includes line, column, expected, found, and surrounding context
+- throws declaration: Methods declare checked exceptions they propagate (throws ConfigurationException)
+- Unchecked vs checked: Configuration loading uses checked exceptions (caller must handle)
 
 ---
 

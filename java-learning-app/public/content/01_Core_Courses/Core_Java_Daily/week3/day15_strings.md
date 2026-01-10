@@ -267,14 +267,50 @@ public class StringBuilderVsBuffer {
 
 ---
 
-## 💻 Practice Exercises
+## 💻 Practical Exercises
 
 ### Exercise 1: Palindrome Checker
+
+**📝 Problem Statement:**
+Create a program that checks if a given string is a palindrome (reads the same forwards and backwards). The checker should ignore spaces and be case-insensitive.
+
+**Requirements:**
+- Create isPalindrome(String str) method that returns boolean
+- Remove all spaces from the string using replaceAll("\\s+", "")
+- Convert string to lowercase for case-insensitive comparison
+- Use two-pointer technique: compare characters from start and end moving inward
+- Return true if all characters match, false otherwise
+- Handle empty strings (return true)
+
+**Sample Test Cases:**
+```
+Input: "racecar"
+Expected Output: true
+
+Input: "A man a plan a canal Panama"
+Expected Output: true
+
+Input: "hello"
+Expected Output: false
+
+Input: "Was it a car or a cat I saw"
+Expected Output: true
+
+Input: ""
+Expected Output: true
+```
+
+**Solution:**
 ```java
 public class PalindromeChecker {
     public static boolean isPalindrome(String str) {
         // Remove spaces and convert to lowercase
         str = str.replaceAll("\\s+", "").toLowerCase();
+        
+        // Empty string is palindrome
+        if (str.isEmpty()) {
+            return true;
+        }
         
         int left = 0;
         int right = str.length() - 1;
@@ -293,24 +329,72 @@ public class PalindromeChecker {
         System.out.println(isPalindrome("racecar"));      // true
         System.out.println(isPalindrome("A man a plan a canal Panama")); // true
         System.out.println(isPalindrome("hello"));        // false
+        System.out.println(isPalindrome("Was it a car or a cat I saw")); // true
+        System.out.println(isPalindrome(""));             // true
     }
 }
 ```
 
+**💡 Tips:**
+- Two-pointer technique is efficient: O(n) time, O(1) space (after string processing)
+- replaceAll("\\s+", "") removes all whitespace characters (spaces, tabs, newlines)
+- toLowerCase() ensures case-insensitive comparison ('A' == 'a')
+- charAt(index) accesses individual characters for comparison
+- left < right condition ensures we only check half the string (optimization)
+- Alternative: reverse string and compare with original using equals()
+
+---
+
 ### Exercise 2: Reverse String
+
+**📝 Problem Statement:**
+Create a program that reverses a string using two different methods: StringBuilder's reverse() method and manual character array manipulation.
+
+**Requirements:**
+- Implement reverse1(String str) using StringBuilder.reverse()
+- Implement reverse2(String str) using character array and two-pointer swap
+- Both methods should return the reversed string
+- Handle empty strings and single characters
+- Compare performance of both approaches (StringBuilder is faster)
+- Display results from both methods
+
+**Sample Test Cases:**
+```
+Input: "Hello World"
+Expected Output: "dlroW olleH"
+
+Input: "Java"
+Expected Output: "avaJ"
+
+Input: "12345"
+Expected Output: "54321"
+
+Input: "a"
+Expected Output: "a"
+
+Input: ""
+Expected Output: ""
+```
+
+**Solution:**
 ```java
 public class ReverseString {
-    // Method 1: Using StringBuilder
+    // Method 1: Using StringBuilder (faster, simpler)
     public static String reverse1(String str) {
         return new StringBuilder(str).reverse().toString();
     }
     
-    // Method 2: Using character array
+    // Method 2: Using character array (manual approach)
     public static String reverse2(String str) {
+        if (str.isEmpty()) {
+            return str;
+        }
+        
         char[] chars = str.toCharArray();
         int left = 0, right = chars.length - 1;
         
         while (left < right) {
+            // Swap characters
             char temp = chars[left];
             chars[left] = chars[right];
             chars[right] = temp;
@@ -322,13 +406,62 @@ public class ReverseString {
     
     public static void main(String[] args) {
         String str = "Hello World";
-        System.out.println(reverse1(str));
-        System.out.println(reverse2(str));
+        System.out.println("Original: " + str);
+        System.out.println("Reversed (Method 1): " + reverse1(str));
+        System.out.println("Reversed (Method 2): " + reverse2(str));
+        
+        // Test edge cases
+        System.out.println("\nEdge cases:");
+        System.out.println("Single char: " + reverse1("a"));
+        System.out.println("Empty: '" + reverse1("") + "'");
     }
 }
 ```
 
+**💡 Tips:**
+- StringBuilder.reverse() is built-in, optimized, and simplest solution
+- toCharArray() converts String to char[] for manual manipulation
+- Two-pointer swap technique: swap first with last, second with second-last, etc.
+- temp variable needed for swapping without losing values
+- new String(chars) converts char array back to String
+- StringBuilder approach is generally faster for large strings
+- Manual approach demonstrates algorithm understanding and works without StringBuilder
+
+---
+
 ### Exercise 3: Anagram Checker
+
+**📝 Problem Statement:**
+Create a program that checks if two strings are anagrams (contain the same characters in different order). The checker should ignore spaces and be case-insensitive.
+
+**Requirements:**
+- Create isAnagram(String s1, String s2) method returning boolean
+- Remove all spaces using replaceAll("\\s+", "")
+- Convert both strings to lowercase for case-insensitive comparison
+- Check if lengths are equal (if not, cannot be anagrams)
+- Sort characters in both strings and compare
+- Use Arrays.sort() for character arrays
+- Use Arrays.equals() to compare sorted arrays
+
+**Sample Test Cases:**
+```
+Input: "listen", "silent"
+Expected Output: true
+
+Input: "hello", "world"
+Expected Output: false
+
+Input: "The Eyes", "They See"
+Expected Output: true
+
+Input: "Dormitory", "Dirty Room"
+Expected Output: true
+
+Input: "abc", "abcd"
+Expected Output: false
+```
+
+**Solution:**
 ```java
 import java.util.Arrays;
 
@@ -338,12 +471,12 @@ public class AnagramChecker {
         s1 = s1.replaceAll("\\s+", "").toLowerCase();
         s2 = s2.replaceAll("\\s+", "").toLowerCase();
         
-        // Check length
+        // Check length first (optimization)
         if (s1.length() != s2.length()) {
             return false;
         }
         
-        // Sort and compare
+        // Sort characters and compare
         char[] arr1 = s1.toCharArray();
         char[] arr2 = s2.toCharArray();
         Arrays.sort(arr1);
@@ -355,11 +488,68 @@ public class AnagramChecker {
     public static void main(String[] args) {
         System.out.println(isAnagram("listen", "silent"));  // true
         System.out.println(isAnagram("hello", "world"));    // false
+        System.out.println(isAnagram("The Eyes", "They See")); // true
+        System.out.println(isAnagram("Dormitory", "Dirty Room")); // true
+        System.out.println(isAnagram("abc", "abcd"));       // false
     }
 }
 ```
 
+**💡 Tips:**
+- Anagrams have same characters but different arrangement
+- Length check is quick optimization: different lengths = not anagrams
+- Sorting approach: O(n log n) time complexity due to Arrays.sort()
+- Alternative approach: use HashMap to count character frequencies (O(n) time)
+- Arrays.equals() compares array contents, not references
+- toCharArray() converts String to char[] for sorting
+- replaceAll("\\s+", "") removes all whitespace (spaces, tabs, newlines)
+- Famous anagram pairs: "listen/silent", "dormitory/dirty room", "astronomer/moon starer"
+
+---
+
 ### Exercise 4: Count Vowels and Consonants
+
+**📝 Problem Statement:**
+Create a program that counts the number of vowels and consonants in a given string. The program should ignore non-letter characters (numbers, spaces, punctuation).
+
+**Requirements:**
+- Create countVowelsConsonants(String str) method
+- Convert string to lowercase for easier checking
+- Use Character.isLetter() to check if character is a letter
+- Check if letter is vowel (a, e, i, o, u)
+- Count vowels and consonants separately
+- Ignore non-letter characters (spaces, numbers, punctuation)
+- Display both counts with clear labels
+
+**Sample Test Cases:**
+```
+Input: "Hello World"
+Expected Output:
+Vowels: 3
+Consonants: 7
+
+Input: "Java Programming"
+Expected Output:
+Vowels: 5
+Consonants: 10
+
+Input: "aeiou"
+Expected Output:
+Vowels: 5
+Consonants: 0
+
+Input: "bcdfg"
+Expected Output:
+Vowels: 0
+Consonants: 5
+
+Input: "Hello123!@#"
+Expected Output:
+Vowels: 2
+Consonants: 3
+```
+
+**Solution:**
 ```java
 public class VowelConsonantCounter {
     public static void countVowelsConsonants(String str) {
@@ -368,14 +558,18 @@ public class VowelConsonantCounter {
         
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
+            
+            // Only count letters
             if (Character.isLetter(ch)) {
-                if (ch == 'a' || ch == 'e' || ch == 'i' || 
+                // Check if vowel
+                if (ch == 'a' || ch == 'e' || ch == 'i' ||
                     ch == 'o' || ch == 'u') {
                     vowels++;
                 } else {
                     consonants++;
                 }
             }
+            // Ignore non-letters (spaces, numbers, punctuation)
         }
         
         System.out.println("Vowels: " + vowels);
@@ -383,10 +577,731 @@ public class VowelConsonantCounter {
     }
     
     public static void main(String[] args) {
+        System.out.println("Test 1:");
         countVowelsConsonants("Hello World");
+        
+        System.out.println("\nTest 2:");
+        countVowelsConsonants("Java Programming");
+        
+        System.out.println("\nTest 3:");
+        countVowelsConsonants("aeiou");
+        
+        System.out.println("\nTest 4:");
+        countVowelsConsonants("bcdfg");
+        
+        System.out.println("\nTest 5:");
+        countVowelsConsonants("Hello123!@#");
     }
 }
 ```
+
+**💡 Tips:**
+- toLowerCase() simplifies vowel checking (only check lowercase vowels)
+- Character.isLetter() returns true for A-Z and a-z, false for numbers/punctuation
+- Vowels in English: a, e, i, o, u (sometimes y, but typically not counted)
+- charAt(i) accesses individual characters in loop
+- Alternative: use String.contains() or regex pattern matching
+- Could use Set<Character> for vowels: Set.of('a', 'e', 'i', 'o', 'u')
+- Enhancement: return counts as int[] or create VowelCount class with fields
+
+---
+
+---
+
+### Exercise 5: Text Processing and Word Analyzer
+
+**📝 Problem Statement:**
+Create a comprehensive text processing system that analyzes text documents. The system should count words, find longest/shortest words, calculate word frequencies, identify unique words, and provide text statistics using String methods and StringBuilder for efficient processing.
+
+**Requirements:**
+- Create TextAnalyzer class with analyzeText(String text) method
+- Implement wordCount() method counting total words (split by spaces and punctuation)
+- Implement findLongestWord() method returning the longest word in the text
+- Implement findShortestWord() method returning the shortest word in the text (excluding single letters)
+- Implement calculateWordFrequency() method returning a formatted string of word frequencies
+- Implement getUniqueWords() method counting unique words (case-insensitive)
+- Implement getAverageWordLength() method calculating average word length
+- Use toLowerCase() for case-insensitive comparisons
+- Use split() with regex to split text by spaces and punctuation: "\\s+|[,.!?;:]"
+- Use StringBuilder to build the formatted output report
+- Handle empty strings and null inputs gracefully
+- Create displayReport() method showing all statistics in formatted output
+
+**Sample Test Cases:**
+```
+Input: "Hello world! Hello Java. Java is great, Java is powerful."
+Expected Output:
+=== Text Analysis Report ===
+Total Words: 10
+Unique Words: 6
+Longest Word: "powerful" (8 letters)
+Shortest Word: "is" (2 letters)
+Average Word Length: 4.5 letters
+
+Word Frequencies:
+hello: 2
+world: 1
+java: 3
+is: 2
+great: 1
+powerful: 1
+
+Input: "The quick brown fox jumps over the lazy dog"
+Expected Output:
+=== Text Analysis Report ===
+Total Words: 9
+Unique Words: 8
+Longest Word: "quick" (5 letters)
+Shortest Word: "the" (3 letters)
+Average Word Length: 3.9 letters
+
+Word Frequencies:
+the: 2
+quick: 1
+brown: 1
+fox: 1
+jumps: 1
+over: 1
+lazy: 1
+dog: 1
+
+Input: ""
+Expected Output:
+=== Text Analysis Report ===
+Total Words: 0
+Unique Words: 0
+No text to analyze.
+```
+
+**Solution:**
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class TextAnalyzer {
+    private String text;
+    private String[] words;
+
+    public TextAnalyzer(String text) {
+        this.text = text;
+        if (text != null && !text.trim().isEmpty()) {
+            // Split by spaces and punctuation
+            this.words = text.toLowerCase().split("\\s+|[,.!?;:]");
+            // Remove empty strings
+            this.words = removeEmptyStrings(this.words);
+        } else {
+            this.words = new String[0];
+        }
+    }
+
+    private String[] removeEmptyStrings(String[] arr) {
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+        for (String s : arr) {
+            if (!s.isEmpty()) {
+                count++;
+            }
+        }
+
+        String[] result = new String[count];
+        int index = 0;
+        for (String s : arr) {
+            if (!s.isEmpty()) {
+                result[index++] = s;
+            }
+        }
+        return result;
+    }
+
+    public int wordCount() {
+        return words.length;
+    }
+
+    public String findLongestWord() {
+        if (words.length == 0) return "";
+
+        String longest = words[0];
+        for (String word : words) {
+            if (word.length() > longest.length()) {
+                longest = word;
+            }
+        }
+        return longest;
+    }
+
+    public String findShortestWord() {
+        if (words.length == 0) return "";
+
+        String shortest = words[0];
+        for (String word : words) {
+            if (word.length() > 1 && word.length() < shortest.length()) {
+                shortest = word;
+            }
+        }
+        return shortest;
+    }
+
+    public int getUniqueWords() {
+        if (words.length == 0) return 0;
+
+        Map<String, Integer> frequency = new HashMap<>();
+        for (String word : words) {
+            frequency.put(word, frequency.getOrDefault(word, 0) + 1);
+        }
+        return frequency.size();
+    }
+
+    public double getAverageWordLength() {
+        if (words.length == 0) return 0.0;
+
+        int totalLength = 0;
+        for (String word : words) {
+            totalLength += word.length();
+        }
+        return (double) totalLength / words.length;
+    }
+
+    public String calculateWordFrequency() {
+        if (words.length == 0) return "No words to analyze.";
+
+        Map<String, Integer> frequency = new HashMap<>();
+        for (String word : words) {
+            frequency.put(word, frequency.getOrDefault(word, 0) + 1);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nWord Frequencies:\n");
+        for (Map.Entry<String, Integer> entry : frequency.entrySet()) {
+            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    public void displayReport() {
+        StringBuilder report = new StringBuilder();
+        report.append("\n=== Text Analysis Report ===\n");
+        report.append("Total Words: ").append(wordCount()).append("\n");
+        report.append("Unique Words: ").append(getUniqueWords()).append("\n");
+
+        if (words.length > 0) {
+            String longest = findLongestWord();
+            String shortest = findShortestWord();
+            report.append("Longest Word: \"").append(longest).append("\" (")
+                  .append(longest.length()).append(" letters)\n");
+            report.append("Shortest Word: \"").append(shortest).append("\" (")
+                  .append(shortest.length()).append(" letters)\n");
+            report.append("Average Word Length: ")
+                  .append(String.format("%.1f", getAverageWordLength()))
+                  .append(" letters\n");
+            report.append(calculateWordFrequency());
+        } else {
+            report.append("No text to analyze.\n");
+        }
+
+        System.out.println(report.toString());
+    }
+
+    public static void main(String[] args) {
+        TextAnalyzer analyzer1 = new TextAnalyzer("Hello world! Hello Java. Java is great, Java is powerful.");
+        analyzer1.displayReport();
+
+        TextAnalyzer analyzer2 = new TextAnalyzer("The quick brown fox jumps over the lazy dog");
+        analyzer2.displayReport();
+
+        TextAnalyzer analyzer3 = new TextAnalyzer("");
+        analyzer3.displayReport();
+    }
+}
+```
+
+**💡 Tips:**
+- split("\\s+|[,.!?;:]") uses regex to split by whitespace OR punctuation characters
+- toLowerCase() before split ensures case-insensitive word comparison (Hello = hello)
+- HashMap<String, Integer> efficiently stores word frequencies with O(1) lookup
+- StringBuilder used for building formatted output - much more efficient than String concatenation
+- removeEmptyStrings() helper method filters out empty strings after split (common with punctuation)
+- getOrDefault(word, 0) provides default value 0 if word not in map - simplifies counting logic
+- String.format("%.1f") formats double to 1 decimal place for average word length
+- words[] array stored as instance variable avoids re-splitting text for each method call
+- Defensive programming: check for null and empty strings in constructor
+- Map.Entry<String, Integer> used to iterate HashMap entries (key-value pairs)
+- totalLength accumulator pattern for calculating average
+- Demonstrates string immutability: toLowerCase() returns new string, original unchanged
+
+---
+
+### Exercise 6: String Encryption and Decryption System
+
+**📝 Problem Statement:**
+Create a string encryption/decryption system using Caesar cipher and ROT13 algorithms. The system should encrypt and decrypt messages, validate input, handle both uppercase and lowercase letters while preserving non-alphabetic characters, and provide formatted output using StringBuilder.
+
+**Requirements:**
+- Create EncryptionSystem class with encrypt() and decrypt() methods
+- Implement Caesar cipher: shift each letter by n positions (default 3)
+- Implement ROT13 cipher: special case of Caesar with shift 13 (self-inverse)
+- Preserve case: uppercase letters stay uppercase, lowercase stay lowercase
+- Preserve non-alphabetic characters: numbers, spaces, punctuation unchanged
+- Use charAt() to access individual characters for processing
+- Use StringBuilder to build encrypted/decrypted strings efficiently
+- Implement validateShift(int shift) ensuring shift is 0-25
+- Create encryptWithKey(String message, int shift) for custom shift values
+- Create decryptWithKey(String encrypted, int shift) reversing the encryption
+- Handle wrap-around: 'z' shifted by 1 becomes 'a', 'Z' + 1 = 'A'
+- Provide formatted output showing original, encrypted, and decrypted messages
+
+**Sample Test Cases:**
+```
+Input: encrypt("Hello World!", 3)
+Expected Output:
+Original:  Hello World!
+Encrypted: Khoor Zruog!
+(Caesar cipher with shift 3)
+
+Input: decrypt("Khoor Zruog!", 3)
+Expected Output:
+Encrypted: Khoor Zruog!
+Decrypted: Hello World!
+(Caesar cipher with shift 3)
+
+Input: encryptROT13("Java Programming")
+Expected Output:
+Original:  Java Programming
+Encrypted: Wnin Cebtenzzvat
+(ROT13 cipher - shift 13)
+
+Input: decryptROT13("Wnin Cebtenzzvat")
+Expected Output:
+Encrypted: Wnin Cebtenzzvat
+Decrypted: Java Programming
+(ROT13 is self-inverse)
+
+Input: encrypt("xyz ABC 123!", 5)
+Expected Output:
+Original:  xyz ABC 123!
+Encrypted: cde FGH 123!
+(Shift 5: x→c, y→d, z→e, A→F, B→G, C→H, preserves numbers and punctuation)
+
+Input: encrypt("Test", 30)
+Expected Output:
+Error: Shift must be between 0 and 25
+```
+
+**Solution:**
+```java
+public class EncryptionSystem {
+    private static final int ALPHABET_SIZE = 26;
+
+    // Validate shift value
+    private boolean validateShift(int shift) {
+        return shift >= 0 && shift <= 25;
+    }
+
+    // Encrypt a single character with Caesar cipher
+    private char encryptChar(char ch, int shift) {
+        if (Character.isUpperCase(ch)) {
+            // Uppercase letter: A=0, B=1, ..., Z=25
+            int position = ch - 'A';
+            int newPosition = (position + shift) % ALPHABET_SIZE;
+            return (char) ('A' + newPosition);
+        } else if (Character.isLowerCase(ch)) {
+            // Lowercase letter: a=0, b=1, ..., z=25
+            int position = ch - 'a';
+            int newPosition = (position + shift) % ALPHABET_SIZE;
+            return (char) ('a' + newPosition);
+        } else {
+            // Non-alphabetic character: return unchanged
+            return ch;
+        }
+    }
+
+    // Decrypt a single character with Caesar cipher
+    private char decryptChar(char ch, int shift) {
+        if (Character.isUpperCase(ch)) {
+            int position = ch - 'A';
+            int newPosition = (position - shift + ALPHABET_SIZE) % ALPHABET_SIZE;
+            return (char) ('A' + newPosition);
+        } else if (Character.isLowerCase(ch)) {
+            int position = ch - 'a';
+            int newPosition = (position - shift + ALPHABET_SIZE) % ALPHABET_SIZE;
+            return (char) ('a' + newPosition);
+        } else {
+            return ch;
+        }
+    }
+
+    // Encrypt message with custom shift
+    public String encryptWithKey(String message, int shift) {
+        if (!validateShift(shift)) {
+            return "Error: Shift must be between 0 and 25";
+        }
+
+        StringBuilder encrypted = new StringBuilder();
+        for (int i = 0; i < message.length(); i++) {
+            char ch = message.charAt(i);
+            encrypted.append(encryptChar(ch, shift));
+        }
+        return encrypted.toString();
+    }
+
+    // Decrypt message with custom shift
+    public String decryptWithKey(String encrypted, int shift) {
+        if (!validateShift(shift)) {
+            return "Error: Shift must be between 0 and 25";
+        }
+
+        StringBuilder decrypted = new StringBuilder();
+        for (int i = 0; i < encrypted.length(); i++) {
+            char ch = encrypted.charAt(i);
+            decrypted.append(decryptChar(ch, shift));
+        }
+        return decrypted.toString();
+    }
+
+    // Caesar cipher with default shift 3
+    public void encrypt(String message, int shift) {
+        if (!validateShift(shift)) {
+            System.out.println("Error: Shift must be between 0 and 25");
+            return;
+        }
+
+        String encrypted = encryptWithKey(message, shift);
+        System.out.println("\n=== Caesar Cipher Encryption ===");
+        System.out.println("Original:  " + message);
+        System.out.println("Encrypted: " + encrypted);
+        System.out.println("(Caesar cipher with shift " + shift + ")");
+    }
+
+    // Decrypt Caesar cipher
+    public void decrypt(String encrypted, int shift) {
+        if (!validateShift(shift)) {
+            System.out.println("Error: Shift must be between 0 and 25");
+            return;
+        }
+
+        String decrypted = decryptWithKey(encrypted, shift);
+        System.out.println("\n=== Caesar Cipher Decryption ===");
+        System.out.println("Encrypted: " + encrypted);
+        System.out.println("Decrypted: " + decrypted);
+        System.out.println("(Caesar cipher with shift " + shift + ")");
+    }
+
+    // ROT13 encryption (shift 13)
+    public void encryptROT13(String message) {
+        String encrypted = encryptWithKey(message, 13);
+        System.out.println("\n=== ROT13 Encryption ===");
+        System.out.println("Original:  " + message);
+        System.out.println("Encrypted: " + encrypted);
+        System.out.println("(ROT13 cipher - shift 13)");
+    }
+
+    // ROT13 decryption (shift 13 again - self-inverse)
+    public void decryptROT13(String encrypted) {
+        String decrypted = encryptWithKey(encrypted, 13);
+        System.out.println("\n=== ROT13 Decryption ===");
+        System.out.println("Encrypted: " + encrypted);
+        System.out.println("Decrypted: " + decrypted);
+        System.out.println("(ROT13 is self-inverse)");
+    }
+
+    public static void main(String[] args) {
+        EncryptionSystem system = new EncryptionSystem();
+
+        // Caesar cipher examples
+        system.encrypt("Hello World!", 3);
+        system.decrypt("Khoor Zruog!", 3);
+
+        // ROT13 examples
+        system.encryptROT13("Java Programming");
+        system.decryptROT13("Wnin Cebtenzzvat");
+
+        // Custom shift example
+        system.encrypt("xyz ABC 123!", 5);
+
+        // Invalid shift
+        system.encrypt("Test", 30);
+    }
+}
+```
+
+**💡 Tips:**
+- Caesar cipher: each letter shifted by n positions in alphabet (A→D with shift 3)
+- ROT13 is Caesar cipher with shift 13 - self-inverse property means applying twice gives original
+- Character.isUpperCase() and Character.isLowerCase() check letter case before processing
+- ch - 'A' converts character to position: 'A'→0, 'B'→1, ..., 'Z'→25
+- (position + shift) % 26 handles wrap-around: position 25 + shift 3 = 28 % 26 = 2
+- (position - shift + ALPHABET_SIZE) % ALPHABET_SIZE for decryption prevents negative results
+- StringBuilder.append() builds encrypted string character-by-character efficiently
+- charAt(i) accesses individual characters for processing in loop
+- validateShift() ensures shift value 0-25 preventing invalid cipher operations
+- Non-alphabetic characters (spaces, numbers, punctuation) returned unchanged by encryptChar/decryptChar
+- encryptWithKey() and decryptWithKey() are core utility methods reused by other methods
+- Demonstrates string immutability: original message unchanged, encrypted string is new object
+
+---
+
+### Exercise 7: Username and Password Validator
+
+**📝 Problem Statement:**
+Create a comprehensive username and password validation system for user registration. The system should validate usernames (alphanumeric, length 6-20), validate passwords (length 8+, uppercase, lowercase, digit, special character), check password strength, generate validation reports, and provide detailed feedback using String methods.
+
+**Requirements:**
+- Create Validator class with validateUsername(String username) method
+- Username validation: length 6-20 characters, alphanumeric only (letters and digits)
+- Implement validatePassword(String password) checking multiple criteria
+- Password validation: minimum 8 characters, at least 1 uppercase, 1 lowercase, 1 digit, 1 special character
+- Implement checkPasswordStrength(String password) returning "Weak", "Medium", or "Strong"
+- Strong password: 12+ characters, meets all criteria, has multiple special characters
+- Medium password: 8-11 characters, meets all basic criteria
+- Weak password: doesn't meet all criteria
+- Use Character.isLetterOrDigit() for username validation
+- Use Character.isUpperCase(), Character.isLowerCase(), Character.isDigit() for password checks
+- Special characters: !@#$%^&*()_+-=[]{}|;:,.<>?
+- Implement generateValidationReport(String username, String password) with detailed feedback
+- Use StringBuilder to build formatted validation report
+- Provide specific error messages for each failed validation rule
+
+**Sample Test Cases:**
+```
+Input: validateUsername("john_doe")
+Expected Output:
+✗ Username invalid: Contains non-alphanumeric characters
+Valid characters: letters and digits only
+
+Input: validateUsername("johndoe123")
+Expected Output:
+✓ Username valid: johndoe123
+
+Input: validatePassword("Pass123!")
+Expected Output:
+✓ Password valid
+Length: 8 characters
+Contains: Uppercase ✓ Lowercase ✓ Digit ✓ Special Character ✓
+Strength: Medium
+
+Input: validatePassword("password")
+Expected Output:
+✗ Password invalid:
+- Missing uppercase letter
+- Missing digit
+- Missing special character
+Strength: Weak
+
+Input: validatePassword("SecureP@ssw0rd2024!")
+Expected Output:
+✓ Password valid
+Length: 20 characters
+Contains: Uppercase ✓ Lowercase ✓ Digit ✓ Special Character ✓
+Strength: Strong
+
+Input: generateValidationReport("abc", "weak")
+Expected Output:
+=== User Registration Validation ===
+
+Username: abc
+✗ Username too short (minimum 6 characters)
+Current length: 3
+
+Password: weak
+✗ Password too short (minimum 8 characters)
+✗ Missing uppercase letter
+✗ Missing digit
+✗ Missing special character
+Current length: 4
+
+Validation Result: FAILED
+Please fix the issues above and try again.
+```
+
+**Solution:**
+```java
+public class Validator {
+    private static final int MIN_USERNAME_LENGTH = 6;
+    private static final int MAX_USERNAME_LENGTH = 20;
+    private static final int MIN_PASSWORD_LENGTH = 8;
+    private static final int STRONG_PASSWORD_LENGTH = 12;
+    private static final String SPECIAL_CHARACTERS = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+    // Validate username
+    public String validateUsername(String username) {
+        StringBuilder result = new StringBuilder();
+
+        // Check length
+        if (username.length() < MIN_USERNAME_LENGTH) {
+            result.append("✗ Username too short (minimum ").append(MIN_USERNAME_LENGTH)
+                  .append(" characters)\n");
+            result.append("Current length: ").append(username.length()).append("\n");
+            return result.toString();
+        }
+
+        if (username.length() > MAX_USERNAME_LENGTH) {
+            result.append("✗ Username too long (maximum ").append(MAX_USERNAME_LENGTH)
+                  .append(" characters)\n");
+            result.append("Current length: ").append(username.length()).append("\n");
+            return result.toString();
+        }
+
+        // Check alphanumeric
+        for (int i = 0; i < username.length(); i++) {
+            char ch = username.charAt(i);
+            if (!Character.isLetterOrDigit(ch)) {
+                result.append("✗ Username invalid: Contains non-alphanumeric characters\n");
+                result.append("Valid characters: letters and digits only\n");
+                return result.toString();
+            }
+        }
+
+        result.append("✓ Username valid: ").append(username).append("\n");
+        return result.toString();
+    }
+
+    // Validate password
+    public String validatePassword(String password) {
+        StringBuilder result = new StringBuilder();
+        boolean isValid = true;
+
+        // Check length
+        if (password.length() < MIN_PASSWORD_LENGTH) {
+            result.append("✗ Password too short (minimum ").append(MIN_PASSWORD_LENGTH)
+                  .append(" characters)\n");
+            result.append("Current length: ").append(password.length()).append("\n");
+            isValid = false;
+        }
+
+        // Check for uppercase, lowercase, digit, special character
+        boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+
+        for (int i = 0; i < password.length(); i++) {
+            char ch = password.charAt(i);
+            if (Character.isUpperCase(ch)) hasUpper = true;
+            else if (Character.isLowerCase(ch)) hasLower = true;
+            else if (Character.isDigit(ch)) hasDigit = true;
+            else if (SPECIAL_CHARACTERS.indexOf(ch) >= 0) hasSpecial = true;
+        }
+
+        if (!hasUpper) {
+            result.append("✗ Missing uppercase letter\n");
+            isValid = false;
+        }
+        if (!hasLower) {
+            result.append("✗ Missing lowercase letter\n");
+            isValid = false;
+        }
+        if (!hasDigit) {
+            result.append("✗ Missing digit\n");
+            isValid = false;
+        }
+        if (!hasSpecial) {
+            result.append("✗ Missing special character\n");
+            isValid = false;
+        }
+
+        if (isValid) {
+            result.insert(0, "✓ Password valid\n");
+            result.append("Length: ").append(password.length()).append(" characters\n");
+            result.append("Contains: Uppercase ✓ Lowercase ✓ Digit ✓ Special Character ✓\n");
+        }
+
+        // Add strength
+        String strength = checkPasswordStrength(password);
+        result.append("Strength: ").append(strength).append("\n");
+
+        return result.toString();
+    }
+
+    // Check password strength
+    public String checkPasswordStrength(String password) {
+        if (password.length() < MIN_PASSWORD_LENGTH) {
+            return "Weak";
+        }
+
+        boolean hasUpper = false, hasLower = false, hasDigit = false;
+        int specialCount = 0;
+
+        for (int i = 0; i < password.length(); i++) {
+            char ch = password.charAt(i);
+            if (Character.isUpperCase(ch)) hasUpper = true;
+            else if (Character.isLowerCase(ch)) hasLower = true;
+            else if (Character.isDigit(ch)) hasDigit = true;
+            else if (SPECIAL_CHARACTERS.indexOf(ch) >= 0) specialCount++;
+        }
+
+        // Strong: 12+ chars, all criteria, multiple special chars
+        if (password.length() >= STRONG_PASSWORD_LENGTH && hasUpper && hasLower &&
+            hasDigit && specialCount >= 2) {
+            return "Strong";
+        }
+
+        // Medium: 8+ chars, all criteria
+        if (password.length() >= MIN_PASSWORD_LENGTH && hasUpper && hasLower &&
+            hasDigit && specialCount >= 1) {
+            return "Medium";
+        }
+
+        return "Weak";
+    }
+
+    // Generate complete validation report
+    public void generateValidationReport(String username, String password) {
+        StringBuilder report = new StringBuilder();
+        report.append("\n=== User Registration Validation ===\n\n");
+
+        // Username validation
+        report.append("Username: ").append(username).append("\n");
+        report.append(validateUsername(username));
+
+        // Password validation
+        report.append("\nPassword: ").append(password).append("\n");
+        report.append(validatePassword(password));
+
+        // Overall result
+        boolean usernameValid = validateUsername(username).contains("✓ Username valid");
+        boolean passwordValid = validatePassword(password).contains("✓ Password valid");
+
+        report.append("\nValidation Result: ");
+        if (usernameValid && passwordValid) {
+            report.append("PASSED ✓\n");
+            report.append("Registration successful!\n");
+        } else {
+            report.append("FAILED ✗\n");
+            report.append("Please fix the issues above and try again.\n");
+        }
+
+        System.out.println(report.toString());
+    }
+
+    public static void main(String[] args) {
+        Validator validator = new Validator();
+
+        // Test username validation
+        System.out.println(validator.validateUsername("john_doe"));
+        System.out.println(validator.validateUsername("johndoe123"));
+
+        // Test password validation
+        System.out.println(validator.validatePassword("Pass123!"));
+        System.out.println(validator.validatePassword("password"));
+        System.out.println(validator.validatePassword("SecureP@ssw0rd2024!"));
+
+        // Test complete validation report
+        validator.generateValidationReport("abc", "weak");
+        validator.generateValidationReport("validuser123", "SecureP@ssw0rd2024!");
+    }
+}
+```
+
+**💡 Tips:**
+- Character.isLetterOrDigit() checks if character is letter (A-Z, a-z) or digit (0-9) - perfect for username validation
+- Character.isUpperCase/isLowerCase/isDigit provide specific character type checking for password rules
+- SPECIAL_CHARACTERS constant string lists allowed special characters - indexOf() checks membership
+- indexOf(ch) >= 0 means character found in string, -1 means not found
+- StringBuilder.insert(0, text) prepends text to beginning of string builder - useful for success message
+- Boolean flags (hasUpper, hasLower, hasDigit, hasSpecial) track password criteria satisfaction
+- Password strength algorithm: length + criteria combination determines Weak/Medium/Strong rating
+- specialCount variable counts multiple special characters for Strong password requirement
+- generateValidationReport() demonstrates composition: calls validateUsername() and validatePassword() methods
+- contains("✓ Username valid") checks if validation passed - used for overall result determination
+- Unicode symbols (✓ ✗) make validation output more readable and user-friendly
+- charAt(i) in loop processes each character individually for validation checks
 
 ---
 

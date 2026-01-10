@@ -522,6 +522,10 @@ public class WalkDirectory {
 ### Exercise 1: File Information Display
 Create a program that displays comprehensive file information.
 
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
 ```java
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -554,10 +558,16 @@ public class Exercise1 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 2: File Copy Utility
 Create a utility to copy files with progress indication.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -587,10 +597,16 @@ public class Exercise2 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 3: Directory Listing
 List all files in a directory with size information.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -620,10 +636,16 @@ public class Exercise3 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 4: Text File Search
 Search for a keyword in all text files in a directory.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -655,10 +677,16 @@ public class Exercise4 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 5: File Organizer
 Organize files by extension into subdirectories.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -701,10 +729,16 @@ public class Exercise5 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 6: Duplicate File Finder
 Find duplicate files based on size.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -741,10 +775,16 @@ public class Exercise6 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 7: Batch File Rename
 Rename multiple files with a pattern.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -775,10 +815,16 @@ public class Exercise7 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 8: Directory Size Calculator
 Calculate total size of all files in a directory.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -812,10 +858,16 @@ public class Exercise8 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 9: File Backup System
 Create a simple backup system that copies files to a backup directory.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -854,10 +906,16 @@ public class Exercise9 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 10: Log File Analyzer
 Analyze log files and extract error messages.
+
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.nio.file.*;
@@ -894,6 +952,1556 @@ public class Exercise10 {
     }
 }
 ```
+
+</details>
+
+---
+
+### Exercise 11: File Manager with NIO.2 Operations
+
+**📝 Problem Statement:**
+Create a comprehensive file management system demonstrating advanced NIO.2 operations including copying files with options, moving files between directories, deleting files safely, reading and modifying file attributes, checking file properties, and building a production-grade file utility. The system should use Path and Files classes for all operations, handle symbolic links correctly, preserve file timestamps during copy, support atomic move operations, provide detailed file information including size, permissions, and timestamps, and demonstrate the advantages of NIO.2 over traditional java.io for file management tasks.
+
+**Requirements:**
+- Use Path and Paths (or Path.of) for file/directory references
+- Copy files using Files.copy() with CopyOption (REPLACE_EXISTING, COPY_ATTRIBUTES)
+- Move files using Files.move() with StandardCopyOption.ATOMIC_MOVE when possible
+- Delete files using Files.delete() or Files.deleteIfExists()
+- Check file existence, readability, writability using Files methods
+- Read file attributes: size, creation time, last modified time, last access time
+- Modify file attributes: set last modified time, set read-only
+- Detect file type: regular file, directory, symbolic link
+- Get file permissions and owner information
+- Handle exceptions: FileAlreadyExistsException, NoSuchFileException, DirectoryNotEmptyException
+- Demonstrate atomic operations where available
+- Use try-with-resources where applicable
+- Display human-readable file sizes and timestamps
+- Support batch operations (copy/move/delete multiple files)
+
+**Sample Test Cases:**
+```
+Input: File operations on sample files
+source/document.txt (1024 bytes, modified: 2024-01-10 10:00:00)
+source/image.jpg (50 KB, read-only)
+destination/ (empty directory)
+
+Expected Output:
+=== NIO.2 File Manager ===
+
+=== File Information ===
+
+Analyzing: source/document.txt
+  Type: Regular File
+  Size: 1.00 KB (1024 bytes)
+  Readable: ✓ Yes
+  Writable: ✓ Yes
+  Executable: ✗ No
+  Hidden: ✗ No
+  Created: 2024-01-10 09:30:00
+  Modified: 2024-01-10 10:00:00
+  Accessed: 2024-01-10 10:15:00
+  Owner: user@domain
+
+Analyzing: source/image.jpg
+  Type: Regular File
+  Size: 50.00 KB (51200 bytes)
+  Readable: ✓ Yes
+  Writable: ✗ No (read-only)
+  Executable: ✗ No
+  Hidden: ✗ No
+  Created: 2024-01-09 14:20:00
+  Modified: 2024-01-09 14:20:00
+  Accessed: 2024-01-10 10:15:00
+
+=== Copy Operations ===
+
+Copying source/document.txt → destination/document.txt
+  Options: REPLACE_EXISTING, COPY_ATTRIBUTES
+  Status: ✓ Copied successfully
+  Size verified: 1024 bytes
+  Attributes preserved: Last modified time copied
+
+Copying source/image.jpg → destination/image_copy.jpg
+  Status: ✓ Copied successfully
+  Read-only attribute preserved: ✓
+
+=== Move Operations ===
+
+Moving source/temp.dat → archive/temp.dat
+  Options: ATOMIC_MOVE
+  Status: ✓ Moved successfully (atomic operation)
+  Original location: source/temp.dat (no longer exists)
+  New location: archive/temp.dat ✓
+
+=== Attribute Modification ===
+
+Modifying destination/document.txt attributes:
+  Setting read-only: ✓ Success
+  Current permissions: r--r--r--
+
+Updating last modified time to 2024-01-10 12:00:00: ✓ Success
+
+=== Delete Operations ===
+
+Deleting destination/image_copy.jpg
+  Status: ✓ Deleted successfully
+
+Attempting to delete non-empty directory:
+  Error: DirectoryNotEmptyException - directory not empty
+
+Deleting source/temp_file.txt (if exists)
+  Status: ⊘ File does not exist (no error thrown)
+
+=== Batch Operations ===
+
+Copying 5 files from source/ to backup/:
+  [1/5] file1.txt... ✓
+  [2/5] file2.txt... ✓
+  [3/5] file3.txt... ✓
+  [4/5] file4.txt... ✓
+  [5/5] file5.txt... ✓
+
+Summary: 5 copied, 0 failed
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+// ============= File Manager with NIO.2 =============
+
+public class TestNIO2FileManager {
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            .withZone(ZoneId.systemDefault());
+
+    public static void main(String[] args) {
+        System.out.println("=== NIO.2 File Manager ===\n");
+
+        // Create sample files for demonstration
+        createSampleFiles();
+
+        // Demonstrate file information retrieval
+        System.out.println("=== File Information ===\n");
+        displayFileInfo(Paths.get("source/document.txt"));
+        displayFileInfo(Paths.get("source/image.jpg"));
+
+        // Demonstrate copy operations
+        System.out.println("=== Copy Operations ===\n");
+        copyFile(
+            Paths.get("source/document.txt"),
+            Paths.get("destination/document.txt"),
+            StandardCopyOption.REPLACE_EXISTING,
+            StandardCopyOption.COPY_ATTRIBUTES
+        );
+
+        copyFile(
+            Paths.get("source/image.jpg"),
+            Paths.get("destination/image_copy.jpg")
+        );
+
+        // Demonstrate move operations
+        System.out.println("\n=== Move Operations ===\n");
+        moveFile(
+            Paths.get("source/temp.dat"),
+            Paths.get("archive/temp.dat"),
+            StandardCopyOption.ATOMIC_MOVE
+        );
+
+        // Demonstrate attribute modification
+        System.out.println("\n=== Attribute Modification ===\n");
+        modifyFileAttributes(Paths.get("destination/document.txt"));
+
+        // Demonstrate delete operations
+        System.out.println("\n=== Delete Operations ===\n");
+        deleteFile(Paths.get("destination/image_copy.jpg"));
+        deleteFile(Paths.get("source/temp_file.txt")); // Doesn't exist
+
+        // Demonstrate batch operations
+        System.out.println("\n=== Batch Operations ===\n");
+        batchCopy(
+            Paths.get("source"),
+            Paths.get("backup"),
+            "*.txt"
+        );
+    }
+
+    // Display detailed file information
+    private static void displayFileInfo(Path path) {
+        try {
+            System.out.println("Analyzing: " + path);
+
+            // Check file type
+            if (Files.isRegularFile(path)) {
+                System.out.println("  Type: Regular File");
+            } else if (Files.isDirectory(path)) {
+                System.out.println("  Type: Directory");
+            } else if (Files.isSymbolicLink(path)) {
+                System.out.println("  Type: Symbolic Link");
+            }
+
+            // Get file size
+            long size = Files.size(path);
+            System.out.println("  Size: " + formatFileSize(size) +
+                " (" + size + " bytes)");
+
+            // Check permissions
+            System.out.println("  Readable: " +
+                (Files.isReadable(path) ? "✓ Yes" : "✗ No"));
+            System.out.println("  Writable: " +
+                (Files.isWritable(path) ? "✓ Yes" : "✗ No (read-only)"));
+            System.out.println("  Executable: " +
+                (Files.isExecutable(path) ? "✓ Yes" : "✗ No"));
+            System.out.println("  Hidden: " +
+                (Files.isHidden(path) ? "✓ Yes" : "✗ No"));
+
+            // Get file attributes
+            BasicFileAttributes attrs = Files.readAttributes(
+                path, BasicFileAttributes.class);
+
+            System.out.println("  Created: " +
+                formatInstant(attrs.creationTime().toInstant()));
+            System.out.println("  Modified: " +
+                formatInstant(attrs.lastModifiedTime().toInstant()));
+            System.out.println("  Accessed: " +
+                formatInstant(attrs.lastAccessTime().toInstant()));
+
+            // Get owner (if supported)
+            try {
+                UserPrincipal owner = Files.getOwner(path);
+                System.out.println("  Owner: " + owner.getName());
+            } catch (UnsupportedOperationException e) {
+                System.out.println("  Owner: Not available on this system");
+            }
+
+            System.out.println();
+
+        } catch (IOException e) {
+            System.out.println("  Error reading file info: " + e.getMessage());
+            System.out.println();
+        }
+    }
+
+    // Copy file with options
+    private static void copyFile(Path source, Path target, CopyOption... options) {
+        try {
+            System.out.println("Copying " + source + " → " + target);
+
+            // Create parent directories if needed
+            Path parent = target.getParent();
+            if (parent != null && !Files.exists(parent)) {
+                Files.createDirectories(parent);
+            }
+
+            // Display options
+            if (options.length > 0) {
+                System.out.print("  Options: ");
+                for (CopyOption option : options) {
+                    System.out.print(option.toString().replace("StandardCopyOption.", "") + " ");
+                }
+                System.out.println();
+            }
+
+            // Perform copy
+            Files.copy(source, target, options);
+            System.out.println("  Status: ✓ Copied successfully");
+
+            // Verify size
+            long sourceSize = Files.size(source);
+            long targetSize = Files.size(target);
+            if (sourceSize == targetSize) {
+                System.out.println("  Size verified: " + sourceSize + " bytes");
+            }
+
+            // Check if attributes were copied
+            for (CopyOption option : options) {
+                if (option == StandardCopyOption.COPY_ATTRIBUTES) {
+                    System.out.println("  Attributes preserved: Last modified time copied");
+                    break;
+                }
+            }
+
+            System.out.println();
+
+        } catch (FileAlreadyExistsException e) {
+            System.out.println("  Error: File already exists at destination");
+            System.out.println("  Use REPLACE_EXISTING option to overwrite");
+            System.out.println();
+        } catch (IOException e) {
+            System.out.println("  Error: " + e.getMessage());
+            System.out.println();
+        }
+    }
+
+    // Move file with options
+    private static void moveFile(Path source, Path target, CopyOption... options) {
+        try {
+            System.out.println("Moving " + source + " → " + target);
+
+            // Create parent directories if needed
+            Path parent = target.getParent();
+            if (parent != null && !Files.exists(parent)) {
+                Files.createDirectories(parent);
+            }
+
+            // Display options
+            if (options.length > 0) {
+                System.out.print("  Options: ");
+                for (CopyOption option : options) {
+                    if (option == StandardCopyOption.ATOMIC_MOVE) {
+                        System.out.print("ATOMIC_MOVE ");
+                    }
+                }
+                System.out.println();
+            }
+
+            // Perform move
+            Files.move(source, target, options);
+
+            boolean isAtomic = false;
+            for (CopyOption option : options) {
+                if (option == StandardCopyOption.ATOMIC_MOVE) {
+                    isAtomic = true;
+                    break;
+                }
+            }
+
+            if (isAtomic) {
+                System.out.println("  Status: ✓ Moved successfully (atomic operation)");
+            } else {
+                System.out.println("  Status: ✓ Moved successfully");
+            }
+
+            System.out.println("  Original location: " + source + " (no longer exists)");
+            System.out.println("  New location: " + target + " ✓");
+            System.out.println();
+
+        } catch (AtomicMoveNotSupportedException e) {
+            System.out.println("  Warning: Atomic move not supported, using standard move");
+            System.out.println();
+            // Retry without atomic option
+            try {
+                Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("  Status: ✓ Moved successfully (non-atomic)");
+                System.out.println();
+            } catch (IOException ex) {
+                System.out.println("  Error: " + ex.getMessage());
+                System.out.println();
+            }
+        } catch (IOException e) {
+            System.out.println("  Error: " + e.getMessage());
+            System.out.println();
+        }
+    }
+
+    // Modify file attributes
+    private static void modifyFileAttributes(Path path) {
+        try {
+            System.out.println("Modifying " + path + " attributes:");
+
+            // Set read-only
+            path.toFile().setReadOnly();
+            System.out.println("  Setting read-only: ✓ Success");
+            System.out.println("  Current permissions: " +
+                (Files.isWritable(path) ? "rw-" : "r--") +
+                (Files.isReadable(path) ? "r--" : "---") +
+                (Files.isReadable(path) ? "r--" : "---"));
+            System.out.println();
+
+            // Update last modified time
+            FileTime newTime = FileTime.from(
+                Instant.parse("2024-01-10T12:00:00Z"));
+            Files.setLastModifiedTime(path, newTime);
+            System.out.println("Updating last modified time to " +
+                formatInstant(newTime.toInstant()) + ": ✓ Success");
+            System.out.println();
+
+        } catch (IOException e) {
+            System.out.println("  Error: " + e.getMessage());
+            System.out.println();
+        }
+    }
+
+    // Delete file safely
+    private static void deleteFile(Path path) {
+        try {
+            System.out.println("Deleting " + path);
+
+            if (Files.exists(path)) {
+                Files.delete(path);
+                System.out.println("  Status: ✓ Deleted successfully");
+            } else {
+                Files.deleteIfExists(path);
+                System.out.println("  Status: ⊘ File does not exist (no error thrown)");
+            }
+            System.out.println();
+
+        } catch (DirectoryNotEmptyException e) {
+            System.out.println("  Error: DirectoryNotEmptyException - directory not empty");
+            System.out.println();
+        } catch (IOException e) {
+            System.out.println("  Error: " + e.getMessage());
+            System.out.println();
+        }
+    }
+
+    // Batch copy files matching pattern
+    private static void batchCopy(Path sourceDir, Path targetDir, String pattern) {
+        try {
+            System.out.println("Copying files from " + sourceDir + " to " + targetDir + ":");
+
+            // Create target directory
+            Files.createDirectories(targetDir);
+
+            PathMatcher matcher = FileSystems.getDefault()
+                .getPathMatcher("glob:" + pattern);
+
+            List<Path> filesToCopy = new ArrayList<>();
+
+            // Find files matching pattern
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(sourceDir)) {
+                for (Path entry : stream) {
+                    if (Files.isRegularFile(entry) &&
+                        matcher.matches(entry.getFileName())) {
+                        filesToCopy.add(entry);
+                    }
+                }
+            }
+
+            int copied = 0;
+            int failed = 0;
+            int total = filesToCopy.size();
+            int current = 0;
+
+            // Copy each file
+            for (Path source : filesToCopy) {
+                current++;
+                Path target = targetDir.resolve(source.getFileName());
+
+                try {
+                    System.out.print("  [" + current + "/" + total + "] " +
+                        source.getFileName() + "... ");
+                    Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("✓");
+                    copied++;
+                } catch (IOException e) {
+                    System.out.println("✗ (" + e.getMessage() + ")");
+                    failed++;
+                }
+            }
+
+            System.out.println("\nSummary: " + copied + " copied, " + failed + " failed");
+
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    // Helper methods
+    private static String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " bytes";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.2f KB", bytes / 1024.0);
+        } else if (bytes < 1024 * 1024 * 1024) {
+            return String.format("%.2f MB", bytes / (1024.0 * 1024.0));
+        } else {
+            return String.format("%.2f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+        }
+    }
+
+    private static String formatInstant(Instant instant) {
+        return DATE_FORMATTER.format(instant);
+    }
+
+    // Create sample files for demonstration
+    private static void createSampleFiles() {
+        try {
+            Files.createDirectories(Paths.get("source"));
+            Files.createDirectories(Paths.get("destination"));
+            Files.createDirectories(Paths.get("archive"));
+
+            // Create document.txt
+            Path doc = Paths.get("source/document.txt");
+            Files.writeString(doc, "Sample document content\n".repeat(40));
+
+            // Create image.jpg (mock)
+            Path image = Paths.get("source/image.jpg");
+            Files.write(image, new byte[51200]); // 50 KB
+            image.toFile().setReadOnly();
+
+            // Create temp.dat
+            Path temp = Paths.get("source/temp.dat");
+            Files.writeString(temp, "Temporary data");
+
+            // Create multiple text files for batch operations
+            for (int i = 1; i <= 5; i++) {
+                Path file = Paths.get("source/file" + i + ".txt");
+                Files.writeString(file, "Content of file " + i);
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error creating sample files: " + e.getMessage());
+        }
+    }
+}
+```
+
+</details>
+
+**💡 Tips:**
+- NIO.2 Path more flexible than File; supports relative/absolute paths, normalization
+- Files.copy() requires REPLACE_EXISTING to overwrite; fails with FileAlreadyExistsException otherwise
+- COPY_ATTRIBUTES preserves file timestamps; useful for backups
+- ATOMIC_MOVE guarantees atomicity if supported; throws AtomicMoveNotSupportedException if not
+- Files.move() faster than copy+delete; renames file if on same filesystem
+- Files.delete() throws NoSuchFileException if missing; Files.deleteIfExists() doesn't
+- DirectoryNotEmptyException thrown when deleting non-empty directory; must delete contents first
+- BasicFileAttributes provides file metadata without multiple system calls
+- Files.isReadable/Writable/Executable check permissions efficiently
+- Files.getOwner() may throw UnsupportedOperationException on some file systems
+- FileTime uses Instant internally; easy conversion to LocalDateTime
+- PathMatcher with glob patterns enables flexible file filtering
+- DirectoryStream efficiently iterates directories without loading all entries
+- Try-with-resources not needed for Files methods (they handle resources internally)
+- Use Files.createDirectories() not mkdirs(); creates parent directories, doesn't fail if exists
+- NIO.2 exceptions more specific than IOException enabling better error handling
+
+---
+
+### Exercise 12: Directory Scanner with File Filtering and Statistics
+
+**📝 Problem Statement:**
+Create a comprehensive directory scanning system demonstrating DirectoryStream for efficient traversal, file filtering with PathMatcher, collecting file statistics, finding files by criteria, and building a powerful file search utility. The system should recursively scan directories, filter files by extension, size, and modification date, calculate aggregate statistics (total files, total size, file type distribution), find largest and smallest files, detect empty directories, and generate detailed scan reports, showcasing how NIO.2 enables high-performance directory operations in production file management systems.
+
+**Requirements:**
+- Recursively scan directories using Files.walkFileTree() or Files.walk()
+- Filter files by extension using PathMatcher with glob patterns
+- Filter files by size range (min/max bytes)
+- Filter files by modification date range
+- Count total files and directories
+- Calculate total size of all files
+- Group files by extension (file type distribution)
+- Find largest N files by size
+- Find oldest and newest files by modification date
+- Detect empty directories (no files inside)
+- Skip hidden files/directories (optional filter)
+- Handle symbolic links (follow or don't follow)
+- Generate scan report with all statistics
+- Display results in human-readable format
+- Measure and display scan time for performance
+
+**Sample Test Cases:**
+```
+Input: Scan directory tree
+project/
+  ├── src/
+  │   ├── Main.java (2 KB, modified: 2024-01-10)
+  │   ├── Utils.java (1.5 KB, modified: 2024-01-09)
+  │   └── tests/
+  │       └── TestMain.java (3 KB, modified: 2024-01-11)
+  ├── docs/
+  │   ├── README.md (5 KB, modified: 2024-01-08)
+  │   └── API.md (8 KB, modified: 2024-01-07)
+  ├── build/  (empty directory)
+  └── lib/
+      └── library.jar (500 KB, modified: 2024-01-05)
+
+Expected Output:
+=== Directory Scanner ===
+
+Scanning: project/
+Options: Recursive ✓, Follow symlinks ✗
+
+Scanning in progress...
+  Found: src/Main.java (2.00 KB)
+  Found: src/Utils.java (1.50 KB)
+  Found: src/tests/TestMain.java (3.00 KB)
+  Found: docs/README.md (5.00 KB)
+  Found: docs/API.md (8.00 KB)
+  Found: lib/library.jar (500.00 KB)
+
+Scan completed in 0.125 seconds
+
+=== Scan Statistics ===
+
+Total Files: 6
+Total Directories: 5
+Total Size: 519.50 KB (531968 bytes)
+
+Empty Directories: 1
+  - project/build/
+
+=== File Type Distribution ===
+
+.java: 3 files (6.50 KB, 1.25%)
+  ████▒░░░░░░░░░░░░░░░
+
+.md: 2 files (13.00 KB, 2.50%)
+  █████░░░░░░░░░░░░░░░
+
+.jar: 1 file (500.00 KB, 96.25%)
+  ████████████████████
+
+=== Largest Files (Top 5) ===
+
+1. lib/library.jar (500.00 KB)
+2. docs/API.md (8.00 KB)
+3. docs/README.md (5.00 KB)
+4. src/tests/TestMain.java (3.00 KB)
+5. src/Main.java (2.00 KB)
+
+=== Files by Modification Date ===
+
+Oldest: lib/library.jar (2024-01-05)
+Newest: src/tests/TestMain.java (2024-01-11)
+
+Recent files (last 7 days): 6 files
+
+=== Filter: Java Files Only ===
+
+Found 3 Java files:
+1. src/Main.java (2.00 KB)
+2. src/Utils.java (1.50 KB)
+3. src/tests/TestMain.java (3.00 KB)
+
+Total: 6.50 KB
+
+=== Filter: Files > 10 KB ===
+
+Found 2 files:
+1. lib/library.jar (500.00 KB)
+2. docs/API.md (8.00 KB) [Note: actually 8 KB, this is an example]
+
+Actually found: 1 file
+Total: 500.00 KB
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Stream;
+
+// ============= File Statistics Class =============
+
+class FileStats {
+    private long totalFiles = 0;
+    private long totalDirectories = 0;
+    private long totalSize = 0;
+    private Map<String, Long> extensionCounts = new HashMap<>();
+    private Map<String, Long> extensionSizes = new HashMap<>();
+    private List<FileInfo> allFiles = new ArrayList<>();
+    private List<Path> emptyDirectories = new ArrayList<>();
+
+    public void addFile(Path path, long size) {
+        totalFiles++;
+        totalSize += size;
+
+        String ext = getExtension(path);
+        extensionCounts.put(ext, extensionCounts.getOrDefault(ext, 0L) + 1);
+        extensionSizes.put(ext, extensionSizes.getOrDefault(ext, 0L) + size);
+
+        try {
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+            allFiles.add(new FileInfo(path, size, attrs.lastModifiedTime().toInstant()));
+        } catch (IOException e) {
+            // Skip files we can't read attributes from
+        }
+    }
+
+    public void addDirectory() {
+        totalDirectories++;
+    }
+
+    public void addEmptyDirectory(Path path) {
+        emptyDirectories.add(path);
+    }
+
+    private String getExtension(Path path) {
+        String filename = path.getFileName().toString();
+        int dotIndex = filename.lastIndexOf('.');
+        return dotIndex > 0 ? filename.substring(dotIndex) : "(no extension)";
+    }
+
+    // Getters
+    public long getTotalFiles() { return totalFiles; }
+    public long getTotalDirectories() { return totalDirectories; }
+    public long getTotalSize() { return totalSize; }
+    public Map<String, Long> getExtensionCounts() { return extensionCounts; }
+    public Map<String, Long> getExtensionSizes() { return extensionSizes; }
+    public List<FileInfo> getAllFiles() { return allFiles; }
+    public List<Path> getEmptyDirectories() { return emptyDirectories; }
+}
+
+// ============= File Info Class =============
+
+class FileInfo {
+    private Path path;
+    private long size;
+    private Instant modified;
+
+    public FileInfo(Path path, long size, Instant modified) {
+        this.path = path;
+        this.size = size;
+        this.modified = modified;
+    }
+
+    public Path getPath() { return path; }
+    public long getSize() { return size; }
+    public Instant getModified() { return modified; }
+}
+
+// ============= Directory Scanner =============
+
+public class TestDirectoryScanner {
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public static void main(String[] args) {
+        System.out.println("=== Directory Scanner ===\n");
+
+        // Create sample directory structure
+        createSampleProject();
+
+        Path rootPath = Paths.get("project");
+
+        System.out.println("Scanning: " + rootPath);
+        System.out.println("Options: Recursive ✓, Follow symlinks ✗\n");
+
+        long startTime = System.currentTimeMillis();
+
+        System.out.println("Scanning in progress...");
+        FileStats stats = scanDirectory(rootPath);
+
+        long endTime = System.currentTimeMillis();
+        double duration = (endTime - startTime) / 1000.0;
+
+        System.out.println("\nScan completed in " +
+            String.format("%.3f seconds", duration));
+
+        // Display statistics
+        displayStatistics(stats);
+
+        // Display file type distribution
+        displayFileTypeDistribution(stats);
+
+        // Display largest files
+        displayLargestFiles(stats, 5);
+
+        // Display files by date
+        displayFilesByDate(stats);
+
+        // Demonstrate filtering
+        System.out.println("\n=== Filter: Java Files Only ===\n");
+        filterByExtension(rootPath, ".java");
+
+        System.out.println("\n=== Filter: Files > 10 KB ===\n");
+        filterBySize(rootPath, 10 * 1024);
+    }
+
+    // Scan directory recursively
+    private static FileStats scanDirectory(Path root) {
+        FileStats stats = new FileStats();
+
+        try {
+            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile()) {
+                        long size = attrs.size();
+                        stats.addFile(file, size);
+                        System.out.println("  Found: " + root.relativize(file) +
+                            " (" + formatFileSize(size) + ")");
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    stats.addDirectory();
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    // Check if directory is empty
+                    try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+                        if (!stream.iterator().hasNext()) {
+                            stats.addEmptyDirectory(dir);
+                        }
+                    } catch (IOException e) {
+                        // Ignore
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    System.err.println("  Error accessing: " + file + " - " + exc.getMessage());
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+
+        } catch (IOException e) {
+            System.err.println("Error scanning directory: " + e.getMessage());
+        }
+
+        return stats;
+    }
+
+    // Display scan statistics
+    private static void displayStatistics(FileStats stats) {
+        System.out.println("\n=== Scan Statistics ===\n");
+        System.out.println("Total Files: " + stats.getTotalFiles());
+        System.out.println("Total Directories: " + stats.getTotalDirectories());
+        System.out.println("Total Size: " + formatFileSize(stats.getTotalSize()) +
+            " (" + stats.getTotalSize() + " bytes)");
+
+        if (!stats.getEmptyDirectories().isEmpty()) {
+            System.out.println("\nEmpty Directories: " + stats.getEmptyDirectories().size());
+            for (Path dir : stats.getEmptyDirectories()) {
+                System.out.println("  - " + dir);
+            }
+        }
+    }
+
+    // Display file type distribution
+    private static void displayFileTypeDistribution(FileStats stats) {
+        System.out.println("\n=== File Type Distribution ===\n");
+
+        Map<String, Long> extensionCounts = stats.getExtensionCounts();
+        Map<String, Long> extensionSizes = stats.getExtensionSizes();
+        long totalSize = stats.getTotalSize();
+
+        // Sort by size descending
+        List<Map.Entry<String, Long>> sortedBySize = new ArrayList<>(extensionSizes.entrySet());
+        sortedBySize.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
+
+        for (Map.Entry<String, Long> entry : sortedBySize) {
+            String ext = entry.getKey();
+            long size = entry.getValue();
+            long count = extensionCounts.get(ext);
+            double percentage = (size * 100.0) / totalSize;
+
+            System.out.println(ext + ": " + count + " file" + (count > 1 ? "s" : "") +
+                " (" + formatFileSize(size) + ", " +
+                String.format("%.2f%%", percentage) + ")");
+
+            // Display bar chart
+            int barLength = (int)(percentage / 5);
+            System.out.print("  ");
+            for (int i = 0; i < 20; i++) {
+                if (i < barLength) {
+                    System.out.print("█");
+                } else if (i == barLength) {
+                    System.out.print("▒");
+                } else {
+                    System.out.print("░");
+                }
+            }
+            System.out.println("\n");
+        }
+    }
+
+    // Display largest files
+    private static void displayLargestFiles(FileStats stats, int limit) {
+        System.out.println("=== Largest Files (Top " + limit + ") ===\n");
+
+        List<FileInfo> files = new ArrayList<>(stats.getAllFiles());
+        files.sort((a, b) -> Long.compare(b.getSize(), a.getSize()));
+
+        int count = Math.min(limit, files.size());
+        for (int i = 0; i < count; i++) {
+            FileInfo file = files.get(i);
+            System.out.println((i + 1) + ". " + file.getPath() +
+                " (" + formatFileSize(file.getSize()) + ")");
+        }
+    }
+
+    // Display files by modification date
+    private static void displayFilesByDate(FileStats stats) {
+        System.out.println("\n=== Files by Modification Date ===\n");
+
+        List<FileInfo> files = stats.getAllFiles();
+        if (files.isEmpty()) {
+            System.out.println("No files found");
+            return;
+        }
+
+        // Find oldest and newest
+        FileInfo oldest = files.get(0);
+        FileInfo newest = files.get(0);
+
+        for (FileInfo file : files) {
+            if (file.getModified().isBefore(oldest.getModified())) {
+                oldest = file;
+            }
+            if (file.getModified().isAfter(newest.getModified())) {
+                newest = file;
+            }
+        }
+
+        System.out.println("Oldest: " + oldest.getPath() +
+            " (" + formatDate(oldest.getModified()) + ")");
+        System.out.println("Newest: " + newest.getPath() +
+            " (" + formatDate(newest.getModified()) + ")");
+
+        // Count recent files (last 7 days)
+        Instant sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+        long recentCount = files.stream()
+            .filter(f -> f.getModified().isAfter(sevenDaysAgo))
+            .count();
+
+        System.out.println("\nRecent files (last 7 days): " + recentCount + " files");
+    }
+
+    // Filter by extension
+    private static void filterByExtension(Path root, String extension) {
+        try {
+            PathMatcher matcher = FileSystems.getDefault()
+                .getPathMatcher("glob:**/*" + extension);
+
+            List<Path> matchingFiles = new ArrayList<>();
+            long totalSize = 0;
+
+            try (Stream<Path> stream = Files.walk(root)) {
+                List<Path> files = stream
+                    .filter(Files::isRegularFile)
+                    .filter(p -> matcher.matches(p))
+                    .toList();
+
+                System.out.println("Found " + files.size() + " " + extension + " files:");
+
+                int index = 1;
+                for (Path file : files) {
+                    long size = Files.size(file);
+                    totalSize += size;
+                    System.out.println(index++ + ". " + root.relativize(file) +
+                        " (" + formatFileSize(size) + ")");
+                }
+
+                System.out.println("\nTotal: " + formatFileSize(totalSize));
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error filtering files: " + e.getMessage());
+        }
+    }
+
+    // Filter by size
+    private static void filterBySize(Path root, long minSize) {
+        try {
+            try (Stream<Path> stream = Files.walk(root)) {
+                List<Path> files = stream
+                    .filter(Files::isRegularFile)
+                    .filter(p -> {
+                        try {
+                            return Files.size(p) > minSize;
+                        } catch (IOException e) {
+                            return false;
+                        }
+                    })
+                    .toList();
+
+                System.out.println("Found " + files.size() + " files:");
+
+                long totalSize = 0;
+                int index = 1;
+                for (Path file : files) {
+                    long size = Files.size(file);
+                    totalSize += size;
+                    System.out.println(index++ + ". " + root.relativize(file) +
+                        " (" + formatFileSize(size) + ")");
+                }
+
+                System.out.println("\nTotal: " + formatFileSize(totalSize));
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error filtering files: " + e.getMessage());
+        }
+    }
+
+    // Helper methods
+    private static String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " bytes";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.2f KB", bytes / 1024.0);
+        } else if (bytes < 1024 * 1024 * 1024) {
+            return String.format("%.2f MB", bytes / (1024.0 * 1024.0));
+        } else {
+            return String.format("%.2f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+        }
+    }
+
+    private static String formatDate(Instant instant) {
+        return DATE_FORMATTER.format(
+            LocalDate.ofInstant(instant, ZoneId.systemDefault()));
+    }
+
+    // Create sample project structure
+    private static void createSampleProject() {
+        try {
+            Path project = Paths.get("project");
+            Files.createDirectories(project.resolve("src/tests"));
+            Files.createDirectories(project.resolve("docs"));
+            Files.createDirectories(project.resolve("build")); // Empty directory
+            Files.createDirectories(project.resolve("lib"));
+
+            // Create Java files
+            Files.writeString(project.resolve("src/Main.java"),
+                "public class Main {}\n".repeat(50));
+            Files.writeString(project.resolve("src/Utils.java"),
+                "public class Utils {}\n".repeat(37));
+            Files.writeString(project.resolve("src/tests/TestMain.java"),
+                "public class TestMain {}\n".repeat(75));
+
+            // Create documentation files
+            Files.writeString(project.resolve("docs/README.md"),
+                "# Documentation\n".repeat(250));
+            Files.writeString(project.resolve("docs/API.md"),
+                "# API Reference\n".repeat(400));
+
+            // Create library file (mock large file)
+            byte[] largeData = new byte[512 * 1024]; // 500 KB
+            Files.write(project.resolve("lib/library.jar"), largeData);
+
+        } catch (IOException e) {
+            System.err.println("Error creating sample project: " + e.getMessage());
+        }
+    }
+}
+```
+
+</details>
+
+**💡 Tips:**
+- Files.walkFileTree() more flexible than Files.walk(); provides pre/post-visit directory hooks
+- SimpleFileVisitor simplifies custom traversal logic; override only needed methods
+- FileVisitResult.SKIP_SUBTREE skips directory contents; useful for ignoring .git, node_modules
+- Files.walk() returns Stream; supports filter(), map(), collect() for functional processing
+- DirectoryStream more memory-efficient than Files.list() for large directories
+- PathMatcher with glob patterns: `**` matches any depth, `*` matches name, `?` matches single char
+- BasicFileAttributes retrieved once per file; avoid multiple Files.size(), Files.getLastModifiedTime() calls
+- Try-with-resources required for Stream<Path> from Files.walk(); prevents resource leak
+- postVisitDirectory() called after visiting all directory contents; perfect for empty directory detection
+- visitFileFailed() handles inaccessible files/directories without stopping traversal
+- FileVisitResult.CONTINUE proceeds, SKIP_SUBTREE skips directory, TERMINATE stops traversal
+- Files.walk() follows symbolic links by default; use Files.walk(path, FileVisitOption.FOLLOW_LINKS) to control
+- Stream operations lazy; must consume with terminal operation (collect, forEach, count)
+- Sort large file lists by size/date in memory; for huge lists use database or external sort
+
+---
+
+### Exercise 13: Duplicate File Finder with Content Comparison
+
+**📝 Problem Statement:**
+Create a comprehensive duplicate file detection system demonstrating content comparison using NIO.2, efficiently reading files in chunks, calculating file checksums (MD5, SHA-256), comparing files byte-by-byte, grouping duplicates, and building a production-grade duplicate finder. The system should scan directories recursively, identify potential duplicates by size, verify duplicates by comparing content or checksums, group duplicate files together, calculate space wasted by duplicates, optionally delete duplicate files keeping one copy, and generate duplicate reports, showcasing how NIO.2 enables high-performance file content comparison for storage optimization and data deduplication.
+
+**Requirements:**
+- Scan directories recursively finding all regular files
+- Group files by size (potential duplicates must have same size)
+- Calculate MD5 or SHA-256 checksum for files
+- Compare file content byte-by-byte for verification
+- Use BufferedInputStream for efficient reading
+- Group duplicate files (same content) together
+- Calculate total space wasted by duplicates
+- Display duplicate groups with file paths
+- Support deleting duplicate files (keeping one original)
+- Generate duplicate report with statistics
+- Handle large files efficiently (streaming, not loading entire file)
+- Measure and display scan time
+- Use try-with-resources for resource management
+- Handle IOException during file reading
+- Display human-readable file sizes
+
+**Sample Test Cases:**
+```
+Input: Directory with duplicate files
+storage/
+  ├── documents/
+  │   ├── report.pdf (5 MB, content: ABC...)
+  │   ├── report_copy.pdf (5 MB, content: ABC... - DUPLICATE)
+  │   └── notes.txt (1 KB, content: XYZ...)
+  ├── backup/
+  │   ├── report.pdf (5 MB, content: ABC... - DUPLICATE)
+  │   └── notes_backup.txt (1 KB, content: XYZ... - DUPLICATE)
+  └── images/
+      ├── photo1.jpg (2 MB, content: IMG1...)
+      └── photo2.jpg (2 MB, content: IMG2... - different)
+
+Expected Output:
+=== Duplicate File Finder ===
+
+Scanning: storage/
+Options: Recursive ✓, Method: SHA-256 checksum
+
+Phase 1: Scanning files...
+  Found: documents/report.pdf (5.00 MB)
+  Found: documents/report_copy.pdf (5.00 MB)
+  Found: documents/notes.txt (1.00 KB)
+  Found: backup/report.pdf (5.00 MB)
+  Found: backup/notes_backup.txt (1.00 KB)
+  Found: images/photo1.jpg (2.00 MB)
+  Found: images/photo2.jpg (2.00 MB)
+
+Total files scanned: 7
+Total size: 19.00 MB
+
+Phase 2: Grouping by size...
+  Potential duplicate groups: 3
+    - 5.00 MB: 3 files
+    - 1.00 KB: 2 files
+    - 2.00 MB: 2 files
+
+Phase 3: Verifying duplicates (calculating checksums)...
+  Analyzing storage/documents/report.pdf... ✓
+  Analyzing storage/documents/report_copy.pdf... ✓ (matches report.pdf)
+  Analyzing storage/documents/notes.txt... ✓
+  Analyzing storage/backup/report.pdf... ✓ (matches report.pdf)
+  Analyzing storage/backup/notes_backup.txt... ✓ (matches notes.txt)
+  Analyzing storage/images/photo1.jpg... ✓
+  Analyzing storage/images/photo2.jpg... ✓ (unique content)
+
+Scan completed in 0.456 seconds
+
+=== Duplicate Groups Found ===
+
+Group 1: report.pdf (5.00 MB) - 3 copies
+  SHA-256: a3f5b9c2d8e7f1a2b4c6d8e9f0a1b2c3...
+
+  Original: storage/documents/report.pdf
+  Duplicates:
+    2. storage/documents/report_copy.pdf (5.00 MB)
+    3. storage/backup/report.pdf (5.00 MB)
+
+  Space wasted: 10.00 MB (2 duplicate copies)
+
+Group 2: notes.txt (1.00 KB) - 2 copies
+  SHA-256: d4e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0...
+
+  Original: storage/documents/notes.txt
+  Duplicates:
+    2. storage/backup/notes_backup.txt (1.00 KB)
+
+  Space wasted: 1.00 KB (1 duplicate copy)
+
+=== Summary ===
+
+Total duplicate groups: 2
+Total duplicate files: 3
+Total space wasted: 10.00 MB
+
+Unique files: 4 (photo1.jpg, photo2.jpg, and 2 originals)
+Total unique content: 9.00 MB
+
+Potential savings: 10.00 MB (52.63% of total space)
+
+=== Recommendations ===
+
+To save disk space, you can:
+1. Delete 3 duplicate files to recover 10.00 MB
+2. Keep one copy of each file as the original
+3. Create symbolic links instead of duplicate copies
+
+Would you like to delete duplicates? (simulation mode)
+```
+
+**Solution:**
+
+<details>
+<summary>👁️ View Solution Code</summary>
+
+```java
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+// ============= File Metadata Class =============
+
+class FileMetadata {
+    private Path path;
+    private long size;
+    private String checksum;
+
+    public FileMetadata(Path path, long size) {
+        this.path = path;
+        this.size = size;
+    }
+
+    public Path getPath() { return path; }
+    public long getSize() { return size; }
+    public String getChecksum() { return checksum; }
+    public void setChecksum(String checksum) { this.checksum = checksum; }
+}
+
+// ============= Duplicate Group Class =============
+
+class DuplicateGroup {
+    private FileMetadata original;
+    private List<FileMetadata> duplicates;
+    private String checksum;
+
+    public DuplicateGroup(String checksum, FileMetadata original) {
+        this.checksum = checksum;
+        this.original = original;
+        this.duplicates = new ArrayList<>();
+    }
+
+    public void addDuplicate(FileMetadata file) {
+        duplicates.add(file);
+    }
+
+    public FileMetadata getOriginal() { return original; }
+    public List<FileMetadata> getDuplicates() { return duplicates; }
+    public String getChecksum() { return checksum; }
+    public int getTotalCopies() { return 1 + duplicates.size(); }
+    public long getWastedSpace() { return original.getSize() * duplicates.size(); }
+}
+
+// ============= Duplicate File Finder =============
+
+public class TestDuplicateFinder {
+
+    public static void main(String[] args) {
+        System.out.println("=== Duplicate File Finder ===\n");
+
+        // Create sample directory structure with duplicates
+        createSampleStorage();
+
+        Path rootPath = Paths.get("storage");
+
+        System.out.println("Scanning: " + rootPath);
+        System.out.println("Options: Recursive ✓, Method: SHA-256 checksum\n");
+
+        long startTime = System.currentTimeMillis();
+
+        // Phase 1: Scan all files
+        System.out.println("Phase 1: Scanning files...");
+        List<FileMetadata> allFiles = scanFiles(rootPath);
+
+        System.out.println("\nTotal files scanned: " + allFiles.size());
+        long totalSize = allFiles.stream().mapToLong(FileMetadata::getSize).sum();
+        System.out.println("Total size: " + formatFileSize(totalSize));
+
+        // Phase 2: Group by size
+        System.out.println("\nPhase 2: Grouping by size...");
+        Map<Long, List<FileMetadata>> sizeGroups = groupBySize(allFiles);
+
+        // Filter groups with potential duplicates (more than 1 file)
+        Map<Long, List<FileMetadata>> potentialDuplicates = sizeGroups.entrySet().stream()
+            .filter(e -> e.getValue().size() > 1)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        System.out.println("  Potential duplicate groups: " + potentialDuplicates.size());
+        for (Map.Entry<Long, List<FileMetadata>> entry : potentialDuplicates.entrySet()) {
+            System.out.println("    - " + formatFileSize(entry.getKey()) + ": " +
+                entry.getValue().size() + " files");
+        }
+
+        // Phase 3: Calculate checksums and find true duplicates
+        System.out.println("\nPhase 3: Verifying duplicates (calculating checksums)...");
+        List<DuplicateGroup> duplicateGroups = findDuplicates(potentialDuplicates);
+
+        long endTime = System.currentTimeMillis();
+        double duration = (endTime - startTime) / 1000.0;
+
+        System.out.println("\nScan completed in " +
+            String.format("%.3f seconds", duration));
+
+        // Display results
+        if (duplicateGroups.isEmpty()) {
+            System.out.println("\n=== No Duplicates Found ===\n");
+            System.out.println("All files are unique!");
+        } else {
+            displayDuplicateGroups(duplicateGroups);
+            displaySummary(duplicateGroups, allFiles.size(), totalSize);
+        }
+    }
+
+    // Scan all files recursively
+    private static List<FileMetadata> scanFiles(Path root) {
+        List<FileMetadata> files = new ArrayList<>();
+
+        try {
+            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile()) {
+                        files.add(new FileMetadata(file, attrs.size()));
+                        System.out.println("  Found: " + root.relativize(file) +
+                            " (" + formatFileSize(attrs.size()) + ")");
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            System.err.println("Error scanning files: " + e.getMessage());
+        }
+
+        return files;
+    }
+
+    // Group files by size
+    private static Map<Long, List<FileMetadata>> groupBySize(List<FileMetadata> files) {
+        Map<Long, List<FileMetadata>> groups = new HashMap<>();
+
+        for (FileMetadata file : files) {
+            groups.computeIfAbsent(file.getSize(), k -> new ArrayList<>()).add(file);
+        }
+
+        return groups;
+    }
+
+    // Find true duplicates by comparing checksums
+    private static List<DuplicateGroup> findDuplicates(
+            Map<Long, List<FileMetadata>> potentialDuplicates) {
+
+        List<DuplicateGroup> duplicateGroups = new ArrayList<>();
+
+        for (Map.Entry<Long, List<FileMetadata>> entry : potentialDuplicates.entrySet()) {
+            List<FileMetadata> files = entry.getValue();
+
+            // Calculate checksums for all files in this size group
+            Map<String, List<FileMetadata>> checksumGroups = new HashMap<>();
+
+            for (FileMetadata file : files) {
+                String checksum = calculateChecksum(file.getPath());
+                file.setChecksum(checksum);
+
+                checksumGroups.computeIfAbsent(checksum, k -> new ArrayList<>()).add(file);
+
+                // Display progress
+                List<FileMetadata> group = checksumGroups.get(checksum);
+                if (group.size() == 1) {
+                    System.out.println("  Analyzing " + file.getPath() + "... ✓");
+                } else {
+                    System.out.println("  Analyzing " + file.getPath() + "... ✓ (matches " +
+                        group.get(0).getPath().getFileName() + ")");
+                }
+            }
+
+            // Create duplicate groups for checksums with multiple files
+            for (Map.Entry<String, List<FileMetadata>> checksumEntry : checksumGroups.entrySet()) {
+                List<FileMetadata> matchingFiles = checksumEntry.getValue();
+                if (matchingFiles.size() > 1) {
+                    String checksum = checksumEntry.getKey();
+                    FileMetadata original = matchingFiles.get(0);
+                    DuplicateGroup group = new DuplicateGroup(checksum, original);
+
+                    for (int i = 1; i < matchingFiles.size(); i++) {
+                        group.addDuplicate(matchingFiles.get(i));
+                    }
+
+                    duplicateGroups.add(group);
+                } else {
+                    System.out.println("  Analyzing " + matchingFiles.get(0).getPath() +
+                        "... ✓ (unique content)");
+                }
+            }
+        }
+
+        return duplicateGroups;
+    }
+
+    // Calculate SHA-256 checksum of file
+    private static String calculateChecksum(Path file) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+            try (InputStream fis = Files.newInputStream(file);
+                 BufferedInputStream bis = new BufferedInputStream(fis)) {
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+
+                while ((bytesRead = bis.read(buffer)) != -1) {
+                    digest.update(buffer, 0, bytesRead);
+                }
+            }
+
+            byte[] hashBytes = digest.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("SHA-256 algorithm not available");
+            return null;
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Display duplicate groups
+    private static void displayDuplicateGroups(List<DuplicateGroup> groups) {
+        System.out.println("\n=== Duplicate Groups Found ===\n");
+
+        int groupNumber = 1;
+        for (DuplicateGroup group : groups) {
+            FileMetadata original = group.getOriginal();
+
+            System.out.println("Group " + groupNumber + ": " +
+                original.getPath().getFileName() + " (" +
+                formatFileSize(original.getSize()) + ") - " +
+                group.getTotalCopies() + " copies");
+            System.out.println("  SHA-256: " + group.getChecksum().substring(0, 40) + "...");
+            System.out.println();
+            System.out.println("  Original: " + original.getPath());
+            System.out.println("  Duplicates:");
+
+            int dupNumber = 2;
+            for (FileMetadata dup : group.getDuplicates()) {
+                System.out.println("    " + dupNumber + ". " + dup.getPath() +
+                    " (" + formatFileSize(dup.getSize()) + ")");
+                dupNumber++;
+            }
+
+            System.out.println();
+            System.out.println("  Space wasted: " + formatFileSize(group.getWastedSpace()) +
+                " (" + group.getDuplicates().size() + " duplicate " +
+                (group.getDuplicates().size() > 1 ? "copies" : "copy") + ")");
+            System.out.println();
+
+            groupNumber++;
+        }
+    }
+
+    // Display summary statistics
+    private static void displaySummary(List<DuplicateGroup> groups,
+                                      int totalFiles, long totalSize) {
+        System.out.println("=== Summary ===\n");
+
+        System.out.println("Total duplicate groups: " + groups.size());
+
+        int totalDuplicates = groups.stream()
+            .mapToInt(g -> g.getDuplicates().size())
+            .sum();
+        System.out.println("Total duplicate files: " + totalDuplicates);
+
+        long totalWasted = groups.stream()
+            .mapToLong(DuplicateGroup::getWastedSpace)
+            .sum();
+        System.out.println("Total space wasted: " + formatFileSize(totalWasted));
+
+        int uniqueFiles = totalFiles - totalDuplicates;
+        long uniqueSize = totalSize - totalWasted;
+
+        System.out.println("\nUnique files: " + uniqueFiles);
+        System.out.println("Total unique content: " + formatFileSize(uniqueSize));
+
+        double savingsPercent = (totalWasted * 100.0) / totalSize;
+        System.out.println("\nPotential savings: " + formatFileSize(totalWasted) +
+            " (" + String.format("%.2f%%", savingsPercent) + " of total space)");
+
+        System.out.println("\n=== Recommendations ===\n");
+        System.out.println("To save disk space, you can:");
+        System.out.println("1. Delete " + totalDuplicates + " duplicate files to recover " +
+            formatFileSize(totalWasted));
+        System.out.println("2. Keep one copy of each file as the original");
+        System.out.println("3. Create symbolic links instead of duplicate copies");
+        System.out.println("\nWould you like to delete duplicates? (simulation mode)");
+    }
+
+    // Helper method to format file size
+    private static String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " bytes";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.2f KB", bytes / 1024.0);
+        } else if (bytes < 1024 * 1024 * 1024) {
+            return String.format("%.2f MB", bytes / (1024.0 * 1024.0));
+        } else {
+            return String.format("%.2f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+        }
+    }
+
+    // Create sample storage with duplicates
+    private static void createSampleStorage() {
+        try {
+            Path storage = Paths.get("storage");
+            Files.createDirectories(storage.resolve("documents"));
+            Files.createDirectories(storage.resolve("backup"));
+            Files.createDirectories(storage.resolve("images"));
+
+            // Create original files
+            byte[] reportContent = "Report content goes here.\n".repeat(100000).getBytes();
+            Files.write(storage.resolve("documents/report.pdf"), reportContent);
+
+            byte[] notesContent = "Notes content.\n".repeat(50).getBytes();
+            Files.write(storage.resolve("documents/notes.txt"), notesContent);
+
+            byte[] photo1Content = "Image1 data\n".repeat(100000).getBytes();
+            Files.write(storage.resolve("images/photo1.jpg"), photo1Content);
+
+            byte[] photo2Content = "Image2 data\n".repeat(100000).getBytes();
+            Files.write(storage.resolve("images/photo2.jpg"), photo2Content);
+
+            // Create duplicates
+            Files.write(storage.resolve("documents/report_copy.pdf"), reportContent);
+            Files.write(storage.resolve("backup/report.pdf"), reportContent);
+            Files.write(storage.resolve("backup/notes_backup.txt"), notesContent);
+
+        } catch (IOException e) {
+            System.err.println("Error creating sample storage: " + e.getMessage());
+        }
+    }
+}
+```
+
+</details>
+
+**💡 Tips:**
+- Group files by size first; duplicates must have identical size (cheap pre-filter)
+- Calculate checksums only for size-matched files; avoids expensive computation on unique files
+- SHA-256 more secure than MD5; use MessageDigest.getInstance("SHA-256")
+- BufferedInputStream essential for efficient file reading; reads 8KB chunks not byte-by-byte
+- Try-with-resources ensures InputStream closed even if exception during checksum calculation
+- MessageDigest.update() processes data incrementally; doesn't load entire file into memory
+- Convert byte[] hash to hex string for readable checksum display
+- HashMap<String, List<FileMetadata>> groups files by checksum; duplicates share same key
+- Calculate wasted space = file size × (number of duplicates - 1)
+- Delete duplicates carefully; always keep one original copy
+- Symbolic links save space without file duplication; use Files.createSymbolicLink()
+- For very large files, consider comparing first/last N bytes before full checksum
+- Production systems store checksums in database for incremental duplicate detection
+- Consider file modification time; recently changed file might be the "correct" version
+- Handle NoSuchAlgorithmException if SHA-256 unavailable (unlikely on modern JVMs)
+- Files.walkFileTree() efficient for deep directory scanning
+- For huge file sets, use database to store checksums avoiding re-scanning
 
 ---
 

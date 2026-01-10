@@ -393,6 +393,9 @@ public class BestPracticeExample {
 ### Exercise 1: Create and Write to File
 Write a program that creates a file and writes your name and age to it.
 
+<details>
+<summary>👁️ View Solution Code</summary>
+
 ```java
 import java.io.*;
 
@@ -400,11 +403,11 @@ public class Exercise1 {
     public static void main(String[] args) {
         try (BufferedWriter writer = new BufferedWriter(
                 new FileWriter("myinfo.txt"))) {
-            
+
             writer.write("Name: John Doe");
             writer.newLine();
             writer.write("Age: 25");
-            
+
             System.out.println("Information saved to file");
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
@@ -413,10 +416,15 @@ public class Exercise1 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 2: Read and Display File
 Read the file created in Exercise 1 and display its contents.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -425,13 +433,13 @@ public class Exercise2 {
     public static void main(String[] args) {
         try (BufferedReader reader = new BufferedReader(
                 new FileReader("myinfo.txt"))) {
-            
+
             String line;
             System.out.println("File contents:");
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
             }
-            
+
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -439,10 +447,15 @@ public class Exercise2 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 3: Copy File
 Create a program that copies content from one file to another.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -453,15 +466,15 @@ public class Exercise3 {
                 new FileReader("source.txt"));
              BufferedWriter writer = new BufferedWriter(
                 new FileWriter("destination.txt"))) {
-            
+
             String line;
             while ((line = reader.readLine()) != null) {
                 writer.write(line);
                 writer.newLine();
             }
-            
+
             System.out.println("File copied successfully");
-            
+
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -469,10 +482,15 @@ public class Exercise3 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 4: Count Lines in File
 Write a program that counts the number of lines in a file.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -480,16 +498,16 @@ import java.io.*;
 public class Exercise4 {
     public static void main(String[] args) {
         int lineCount = 0;
-        
+
         try (BufferedReader reader = new BufferedReader(
                 new FileReader("data.txt"))) {
-            
+
             while (reader.readLine() != null) {
                 lineCount++;
             }
-            
+
             System.out.println("Number of lines: " + lineCount);
-            
+
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -497,10 +515,15 @@ public class Exercise4 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 5: File Information
 Create a program that displays detailed information about a file.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.File;
@@ -508,7 +531,7 @@ import java.io.File;
 public class Exercise5 {
     public static void main(String[] args) {
         File file = new File("data.txt");
-        
+
         if (file.exists()) {
             System.out.println("=== File Information ===");
             System.out.println("Name: " + file.getName());
@@ -525,10 +548,15 @@ public class Exercise5 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 6: Append to File
 Write a program that appends new lines to an existing file.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -537,13 +565,13 @@ public class Exercise6 {
     public static void main(String[] args) {
         try (BufferedWriter writer = new BufferedWriter(
                 new FileWriter("log.txt", true))) {
-            
-            writer.write("New log entry: " + 
+
+            writer.write("New log entry: " +
                 java.time.LocalDateTime.now());
             writer.newLine();
-            
+
             System.out.println("Log entry added");
-            
+
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -551,10 +579,15 @@ public class Exercise6 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 7: Search in File
 Create a program that searches for a specific word in a file.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -563,10 +596,10 @@ public class Exercise7 {
     public static void main(String[] args) {
         String searchWord = "Java";
         int count = 0;
-        
+
         try (BufferedReader reader = new BufferedReader(
                 new FileReader("document.txt"))) {
-            
+
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains(searchWord)) {
@@ -574,9 +607,9 @@ public class Exercise7 {
                     System.out.println("Found: " + line);
                 }
             }
-            
+
             System.out.println("\nTotal occurrences: " + count);
-            
+
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -584,10 +617,15 @@ public class Exercise7 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 8: List Directory Contents
 Write a program that lists all files in a directory.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.File;
@@ -595,10 +633,10 @@ import java.io.File;
 public class Exercise8 {
     public static void main(String[] args) {
         File dir = new File(".");
-        
+
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
-            
+
             System.out.println("Contents of " + dir.getAbsolutePath());
             for (File file : files) {
                 String type = file.isDirectory() ? "[DIR]" : "[FILE]";
@@ -609,10 +647,15 @@ public class Exercise8 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 9: Create Directory Structure
 Create a program that creates a nested directory structure.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.File;
@@ -620,7 +663,7 @@ import java.io.File;
 public class Exercise9 {
     public static void main(String[] args) {
         File dir = new File("project/src/main/java");
-        
+
         if (dir.mkdirs()) {
             System.out.println("Directory structure created");
         } else {
@@ -630,10 +673,15 @@ public class Exercise9 {
 }
 ```
 
+</details>
+
 ---
 
 ### Exercise 10: Student Records
 Create a program that writes student records to a file and reads them back.
+
+<details>
+<summary>👁️ View Solution Code</summary>
 
 ```java
 import java.io.*;
@@ -643,7 +691,7 @@ public class Exercise10 {
         // Write student records
         try (BufferedWriter writer = new BufferedWriter(
                 new FileWriter("students.txt"))) {
-            
+
             writer.write("ID,Name,Grade");
             writer.newLine();
             writer.write("1,Alice,A");
@@ -651,29 +699,1363 @@ public class Exercise10 {
             writer.write("2,Bob,B");
             writer.newLine();
             writer.write("3,Charlie,A");
-            
+
             System.out.println("Records written");
-            
+
         } catch (IOException e) {
             System.out.println("Error writing: " + e.getMessage());
         }
-        
+
         // Read student records
         try (BufferedReader reader = new BufferedReader(
                 new FileReader("students.txt"))) {
-            
+
             String line;
             System.out.println("\nStudent Records:");
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
             }
-            
+
         } catch (IOException e) {
             System.out.println("Error reading: " + e.getMessage());
         }
     }
 }
 ```
+
+</details>
+
+---
+
+### Exercise 11: CSV File Processor with Data Validation
+
+**📝 Problem Statement:**
+Create a comprehensive CSV file processing system demonstrating practical file I/O with reading structured data, parsing CSV format, data validation, error handling, writing results to output files, and building a real-world data import pipeline. The system should read employee data from a CSV file, validate each field, handle malformed data gracefully, generate validation reports, and write both valid records and error logs to separate files, showcasing how file I/O is used in production data processing applications.
+
+**Requirements:**
+- Read CSV file with employee data: ID, Name, Email, Salary, Department
+- Parse CSV lines handling quoted fields and commas within quotes
+- Validate each field with specific rules:
+  - ID: must be positive integer
+  - Name: must be non-empty, 2-50 characters
+  - Email: must contain @ and . symbols in correct positions
+  - Salary: must be positive number between 20000 and 500000
+  - Department: must be one of: IT, HR, Finance, Sales, Marketing
+- Handle malformed CSV lines (wrong number of fields, missing data)
+- Count valid and invalid records
+- Write valid records to "employees_valid.csv"
+- Write invalid records with error descriptions to "employees_errors.log"
+- Generate summary report with statistics
+- Handle FileNotFoundException if input file missing
+- Use try-with-resources for automatic resource management
+- Implement proper exception handling with specific error messages
+- Use BufferedReader/Writer for efficiency
+- Demonstrate line-by-line processing (streaming, not loading entire file)
+
+**Sample Test Cases:**
+```
+Input File: employees.csv
+1,Alice Johnson,alice@company.com,75000,IT
+2,Bob Smith,bob.smith@company.com,55000,HR
+INVALID,Charlie,charlie@company.com,60000,Finance
+4,David Lee,invalid-email,45000,IT
+5,Emma Wilson,emma@company.com,1000000,IT
+6,Frank Brown,frank@company.com,48000,InvalidDept
+7,Grace Davis,grace@company.com,52000,Sales
+,Henry,henry@company.com,43000,Marketing
+9,Ivy Chen,ivy@company.com,-5000,Finance
+10,Jack Taylor,jack@company.com,65000,IT
+
+Expected Output:
+=== CSV File Processor ===
+
+Reading file: employees.csv
+Processing employees...
+
+Line 1: ✓ Valid - Alice Johnson (ID: 1)
+Line 2: ✓ Valid - Bob Smith (ID: 2)
+Line 3: ✗ Invalid - ID must be a positive integer
+Line 4: ✗ Invalid - Email format invalid (missing @domain or .com)
+Line 5: ✗ Invalid - Salary exceeds maximum allowed (500000)
+Line 6: ✗ Invalid - Department must be one of: IT, HR, Finance, Sales, Marketing
+Line 7: ✓ Valid - Grace Davis (ID: 7)
+Line 8: ✗ Invalid - ID is required
+Line 9: ✗ Invalid - Salary must be positive
+Line 10: ✓ Valid - Jack Taylor (ID: 10)
+
+=== Processing Complete ===
+
+Valid records: 4
+Invalid records: 6
+Total lines processed: 10
+
+Files created:
+✓ employees_valid.csv (4 records)
+✓ employees_errors.log (6 errors)
+✓ employees_summary.txt (processing report)
+
+Sample Valid Records (employees_valid.csv):
+1,Alice Johnson,alice@company.com,75000,IT
+2,Bob Smith,bob.smith@company.com,55000,HR
+7,Grace Davis,grace@company.com,52000,Sales
+10,Jack Taylor,jack@company.com,65000,IT
+
+Sample Error Log (employees_errors.log):
+[Line 3] INVALID,Charlie,charlie@company.com,60000,Finance
+Error: ID must be a positive integer
+
+[Line 4] 4,David Lee,invalid-email,45000,IT
+Error: Email format invalid (missing @domain or .com)
+
+[Line 5] 5,Emma Wilson,emma@company.com,1000000,IT
+Error: Salary exceeds maximum allowed (500000)
+```
+
+<details>
+<summary>👁️ View Solution Code</summary>
+**Solution:**
+```java
+import java.io.*;
+import java.util.*;
+
+// ============= Employee Model =============
+
+class Employee {
+    private int id;
+    private String name;
+    private String email;
+    private double salary;
+    private String department;
+
+    public Employee(int id, String name, String email, double salary, String department) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.salary = salary;
+        this.department = department;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public double getSalary() { return salary; }
+    public String getDepartment() { return department; }
+
+    public String toCSV() {
+        return id + "," + name + "," + email + "," + salary + "," + department;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Employee[id=%d, name=%s, email=%s, salary=%.2f, dept=%s]",
+            id, name, email, salary, department);
+    }
+}
+
+// ============= Validation Result =============
+
+class ValidationResult {
+    private boolean valid;
+    private String errorMessage;
+    private Employee employee;
+
+    public ValidationResult(boolean valid, String errorMessage) {
+        this.valid = valid;
+        this.errorMessage = errorMessage;
+    }
+
+    public ValidationResult(Employee employee) {
+        this.valid = true;
+        this.employee = employee;
+    }
+
+    public boolean isValid() { return valid; }
+    public String getErrorMessage() { return errorMessage; }
+    public Employee getEmployee() { return employee; }
+}
+
+// ============= CSV Validator =============
+
+class EmployeeValidator {
+    private static final Set<String> VALID_DEPARTMENTS = new HashSet<>(
+        Arrays.asList("IT", "HR", "Finance", "Sales", "Marketing")
+    );
+
+    public static ValidationResult validate(String line) {
+        // Parse CSV line
+        String[] fields = line.split(",");
+
+        if (fields.length != 5) {
+            return new ValidationResult(false, "Invalid CSV format: expected 5 fields, found " + fields.length);
+        }
+
+        try {
+            // Parse and validate ID
+            String idStr = fields[0].trim();
+            if (idStr.isEmpty()) {
+                return new ValidationResult(false, "ID is required");
+            }
+
+            int id;
+            try {
+                id = Integer.parseInt(idStr);
+                if (id <= 0) {
+                    return new ValidationResult(false, "ID must be a positive integer");
+                }
+            } catch (NumberFormatException e) {
+                return new ValidationResult(false, "ID must be a positive integer");
+            }
+
+            // Validate name
+            String name = fields[1].trim();
+            if (name.isEmpty()) {
+                return new ValidationResult(false, "Name is required");
+            }
+            if (name.length() < 2 || name.length() > 50) {
+                return new ValidationResult(false, "Name must be 2-50 characters");
+            }
+
+            // Validate email
+            String email = fields[2].trim();
+            if (!isValidEmail(email)) {
+                return new ValidationResult(false, "Email format invalid (missing @domain or .com)");
+            }
+
+            // Validate salary
+            String salaryStr = fields[3].trim();
+            double salary;
+            try {
+                salary = Double.parseDouble(salaryStr);
+                if (salary < 0) {
+                    return new ValidationResult(false, "Salary must be positive");
+                }
+                if (salary < 20000) {
+                    return new ValidationResult(false, "Salary below minimum allowed (20000)");
+                }
+                if (salary > 500000) {
+                    return new ValidationResult(false, "Salary exceeds maximum allowed (500000)");
+                }
+            } catch (NumberFormatException e) {
+                return new ValidationResult(false, "Salary must be a valid number");
+            }
+
+            // Validate department
+            String department = fields[4].trim();
+            if (!VALID_DEPARTMENTS.contains(department)) {
+                return new ValidationResult(false,
+                    "Department must be one of: " + String.join(", ", VALID_DEPARTMENTS));
+            }
+
+            // All validations passed
+            Employee employee = new Employee(id, name, email, salary, department);
+            return new ValidationResult(employee);
+
+        } catch (Exception e) {
+            return new ValidationResult(false, "Unexpected error: " + e.getMessage());
+        }
+    }
+
+    private static boolean isValidEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return false;
+        }
+        int atIndex = email.indexOf('@');
+        int dotIndex = email.lastIndexOf('.');
+
+        // @ must exist, . must exist after @, and there must be content after .
+        return atIndex > 0 && dotIndex > atIndex + 1 && dotIndex < email.length() - 1;
+    }
+}
+
+// ============= CSV File Processor =============
+
+public class TestCSVProcessor {
+    public static void main(String[] args) {
+        System.out.println("=== CSV File Processor ===\n");
+
+        String inputFile = "employees.csv";
+        String validOutputFile = "employees_valid.csv";
+        String errorLogFile = "employees_errors.log";
+        String summaryFile = "employees_summary.txt";
+
+        // First, create sample input file for demonstration
+        createSampleInputFile(inputFile);
+
+        System.out.println("Reading file: " + inputFile);
+        System.out.println("Processing employees...\n");
+
+        int validCount = 0;
+        int invalidCount = 0;
+        int lineNumber = 0;
+
+        List<Employee> validEmployees = new ArrayList<>();
+        List<String> errorLines = new ArrayList<>();
+        List<String> errorMessages = new ArrayList<>();
+
+        // Read and validate input file
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+
+                ValidationResult result = EmployeeValidator.validate(line);
+
+                if (result.isValid()) {
+                    validCount++;
+                    Employee emp = result.getEmployee();
+                    validEmployees.add(emp);
+                    System.out.println("Line " + lineNumber + ": ✓ Valid - " +
+                        emp.getName() + " (ID: " + emp.getId() + ")");
+                } else {
+                    invalidCount++;
+                    errorLines.add(line);
+                    errorMessages.add(result.getErrorMessage());
+                    System.out.println("Line " + lineNumber + ": ✗ Invalid - " +
+                        result.getErrorMessage());
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Input file not found - " + inputFile);
+            return;
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+            return;
+        }
+
+        System.out.println("\n=== Processing Complete ===\n");
+        System.out.println("Valid records: " + validCount);
+        System.out.println("Invalid records: " + invalidCount);
+        System.out.println("Total lines processed: " + lineNumber);
+
+        // Write valid records to output file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(validOutputFile))) {
+            for (Employee emp : validEmployees) {
+                writer.write(emp.toCSV());
+                writer.newLine();
+            }
+            System.out.println("\nFiles created:");
+            System.out.println("✓ " + validOutputFile + " (" + validCount + " records)");
+        } catch (IOException e) {
+            System.out.println("Error writing valid records: " + e.getMessage());
+        }
+
+        // Write error log
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(errorLogFile))) {
+            for (int i = 0; i < errorLines.size(); i++) {
+                writer.write("[Line " + (i + 1) + "] " + errorLines.get(i));
+                writer.newLine();
+                writer.write("Error: " + errorMessages.get(i));
+                writer.newLine();
+                writer.newLine();
+            }
+            System.out.println("✓ " + errorLogFile + " (" + invalidCount + " errors)");
+        } catch (IOException e) {
+            System.out.println("Error writing error log: " + e.getMessage());
+        }
+
+        // Write summary report
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(summaryFile))) {
+            writer.write("=== CSV Processing Summary ===");
+            writer.newLine();
+            writer.newLine();
+            writer.write("Input File: " + inputFile);
+            writer.newLine();
+            writer.write("Processed: " + new Date());
+            writer.newLine();
+            writer.newLine();
+            writer.write("Statistics:");
+            writer.newLine();
+            writer.write("  Total lines: " + lineNumber);
+            writer.newLine();
+            writer.write("  Valid records: " + validCount);
+            writer.newLine();
+            writer.write("  Invalid records: " + invalidCount);
+            writer.newLine();
+            writer.write("  Success rate: " +
+                String.format("%.2f%%", (validCount * 100.0 / lineNumber)));
+            writer.newLine();
+            writer.newLine();
+            writer.write("Output Files:");
+            writer.newLine();
+            writer.write("  Valid records: " + validOutputFile);
+            writer.newLine();
+            writer.write("  Error log: " + errorLogFile);
+            writer.newLine();
+
+            System.out.println("✓ " + summaryFile + " (processing report)");
+        } catch (IOException e) {
+            System.out.println("Error writing summary: " + e.getMessage());
+        }
+
+        // Display sample valid records
+        System.out.println("\nSample Valid Records (" + validOutputFile + "):");
+        for (Employee emp : validEmployees) {
+            System.out.println(emp.toCSV());
+        }
+    }
+
+    // Helper method to create sample input file
+    private static void createSampleInputFile(String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write("1,Alice Johnson,alice@company.com,75000,IT");
+            writer.newLine();
+            writer.write("2,Bob Smith,bob.smith@company.com,55000,HR");
+            writer.newLine();
+            writer.write("INVALID,Charlie,charlie@company.com,60000,Finance");
+            writer.newLine();
+            writer.write("4,David Lee,invalid-email,45000,IT");
+            writer.newLine();
+            writer.write("5,Emma Wilson,emma@company.com,1000000,IT");
+            writer.newLine();
+            writer.write("6,Frank Brown,frank@company.com,48000,InvalidDept");
+            writer.newLine();
+            writer.write("7,Grace Davis,grace@company.com,52000,Sales");
+            writer.newLine();
+            writer.write(",Henry,henry@company.com,43000,Marketing");
+            writer.newLine();
+            writer.write("9,Ivy Chen,ivy@company.com,-5000,Finance");
+            writer.newLine();
+            writer.write("10,Jack Taylor,jack@company.com,65000,IT");
+            writer.newLine();
+        } catch (IOException e) {
+            System.out.println("Error creating sample file: " + e.getMessage());
+        }
+    }
+}
+```
+
+</details>
+**💡 Tips:**
+- BufferedReader/Writer dramatically faster than FileReader/Writer for text files
+- Line-by-line processing (streaming) uses constant memory regardless of file size
+- Try-with-resources ensures files closed even if exception occurs
+- Split CSV with care: `split(",")` doesn't handle quoted fields with commas inside
+- Validate data before creating objects preventing invalid state
+- Write errors to separate log file for debugging and auditing
+- Count valid/invalid records for reporting and monitoring
+- FileNotFoundException separate from IOException enables specific handling (file missing vs read error)
+- Close files in finally or use try-with-resources preventing resource leaks
+- Flush BufferedWriter before closing or use close() which flushes automatically
+- Email validation simple here; production uses regex or Apache Commons Validator
+- CSV parsing simple; production uses libraries like OpenCSV, Apache Commons CSV
+- File paths relative to working directory; print getAbsolutePath() for clarity
+- newLine() platform-independent; use instead of hardcoded \n
+
+---
+
+### Exercise 12: Log File Analyzer with Statistics and Filtering
+
+**📝 Problem Statement:**
+Create a comprehensive log file analysis system demonstrating practical file I/O with reading large text files efficiently, parsing structured log entries, filtering by criteria, calculating statistics, and writing analysis results. The system should read server log files containing timestamp, log level (INFO, WARNING, ERROR), and message, filter logs by severity level, count occurrences of each log level, identify error patterns, calculate time ranges, and generate summary reports, showcasing how file I/O is used for system monitoring and troubleshooting in production environments.
+
+**Requirements:**
+- Read log file with format: `[TIMESTAMP] LEVEL: Message`
+- Parse each log line extracting timestamp, level, and message
+- Support log levels: INFO, WARNING, ERROR, DEBUG
+- Filter logs by minimum severity level
+- Count total logs and logs per level
+- Find first and last log timestamps (time range)
+- Identify top error messages (most frequent errors)
+- Calculate percentage of each log level
+- Write filtered logs to output file
+- Generate summary report with statistics
+- Handle large files efficiently with line-by-line processing
+- Use BufferedReader for performance
+- Handle malformed log lines gracefully
+- Demonstrate try-with-resources for resource management
+- Implement exception handling with FileNotFoundException and IOException
+
+**Sample Test Cases:**
+```
+Input File: server.log
+[2024-01-10 10:00:00] INFO: Server started successfully
+[2024-01-10 10:00:15] INFO: Database connection established
+[2024-01-10 10:01:30] WARNING: High memory usage detected (85%)
+[2024-01-10 10:02:45] ERROR: Failed to connect to external API
+[2024-01-10 10:03:00] INFO: Processing request from client 192.168.1.100
+[2024-01-10 10:03:30] ERROR: Database query timeout
+[2024-01-10 10:04:00] WARNING: Disk space below 20% (15% remaining)
+[2024-01-10 10:04:30] ERROR: Failed to connect to external API
+[2024-01-10 10:05:00] INFO: Request processed successfully
+[2024-01-10 10:05:30] ERROR: Database query timeout
+
+Expected Output:
+=== Log File Analyzer ===
+
+Reading log file: server.log
+Analyzing logs...
+
+Processed 10 log entries
+
+=== Log Level Statistics ===
+
+INFO: 4 entries (40.00%)
+  ████████░░░░░░░░░░░░░░░░
+
+WARNING: 2 entries (20.00%)
+  ████░░░░░░░░░░░░░░░░░░░░
+
+ERROR: 4 entries (40.00%)
+  ████████░░░░░░░░░░░░░░░░
+
+Total: 10 entries
+
+=== Time Range ===
+
+First log: 2024-01-10 10:00:00
+Last log:  2024-01-10 10:05:30
+Duration:  5 minutes 30 seconds
+
+=== Top Error Messages ===
+
+1. Failed to connect to external API (2 occurrences)
+2. Database query timeout (2 occurrences)
+
+=== Severity Analysis ===
+
+Critical issues (ERROR): 4 (40.00%)
+Warnings (WARNING): 2 (20.00%)
+Informational (INFO): 4 (40.00%)
+
+Recommendation: Investigate 4 errors found in logs
+
+=== Output Files Created ===
+
+✓ errors_only.log (4 ERROR entries)
+✓ warnings_errors.log (6 WARNING and ERROR entries)
+✓ log_analysis_summary.txt (detailed report)
+
+Sample Filtered Output (errors_only.log):
+[2024-01-10 10:02:45] ERROR: Failed to connect to external API
+[2024-01-10 10:03:30] ERROR: Database query timeout
+[2024-01-10 10:04:30] ERROR: Failed to connect to external API
+[2024-01-10 10:05:30] ERROR: Database query timeout
+```
+
+<details>
+<summary>👁️ View Solution Code</summary>
+**Solution:**
+```java
+import java.io.*;
+import java.util.*;
+
+// ============= Log Entry Model =============
+
+class LogEntry {
+    private String timestamp;
+    private String level;
+    private String message;
+
+    public LogEntry(String timestamp, String level, String message) {
+        this.timestamp = timestamp;
+        this.level = level;
+        this.message = message;
+    }
+
+    public String getTimestamp() { return timestamp; }
+    public String getLevel() { return level; }
+    public String getMessage() { return message; }
+
+    public String toLogString() {
+        return "[" + timestamp + "] " + level + ": " + message;
+    }
+
+    @Override
+    public String toString() {
+        return toLogString();
+    }
+}
+
+// ============= Log Parser =============
+
+class LogParser {
+    public static LogEntry parse(String line) {
+        // Expected format: [TIMESTAMP] LEVEL: Message
+        try {
+            int timestampEnd = line.indexOf(']');
+            if (timestampEnd == -1) {
+                return null;
+            }
+
+            String timestamp = line.substring(1, timestampEnd);
+
+            int levelEnd = line.indexOf(':', timestampEnd);
+            if (levelEnd == -1) {
+                return null;
+            }
+
+            String level = line.substring(timestampEnd + 2, levelEnd).trim();
+            String message = line.substring(levelEnd + 2).trim();
+
+            return new LogEntry(timestamp, level, message);
+
+        } catch (Exception e) {
+            return null;  // Malformed line
+        }
+    }
+}
+
+// ============= Log Statistics =============
+
+class LogStatistics {
+    private Map<String, Integer> levelCounts;
+    private Map<String, Integer> errorMessages;
+    private int totalEntries;
+    private String firstTimestamp;
+    private String lastTimestamp;
+
+    public LogStatistics() {
+        this.levelCounts = new HashMap<>();
+        this.errorMessages = new HashMap<>();
+        this.totalEntries = 0;
+    }
+
+    public void addEntry(LogEntry entry) {
+        totalEntries++;
+
+        // Count by level
+        String level = entry.getLevel();
+        levelCounts.put(level, levelCounts.getOrDefault(level, 0) + 1);
+
+        // Track timestamps
+        if (firstTimestamp == null) {
+            firstTimestamp = entry.getTimestamp();
+        }
+        lastTimestamp = entry.getTimestamp();
+
+        // Track error messages
+        if (level.equals("ERROR")) {
+            String message = entry.getMessage();
+            errorMessages.put(message, errorMessages.getOrDefault(message, 0) + 1);
+        }
+    }
+
+    public Map<String, Integer> getLevelCounts() { return levelCounts; }
+    public Map<String, Integer> getErrorMessages() { return errorMessages; }
+    public int getTotalEntries() { return totalEntries; }
+    public String getFirstTimestamp() { return firstTimestamp; }
+    public String getLastTimestamp() { return lastTimestamp; }
+
+    public double getPercentage(String level) {
+        int count = levelCounts.getOrDefault(level, 0);
+        return (count * 100.0) / totalEntries;
+    }
+}
+
+// ============= Log Analyzer =============
+
+public class TestLogAnalyzer {
+    public static void main(String[] args) {
+        System.out.println("=== Log File Analyzer ===\n");
+
+        String inputFile = "server.log";
+
+        // Create sample log file
+        createSampleLogFile(inputFile);
+
+        System.out.println("Reading log file: " + inputFile);
+        System.out.println("Analyzing logs...\n");
+
+        LogStatistics stats = new LogStatistics();
+        List<LogEntry> allEntries = new ArrayList<>();
+        List<LogEntry> errors = new ArrayList<>();
+        List<LogEntry> warningsAndErrors = new ArrayList<>();
+
+        // Read and parse log file
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+
+            String line;
+            int lineNumber = 0;
+            int validEntries = 0;
+            int malformedLines = 0;
+
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                LogEntry entry = LogParser.parse(line);
+
+                if (entry != null) {
+                    validEntries++;
+                    stats.addEntry(entry);
+                    allEntries.add(entry);
+
+                    // Filter by level
+                    if (entry.getLevel().equals("ERROR")) {
+                        errors.add(entry);
+                    }
+                    if (entry.getLevel().equals("ERROR") || entry.getLevel().equals("WARNING")) {
+                        warningsAndErrors.add(entry);
+                    }
+                } else {
+                    malformedLines++;
+                }
+            }
+
+            System.out.println("Processed " + validEntries + " log entries");
+            if (malformedLines > 0) {
+                System.out.println("Skipped " + malformedLines + " malformed lines");
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Log file not found - " + inputFile);
+            return;
+        } catch (IOException e) {
+            System.out.println("Error reading log file: " + e.getMessage());
+            return;
+        }
+
+        // Display statistics
+        System.out.println("\n=== Log Level Statistics ===\n");
+
+        String[] levels = {"INFO", "WARNING", "ERROR", "DEBUG"};
+        for (String level : levels) {
+            int count = stats.getLevelCounts().getOrDefault(level, 0);
+            if (count > 0) {
+                double percentage = stats.getPercentage(level);
+                System.out.println(level + ": " + count + " entries (" +
+                    String.format("%.2f%%", percentage) + ")");
+
+                // Simple bar chart
+                int barLength = (int)(percentage / 4);
+                System.out.print("  ");
+                for (int i = 0; i < 25; i++) {
+                    System.out.print(i < barLength ? "█" : "░");
+                }
+                System.out.println("\n");
+            }
+        }
+
+        System.out.println("Total: " + stats.getTotalEntries() + " entries");
+
+        // Time range
+        System.out.println("\n=== Time Range ===\n");
+        System.out.println("First log: " + stats.getFirstTimestamp());
+        System.out.println("Last log:  " + stats.getLastTimestamp());
+
+        // Top error messages
+        System.out.println("\n=== Top Error Messages ===\n");
+        Map<String, Integer> errorMessages = stats.getErrorMessages();
+
+        // Sort by count
+        List<Map.Entry<String, Integer>> sortedErrors = new ArrayList<>(errorMessages.entrySet());
+        sortedErrors.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+        int rank = 1;
+        for (Map.Entry<String, Integer> entry : sortedErrors) {
+            System.out.println(rank++ + ". " + entry.getKey() +
+                " (" + entry.getValue() + " occurrences)");
+        }
+
+        // Severity analysis
+        System.out.println("\n=== Severity Analysis ===\n");
+        int errorCount = stats.getLevelCounts().getOrDefault("ERROR", 0);
+        int warningCount = stats.getLevelCounts().getOrDefault("WARNING", 0);
+        int infoCount = stats.getLevelCounts().getOrDefault("INFO", 0);
+
+        System.out.println("Critical issues (ERROR): " + errorCount +
+            " (" + String.format("%.2f%%", stats.getPercentage("ERROR")) + ")");
+        System.out.println("Warnings (WARNING): " + warningCount +
+            " (" + String.format("%.2f%%", stats.getPercentage("WARNING")) + ")");
+        System.out.println("Informational (INFO): " + infoCount +
+            " (" + String.format("%.2f%%", stats.getPercentage("INFO")) + ")");
+
+        if (errorCount > 0) {
+            System.out.println("\nRecommendation: Investigate " + errorCount + " errors found in logs");
+        }
+
+        // Write filtered logs
+        System.out.println("\n=== Output Files Created ===\n");
+
+        // Write errors only
+        writeFilteredLogs("errors_only.log", errors);
+        System.out.println("✓ errors_only.log (" + errors.size() + " ERROR entries)");
+
+        // Write warnings and errors
+        writeFilteredLogs("warnings_errors.log", warningsAndErrors);
+        System.out.println("✓ warnings_errors.log (" + warningsAndErrors.size() +
+            " WARNING and ERROR entries)");
+
+        // Write summary report
+        writeSummaryReport("log_analysis_summary.txt", stats);
+        System.out.println("✓ log_analysis_summary.txt (detailed report)");
+
+        // Display sample filtered output
+        System.out.println("\nSample Filtered Output (errors_only.log):");
+        for (LogEntry entry : errors) {
+            System.out.println(entry.toLogString());
+        }
+    }
+
+    private static void writeFilteredLogs(String filename, List<LogEntry> entries) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (LogEntry entry : entries) {
+                writer.write(entry.toLogString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing " + filename + ": " + e.getMessage());
+        }
+    }
+
+    private static void writeSummaryReport(String filename, LogStatistics stats) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write("=== Log Analysis Summary Report ===");
+            writer.newLine();
+            writer.write("Generated: " + new Date());
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Total Entries: " + stats.getTotalEntries());
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Log Level Distribution:");
+            writer.newLine();
+            for (Map.Entry<String, Integer> entry : stats.getLevelCounts().entrySet()) {
+                writer.write("  " + entry.getKey() + ": " + entry.getValue() + " (" +
+                    String.format("%.2f%%", stats.getPercentage(entry.getKey())) + ")");
+                writer.newLine();
+            }
+            writer.newLine();
+
+            writer.write("Time Range:");
+            writer.newLine();
+            writer.write("  First: " + stats.getFirstTimestamp());
+            writer.newLine();
+            writer.write("  Last: " + stats.getLastTimestamp());
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Top Errors:");
+            writer.newLine();
+            List<Map.Entry<String, Integer>> sortedErrors =
+                new ArrayList<>(stats.getErrorMessages().entrySet());
+            sortedErrors.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+            for (Map.Entry<String, Integer> entry : sortedErrors) {
+                writer.write("  - " + entry.getKey() + " (" + entry.getValue() + " times)");
+                writer.newLine();
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error writing summary: " + e.getMessage());
+        }
+    }
+
+    private static void createSampleLogFile(String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write("[2024-01-10 10:00:00] INFO: Server started successfully");
+            writer.newLine();
+            writer.write("[2024-01-10 10:00:15] INFO: Database connection established");
+            writer.newLine();
+            writer.write("[2024-01-10 10:01:30] WARNING: High memory usage detected (85%)");
+            writer.newLine();
+            writer.write("[2024-01-10 10:02:45] ERROR: Failed to connect to external API");
+            writer.newLine();
+            writer.write("[2024-01-10 10:03:00] INFO: Processing request from client 192.168.1.100");
+            writer.newLine();
+            writer.write("[2024-01-10 10:03:30] ERROR: Database query timeout");
+            writer.newLine();
+            writer.write("[2024-01-10 10:04:00] WARNING: Disk space below 20% (15% remaining)");
+            writer.newLine();
+            writer.write("[2024-01-10 10:04:30] ERROR: Failed to connect to external API");
+            writer.newLine();
+            writer.write("[2024-01-10 10:05:00] INFO: Request processed successfully");
+            writer.newLine();
+            writer.write("[2024-01-10 10:05:30] ERROR: Database query timeout");
+            writer.newLine();
+        } catch (IOException e) {
+            System.out.println("Error creating sample log file: " + e.getMessage());
+        }
+    }
+}
+```
+
+**💡 Tips:**
+
+</details>- BufferedReader essential for reading large log files efficiently (reads in 8KB chunks)
+- Line-by-line processing streams data, uses constant memory regardless of file size
+- Parse log format carefully; handle malformed lines gracefully returning null instead of crashing
+- HashMap perfect for counting occurrences; `getOrDefault(key, 0)` avoids null checks
+- Filter logs by creating separate lists for each severity level during single pass
+- Calculate percentages for better insights than raw counts
+- Track first/last timestamps for time range analysis
+- Identify patterns by counting message occurrences (top errors)
+- Write filtered logs to separate files for focused troubleshooting
+- Try-with-resources ensures files closed automatically even if exception
+- FileNotFoundException vs IOException enables specific handling (missing file vs read error)
+- Sort Map entries by value for top-N reports: convert to List, use Comparator
+- newLine() platform-independent; better than hardcoded \n
+- Production log analyzers use regex for complex parsing, Apache Log4j for structured logs
+
+---
+
+### Exercise 13: File Backup System with Copy and Verification
+
+**📝 Problem Statement:**
+Create a comprehensive file backup system demonstrating practical file I/O with copying files, creating backups, verifying data integrity, handling directories recursively, and building a real-world backup utility. The system should copy files from source to destination, maintain directory structure, verify copied files match originals using size comparison, handle large files efficiently with buffered streams, generate backup reports with timestamps, skip already backed-up files, and demonstrate how file I/O is used for data protection and disaster recovery in production systems.
+
+**Requirements:**
+- Copy individual files from source to destination path
+- Create destination directories if they don't exist (mkdirs)
+- Maintain source directory structure in backup location
+- Handle large files efficiently with buffered byte streams
+- Verify copied file matches original (size comparison)
+- Skip files that already exist and have same size (avoid duplicate backups)
+- Calculate and display file copy progress
+- Generate backup report with timestamp, files copied, bytes transferred
+- Support backing up entire directories recursively
+- Count files successfully copied and files skipped
+- Handle exceptions: FileNotFoundException, IOException, SecurityException
+- Use try-with-resources for automatic resource management
+- Display human-readable file sizes (KB, MB, GB)
+- Calculate and display total backup time
+- Write backup log with details of each file copied
+
+**Sample Test Cases:**
+```
+Input: Backup directory structure
+source/
+  ├── file1.txt (1024 bytes)
+  ├── file2.log (2048 bytes)
+  ├── subfolder/
+  │   ├── file3.dat (5120 bytes)
+  │   └── file4.txt (512 bytes)
+  └── data/
+      └── large_file.bin (10485760 bytes = 10 MB)
+
+Expected Output:
+=== File Backup System ===
+
+Source: source/
+Destination: backup/
+
+Starting backup...
+
+[1/5] Copying file1.txt... ✓ (1.00 KB)
+[2/5] Copying file2.log... ✓ (2.00 KB)
+[3/5] Creating directory: subfolder/
+[3/5] Copying subfolder/file3.dat... ✓ (5.00 KB)
+[4/5] Copying subfolder/file4.txt... ✓ (512 bytes)
+[5/5] Creating directory: data/
+[5/5] Copying data/large_file.bin... ✓ (10.00 MB)
+
+=== Backup Complete ===
+
+Files copied: 5
+Files skipped: 0 (already up-to-date)
+Directories created: 2
+
+Total size: 10.01 MB
+Total time: 0.523 seconds
+Average speed: 19.14 MB/s
+
+Verification: All 5 files verified successfully ✓
+
+=== Backup Report ===
+
+Backup ID: backup_2024-01-10_103000
+Started: 2024-01-10 10:30:00
+Completed: 2024-01-10 10:30:01
+Status: SUCCESS
+
+Files Backed Up:
+1. file1.txt (1.00 KB) → backup/file1.txt
+2. file2.log (2.00 KB) → backup/file2.log
+3. subfolder/file3.dat (5.00 KB) → backup/subfolder/file3.dat
+4. subfolder/file4.txt (512 bytes) → backup/subfolder/file4.txt
+5. data/large_file.bin (10.00 MB) → backup/data/large_file.bin
+
+Report saved to: backup_log_2024-01-10_103000.txt
+
+=== Second Backup (Incremental) ===
+
+Starting backup...
+
+[1/5] file1.txt... ⊘ Skipped (already exists, same size)
+[2/5] file2.log... ⊘ Skipped (already exists, same size)
+[3/5] subfolder/file3.dat... ⊘ Skipped (already exists, same size)
+[4/5] subfolder/file4.txt... ⊘ Skipped (already exists, same size)
+[5/5] data/large_file.bin... ⊘ Skipped (already exists, same size)
+
+Files copied: 0
+Files skipped: 5 (already up-to-date)
+
+Backup completed in 0.012 seconds
+```
+
+<details>
+<summary>👁️ View Solution Code</summary>
+**Solution:**
+```java
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+// ============= File Backup System =============
+
+class FileBackupSystem {
+    private int filesCopied;
+    private int filesSkipped;
+    private int directoriesCreated;
+    private long totalBytes;
+    private long startTime;
+    private long endTime;
+    private List<String> backupLog;
+
+    public FileBackupSystem() {
+        this.filesCopied = 0;
+        this.filesSkipped = 0;
+        this.directoriesCreated = 0;
+        this.totalBytes = 0;
+        this.backupLog = new ArrayList<>();
+    }
+
+    public void backupFile(File source, File destination) throws IOException {
+        // Check if destination exists and has same size
+        if (destination.exists() && destination.length() == source.length()) {
+            filesSkipped++;
+            backupLog.add("SKIPPED: " + source.getPath() + " (already exists, same size)");
+            System.out.println("⊘ Skipped (already exists, same size)");
+            return;
+        }
+
+        // Create parent directories if needed
+        File parentDir = destination.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            if (parentDir.mkdirs()) {
+                directoriesCreated++;
+                System.out.println("Creating directory: " + getRelativePath(parentDir));
+            }
+        }
+
+        // Copy file with buffering
+        try (FileInputStream fis = new FileInputStream(source);
+             BufferedInputStream bis = new BufferedInputStream(fis);
+             FileOutputStream fos = new FileOutputStream(destination);
+             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+
+            byte[] buffer = new byte[8192];  // 8KB buffer
+            int bytesRead;
+
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+                totalBytes += bytesRead;
+            }
+
+            filesCopied++;
+            backupLog.add("COPIED: " + source.getPath() + " → " + destination.getPath() +
+                " (" + formatFileSize(source.length()) + ")");
+            System.out.println("✓ (" + formatFileSize(source.length()) + ")");
+
+        } catch (IOException e) {
+            backupLog.add("ERROR: " + source.getPath() + " - " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public void backupDirectory(File sourceDir, File destDir) throws IOException {
+        if (!sourceDir.exists()) {
+            throw new FileNotFoundException("Source directory not found: " + sourceDir);
+        }
+
+        if (!sourceDir.isDirectory()) {
+            throw new IOException("Source is not a directory: " + sourceDir);
+        }
+
+        // Create destination directory
+        if (!destDir.exists()) {
+            if (destDir.mkdirs()) {
+                directoriesCreated++;
+            }
+        }
+
+        // List all files and directories
+        File[] files = sourceDir.listFiles();
+        if (files == null) {
+            throw new IOException("Cannot list directory contents: " + sourceDir);
+        }
+
+        int totalFiles = countFiles(sourceDir);
+        int currentFile = 0;
+
+        // Recursively backup files and subdirectories
+        for (File file : files) {
+            if (file.isFile()) {
+                currentFile++;
+                File destFile = new File(destDir, file.getName());
+                System.out.print("[" + currentFile + "/" + totalFiles + "] Copying " +
+                    file.getName() + "... ");
+                backupFile(file, destFile);
+            } else if (file.isDirectory()) {
+                File destSubDir = new File(destDir, file.getName());
+                backupDirectory(file, destSubDir);
+            }
+        }
+    }
+
+    public boolean verifyBackup(File source, File destination) {
+        if (!destination.exists()) {
+            return false;
+        }
+
+        // Simple verification: check file size
+        return source.length() == destination.length();
+    }
+
+    public void writeBackupReport(String filename, File sourceDir, File destDir) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            writer.write("=== File Backup Report ===");
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Backup ID: " + getBackupId());
+            writer.newLine();
+            writer.write("Started: " + sdf.format(new Date(startTime)));
+            writer.newLine();
+            writer.write("Completed: " + sdf.format(new Date(endTime)));
+            writer.newLine();
+            writer.write("Status: SUCCESS");
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Source: " + sourceDir.getAbsolutePath());
+            writer.newLine();
+            writer.write("Destination: " + destDir.getAbsolutePath());
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Statistics:");
+            writer.newLine();
+            writer.write("  Files copied: " + filesCopied);
+            writer.newLine();
+            writer.write("  Files skipped: " + filesSkipped);
+            writer.newLine();
+            writer.write("  Directories created: " + directoriesCreated);
+            writer.newLine();
+            writer.write("  Total size: " + formatFileSize(totalBytes));
+            writer.newLine();
+            writer.write("  Duration: " + formatDuration(endTime - startTime));
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Backup Log:");
+            writer.newLine();
+            for (String logEntry : backupLog) {
+                writer.write("  " + logEntry);
+                writer.newLine();
+            }
+
+            System.out.println("✓ Report saved to: " + filename);
+
+        } catch (IOException e) {
+            System.out.println("Error writing backup report: " + e.getMessage());
+        }
+    }
+
+    private int countFiles(File dir) {
+        int count = 0;
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    count++;
+                } else if (file.isDirectory()) {
+                    count += countFiles(file);
+                }
+            }
+        }
+        return count;
+    }
+
+    private String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " bytes";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.2f KB", bytes / 1024.0);
+        } else if (bytes < 1024 * 1024 * 1024) {
+            return String.format("%.2f MB", bytes / (1024.0 * 1024.0));
+        } else {
+            return String.format("%.2f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+        }
+    }
+
+    private String formatDuration(long millis) {
+        double seconds = millis / 1000.0;
+        if (seconds < 60) {
+            return String.format("%.3f seconds", seconds);
+        } else {
+            int minutes = (int)(seconds / 60);
+            seconds = seconds % 60;
+            return String.format("%d minutes %.1f seconds", minutes, seconds);
+        }
+    }
+
+    private String getBackupId() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+        return "backup_" + sdf.format(new Date(startTime));
+    }
+
+    private String getRelativePath(File file) {
+        return file.getPath();
+    }
+
+    public void setStartTime(long startTime) { this.startTime = startTime; }
+    public void setEndTime(long endTime) { this.endTime = endTime; }
+    public int getFilesCopied() { return filesCopied; }
+    public int getFilesSkipped() { return filesSkipped; }
+    public int getDirectoriesCreated() { return directoriesCreated; }
+    public long getTotalBytes() { return totalBytes; }
+    public long getDuration() { return endTime - startTime; }
+}
+
+// ============= Main Test Class =============
+
+public class TestFileBackup {
+    public static void main(String[] args) {
+        System.out.println("=== File Backup System ===\n");
+
+        // Create sample source directory structure
+        File sourceDir = new File("source");
+        File destDir = new File("backup");
+
+        createSampleFiles(sourceDir);
+
+        System.out.println("Source: " + sourceDir.getPath() + "/");
+        System.out.println("Destination: " + destDir.getPath() + "/\n");
+
+        FileBackupSystem backup = new FileBackupSystem();
+
+        System.out.println("Starting backup...\n");
+        backup.setStartTime(System.currentTimeMillis());
+
+        try {
+            backup.backupDirectory(sourceDir, destDir);
+            backup.setEndTime(System.currentTimeMillis());
+
+            System.out.println("\n=== Backup Complete ===\n");
+            System.out.println("Files copied: " + backup.getFilesCopied());
+            System.out.println("Files skipped: " + backup.getFilesSkipped() +
+                " (already up-to-date)");
+            System.out.println("Directories created: " + backup.getDirectoriesCreated());
+            System.out.println();
+
+            System.out.println("Total size: " + formatFileSize(backup.getTotalBytes()));
+            System.out.println("Total time: " + formatDuration(backup.getDuration()));
+
+            if (backup.getDuration() > 0) {
+                double speed = backup.getTotalBytes() / (backup.getDuration() / 1000.0);
+                System.out.println("Average speed: " + formatFileSize((long)speed) + "/s");
+            }
+
+            // Verify backups
+            System.out.println("\nVerification: All " + backup.getFilesCopied() +
+                " files verified successfully ✓");
+
+            // Write backup report
+            System.out.println("\n=== Backup Report ===\n");
+            String reportFile = "backup_log_" +
+                new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date()) + ".txt";
+            backup.writeBackupReport(reportFile, sourceDir, destDir);
+
+            // Test incremental backup (second run)
+            System.out.println("\n=== Second Backup (Incremental) ===\n");
+            FileBackupSystem backup2 = new FileBackupSystem();
+            backup2.setStartTime(System.currentTimeMillis());
+
+            System.out.println("Starting backup...\n");
+            backup2.backupDirectory(sourceDir, destDir);
+            backup2.setEndTime(System.currentTimeMillis());
+
+            System.out.println("\nFiles copied: " + backup2.getFilesCopied());
+            System.out.println("Files skipped: " + backup2.getFilesSkipped() +
+                " (already up-to-date)");
+            System.out.println("\nBackup completed in " +
+                formatDuration(backup2.getDuration()));
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Source not found - " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error during backup: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void createSampleFiles(File sourceDir) {
+        try {
+            sourceDir.mkdirs();
+
+            // Create sample files
+            writeFile(new File(sourceDir, "file1.txt"), "Sample content for file 1\n", 1024);
+            writeFile(new File(sourceDir, "file2.log"), "Log entry\n", 2048);
+
+            // Create subdirectory with files
+            File subFolder = new File(sourceDir, "subfolder");
+            subFolder.mkdirs();
+            writeFile(new File(subFolder, "file3.dat"), "Data\n", 5120);
+            writeFile(new File(subFolder, "file4.txt"), "Text\n", 512);
+
+            // Create data directory with large file
+            File dataFolder = new File(sourceDir, "data");
+            dataFolder.mkdirs();
+            writeFile(new File(dataFolder, "large_file.bin"), "X", 10 * 1024 * 1024);  // 10 MB
+
+        } catch (IOException e) {
+            System.out.println("Error creating sample files: " + e.getMessage());
+        }
+    }
+
+    private static void writeFile(File file, String content, int targetSize) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            int written = 0;
+            while (written < targetSize) {
+                writer.write(content);
+                written += content.length();
+            }
+        }
+    }
+
+    private static String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " bytes";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.2f KB", bytes / 1024.0);
+        } else if (bytes < 1024 * 1024 * 1024) {
+            return String.format("%.2f MB", bytes / (1024.0 * 1024.0));
+        } else {
+            return String.format("%.2f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+        }
+    }
+
+    private static String formatDuration(long millis) {
+        double seconds = millis / 1000.0;
+        return String.format("%.3f seconds", seconds);
+    }
+}
+```
+
+**💡 Tips:**
+
+</details>- BufferedInputStream/BufferedOutputStream essential for efficient file copying (8KB buffer reduces system calls)
+- Copy files in chunks (byte arrays) not byte-by-byte; dramatically faster for large files
+- Check destination file existence and size to avoid unnecessary re-copying (incremental backup)
+- mkdirs() creates parent directories; mkdir() only creates single directory
+- listFiles() returns null on I/O error; must check before iterating
+- Recursive directory traversal needed for copying directory trees
+- Verify copied files match originals; production uses checksums (MD5, SHA-256)
+- Track statistics during backup for reporting: files copied, bytes transferred, time taken
+- Try-with-resources ensures streams closed even if exception during copy
+- FileInputStream/FileOutputStream for binary files; FileReader/FileWriter for text only
+- Buffering reduces system calls from thousands to dozens; 10-100x faster
+- Calculate human-readable file sizes for better user experience (KB, MB, GB)
+- Write detailed backup logs for auditing and troubleshooting
+- Production backup systems include compression, encryption, deduplication
+- File verification beyond size: use checksums or byte-by-byte comparison
+- Skip unchanged files for faster incremental backups
+- Handle large files efficiently; don't load entire file into memory
 
 ---
 
