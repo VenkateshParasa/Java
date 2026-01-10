@@ -1675,159 +1675,1633 @@ public class TestGCDLCM {
 
 ## ⚠️ Common Mistakes
 
-### 1. Missing Return Statement:
+### 1. Method Declaration and Syntax Errors
+
+#### ❌ Wrong - Missing Return Statement in Non-Void Method:
 ```java
 // WRONG
-public int add(int a, int b) {
-    int sum = a + b;
-    // Missing return statement
-}
-
-// CORRECT
-public int add(int a, int b) {
-    int sum = a + b;
-    return sum;
-}
-```
-
-### 2. Wrong Return Type:
-```java
-// WRONG
-public int divide(int a, int b) {
-    return a / b;  // Returns int, loses decimal precision
-}
-
-// CORRECT
-public double divide(int a, int b) {
-    return (double) a / b;  // Returns double with precision
-}
-```
-
-### 3. Overloading Only by Return Type:
-```java
-// WRONG - Cannot overload by return type alone
-public int calculate(int a, int b) {
-    return a + b;
-}
-
-public double calculate(int a, int b) {  // ERROR!
-    return a + b;
-}
-
-// CORRECT - Different parameters
-public int calculate(int a, int b) {
-    return a + b;
-}
-
-public double calculate(double a, double b) {
-    return a + b;
-}
-```
-
-### 4. Varargs Not Last Parameter:
-```java
-// WRONG
-public void method(int... numbers, String name) {  // ERROR!
-    // Varargs must be last
-}
-
-// CORRECT
-public void method(String name, int... numbers) {
-    // Varargs is last parameter
-}
-```
-
-### 5. Missing Base Case in Recursion:
-```java
-// WRONG - Infinite recursion
-public int factorial(int n) {
-    return n * factorial(n - 1);  // No base case!
-}
-
-// CORRECT
-public int factorial(int n) {
-    if (n == 0 || n == 1) {  // Base case
-        return 1;
+public class Calculator {
+    public int add(int a, int b) {
+        int sum = a + b;
+        // Compilation error! Missing return statement
     }
-    return n * factorial(n - 1);
+}
+```
+**Issue:** Non-void method must return a value of the declared type
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {
+        int sum = a + b;
+        return sum;  // Must return int value
+    }
 }
 ```
 
-### 6. Modifying Parameters Expecting Change:
+**Why:** Methods with non-void return types must return a value matching that type.
+
+**💡 Tip:** Every code path in a non-void method must have a return statement.
+
+---
+
+#### ❌ Wrong - Adding Return Type to Constructor-Like Method:
 ```java
-// WRONG - Expecting parameter to change
-public void increment(int number) {
-    number++;  // Only changes local copy
+// WRONG - This is NOT a constructor!
+public class Student {
+    String name;
+
+    public void Student(String name) {  // This is a method, not constructor!
+        this.name = name;
+    }
 }
 
-int value = 5;
-increment(value);
-System.out.println(value);  // Still 5!
+Student s = new Student("Alice");  // Compilation error! No constructor
+```
+**Issue:** Adding return type (even void) makes it a regular method, not a constructor
 
+#### ✅ Right:
+```java
+// CORRECT - Constructor has no return type
+public class Student {
+    String name;
+
+    public Student(String name) {  // Constructor: no return type
+        this.name = name;
+    }
+}
+
+Student s = new Student("Alice");  // Works!
+```
+
+**Why:** Constructors must have no return type at all; any return type makes it a regular method.
+
+**💡 Tip:** Constructor syntax: `ClassName()` with no return type, not even void.
+
+---
+
+#### ❌ Wrong - Missing Method Body Braces:
+```java
+// WRONG
+public class Test {
+    public void display();  // Compilation error! Missing body
+}
+```
+**Issue:** Non-abstract methods must have a body with braces
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Empty body
+public class Test {
+    public void display() {
+        // Empty but has braces
+    }
+}
+
+// CORRECT - Method 2: With code
+public class Test {
+    public void display() {
+        System.out.println("Hello");
+    }
+}
+```
+
+**Why:** Concrete methods need implementation; semicolon-only syntax is for abstract methods.
+
+**💡 Tip:** Regular methods need `{ }` braces; abstract methods use `;` (covered later).
+
+---
+
+#### ❌ Wrong - Wrong Access Modifier Placement:
+```java
+// WRONG
+public class Calculator {
+    int public add(int a, int b) {  // Compilation error! Wrong order
+        return a + b;
+    }
+}
+```
+**Issue:** Return type comes after access modifier, not before
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {  // Correct order: access, return, name
+        return a + b;
+    }
+}
+```
+
+**Why:** Method syntax requires: access modifier → return type → method name → parameters.
+
+**💡 Tip:** Order: `public int methodName(params)` not `int public methodName(params)`.
+
+---
+
+### 2. Return Type Mistakes
+
+#### ❌ Wrong - Wrong Return Type Causing Data Loss:
+```java
+// WRONG
+public class Calculator {
+    public int divide(int a, int b) {
+        return a / b;  // Integer division loses decimals!
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.divide(10, 3));  // Prints 3, not 3.333...
+```
+**Issue:** int return type causes truncation of decimal values
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public double divide(int a, int b) {
+        return (double) a / b;  // Cast to double for precision
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.divide(10, 3));  // Prints 3.333...
+```
+
+**Why:** Use double return type when result needs decimal precision.
+
+**💡 Tip:** For division with decimals, return double and cast at least one operand.
+
+---
+
+#### ❌ Wrong - Returning Value from Void Method:
+```java
+// WRONG
+public class Display {
+    public void showMessage() {
+        return "Hello";  // Compilation error! void can't return value
+    }
+}
+```
+**Issue:** void methods cannot return any value
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Change to String return type
+public class Display {
+    public String getMessage() {
+        return "Hello";  // Now returns String
+    }
+}
+
+// CORRECT - Method 2: Keep void, just print
+public class Display {
+    public void showMessage() {
+        System.out.println("Hello");
+        // No return needed (or use: return; with no value)
+    }
+}
+```
+
+**Why:** void means no return value; must match return type with what you return.
+
+**💡 Tip:** Use void for actions (printing, modifying state), non-void for calculations.
+
+---
+
+#### ❌ Wrong - Unreachable Code After Return:
+```java
+// WRONG
+public class Calculator {
+    public int calculate(int a, int b) {
+        return a + b;
+        System.out.println("Done");  // Compilation error! Unreachable
+    }
+}
+```
+**Issue:** Code after return statement can never execute
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int calculate(int a, int b) {
+        System.out.println("Calculating...");  // Before return
+        return a + b;
+    }
+}
+```
+
+**Why:** return immediately exits method; any code after is unreachable.
+
+**💡 Tip:** Place all logic before the return statement.
+
+---
+
+#### ❌ Wrong - Not All Code Paths Return Value:
+```java
+// WRONG
+public class Grader {
+    public char getGrade(int marks) {
+        if (marks >= 90) {
+            return 'A';
+        } else if (marks >= 80) {
+            return 'B';
+        }
+        // Compilation error! Missing return for marks < 80
+    }
+}
+```
+**Issue:** Some execution paths don't have return statements
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Grader {
+    public char getGrade(int marks) {
+        if (marks >= 90) {
+            return 'A';
+        } else if (marks >= 80) {
+            return 'B';
+        } else if (marks >= 70) {
+            return 'C';
+        } else {
+            return 'F';  // Default case ensures all paths return
+        }
+    }
+}
+```
+
+**Why:** Every possible execution path must return a value for non-void methods.
+
+**💡 Tip:** Add a final else or return after all conditions to ensure all paths covered.
+
+---
+
+#### ❌ Wrong - Returning Wrong Type:
+```java
+// WRONG
+public class Converter {
+    public int convertToInt(String str) {
+        return str;  // Compilation error! String can't be returned as int
+    }
+}
+```
+**Issue:** Return type doesn't match declared type
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Converter {
+    public int convertToInt(String str) {
+        return Integer.parseInt(str);  // Convert String to int
+    }
+}
+```
+
+**Why:** Return value must be assignable to the declared return type.
+
+**💡 Tip:** Return type must match or be convertible to declared type.
+
+---
+
+### 3. Parameter Issues
+
+#### ❌ Wrong - Wrong Number of Arguments in Method Call:
+```java
+// WRONG
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add(10);  // Compilation error! Missing argument
+```
+**Issue:** Method expects 2 arguments, only 1 provided
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add(10, 20);  // Both arguments provided
+```
+
+**Why:** Must provide exact number of arguments matching method signature.
+
+**💡 Tip:** Check method signature for required parameters and their types.
+
+---
+
+#### ❌ Wrong - Wrong Parameter Types:
+```java
+// WRONG
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add("10", "20");  // Compilation error! Wrong types
+```
+**Issue:** Passing String arguments to int parameters
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add(10, 20);  // Correct: int arguments
+```
+
+**Why:** Argument types must match or be compatible with parameter types.
+
+**💡 Tip:** Ensure argument types match method parameter types exactly.
+
+---
+
+#### ❌ Wrong - Expecting Primitive Parameters to Change:
+```java
+// WRONG (logic error)
+public class Test {
+    public void increment(int number) {
+        number++;  // Only modifies local copy!
+    }
+
+    public static void main(String[] args) {
+        int value = 5;
+        Test t = new Test();
+        t.increment(value);
+        System.out.println(value);  // Still 5! Not 6
+    }
+}
+```
+**Issue:** Modifying primitive parameter doesn't affect original variable
+
+#### ✅ Right:
+```java
 // CORRECT - Return new value
-public int increment(int number) {
-    return number + 1;
-}
+public class Test {
+    public int increment(int number) {
+        return number + 1;  // Return modified value
+    }
 
-int value = 5;
-value = increment(value);
-System.out.println(value);  // Now 6
+    public static void main(String[] args) {
+        int value = 5;
+        Test t = new Test();
+        value = t.increment(value);  // Assign returned value
+        System.out.println(value);  // Now 6
+    }
+}
 ```
 
-### 7. Not Handling Division by Zero:
+**Why:** Java is pass-by-value; primitive parameters are copies, not references.
+
+**💡 Tip:** For primitives, return new value instead of expecting parameter to change.
+
+---
+
+#### ❌ Wrong - Expecting Object Reference Reassignment to Affect Original:
+```java
+// WRONG (logic error)
+public class Person {
+    String name;
+
+    Person(String name) {
+        this.name = name;
+    }
+}
+
+public class Test {
+    public void changeReference(Person p) {
+        p = new Person("New Person");  // Only changes local reference!
+    }
+
+    public static void main(String[] args) {
+        Person person = new Person("Alice");
+        Test t = new Test();
+        t.changeReference(person);
+        System.out.println(person.name);  // Still "Alice", not "New Person"
+    }
+}
+```
+**Issue:** Reassigning parameter reference doesn't affect original reference
+
+#### ✅ Right:
+```java
+// CORRECT - Modify object properties
+public class Person {
+    String name;
+
+    Person(String name) {
+        this.name = name;
+    }
+}
+
+public class Test {
+    public void changeName(Person p) {
+        p.name = "New Name";  // Modifies object through reference
+    }
+
+    public static void main(String[] args) {
+        Person person = new Person("Alice");
+        Test t = new Test();
+        t.changeName(person);
+        System.out.println(person.name);  // Now "New Name"
+    }
+}
+```
+
+**Why:** Reference is passed by value; reassigning parameter doesn't affect original reference.
+
+**💡 Tip:** Modify object properties (works), not reassign reference (doesn't work).
+
+---
+
+#### ❌ Wrong - Parameter Shadowing Without Understanding:
+```java
+// WRONG (confusing)
+public class Calculator {
+    int result = 100;  // Instance variable
+
+    public void calculate(int result) {  // Parameter shadows instance variable
+        result = result + 10;  // Which result? Parameter, not instance!
+        System.out.println(result);  // Prints parameter value
+    }
+
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        calc.calculate(5);  // Prints 15
+        System.out.println(calc.result);  // Still 100! Instance variable unchanged
+    }
+}
+```
+**Issue:** Parameter name shadows instance variable, causing confusion
+
+#### ✅ Right:
+```java
+// CORRECT - Use different names or 'this'
+public class Calculator {
+    int result = 100;
+
+    public void calculate(int value) {  // Different parameter name
+        this.result = this.result + value;  // Clear: instance variable
+        System.out.println(this.result);
+    }
+
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        calc.calculate(5);  // Prints 105
+        System.out.println(calc.result);  // 105 - instance variable modified
+    }
+}
+```
+
+**Why:** When parameter and field have same name, parameter takes precedence; use this to access field.
+
+**💡 Tip:** Use different parameter names or this.fieldName to avoid shadowing confusion.
+
+---
+
+### 4. Method Overloading Errors
+
+#### ❌ Wrong - Overloading by Return Type Only:
 ```java
 // WRONG
-public double divide(int a, int b) {
-    return a / b;  // Crashes if b is 0
-}
-
-// CORRECT
-public double divide(int a, int b) {
-    if (b == 0) {
-        System.out.println("Error: Division by zero");
-        return 0;
+public class Calculator {
+    public int calculate(int a, int b) {
+        return a + b;
     }
-    return (double) a / b;
+
+    // Compilation error! Cannot overload by return type alone
+    public double calculate(int a, int b) {
+        return a + b;
+    }
+}
+```
+**Issue:** Methods cannot be overloaded based solely on return type
+
+#### ✅ Right:
+```java
+// CORRECT - Different parameter types
+public class Calculator {
+    public int calculate(int a, int b) {
+        return a + b;
+    }
+
+    public double calculate(double a, double b) {  // Different parameter types
+        return a + b;
+    }
 }
 ```
 
-### 8. Confusing Method Overloading with Overriding:
+**Why:** Method signature includes name and parameters, not return type.
+
+**💡 Tip:** Overload by changing number, type, or order of parameters, not return type.
+
+---
+
+#### ❌ Wrong - Duplicate Method Signatures:
 ```java
-// Overloading - Same class, different parameters
+// WRONG
+public class Display {
+    public void show(int value) {
+        System.out.println("First: " + value);
+    }
+
+    // Compilation error! Duplicate method
+    public void show(int number) {  // Same signature!
+        System.out.println("Second: " + number);
+    }
+}
+```
+**Issue:** Parameter names don't matter; both methods have same signature (int)
+
+#### ✅ Right:
+```java
+// CORRECT - Different parameter types or count
+public class Display {
+    public void show(int value) {
+        System.out.println("Integer: " + value);
+    }
+
+    public void show(double number) {  // Different type
+        System.out.println("Double: " + number);
+    }
+
+    public void show(int a, int b) {  // Different count
+        System.out.println("Two integers: " + a + ", " + b);
+    }
+}
+```
+
+**Why:** Method signature is method name + parameter types (names don't matter).
+
+**💡 Tip:** Parameter names don't distinguish methods; only types, order, and count matter.
+
+---
+
+#### ❌ Wrong - Ambiguous Method Calls with Autoboxing:
+```java
+// WRONG (ambiguous)
+public class Printer {
+    public void print(int value) {
+        System.out.println("int: " + value);
+    }
+
+    public void print(Integer value) {  // Wrapper type
+        System.out.println("Integer: " + value);
+    }
+}
+
+Printer p = new Printer();
+p.print(10);  // Which method? Ambiguous with autoboxing!
+```
+**Issue:** Autoboxing creates ambiguity between primitive and wrapper overloads
+
+#### ✅ Right:
+```java
+// CORRECT - Use clearly different types
+public class Printer {
+    public void print(int value) {
+        System.out.println("int: " + value);
+    }
+
+    public void print(String value) {  // Clearly different type
+        System.out.println("String: " + value);
+    }
+}
+
+Printer p = new Printer();
+p.print(10);      // Calls int version
+p.print("Hello"); // Calls String version
+```
+
+**Why:** Avoid primitive/wrapper pairs to prevent autoboxing ambiguity.
+
+**💡 Tip:** Design overloads with clearly distinct parameter types.
+
+---
+
+#### ❌ Wrong - Confusing Method Overloading with Overriding:
+```java
+// WRONG (conceptual confusion)
+// Student thinks overloading and overriding are the same thing
+
+// Overloading: SAME CLASS, DIFFERENT PARAMETERS
 public class Calculator {
     public int add(int a, int b) { return a + b; }
     public double add(double a, double b) { return a + b; }
 }
 
-// Overriding - Different class (inheritance), same signature
-// (Will be covered in later lessons)
+// Overriding: DIFFERENT CLASSES (inheritance), SAME SIGNATURE
+// Will be covered in Day 12-13
+```
+**Issue:** Mixing up overloading (compile-time) with overriding (runtime)
+
+#### ✅ Right:
+```java
+// CORRECT Understanding:
+
+// Overloading: Same class, different signatures
+public class MathOps {
+    public int max(int a, int b) {
+        return a > b ? a : b;
+    }
+
+    public double max(double a, double b) {  // Overloading
+        return a > b ? a : b;
+    }
+}
+
+// Note: Overriding is covered in inheritance lessons
 ```
 
-### 9. Unreachable Code After Return:
+**Why:** Overloading = same class, different parameters; Overriding = subclass, same signature.
+
+**💡 Tip:** Overloading is within one class with different parameters.
+
+---
+
+#### ❌ Wrong - Order of Parameters Not Creating Valid Overload:
+```java
+// WRONG (might not work as expected)
+public class Display {
+    public void show(int a, int b) {
+        System.out.println("Version 1: " + a + ", " + b);
+    }
+
+    public void show(int b, int a) {  // Same signature! Not overloaded!
+        System.out.println("Version 2: " + b + ", " + a);
+    }
+}
+```
+**Issue:** Same types in same order = same signature, even with different names
+
+#### ✅ Right:
+```java
+// CORRECT - Different types in different order
+public class Display {
+    public void show(int num, String text) {
+        System.out.println("int, String: " + num + ", " + text);
+    }
+
+    public void show(String text, int num) {  // Different order of TYPES
+        System.out.println("String, int: " + text + ", " + num);
+    }
+}
+
+Display d = new Display();
+d.show(10, "Hello");    // Calls first method
+d.show("Hello", 10);    // Calls second method
+```
+
+**Why:** Signature is based on parameter types and order, not parameter names.
+
+**💡 Tip:** Different order of TYPES (not names) creates valid overload.
+
+---
+
+#### ❌ Wrong - Overloading with Too Similar Types:
+```java
+// WRONG (confusing for users)
+public class NumberProcessor {
+    public void process(int value) {
+        System.out.println("int: " + value);
+    }
+
+    public void process(long value) {
+        System.out.println("long: " + value);
+    }
+}
+
+NumberProcessor np = new NumberProcessor();
+np.process(10);   // Calls int version
+np.process(10L);  // Calls long version - easy to confuse!
+```
+**Issue:** Very similar types make method calls confusing
+
+#### ✅ Right:
+```java
+// CORRECT - Use clearly different types or names
+public class NumberProcessor {
+    public void processInteger(int value) {  // Clear naming
+        System.out.println("int: " + value);
+    }
+
+    public void processLong(long value) {  // Clear naming
+        System.out.println("long: " + value);
+    }
+}
+
+NumberProcessor np = new NumberProcessor();
+np.processInteger(10);
+np.processLong(10L);
+```
+
+**Why:** Similar types in overloads can confuse users; clear names help.
+
+**💡 Tip:** For subtle type differences, use descriptive method names instead.
+
+---
+
+### 5. Varargs Mistakes
+
+#### ❌ Wrong - Varargs Not as Last Parameter:
 ```java
 // WRONG
-public int calculate(int a, int b) {
-    return a + b;
-    System.out.println("Done");  // ERROR! Unreachable
-}
-
-// CORRECT
-public int calculate(int a, int b) {
-    System.out.println("Calculating...");
-    return a + b;
+public class Formatter {
+    public String format(String... words, String separator) {
+        // Compilation error! varargs must be last
+        return String.join(separator, words);
+    }
 }
 ```
+**Issue:** Varargs parameter must be the last parameter
 
-### 10. Not Using Descriptive Method Names:
+#### ✅ Right:
 ```java
-// WRONG - Unclear names
-public int calc(int a, int b) { return a + b; }
-public void doIt() { /* ... */ }
+// CORRECT
+public class Formatter {
+    public String format(String separator, String... words) {
+        return String.join(separator, words);
+    }
+}
 
-// CORRECT - Descriptive names
-public int calculateSum(int a, int b) { return a + b; }
-public void displayUserInformation() { /* ... */ }
+Formatter f = new Formatter();
+String result = f.format(", ", "Apple", "Banana", "Cherry");
 ```
+
+**Why:** Varargs creates ambiguity if not last; compiler can't determine where varargs ends.
+
+**💡 Tip:** Varargs syntax: `type... name` must always be the last parameter.
+
+---
+
+#### ❌ Wrong - Multiple Varargs Parameters:
+```java
+// WRONG
+public class Combiner {
+    public void combine(int... numbers, String... words) {
+        // Compilation error! Only one varargs allowed
+    }
+}
+```
+**Issue:** Only one varargs parameter allowed per method
+
+#### ✅ Right:
+```java
+// CORRECT - Use array for additional variable-length parameters
+public class Combiner {
+    public void combine(int[] numbers, String... words) {
+        // OR pass array explicitly for both
+    }
+
+    // OR separate methods
+    public void combineNumbers(int... numbers) {
+        // Process numbers
+    }
+
+    public void combineWords(String... words) {
+        // Process words
+    }
+}
+```
+
+**Why:** Multiple varargs would create ambiguity in determining which values belong to which parameter.
+
+**💡 Tip:** Only one varargs per method; use arrays for additional variable-length parameters.
+
+---
+
+#### ❌ Wrong - Not Checking Varargs Length Before Access:
+```java
+// WRONG
+public class ArrayOps {
+    public int getFirst(int... numbers) {
+        return numbers[0];  // ArrayIndexOutOfBoundsException if empty!
+    }
+}
+
+ArrayOps ops = new ArrayOps();
+int first = ops.getFirst();  // Crashes! No elements passed
+```
+**Issue:** Varargs can be empty; accessing without checking causes error
+
+#### ✅ Right:
+```java
+// CORRECT
+public class ArrayOps {
+    public int getFirst(int... numbers) {
+        if (numbers.length == 0) {
+            throw new IllegalArgumentException("At least one number required");
+        }
+        return numbers[0];
+    }
+}
+
+ArrayOps ops = new ArrayOps();
+try {
+    int first = ops.getFirst();  // Throws descriptive exception
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+}
+```
+
+**Why:** Varargs can be empty array; always validate length before accessing elements.
+
+**💡 Tip:** Check `varargs.length` before accessing elements; provide clear error messages.
+
+---
+
+#### ❌ Wrong - Ambiguous Varargs Method Calls:
+```java
+// WRONG (ambiguous)
+public class Printer {
+    public void print(String... messages) {
+        for (String msg : messages) {
+            System.out.println(msg);
+        }
+    }
+
+    public void print(String message, String... more) {
+        System.out.println("First: " + message);
+        for (String msg : more) {
+            System.out.println(msg);
+        }
+    }
+}
+
+Printer p = new Printer();
+p.print("Hello");  // Ambiguous! Which method?
+```
+**Issue:** Compiler can't determine which overloaded varargs method to call
+
+#### ✅ Right:
+```java
+// CORRECT - Avoid ambiguous varargs overloads
+public class Printer {
+    public void printAll(String... messages) {
+        for (String msg : messages) {
+            System.out.println(msg);
+        }
+    }
+
+    public void printWithHeader(String header, String... messages) {
+        System.out.println("Header: " + header);
+        for (String msg : messages) {
+            System.out.println(msg);
+        }
+    }
+}
+
+Printer p = new Printer();
+p.printAll("Hello", "World");
+p.printWithHeader("Messages:", "Hello", "World");
+```
+
+**Why:** Ambiguous varargs overloads confuse compiler; use distinct method names or parameters.
+
+**💡 Tip:** Avoid overloading with similar varargs signatures; use different method names.
+
+---
+
+#### ❌ Wrong - Passing null to Varargs:
+```java
+// WRONG (ambiguous)
+public class Test {
+    public void process(String... items) {
+        System.out.println("String varargs");
+    }
+
+    public void process(Integer... items) {
+        System.out.println("Integer varargs");
+    }
+}
+
+Test t = new Test();
+t.process(null);  // Compilation error! Ambiguous
+```
+**Issue:** null matches both String[] and Integer[], creating ambiguity
+
+#### ✅ Right:
+```java
+// CORRECT - Explicit type casting
+public class Test {
+    public void process(String... items) {
+        System.out.println("String varargs");
+    }
+
+    public void process(Integer... items) {
+        System.out.println("Integer varargs");
+    }
+}
+
+Test t = new Test();
+t.process((String[])null);   // Explicitly cast to resolve ambiguity
+t.process((Integer[])null);  // OR pass empty array
+t.process(new String[0]);    // Empty array
+```
+
+**Why:** null literal matches any reference type array; explicit cast removes ambiguity.
+
+**💡 Tip:** Cast null to specific array type or pass empty array instead.
+
+---
+
+### 6. Recursion Problems
+
+#### ❌ Wrong - Missing Base Case (Infinite Recursion):
+```java
+// WRONG
+public class Factorial {
+    public int factorial(int n) {
+        return n * factorial(n - 1);  // No base case! Infinite recursion!
+    }
+}
+
+Factorial f = new Factorial();
+int result = f.factorial(5);  // StackOverflowError!
+```
+**Issue:** No base case to stop recursion; runs forever until stack overflows
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Factorial {
+    public int factorial(int n) {
+        // Base case
+        if (n == 0 || n == 1) {
+            return 1;
+        }
+        // Recursive case
+        return n * factorial(n - 1);
+    }
+}
+
+Factorial f = new Factorial();
+int result = f.factorial(5);  // Returns 120
+```
+
+**Why:** Every recursive method needs a base case to stop recursion.
+
+**💡 Tip:** Always define base case first; it's the exit condition for recursion.
+
+---
+
+#### ❌ Wrong - Base Case Never Reached:
+```java
+// WRONG
+public class Counter {
+    public int countdown(int n) {
+        if (n == 0) {  // Base case
+            return 0;
+        }
+        return countdown(n + 1);  // Incrementing! Never reaches 0
+    }
+}
+
+Counter c = new Counter();
+int result = c.countdown(5);  // StackOverflowError!
+```
+**Issue:** Recursive call moves away from base case instead of toward it
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Counter {
+    public int countdown(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        System.out.println(n);
+        return countdown(n - 1);  // Decrementing toward base case
+    }
+}
+
+Counter c = new Counter();
+int result = c.countdown(5);  // Prints 5, 4, 3, 2, 1
+```
+
+**Why:** Recursive calls must progress toward the base case.
+
+**💡 Tip:** Ensure recursive parameter changes move toward base case condition.
+
+---
+
+#### ❌ Wrong - Not Handling Negative Input in Recursion:
+```java
+// WRONG
+public class Factorial {
+    public int factorial(int n) {
+        if (n == 0 || n == 1) {
+            return 1;
+        }
+        return n * factorial(n - 1);
+    }
+}
+
+Factorial f = new Factorial();
+int result = f.factorial(-5);  // StackOverflowError! Never reaches base
+```
+**Issue:** Negative input never reaches base case (0 or 1)
+
+#### ✅ Right:
+```java
+// CORRECT - Validate input
+public class Factorial {
+    public int factorial(int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("Factorial not defined for negative numbers");
+        }
+        if (n == 0 || n == 1) {
+            return 1;
+        }
+        return n * factorial(n - 1);
+    }
+}
+
+Factorial f = new Factorial();
+int result = f.factorial(5);  // Works: 120
+// f.factorial(-5);  // Throws exception with clear message
+```
+
+**Why:** Validate inputs to ensure they can reach base case.
+
+**💡 Tip:** Add input validation before recursive logic to catch invalid values.
+
+---
+
+#### ❌ Wrong - Stack Overflow from Deep Recursion:
+```java
+// WRONG (inefficient)
+public class Fibonacci {
+    public int fibonacci(int n) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+}
+
+Fibonacci fib = new Fibonacci();
+int result = fib.fibonacci(50);  // Extremely slow! May cause stack overflow
+```
+**Issue:** Deep recursion without optimization causes exponential time and stack overflow
+
+#### ✅ Right:
+```java
+// CORRECT - Use iteration or memoization
+public class Fibonacci {
+    // Iterative approach (more efficient)
+    public int fibonacci(int n) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+
+        int prev = 0, curr = 1;
+        for (int i = 2; i <= n; i++) {
+            int next = prev + curr;
+            prev = curr;
+            curr = next;
+        }
+        return curr;
+    }
+}
+
+Fibonacci fib = new Fibonacci();
+int result = fib.fibonacci(50);  // Fast!
+```
+
+**Why:** Some recursive problems need iterative or memoized solutions for efficiency.
+
+**💡 Tip:** Consider iteration or memoization for problems with deep recursion.
+
+---
+
+#### ❌ Wrong - Not Returning Recursive Call Result:
+```java
+// WRONG
+public class StringReverse {
+    public String reverse(String str) {
+        if (str.isEmpty()) {
+            return str;
+        }
+        reverse(str.substring(1));  // Not returning result!
+        return str.charAt(0) + "";  // Wrong logic
+    }
+}
+```
+**Issue:** Not capturing and returning the result of recursive call
+
+#### ✅ Right:
+```java
+// CORRECT
+public class StringReverse {
+    public String reverse(String str) {
+        if (str.isEmpty()) {
+            return str;
+        }
+        return reverse(str.substring(1)) + str.charAt(0);  // Return recursive result
+    }
+}
+
+StringReverse sr = new StringReverse();
+String result = sr.reverse("Hello");  // Returns "olleH"
+```
+
+**Why:** Must return the result of recursive call to build up final result.
+
+**💡 Tip:** Always return the recursive call result (unless void method).
+
+---
+
+### 7. Method Invocation Errors
+
+#### ❌ Wrong - Calling Non-Static Method from Static Context:
+```java
+// WRONG
+public class Test {
+    public void instanceMethod() {
+        System.out.println("Instance method");
+    }
+
+    public static void main(String[] args) {
+        instanceMethod();  // Compilation error! Can't call from static
+    }
+}
+```
+**Issue:** Static methods cannot directly call instance methods
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Test {
+    public void instanceMethod() {
+        System.out.println("Instance method");
+    }
+
+    public static void main(String[] args) {
+        Test obj = new Test();  // Create instance
+        obj.instanceMethod();   // Call through instance
+    }
+}
+```
+
+**Why:** Instance methods belong to objects; static context has no implicit object.
+
+**💡 Tip:** Create object instance to call non-static methods from static context.
+
+---
+
+#### ❌ Wrong - Calling Method Without Object:
+```java
+// WRONG
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int result = Calculator.add(10, 20);  // Compilation error! add is not static
+    }
+}
+```
+**Issue:** Non-static methods require an object instance
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();  // Create object
+        int result = calc.add(10, 20);       // Call through object
+        System.out.println(result);
+    }
+}
+```
+
+**Why:** Instance methods need an object; they operate on object state.
+
+**💡 Tip:** Instance methods: create object first. Static methods: call on class.
+
+---
+
+#### ❌ Wrong - Ignoring Return Value When Needed:
+```java
+// WRONG (logic error)
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+calc.add(10, 20);  // Return value ignored! Result lost
+System.out.println("Result: ???");  // Can't access result
+```
+**Issue:** Method returns value but it's not captured
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add(10, 20);  // Capture return value
+System.out.println("Result: " + result);  // Use it
+```
+
+**Why:** Return values contain the method's result; must capture if needed.
+
+**💡 Tip:** Assign return values to variables if you need to use the result.
+
+---
+
+#### ❌ Wrong - Wrong Method Call Syntax:
+```java
+// WRONG
+public class Test {
+    public void display() {
+        System.out.println("Hello");
+    }
+}
+
+Test obj = new Test();
+obj.display;  // Compilation error! Missing parentheses
+```
+**Issue:** Missing parentheses in method call
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Test {
+    public void display() {
+        System.out.println("Hello");
+    }
+}
+
+Test obj = new Test();
+obj.display();  // Parentheses required even for no parameters
+```
+
+**Why:** Parentheses are required for all method calls, even with no arguments.
+
+**💡 Tip:** Always use `()` for method calls, even if no parameters.
+
+---
+
+### 8. Pass-by-Value Confusion
+
+#### ❌ Wrong - Thinking Java is Pass-by-Reference:
+```java
+// WRONG (conceptual)
+public class Swapper {
+    public void swap(int a, int b) {
+        int temp = a;
+        a = b;
+        b = temp;
+        System.out.println("Inside: a=" + a + ", b=" + b);
+    }
+}
+
+int x = 10, y = 20;
+Swapper s = new Swapper();
+s.swap(x, y);  // Inside: a=20, b=10
+System.out.println("Outside: x=" + x + ", y=" + y);  // Outside: x=10, y=20 (unchanged!)
+```
+**Issue:** Expecting primitive parameters to swap; Java is pass-by-value for primitives
+
+#### ✅ Right:
+```java
+// CORRECT - Use return value or object wrapper
+public class Swapper {
+    // Method 1: Return array with swapped values
+    public int[] swap(int a, int b) {
+        return new int[]{b, a};
+    }
+
+    // Method 2: Use object wrapper
+    public void swap(int[] arr) {
+        if (arr.length >= 2) {
+            int temp = arr[0];
+            arr[0] = arr[1];
+            arr[1] = temp;
+        }
+    }
+}
+
+Swapper s = new Swapper();
+int[] result = s.swap(10, 20);
+System.out.println("x=" + result[0] + ", y=" + result[1]);  // x=20, y=10
+```
+
+**Why:** Java is strictly pass-by-value; primitive parameters are copies.
+
+**💡 Tip:** For "swap" effect, return new values or use array/object wrapper.
+
+---
+
+#### ❌ Wrong - Misunderstanding Object Parameter Behavior:
+```java
+// WRONG (conceptual)
+public class Person {
+    String name;
+
+    Person(String name) {
+        this.name = name;
+    }
+}
+
+public class Test {
+    public void rename(Person p) {
+        p.name = "Modified";  // This DOES modify original object
+    }
+
+    public void replace(Person p) {
+        p = new Person("New Person");  // This does NOT affect original
+    }
+}
+
+Person person = new Person("Alice");
+Test t = new Test();
+t.rename(person);
+System.out.println(person.name);  // "Modified" - changed!
+
+t.replace(person);
+System.out.println(person.name);  // Still "Modified" - NOT "New Person"
+```
+**Issue:** Confusing modification (works) with reassignment (doesn't work)
+
+#### ✅ Right:
+```java
+// CORRECT Understanding:
+public class Person {
+    String name;
+    Person(String name) { this.name = name; }
+}
+
+public class Test {
+    // Modifying object properties WORKS (reference copied, not object)
+    public void modify(Person p) {
+        p.name = "Modified";  // Modifies original object
+    }
+
+    // Reassigning parameter reference does NOT affect original
+    public void reassign(Person p) {
+        p = new Person("New");  // Only changes local reference
+    }
+
+    // To change reference, return new object
+    public Person create(String name) {
+        return new Person(name);
+    }
+}
+```
+
+**Why:** Reference value is copied; can modify object through it, but can't change original reference.
+
+**💡 Tip:** Object properties can be modified; object reference reassignment doesn't work.
+
+---
+
+### 9. Method Naming and Convention Issues
+
+#### ❌ Wrong - Not Following camelCase Convention:
+```java
+// WRONG
+public class Student {
+    public void DisplayInfo() { }       // PascalCase (wrong for methods)
+    public void display_info() { }      // snake_case (wrong)
+    public void DISPLAYINFO() { }       // ALL_CAPS (wrong)
+}
+```
+**Issue:** Not following Java method naming conventions
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    public void displayInfo() { }       // camelCase (correct)
+    public void calculateGrade() { }    // camelCase
+    public void setStudentName() { }    // camelCase
+}
+```
+
+**Why:** Java convention is camelCase for methods: start lowercase, capitalize subsequent words.
+
+**💡 Tip:** Methods: camelCase, Classes: PascalCase, Constants: UPPER_CASE.
+
+---
+
+#### ❌ Wrong - Non-Descriptive Method Names:
+```java
+// WRONG
+public class Calculator {
+    public int calc(int a, int b) { return a + b; }
+    public void doIt() { }
+    public int x(int n) { return n * 2; }
+}
+```
+**Issue:** Method names don't describe what they do
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int calculateSum(int a, int b) { return a + b; }
+    public void displayResults() { }
+    public int doubleValue(int number) { return number * 2; }
+}
+```
+
+**Why:** Descriptive names make code self-documenting and easier to understand.
+
+**💡 Tip:** Method names should clearly describe the action: verb + noun pattern.
+
+---
+
+#### ❌ Wrong - Method Name Starting with Capital Letter:
+```java
+// WRONG
+public class Test {
+    public void DisplayMessage() {  // Looks like class name!
+        System.out.println("Hello");
+    }
+}
+```
+**Issue:** Method name follows class naming convention (PascalCase)
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Test {
+    public void displayMessage() {  // Starts with lowercase
+        System.out.println("Hello");
+    }
+}
+```
+
+**Why:** Methods start with lowercase to distinguish from classes.
+
+**💡 Tip:** Classes: PascalCase (Capital first), Methods: camelCase (lowercase first).
+
+---
+
+### 10. Visibility and Access Issues
+
+#### ❌ Wrong - Trying to Access Private Methods from Outside:
+```java
+// WRONG
+public class Calculator {
+    private int add(int a, int b) {  // Private method
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        int result = calc.add(10, 20);  // Compilation error! add is private
+    }
+}
+```
+**Issue:** Private methods cannot be accessed from outside the class
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {  // Public method
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        int result = calc.add(10, 20);  // Works!
+    }
+}
+```
+
+**Why:** Private members are only accessible within the same class.
+
+**💡 Tip:** Use public for methods you want accessible from outside the class.
+
+---
+
+#### ❌ Wrong - Making Everything Static:
+```java
+// WRONG
+public class Student {
+    static String name;     // All students share one name!
+    static int rollNumber;  // All students share one roll number!
+
+    static void setName(String n) {
+        name = n;
+    }
+
+    static void display() {
+        System.out.println(name + " - " + rollNumber);
+    }
+}
+
+Student.setName("Alice");
+Student s1 = new Student();
+Student s2 = new Student();
+// Both s1 and s2 have the same name "Alice"!
+```
+**Issue:** Making instance data static shares it across all instances
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;            // Instance variable (each student has own)
+    int rollNumber;         // Instance variable
+
+    void setName(String n) {  // Instance method
+        this.name = n;
+    }
+
+    void display() {
+        System.out.println(name + " - " + rollNumber);
+    }
+}
+
+Student s1 = new Student();
+s1.setName("Alice");
+Student s2 = new Student();
+s2.setName("Bob");
+// s1 and s2 have different names
+```
+
+**Why:** Instance members belong to each object; static members are shared across all instances.
+
+**💡 Tip:** Use instance variables/methods for object-specific data; static for shared data.
+
+---
+
+#### ❌ Wrong - Calling Instance Method on Class:
+```java
+// WRONG
+public class Calculator {
+    public int add(int a, int b) {  // Instance method
+        return a + b;
+    }
+}
+
+int result = Calculator.add(10, 20);  // Compilation error!
+```
+**Issue:** Trying to call instance method without creating object
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();  // Create object
+int result = calc.add(10, 20);       // Call on object
+```
+
+**Why:** Instance methods need an object; they may access instance variables.
+
+**💡 Tip:** ClassName.method() for static; object.method() for instance.
+
+---
+
+This comprehensive list now contains **40+ Method and Method Overloading mistakes** covering all fundamental concepts!
+
+---
 
 ---
 

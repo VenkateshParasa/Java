@@ -1026,63 +1026,1210 @@ public class VowelConsonant {
 
 ## ⚠️ Common Mistakes
 
-### 1. Missing Braces:
-```java
-// Dangerous without braces
-if (condition)
-    statement1;
-    statement2;  // Always executes! Not part of if
+### 1. Missing Braces Issues
 
-// Safe with braces
-if (condition) {
-    statement1;
-    statement2;
+#### ❌ Wrong - Forgetting Braces with Multiple Statements:
+```java
+// WRONG
+int score = 95;
+int totalPassed = 0;
+
+if (score > 90)
+    System.out.println("Great!");
+    totalPassed++;  // Always executes!
+```
+**Issue:** `totalPassed++` always executes regardless of condition
+
+#### ✅ Right:
+```java
+// CORRECT
+int score = 95;
+int totalPassed = 0;
+
+if (score > 90) {
+    System.out.println("Great!");
+    totalPassed++;  // Executes only when score > 90
 }
 ```
 
-### 2. Assignment vs Comparison:
+**Why:** Without braces, only the first statement belongs to the if block.
+
+**💡 Tip:** Always use braces `{ }` even for single statements to prevent bugs when adding code later.
+
+---
+
+#### ❌ Wrong - Misleading Indentation:
 ```java
-int x = 5;
-if (x = 10) { }  // ERROR! Should be x == 10
-if (x == 10) { } // CORRECT
+// WRONG
+if (isValid)
+    processData();
+    saveData();  // Always runs despite indentation!
+```
+**Issue:** `saveData()` always runs despite indentation suggesting otherwise
+
+#### ✅ Right:
+```java
+// CORRECT
+if (isValid) {
+    processData();
+    saveData();  // Both execute only when isValid is true
+}
 ```
 
-### 3. Missing break in switch:
+**Why:** Java ignores indentation; only braces determine block scope.
+
+**💡 Tip:** Use braces to make the code structure match the visual indentation.
+
+---
+
+#### ❌ Wrong - Adding Code Later Breaks Logic:
 ```java
+// WRONG (initially worked, then broke)
+if (age >= 18)
+    canVote = true;
+    hasVotingRights = true;  // Always true! Bug introduced later
+```
+**Issue:** Adding second statement without braces breaks the logic
+
+#### ✅ Right:
+```java
+// CORRECT
+if (age >= 18) {
+    canVote = true;
+    hasVotingRights = true;  // Both conditional
+}
+```
+
+**Why:** Single-line if becomes multi-line, requires braces.
+
+**💡 Tip:** Use braces from the start to prevent future bugs when code grows.
+
+---
+
+#### ❌ Wrong - Single Line if Becoming Complex:
+```java
+// WRONG
+if (score >= 60) passed = true; System.out.println("Result processed");
+```
+**Issue:** Print statement always executes (not part of if)
+
+#### ✅ Right:
+```java
+// CORRECT
+if (score >= 60) {
+    passed = true;
+    System.out.println("Result processed");
+}
+```
+
+**Why:** Multiple statements on one line are confusing and error-prone.
+
+**💡 Tip:** Always use braces and proper formatting for clarity.
+
+---
+
+### 2. Semicolon Errors
+
+#### ❌ Wrong - Accidental Semicolon After if:
+```java
+// WRONG
+int x = 15;
+
+if (x > 10);  // Semicolon here!
+{
+    System.out.println("Greater than 10");  // Always prints!
+}
+```
+**Issue:** Semicolon creates empty if statement; block always executes
+
+#### ✅ Right:
+```java
+// CORRECT
+int x = 15;
+
+if (x > 10) {  // No semicolon
+    System.out.println("Greater than 10");  // Prints only if x > 10
+}
+```
+
+**Why:** Semicolon terminates the if statement with an empty body; following block is independent.
+
+**💡 Tip:** Never put semicolon after if, else, while, or for conditions (except do-while).
+
+---
+
+#### ❌ Wrong - Semicolon After while:
+```java
+// WRONG
+int i = 0;
+
+while (i < 5);  // Infinite loop!
+{
+    System.out.println(i);  // Never executes
+    i++;
+}
+```
+**Issue:** Infinite empty loop; block outside loop never runs
+
+#### ✅ Right:
+```java
+// CORRECT
+int i = 0;
+
+while (i < 5) {  // No semicolon
+    System.out.println(i);
+    i++;
+}
+```
+
+**Why:** Semicolon makes while loop empty; i never increments.
+
+**💡 Tip:** Watch for accidental semicolons in all control structures.
+
+---
+
+### 3. if-else-if Ordering Issues
+
+#### ❌ Wrong - General Before Specific:
+```java
+// WRONG
+int score = 95;
+String grade;
+
+if (score >= 60) {
+    grade = "Pass";  // This executes for score 95!
+} else if (score >= 90) {
+    grade = "A+";  // Never reached!
+}
+System.out.println(grade);  // Prints "Pass" not "A+"
+```
+**Issue:** Score 95 gets "Pass" not "A+" (first matching condition wins)
+
+#### ✅ Right:
+```java
+// CORRECT
+int score = 95;
+String grade;
+
+if (score >= 90) {
+    grade = "A+";  // Checked first
+} else if (score >= 60) {
+    grade = "Pass";
+}
+System.out.println(grade);  // Prints "A+"
+```
+
+**Why:** if-else-if evaluates top to bottom and stops at first true condition.
+
+**💡 Tip:** Always order conditions from most specific to most general (highest to lowest ranges).
+
+---
+
+#### ❌ Wrong - Overlapping Ranges:
+```java
+// WRONG
+int age = 25;
+
+if (age >= 18) {
+    System.out.println("Adult");  // This prints
+} else if (age >= 21) {
+    System.out.println("Can drink");  // Never reached!
+}
+```
+**Issue:** age >= 21 never evaluated (subset of age >= 18)
+
+#### ✅ Right:
+```java
+// CORRECT
+int age = 25;
+
+if (age >= 21) {
+    System.out.println("Can drink");  // Checked first
+} else if (age >= 18) {
+    System.out.println("Adult");
+}
+```
+
+**Why:** More restrictive condition must come first.
+
+**💡 Tip:** Order conditions from most restrictive to least restrictive.
+
+---
+
+#### ❌ Wrong - Unreachable else-if:
+```java
+// WRONG
+int x = 15;
+
+if (x > 5) {
+    System.out.println("Greater than 5");  // This executes
+} else if (x > 10) {
+    System.out.println("Greater than 10");  // Never reached!
+}
+```
+**Issue:** Second condition never reached (x > 10 is subset of x > 5)
+
+#### ✅ Right:
+```java
+// CORRECT
+int x = 15;
+
+if (x > 10) {
+    System.out.println("Greater than 10");  // Checked first
+} else if (x > 5) {
+    System.out.println("Greater than 5");
+}
+```
+
+**Why:** First condition catches all cases where x > 10.
+
+**💡 Tip:** Check condition logic - ensure else-if conditions can actually be reached.
+
+---
+
+#### ❌ Wrong - Wrong Priority Order:
+```java
+// WRONG
+int marks = 85;
+String grade;
+
+if (marks >= 50) {
+    grade = "Pass";
+} else if (marks >= 75) {
+    grade = "Distinction";  // Never reached
+}
+```
+**Issue:** Distinction grade never assigned even when deserved
+
+#### ✅ Right:
+```java
+// CORRECT
+int marks = 85;
+String grade;
+
+if (marks >= 75) {
+    grade = "Distinction";  // Checked first
+} else if (marks >= 50) {
+    grade = "Pass";
+}
+```
+
+**Why:** Higher requirements must be checked before lower ones.
+
+**💡 Tip:** Think of conditions as filters - finest filter first.
+
+---
+
+### 4. switch-case Issues
+
+#### ❌ Wrong - Missing break Causes Fall-Through:
+```java
+// WRONG
+int day = 1;
+
+switch (day) {
+    case 1:
+        System.out.println("Monday");  // Prints
+    case 2:
+        System.out.println("Tuesday");  // Also prints!
+    case 3:
+        System.out.println("Wednesday");  // Also prints!
+}
+// Output: Monday Tuesday Wednesday
+```
+**Issue:** Execution falls through to all following cases
+
+#### ✅ Right:
+```java
+// CORRECT
+int day = 1;
+
 switch (day) {
     case 1:
         System.out.println("Monday");
-        // Missing break - falls through!
+        break;  // Exit switch
     case 2:
         System.out.println("Tuesday");
+        break;
+    case 3:
+        System.out.println("Wednesday");
+        break;
+}
+// Output: Monday
+```
+
+**Why:** Without break, execution continues to next case (fall-through behavior).
+
+**💡 Tip:** Always add break unless intentional grouping; use default case for safety.
+
+---
+
+#### ❌ Wrong - Unintentional Fall-Through Overwrites Value:
+```java
+// WRONG
+char grade = 'A';
+int bonus = 0;
+
+switch (grade) {
+    case 'A':
+        bonus = 100;  // Set to 100
+    case 'B':
+        bonus = 50;  // Overwrites to 50!
+        break;
+}
+System.out.println(bonus);  // Prints 50, not 100!
+```
+**Issue:** Grade 'A' gets bonus = 50 (falls through and overwrites 100)
+
+#### ✅ Right:
+```java
+// CORRECT
+char grade = 'A';
+int bonus = 0;
+
+switch (grade) {
+    case 'A':
+        bonus = 100;
+        break;  // Exit here
+    case 'B':
+        bonus = 50;
+        break;
+}
+System.out.println(bonus);  // Prints 100
+```
+
+**Why:** Missing break causes next case to execute, overwriting previous assignment.
+
+**💡 Tip:** Add break after every case unless intentionally grouping cases for same action.
+
+---
+
+#### ❌ Wrong - Missing default Case:
+```java
+// WRONG
+int month = 13;  // Invalid
+int days = 0;
+
+switch (month) {
+    case 1: case 3: case 5:
+        days = 31;
+        break;
+    case 2:
+        days = 28;
+        break;
+}
+System.out.println(days);  // Prints 0 - no error message!
+```
+**Issue:** Invalid input silently fails (days remains 0)
+
+#### ✅ Right:
+```java
+// CORRECT
+int month = 13;
+int days = 0;
+
+switch (month) {
+    case 1: case 3: case 5:
+        days = 31;
+        break;
+    case 2:
+        days = 28;
+        break;
+    default:
+        System.out.println("Invalid month!");
+        days = -1;  // Or throw exception
+}
+```
+
+**Why:** default case handles unexpected values.
+
+**💡 Tip:** Always include default case to catch invalid input.
+
+---
+
+#### ❌ Wrong - Using double in switch:
+```java
+// WRONG
+double price = 19.99;
+
+switch (price) {  // Compilation error!
+    case 19.99:
+        System.out.println("Standard price");
+        break;
+}
+```
+**Issue:** switch doesn't support double/float types
+
+#### ✅ Right:
+```java
+// CORRECT
+double price = 19.99;
+
+if (Math.abs(price - 19.99) < 0.01) {
+    System.out.println("Standard price");
+} else if (Math.abs(price - 29.99) < 0.01) {
+    System.out.println("Premium price");
+}
+```
+
+**Why:** switch only works with int, byte, short, char, String, and enums.
+
+**💡 Tip:** Use if-else for boolean, double, float, and long types.
+
+---
+
+#### ❌ Wrong - Variable Declaration in case Without Braces:
+```java
+// WRONG
+int choice = 1;
+
+switch (choice) {
+    case 1:
+        int result = 10;  // Compilation error in some cases
+        System.out.println(result);
+        break;
+    case 2:
+        int result = 20;  // Error: duplicate variable
+        System.out.println(result);
+        break;
+}
+```
+**Issue:** Variable scope extends to entire switch (duplicate declaration)
+
+#### ✅ Right:
+```java
+// CORRECT
+int choice = 1;
+
+switch (choice) {
+    case 1: {
+        int result = 10;  // Scoped to this case
+        System.out.println(result);
+        break;
+    }
+    case 2: {
+        int result = 20;  // Different scope
+        System.out.println(result);
+        break;
+    }
+}
+```
+
+**Why:** Variables declared in case are scoped to entire switch without braces.
+
+**💡 Tip:** Use braces `{ }` in case blocks when declaring variables.
+
+---
+
+#### ❌ Wrong - Duplicate case Values:
+```java
+// WRONG
+int num = 1;
+
+switch (num) {
+    case 1:
+        System.out.println("One");
+        break;
+    case 1:  // Compilation error!
+        System.out.println("Uno");
+        break;
+}
+```
+**Issue:** Duplicate case labels cause compilation error
+
+#### ✅ Right:
+```java
+// CORRECT
+int num = 1;
+
+switch (num) {
+    case 1:
+        System.out.println("One");
+        break;
+    case 2:
+        System.out.println("Two");
         break;
 }
 ```
 
-### 4. Wrong Order in if-else-if:
-```java
-// Wrong - general condition first
-if (score >= 60) {
-    System.out.println("Pass");  // Always executes for 90+
-} else if (score >= 90) {
-    System.out.println("Excellent");  // Never reached!
-}
+**Why:** Each case label must be unique.
 
-// Correct - specific first
+**💡 Tip:** Check for typos and duplicate values when switch doesn't compile.
+
+---
+
+### 5. String Comparison Issues
+
+#### ❌ Wrong - Using == for String Comparison:
+```java
+// WRONG
+String input = new String("yes");
+
+if (input == "yes") {  // FALSE! Different objects
+    System.out.println("Confirmed");
+}
+// Nothing prints!
+```
+**Issue:** Compares memory addresses, not string content
+
+#### ✅ Right:
+```java
+// CORRECT
+String input = new String("yes");
+
+if (input.equals("yes")) {  // TRUE! Compares content
+    System.out.println("Confirmed");
+}
+// Prints "Confirmed"
+```
+
+**Why:** == compares references (memory addresses), not string values.
+
+**💡 Tip:** Always use `.equals()` for strings; use `"yes".equals(input)` to avoid NullPointerException.
+
+---
+
+#### ❌ Wrong - Using != for String Comparison:
+```java
+// WRONG
+String answer = "no";
+
+if (answer != "yes") {  // Compares references!
+    System.out.println("Not confirmed");
+}
+```
+**Issue:** May give wrong result with string pool
+
+#### ✅ Right:
+```java
+// CORRECT
+String answer = "no";
+
+if (!answer.equals("yes")) {  // Correctly compares content
+    System.out.println("Not confirmed");
+}
+```
+
+**Why:** != is opposite of ==, both compare references not content.
+
+**💡 Tip:** Use `!str1.equals(str2)` for "not equal" comparison.
+
+---
+
+#### ❌ Wrong - Null Pointer with equals:
+```java
+// WRONG
+String name = getName();  // May return null
+
+if (name.equals("Admin")) {  // NullPointerException if null!
+    System.out.println("Welcome Admin");
+}
+```
+**Issue:** Throws NullPointerException if name is null
+
+#### ✅ Right:
+```java
+// CORRECT
+String name = getName();
+
+if ("Admin".equals(name)) {  // Safe! Returns false if name is null
+    System.out.println("Welcome Admin");
+}
+```
+
+**Why:** Calling methods on null throws exception; literal first is safe.
+
+**💡 Tip:** Put known non-null value first: `"literal".equals(variable)`, or check: `name != null && name.equals("Admin")`.
+
+---
+
+#### ❌ Wrong - Case Sensitivity Not Handled:
+```java
+// WRONG
+String input = "YES";
+
+if (input.equals("yes")) {  // FALSE! Case matters
+    System.out.println("Confirmed");
+}
+```
+**Issue:** Case-sensitive comparison fails
+
+#### ✅ Right:
+```java
+// CORRECT
+String input = "YES";
+
+if (input.equalsIgnoreCase("yes")) {  // TRUE! Ignores case
+    System.out.println("Confirmed");
+}
+```
+
+**Why:** `.equals()` is case-sensitive by default.
+
+**💡 Tip:** Use `.equalsIgnoreCase()` when case doesn't matter.
+
+---
+
+### 6. Floating-Point Comparison
+
+#### ❌ Wrong - Direct == for Doubles:
+```java
+// WRONG
+double result = 0.1 + 0.2;  // 0.30000000000000004
+
+if (result == 0.3) {  // FALSE due to precision!
+    System.out.println("Equal");
+} else {
+    System.out.println("Not equal");  // This prints
+}
+```
+**Issue:** Floating-point precision causes comparison to fail
+
+#### ✅ Right:
+```java
+// CORRECT
+double result = 0.1 + 0.2;
+final double EPSILON = 0.0001;
+
+if (Math.abs(result - 0.3) < EPSILON) {  // TRUE!
+    System.out.println("Equal");
+}
+```
+
+**Why:** Floating-point arithmetic has precision limitations.
+
+**💡 Tip:** Never use == for double/float; use threshold: `Math.abs(a - b) < epsilon`.
+
+---
+
+#### ❌ Wrong - Using != for Floats:
+```java
+// WRONG
+double price = 10.0 / 3.0 * 3.0;
+
+if (price != 10.0) {  // TRUE unexpectedly!
+    System.out.println("Price changed");
+}
+```
+**Issue:** Precision errors cause unexpected inequality
+
+#### ✅ Right:
+```java
+// CORRECT
+double price = 10.0 / 3.0 * 3.0;
+final double EPSILON = 0.0001;
+
+if (Math.abs(price - 10.0) >= EPSILON) {
+    System.out.println("Price changed");
+}
+```
+
+**Why:** Use threshold for all floating-point comparisons.
+
+**💡 Tip:** Define epsilon constant: `final double EPSILON = 0.0001;` for consistency.
+
+---
+
+### 7. Null Pointer Issues
+
+#### ❌ Wrong - Not Checking for Null:
+```java
+// WRONG
+String text = getText();  // May return null
+
+if (text.length() > 0) {  // NullPointerException!
+    System.out.println(text);
+}
+```
+**Issue:** Calling method on null throws exception
+
+#### ✅ Right:
+```java
+// CORRECT
+String text = getText();
+
+if (text != null && text.length() > 0) {  // Safe!
+    System.out.println(text);
+}
+```
+
+**Why:** Must check null before calling methods.
+
+**💡 Tip:** Always check for null before accessing object methods/fields.
+
+---
+
+#### ❌ Wrong - Checking Null After Usage:
+```java
+// WRONG
+String data = getData();
+int length = data.length();  // NullPointerException!
+
+if (data != null) {
+    System.out.println("Length: " + length);
+}
+```
+**Issue:** Already crashed before null check
+
+#### ✅ Right:
+```java
+// CORRECT
+String data = getData();
+
+if (data != null) {
+    int length = data.length();  // Safe!
+    System.out.println("Length: " + length);
+}
+```
+
+**Why:** Check null BEFORE using the value.
+
+**💡 Tip:** Null check must come first, before any usage.
+
+---
+
+#### ❌ Wrong - Wrong Order in Null Check with &&:
+```java
+// WRONG
+String name = getName();
+
+if (name.equals("John") && name != null) {  // Wrong order!
+    // NullPointerException if name is null
+}
+```
+**Issue:** First condition executes before null check
+
+#### ✅ Right:
+```java
+// CORRECT
+String name = getName();
+
+if (name != null && name.equals("John")) {  // Correct order!
+    // Safe - null check happens first
+}
+```
+
+**Why:** && evaluates left to right; null check must be first.
+
+**💡 Tip:** With &&, put null check on the left side.
+
+---
+
+### 8. Logic Errors
+
+#### ❌ Wrong - Using OR Instead of AND:
+```java
+// WRONG
+int age = 25;
+
+if (age >= 18 || age <= 65) {  // Always true!
+    System.out.println("Working age");
+}
+// Every number satisfies this (either >= 18 OR <= 65)
+```
+**Issue:** Condition is always true (every number is either >= 18 OR <= 65)
+
+#### ✅ Right:
+```java
+// CORRECT
+int age = 25;
+
+if (age >= 18 && age <= 65) {  // Both must be true
+    System.out.println("Working age");
+}
+```
+
+**Why:** OR (||) means at least one true; AND (&&) means both must be true.
+
+**💡 Tip:** Ask yourself: "both conditions?" (use &&) or "either condition?" (use ||).
+
+---
+
+#### ❌ Wrong - Inverted Logic:
+```java
+// WRONG
+boolean isValid = checkValidity();
+
+if (!isValid) {  // Negated
+    processData();  // Processes invalid data!
+}
+```
+**Issue:** Logic is backwards - processes when NOT valid
+
+#### ✅ Right:
+```java
+// CORRECT
+boolean isValid = checkValidity();
+
+if (isValid) {  // Not negated
+    processData();  // Processes valid data
+}
+```
+
+**Why:** Double-check negation (!) to ensure logic is correct.
+
+**💡 Tip:** Minimize use of negation; positive conditions are clearer.
+
+---
+
+#### ❌ Wrong - Always True Condition:
+```java
+// WRONG
+int score = 75;
+
+if (score >= 0) {  // Always true for valid scores!
+    System.out.println("Valid score");
+}
+// Doesn't actually validate anything useful
+```
+**Issue:** Condition doesn't filter anything meaningful
+
+#### ✅ Right:
+```java
+// CORRECT
+int score = 75;
+
+if (score >= 0 && score <= 100) {  // Actually validates range
+    System.out.println("Valid score");
+} else {
+    System.out.println("Invalid score");
+}
+```
+
+**Why:** Condition should have meaningful filtering logic.
+
+**💡 Tip:** Ensure conditions actually check for real requirements.
+
+---
+
+#### ❌ Wrong - De Morgan's Law Violation:
+```java
+// WRONG
+int age = 25;
+boolean hasLicense = false;
+
+if (!(age >= 18 && hasLicense)) {  // Confusing
+    System.out.println("Cannot drive");
+}
+```
+**Issue:** Negation of complex condition is hard to read
+
+#### ✅ Right:
+```java
+// CORRECT
+int age = 25;
+boolean hasLicense = false;
+
+if (age < 18 || !hasLicense) {  // Clear
+    System.out.println("Cannot drive");
+}
+```
+
+**Why:** De Morgan's Law: !(A && B) = !A || !B
+
+**💡 Tip:** Convert negated complex conditions: !(A && B) → !A || !B, !(A || B) → !A && !B.
+
+---
+
+### 9. Nesting Problems
+
+#### ❌ Wrong - Deep Nesting:
+```java
+// WRONG
+if (age >= 18) {
+    if (hasLicense) {
+        if (hasInsurance) {
+            if (carWorking) {
+                System.out.println("Can drive");  // 4 levels deep!
+            }
+        }
+    }
+}
+```
+**Issue:** 4 levels of nesting - hard to read and maintain
+
+#### ✅ Right:
+```java
+// CORRECT
+if (age >= 18 && hasLicense && hasInsurance && carWorking) {
+    System.out.println("Can drive");  // Clear and flat
+}
+```
+
+**Why:** Deep nesting makes code hard to understand and error-prone.
+
+**💡 Tip:** Combine conditions with &&/||, use early returns, or extract methods to reduce nesting.
+
+---
+
+#### ❌ Wrong - Nested When Flat is Better:
+```java
+// WRONG
+int score = 85;
+String grade;
+
 if (score >= 90) {
-    System.out.println("Excellent");
-} else if (score >= 60) {
-    System.out.println("Pass");
+    grade = "A";
+} else {
+    if (score >= 80) {
+        grade = "B";
+    } else {
+        if (score >= 70) {
+            grade = "C";
+        } else {
+            grade = "F";
+        }
+    }
+}
+```
+**Issue:** Unnecessary nesting when else-if ladder works better
+
+#### ✅ Right:
+```java
+// CORRECT
+int score = 85;
+String grade;
+
+if (score >= 90) {
+    grade = "A";
+} else if (score >= 80) {
+    grade = "B";
+} else if (score >= 70) {
+    grade = "C";
+} else {
+    grade = "F";
 }
 ```
 
-### 5. Semicolon After if:
+**Why:** else-if ladder is clearer and flatter than nested if-else.
+
+**💡 Tip:** Use else-if for mutually exclusive conditions.
+
+---
+
+### 10. Empty Blocks
+
+#### ❌ Wrong - Empty if with Logic in else:
 ```java
-if (condition);  // Empty statement!
-{
-    System.out.println("Always executes");
+// WRONG
+int score = 75;
+
+if (score < 60) {
+    // Empty block
+} else {
+    System.out.println("Passed");
 }
 ```
+**Issue:** Empty if block serves no purpose - confusing
+
+#### ✅ Right:
+```java
+// CORRECT
+int score = 75;
+
+if (score >= 60) {
+    System.out.println("Passed");
+}
+```
+
+**Why:** Empty blocks waste space and reduce readability.
+
+**💡 Tip:** Invert the condition (< becomes >=) and remove the else block.
+
+---
+
+#### ❌ Wrong - Empty else Block:
+```java
+// WRONG
+boolean isActive = true;
+
+if (isActive) {
+    activate();
+} else {
+    // Empty - why is this here?
+}
+```
+**Issue:** Empty else adds no value
+
+#### ✅ Right:
+```java
+// CORRECT
+boolean isActive = true;
+
+if (isActive) {
+    activate();
+}
+// No else needed
+```
+
+**Why:** Remove empty else blocks - they add no logic.
+
+**💡 Tip:** Only include else if there's actual alternative logic.
+
+---
+
+### 11. Ternary Operator Issues
+
+#### ❌ Wrong - Complex Nested Ternary:
+```java
+// WRONG
+int score = 85;
+String grade = (score >= 90) ? "A" :
+               (score >= 80) ? "B" :
+               (score >= 70) ? "C" :
+               (score >= 60) ? "D" : "F";
+```
+**Issue:** Difficult to read with multiple nested ternary operators
+
+#### ✅ Right:
+```java
+// CORRECT
+int score = 85;
+String grade;
+
+if (score >= 90) {
+    grade = "A";
+} else if (score >= 80) {
+    grade = "B";
+} else if (score >= 70) {
+    grade = "C";
+} else if (score >= 60) {
+    grade = "D";
+} else {
+    grade = "F";
+}
+```
+
+**Why:** Nested ternary operators reduce readability significantly.
+
+**💡 Tip:** Use ternary only for simple two-way assignments; use if-else for complex logic.
+
+---
+
+#### ❌ Wrong - Side Effects in Ternary:
+```java
+// WRONG
+int count = 0;
+boolean flag = true;
+
+String result = flag ? "Yes: " + ++count : "No: " + ++count;
+```
+**Issue:** Side effect (++count) in ternary is confusing
+
+#### ✅ Right:
+```java
+// CORRECT
+int count = 0;
+boolean flag = true;
+String result;
+
+if (flag) {
+    count++;
+    result = "Yes: " + count;
+} else {
+    count++;
+    result = "No: " + count;
+}
+```
+
+**Why:** Side effects in ternary expressions are hard to track.
+
+**💡 Tip:** Avoid side effects (++, --, assignments) in ternary expressions.
+
+---
+
+#### ❌ Wrong - Ternary for Complex Logic:
+```java
+// WRONG
+String status = (user != null && user.isActive() &&
+                user.hasPermission("admin")) ?
+                "Authorized Admin" : "Unauthorized";
+```
+**Issue:** Complex condition in ternary reduces readability
+
+#### ✅ Right:
+```java
+// CORRECT
+String status;
+
+if (user != null && user.isActive() && user.hasPermission("admin")) {
+    status = "Authorized Admin";
+} else {
+    status = "Unauthorized";
+}
+```
+
+**Why:** Complex conditions are clearer in if-else.
+
+**💡 Tip:** Use ternary only for simple conditions: `int max = (a > b) ? a : b;`.
+
+---
+
+### 12. Type and Scope Issues
+
+#### ❌ Wrong - Using long in switch:
+```java
+// WRONG
+long id = 123456789L;
+
+switch (id) {  // Compilation error!
+    case 123456789L:
+        System.out.println("Found");
+        break;
+}
+```
+**Issue:** switch doesn't support long type
+
+#### ✅ Right:
+```java
+// CORRECT
+long id = 123456789L;
+
+if (id == 123456789L) {
+    System.out.println("Found");
+} else if (id == 987654321L) {
+    System.out.println("Other ID");
+}
+```
+
+**Why:** switch only works with int, byte, short, char, String, and enums.
+
+**💡 Tip:** Use if-else for long, double, float, and boolean types.
+
+---
+
+#### ❌ Wrong - Variable Declared in if Not Accessible:
+```java
+// WRONG
+if (score >= 60) {
+    String grade = "Pass";
+}
+
+System.out.println(grade);  // Compilation error! Out of scope
+```
+**Issue:** Variable declared inside if block not accessible outside
+
+#### ✅ Right:
+```java
+// CORRECT
+String grade;  // Declare outside
+
+if (score >= 60) {
+    grade = "Pass";  // Assign inside
+} else {
+    grade = "Fail";
+}
+
+System.out.println(grade);  // Accessible here
+```
+
+**Why:** Variables are scoped to the block they're declared in.
+
+**💡 Tip:** Declare variables in the outermost scope where they're needed.
+
+---
+
+This comprehensive list now contains **38+ conditional statement mistakes** covering every aspect of Day 4: Control Flow - Conditional Statements!
 
 ---
 

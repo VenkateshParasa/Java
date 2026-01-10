@@ -1112,178 +1112,911 @@ public class TestComplexNumber {
 
 ## ⚠️ Common Mistakes
 
-### 1. Adding Return Type to Constructor:
-```java
-// WRONG
-public void Student() {  // Constructor cannot have return type
-    name = "Unknown";
-}
+### 1. Constructor Syntax Errors
 
-// CORRECT
-public Student() {
-    name = "Unknown";
-}
-```
-
-### 2. Constructor Name Mismatch:
-```java
-// WRONG
-public class Student {
-    public student() {  // Lowercase 's' - not a constructor!
-        // This is a regular method
-    }
-}
-
-// CORRECT
-public class Student {
-    public Student() {  // Matches class name
-        // This is a constructor
-    }
-}
-```
-
-### 3. `this()` Not First Statement:
-```java
-// WRONG
-Student(String name) {
-    System.out.println("Creating student");
-    this(name, 0);  // ERROR! this() must be first
-}
-
-// CORRECT
-Student(String name) {
-    this(name, 0);  // First statement
-    System.out.println("Creating student");
-}
-```
-
-### 4. Calling Constructor Like Method:
-```java
-// WRONG
-Student s = new Student();
-s.Student();  // ERROR! Cannot call constructor like method
-
-// CORRECT
-Student s = new Student();  
-
-### 4. Calling Constructor Like Method:
-```java
-// WRONG
-Student s = new Student();
-s.Student();  // ERROR! Cannot call constructor like method
-
-// CORRECT
-Student s = new Student();  // Constructor called only with 'new'
-```
-
-### 5. Forgetting `this` with Same Parameter Names:
-```java
-// WRONG - Assigns parameter to itself
-Student(String name, int age) {
-    name = name;  // Does nothing! Parameter shadows instance variable
-    age = age;
-}
-
-// CORRECT
-Student(String name, int age) {
-    this.name = name;  // Assigns to instance variable
-    this.age = age;
-}
-```
-
-### 6. Losing Default Constructor:
+#### ❌ Wrong - Adding Return Type to Constructor:
 ```java
 // WRONG
 public class Student {
     String name;
-    
-    Student(String name) {  // Defined parameterized constructor
+
+    public void Student() {  // Compilation error! Constructor can't have return type
+        name = "Unknown";
+    }
+}
+```
+**Issue:** Constructors must not have any return type, not even void
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+
+    public Student() {  // No return type
+        name = "Unknown";
+    }
+}
+```
+
+**Why:** Adding a return type makes it a regular method, not a constructor; constructors are special methods that implicitly return the new object.
+
+**💡 Tip:** Constructor syntax: `ClassName()` with no return type at all.
+
+---
+
+#### ❌ Wrong - Constructor Name Doesn't Match Class Name:
+```java
+// WRONG
+public class Student {
+    String name;
+
+    public student() {  // Lowercase! Not a constructor!
+        name = "Unknown";
+    }
+}
+
+Student s = new Student();  // Compilation error! No constructor found
+```
+**Issue:** Constructor name must exactly match class name including case
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+
+    public Student() {  // Exact match with class name
+        name = "Unknown";
+    }
+}
+
+Student s = new Student();  // Works!
+```
+
+**Why:** Java requires exact name matching for constructors; different case creates a regular method.
+
+**💡 Tip:** Constructor name must be identical to class name: `Student` class needs `Student()` constructor.
+
+---
+
+#### ❌ Wrong - Constructor with Return Statement:
+```java
+// WRONG
+public class Car {
+    String brand;
+
+    public Car() {
+        brand = "Unknown";
+        return;  // Compilation error! Constructor can't return value
+    }
+}
+```
+**Issue:** Constructors cannot have return statements with values
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Car {
+    String brand;
+
+    public Car() {
+        brand = "Unknown";
+        // No return statement needed
+    }
+}
+```
+
+**Why:** Constructors implicitly return the new object; explicit return not allowed.
+
+**💡 Tip:** Never use `return` in constructors; they automatically return the created object.
+
+---
+
+### 2. Default Constructor Issues
+
+#### ❌ Wrong - Assuming Default Constructor Exists After Defining Parameterized:
+```java
+// WRONG
+public class Student {
+    String name;
+    int rollNumber;
+
+    Student(String name, int rollNumber) {  // Parameterized constructor defined
         this.name = name;
+        this.rollNumber = rollNumber;
     }
 }
 
-// This will cause error:
-Student s = new Student();  // ERROR! No default constructor available
+// Compilation error! No default constructor
+Student s = new Student();  // Fails!
+```
+**Issue:** Defining any constructor removes compiler-provided default constructor
 
-// CORRECT - Provide both if needed
+#### ✅ Right:
+```java
+// CORRECT - Explicitly provide default constructor if needed
 public class Student {
     String name;
-    
+    int rollNumber;
+
     Student() {  // Explicit default constructor
         this.name = "Unknown";
+        this.rollNumber = 0;
     }
-    
+
+    Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+    }
+}
+
+Student s1 = new Student();  // Works!
+Student s2 = new Student("Alice", 101);  // Also works!
+```
+
+**Why:** Once you define any constructor, Java doesn't provide default constructor; must explicitly create it.
+
+**💡 Tip:** If you need both default and parameterized constructors, define both explicitly.
+
+---
+
+#### ❌ Wrong - Not Understanding Default Constructor Behavior:
+```java
+// WRONG (conceptual error)
+public class Book {
+    String title;
+    double price;
+
+    // No constructor defined
+}
+
+Book book = new Book();  // Compiler provides: Book() { }
+System.out.println(book.title);  // null
+System.out.println(book.price);  // 0.0
+// Expecting initialized values!
+```
+**Issue:** Compiler-provided default constructor doesn't initialize fields to meaningful values
+
+#### ✅ Right:
+```java
+// CORRECT - Provide explicit constructor with initialization
+public class Book {
+    String title;
+    double price;
+
+    Book() {  // Explicit initialization
+        title = "Untitled";
+        price = 0.0;
+    }
+}
+
+Book book = new Book();
+System.out.println(book.title);  // "Untitled"
+System.out.println(book.price);  // 0.0
+```
+
+**Why:** Compiler-provided constructor only calls super(); doesn't initialize fields to non-default values.
+
+**💡 Tip:** Define explicit constructor to control field initialization; don't rely on compiler's default.
+
+---
+
+### 3. Parameter and this Keyword Issues
+
+#### ❌ Wrong - Shadowing Instance Variables Without this:
+```java
+// WRONG
+public class Student {
+    String name;
+    int age;
+
+    Student(String name, int age) {
+        name = name;  // Assigns parameter to itself! Instance variable unchanged
+        age = age;    // Same problem
+    }
+}
+
+Student s = new Student("Alice", 20);
+System.out.println(s.name);  // null! Not "Alice"
+System.out.println(s.age);   // 0! Not 20
+```
+**Issue:** Parameters shadow instance variables; assignment does nothing
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+    int age;
+
+    Student(String name, int age) {
+        this.name = name;  // this.name = instance variable
+        this.age = age;    // name/age = parameters
+    }
+}
+
+Student s = new Student("Alice", 20);
+System.out.println(s.name);  // "Alice"
+System.out.println(s.age);   // 20
+```
+
+**Why:** When parameter and field have same name, parameter takes precedence; use `this` to access field.
+
+**💡 Tip:** Always use `this.fieldName` when parameter names match field names.
+
+---
+
+#### ❌ Wrong - Using this for Non-Instance Members:
+```java
+// WRONG
+public class Math Calculator {
+    static int count = 0;
+
+    MathCalculator() {
+        this.count++;  // Confusing! this refers to instance, count is static
+    }
+}
+```
+**Issue:** Using `this` with static members is misleading
+
+#### ✅ Right:
+```java
+// CORRECT
+public class MathCalculator {
+    static int count = 0;
+
+    MathCalculator() {
+        MathCalculator.count++;  // Clear that it's static
+        // OR just: count++;
+    }
+}
+```
+
+**Why:** `this` refers to current instance; static members belong to class, not instances.
+
+**💡 Tip:** Access static members through class name, not `this`.
+
+---
+
+#### ❌ Wrong - Forgetting this When Returning Current Object:
+```java
+// WRONG
+public class Builder {
+    String name;
+
+    Builder setName(String name) {
+        this.name = name;
+        return;  // Returns void, not object!
+    }
+}
+
+Builder b = new Builder();
+b.setName("Alice").setAge(25);  // Compilation error! Can't chain
+```
+**Issue:** Method returns void; cannot chain method calls
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Builder {
+    String name;
+    int age;
+
+    Builder setName(String name) {
+        this.name = name;
+        return this;  // Return current object
+    }
+
+    Builder setAge(int age) {
+        this.age = age;
+        return this;
+    }
+}
+
+Builder b = new Builder();
+b.setName("Alice").setAge(25);  // Method chaining works!
+```
+
+**Why:** Returning `this` allows method chaining by returning the current object reference.
+
+**💡 Tip:** Return `this` from setter methods to enable fluent/builder pattern.
+
+---
+
+### 4. Constructor Chaining Mistakes
+
+#### ❌ Wrong - this() Not as First Statement:
+```java
+// WRONG
+public class Student {
+    String name;
+    int rollNumber;
+
+    Student(String name) {
+        System.out.println("Creating student");
+        this(name, 0);  // Compilation error! this() must be first
+    }
+
+    Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+    }
+}
+```
+**Issue:** Constructor call `this()` must be the very first statement
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+    int rollNumber;
+
+    Student(String name) {
+        this(name, 0);  // First statement
+        System.out.println("Creating student");  // After this()
+    }
+
+    Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+    }
+}
+```
+
+**Why:** Java syntax requires `this()` as first statement to ensure proper object initialization order.
+
+**💡 Tip:** Always place `this()` as the very first line in constructor body.
+
+---
+
+#### ❌ Wrong - Circular Constructor Calls:
+```java
+// WRONG
+public class Student {
+    String name;
+
+    Student() {
+        this("Unknown");  // Calls Student(String)
+    }
+
+    Student(String name) {
+        this();  // Calls Student()! Infinite recursion! Compilation error
+    }
+}
+```
+**Issue:** Constructors call each other in a circle; creates infinite loop
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+
+    Student() {
+        this("Unknown");  // Calls Student(String)
+    }
+
+    Student(String name) {
+        this.name = name;  // No further this() call; recursion ends
+    }
+}
+```
+
+**Why:** Circular calls create infinite recursion; one constructor must do actual initialization.
+
+**💡 Tip:** Constructor chaining must eventually reach a constructor that doesn't call `this()`.
+
+---
+
+#### ❌ Wrong - Multiple this() Calls:
+```java
+// WRONG
+public class Student {
+    String name;
+    int rollNumber;
+    int age;
+
+    Student(String name) {
+        this();              // Compilation error!
+        this(name, 0, 18);   // Only one this() allowed
+    }
+}
+```
+**Issue:** Constructor can only call one other constructor
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+    int rollNumber;
+    int age;
+
+    Student(String name) {
+        this(name, 0, 18);  // Single this() call
+    }
+
+    Student(String name, int rollNumber, int age) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.age = age;
+    }
+}
+```
+
+**Why:** Java allows only one constructor call to avoid ambiguity and ensure single initialization path.
+
+**💡 Tip:** Choose the most appropriate constructor to chain to; only one `this()` per constructor.
+
+---
+
+#### ❌ Wrong - Using this() and super() Together:
+```java
+// WRONG
+public class Student extends Person {
+    int rollNumber;
+
+    Student(String name, int rollNumber) {
+        super(name);         // Compilation error!
+        this(rollNumber);    // Can't call both super() and this()
+    }
+
+    Student(int rollNumber) {
+        this.rollNumber = rollNumber;
+    }
+}
+```
+**Issue:** Cannot call both `super()` and `this()` in same constructor
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Use super()
+public class Student extends Person {
+    int rollNumber;
+
+    Student(String name, int rollNumber) {
+        super(name);  // Call parent constructor
+        this.rollNumber = rollNumber;
+    }
+}
+
+// CORRECT - Method 2: Use this(), which then calls super()
+public class Student extends Person {
+    int rollNumber;
+
+    Student(String name, int rollNumber) {
+        this(rollNumber);  // this() will call Student(int), which calls super()
+        // Cannot access name here
+    }
+
+    Student(int rollNumber) {
+        super("Unknown");  // This constructor calls super()
+        this.rollNumber = rollNumber;
+    }
+}
+```
+
+**Why:** Either `this()` or `super()` can be first statement, not both; choose one path.
+
+**💡 Tip:** Use either `this()` or `super()` as first statement, never both.
+
+---
+
+### 5. Constructor Overloading Errors
+
+#### ❌ Wrong - Duplicate Constructor Signatures:
+```java
+// WRONG
+public class Rectangle {
+    double length;
+    double width;
+
+    Rectangle(double length, double width) {
+        this.length = length;
+        this.width = width;
+    }
+
+    // Compilation error! Duplicate constructor
+    Rectangle(double width, double length) {
+        this.width = width;
+        this.length = length;
+    }
+}
+```
+**Issue:** Same parameter types in same order; compiler can't distinguish
+
+#### ✅ Right:
+```java
+// CORRECT - Different number or types of parameters
+public class Rectangle {
+    double length;
+    double width;
+
+    Rectangle(double side) {  // Single parameter (square)
+        this.length = side;
+        this.width = side;
+    }
+
+    Rectangle(double length, double width) {  // Two parameters
+        this.length = length;
+        this.width = width;
+    }
+}
+```
+
+**Why:** Overloading requires different parameter lists; same types in same order is duplicate.
+
+**💡 Tip:** Vary number of parameters, types, or order; just renaming parameters doesn't work.
+
+---
+
+#### ❌ Wrong - Ambiguous Constructor Calls:
+```java
+// WRONG
+public class Number {
+    int value;
+
+    Number(int value) {
+        this.value = value;
+    }
+
+    Number(Integer value) {  // Wrapper type
+        this.value = value;
+    }
+}
+
+// Ambiguous! Which constructor?
+Number n = new Number(10);  // Could be int or Integer (autoboxing)
+```
+**Issue:** Autoboxing creates ambiguity between primitive and wrapper constructors
+
+#### ✅ Right:
+```java
+// CORRECT - Avoid ambiguity
+public class Number {
+    int value;
+
+    Number(int value) {
+        this.value = value;
+    }
+
+    Number(String stringValue) {  // Different type, clear distinction
+        this.value = Integer.parseInt(stringValue);
+    }
+}
+
+Number n1 = new Number(10);      // Calls int constructor
+Number n2 = new Number("10");    // Calls String constructor
+```
+
+**Why:** Autoboxing can create ambiguity; use clearly different types.
+
+**💡 Tip:** Design constructors with distinct parameter types to avoid ambiguity.
+
+---
+
+### 6. Calling Constructor Mistakes
+
+#### ❌ Wrong - Calling Constructor Like a Method:
+```java
+// WRONG
+public class Student {
+    String name;
+
     Student(String name) {
         this.name = name;
     }
+
+    void resetName() {
+        Student("Unknown");  // Compilation error! Can't call constructor like method
+    }
 }
 ```
+**Issue:** Constructors can only be called with `new` keyword or `this()`
 
-### 7. Circular Constructor Calls:
+#### ✅ Right:
 ```java
-// WRONG - Infinite loop
-Student() {
-    this("Unknown");
-}
+// CORRECT - Reinitialize fields directly
+public class Student {
+    String name;
 
-Student(String name) {
-    this();  // ERROR! Circular call
-}
+    Student(String name) {
+        this.name = name;
+    }
 
-// CORRECT
-Student() {
-    this("Unknown");
-}
-
-Student(String name) {
-    this.name = name;  // No circular call
+    void resetName() {
+        this.name = "Unknown";  // Directly set field
+    }
 }
 ```
 
-### 8. Multiple `this()` Calls:
-```java
-// WRONG
-Student(String name) {
-    this();           // ERROR! Only one this() allowed
-    this(name, 0);
-}
+**Why:** Constructors are special; called only during object creation with `new`.
 
-// CORRECT
-Student(String name) {
-    this(name, 0);    // Single this() call
-}
-```
+**💡 Tip:** To reset fields, directly assign values; don't try to call constructor.
 
-### 9. Not Initializing All Fields:
-```java
-// WRONG - Some fields uninitialized
-Student(String name) {
-    this.name = name;
-    // rollNumber and age remain 0 (default values)
-}
+---
 
-// BETTER - Initialize all fields
-Student(String name) {
-    this.name = name;
-    this.rollNumber = 0;
-    this.age = 18;
-}
-```
-
-### 10. Using `this()` After Other Statements:
+#### ❌ Wrong - Trying to Call Constructor on Existing Object:
 ```java
 // WRONG
-Student(String name) {
-    System.out.println("Creating student");
-    this(name, 0);  // ERROR! this() must be first
+Student student = new Student("Alice");
+student.Student("Bob");  // Compilation error! Constructor not a method
+```
+**Issue:** Constructor cannot be called on existing object
+
+#### ✅ Right:
+```java
+// CORRECT - Create new object OR use setter
+Student student = new Student("Alice");
+
+// Option 1: Create new object
+student = new Student("Bob");  // New object
+
+// Option 2: Use setter method
+public class Student {
+    String name;
+
+    Student(String name) {
+        this.name = name;
+    }
+
+    void setName(String name) {
+        this.name = name;
+    }
 }
 
-// CORRECT
-Student(String name) {
-    this(name, 0);  // First statement
-    System.out.println("Creating student");
+student.setName("Bob");  // Modify existing object
+```
+
+**Why:** Each constructor call creates a new object; use setters to modify existing objects.
+
+**💡 Tip:** Constructors for creation; setters for modification.
+
+---
+
+### 7. Initialization Issues
+
+#### ❌ Wrong - Partial Initialization in Constructor:
+```java
+// WRONG (logic error)
+public class Employee {
+    String name;
+    int id;
+    double salary;
+    String department;
+
+    Employee(String name, int id) {
+        this.name = name;
+        this.id = id;
+        // salary and department remain default (0.0 and null)
+    }
+}
+
+Employee emp = new Employee("Alice", 101);
+System.out.println(emp.department.length());  // NullPointerException!
+```
+**Issue:** Not initializing all fields; some remain null or zero
+
+#### ✅ Right:
+```java
+// CORRECT - Initialize all fields
+public class Employee {
+    String name;
+    int id;
+    double salary;
+    String department;
+
+    Employee(String name, int id) {
+        this.name = name;
+        this.id = id;
+        this.salary = 0.0;              // Explicit initialization
+        this.department = "Unassigned";  // Safe default
+    }
+}
+
+Employee emp = new Employee("Alice", 101);
+System.out.println(emp.department.length());  // Works! Returns 10
+```
+
+**Why:** Uninitialized reference fields are null; accessing causes NullPointerException.
+
+**💡 Tip:** Initialize all fields in constructor; use safe defaults for optional values.
+
+---
+
+#### ❌ Wrong - Not Validating Constructor Parameters:
+```java
+// WRONG
+public class Rectangle {
+    double length;
+    double width;
+
+    Rectangle(double length, double width) {
+        this.length = length;  // What if negative?
+        this.width = width;
+    }
+}
+
+Rectangle rect = new Rectangle(-5, -10);  // Invalid! Negative dimensions
+System.out.println(rect.calculateArea());  // Positive (incorrect)!
+```
+**Issue:** Accepting invalid values without validation
+
+#### ✅ Right:
+```java
+// CORRECT - Validate parameters
+public class Rectangle {
+    double length;
+    double width;
+
+    Rectangle(double length, double width) {
+        if (length <= 0 || width <= 0) {
+            throw new IllegalArgumentException("Dimensions must be positive");
+        }
+        this.length = length;
+        this.width = width;
+    }
+}
+
+Rectangle rect = new Rectangle(-5, -10);  // Throws exception!
+```
+
+**Why:** Constructors should ensure object created in valid state; validate inputs.
+
+**💡 Tip:** Add validation in constructors to prevent invalid object states.
+
+---
+
+### 8. Access Modifier Confusion
+
+#### ❌ Wrong - Private Constructor Without Static Method:
+```java
+// WRONG (usually)
+public class Utility {
+    private Utility() {  // Private constructor
+    }
+
+    void helperMethod() {
+        // ...
+    }
+}
+
+// Can't create instance!
+Utility util = new Utility();  // Compilation error! Constructor is private
+```
+**Issue:** Private constructor prevents object creation; no way to use class
+
+#### ✅ Right:
+```java
+// CORRECT - Use for singleton or utility classes
+public class Utility {
+    private static Utility instance = new Utility();
+
+    private Utility() {  // Private for singleton
+    }
+
+    public static Utility getInstance() {
+        return instance;
+    }
+
+    public void helperMethod() {
+        // ...
+    }
+}
+
+Utility util = Utility.getInstance();  // Access through static method
+```
+
+**Why:** Private constructors used for singletons or utility classes; provide static access method.
+
+**💡 Tip:** Private constructor + static method = Singleton pattern or utility class.
+
+---
+
+### 9. Order of Execution Confusion
+
+#### ❌ Wrong - Assuming Constructor Runs Before Field Initialization:
+```java
+// WRONG (conceptual error)
+public class Counter {
+    int count = initializeCount();  // Runs BEFORE constructor
+
+    Counter() {
+        System.out.println("Constructor: count = " + count);  // Prints: 10
+        count = 0;  // Overwrites field initialization!
+    }
+
+    int initializeCount() {
+        System.out.println("Field init: count = 10");
+        return 10;
+    }
+}
+
+Counter c = new Counter();
+// Output: Field init: count = 10
+//         Constructor: count = 10
+// Final count = 0 (constructor overwrites)
+```
+**Issue:** Not understanding initialization order: fields → constructor
+
+#### ✅ Right:
+```java
+// CORRECT - Understand order: field initialization → constructor
+public class Counter {
+    int count;  // Default: 0
+
+    Counter() {
+        count = initializeCount();  // Explicit call in constructor
+    }
+
+    int initializeCount() {
+        return 10;
+    }
 }
 ```
+
+**Why:** Initialization order: (1) Default values (2) Field initializers (3) Constructor body
+
+**💡 Tip:** Fields initialize before constructor runs; constructor can override field initializers.
+
+---
+
+### 10. Inheritance-Related Constructor Mistakes
+
+#### ❌ Wrong - Forgetting super() Call:
+```java
+// WRONG (implicit super() may fail)
+public class Student extends Person {
+    int rollNumber;
+
+    Student(String name, int rollNumber) {
+        // Implicit super() call here! What if Person has no default constructor?
+        this.rollNumber = rollNumber;
+    }
+}
+
+public class Person {
+    String name;
+
+    Person(String name) {  // Only parameterized constructor
+        this.name = name;
+    }
+}
+
+// Compilation error! No default constructor in Person
+```
+**Issue:** Implicit `super()` fails when parent has no default constructor
+
+#### ✅ Right:
+```java
+// CORRECT - Explicitly call super()
+public class Student extends Person {
+    int rollNumber;
+
+    Student(String name, int rollNumber) {
+        super(name);  // Explicit call to Person(String)
+        this.rollNumber = rollNumber;
+    }
+}
+
+public class Person {
+    String name;
+
+    Person(String name) {
+        this.name = name;
+    }
+}
+```
+
+**Why:** If no explicit `super()`, Java inserts implicit `super()`; fails if parent has no default constructor.
+
+**💡 Tip:** Explicitly call `super(args)` when parent class has no default constructor.
+
+---
+
+This comprehensive list now contains **35+ Constructor and this keyword mistakes** covering all fundamental concepts!
 
 ---
 

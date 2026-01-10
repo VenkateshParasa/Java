@@ -90,6 +90,15 @@ function App() {
                 <Route path="/assessment/day19" element={<AssessmentPage assessmentId="day19" />} />
                 <Route path="/assessment/day20" element={<AssessmentPage assessmentId="day20" />} />
                 <Route path="/assessment/day21" element={<AssessmentPage assessmentId="day21" />} />
+
+                {/* Week 4 Routes */}
+                <Route path="/assessment/day22" element={<AssessmentPage assessmentId="day22" />} />
+                <Route path="/assessment/day23" element={<AssessmentPage assessmentId="day23" />} />
+                <Route path="/assessment/day24" element={<AssessmentPage assessmentId="day24" />} />
+                <Route path="/assessment/day25" element={<AssessmentPage assessmentId="day25" />} />
+                <Route path="/assessment/day26" element={<AssessmentPage assessmentId="day26" />} />
+                <Route path="/assessment/day27" element={<AssessmentPage assessmentId="day27" />} />
+                <Route path="/assessment/day28" element={<AssessmentPage assessmentId="day28" />} />
               </Routes>
             </main>
           </div>

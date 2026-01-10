@@ -1045,55 +1045,1057 @@ public class ReverseNumber {
 
 ## ⚠️ Common Mistakes
 
-### 1. Infinite Loop:
+### 1. Infinite Loop Issues
+
+#### ❌ Wrong - Forgetting to Update Loop Counter:
 ```java
-// Missing update
+// WRONG
 int i = 1;
+
 while (i <= 10) {
     System.out.println(i);
-    // Forgot i++; - infinite loop!
+    // i is never updated - infinite loop!
+}
+```
+**Issue:** Loop runs forever because i never changes
+
+#### ✅ Right:
+```java
+// CORRECT
+int i = 1;
+
+while (i <= 10) {
+    System.out.println(i);
+    i++;  // Counter increments each iteration
 }
 ```
 
-### 2. Off-by-One Error:
-```java
-// Wrong: prints 0 to 9 (10 numbers)
-for (int i = 0; i < 10; i++) { }
+**Why:** Without updating the loop variable, condition remains true forever.
 
-// Correct: prints 1 to 10 (10 numbers)
-for (int i = 1; i <= 10; i++) { }
+**💡 Tip:** Always ensure loop variables are updated inside the loop body to eventually make the condition false.
+
+---
+
+#### ❌ Wrong - Wrong Increment Direction:
+```java
+// WRONG
+for (int i = 10; i > 0; i++) {  // Incrementing!
+    System.out.println(i);
+}
+// Infinite loop! i starts at 10, keeps increasing
+```
+**Issue:** i starts at 10 and increases, so i > 0 is always true
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 10; i > 0; i--) {  // Decrementing!
+    System.out.println(i);
+}
+// Prints 10, 9, 8, ..., 1
 ```
 
-### 3. Modifying for-each Variable:
+**Why:** Increment (i++) makes condition permanently true; need decrement (i--).
+
+**💡 Tip:** Match the update direction with condition: use i++ when condition is <, use i-- when condition is >.
+
+---
+
+#### ❌ Wrong - Condition Never Becomes False:
 ```java
-int[] arr = {1, 2, 3};
+// WRONG
+int count = 0;
+
+while (count < 10) {
+    System.out.println("Running");
+    count--;  // Decrements instead of increments!
+}
+// Infinite loop!
+```
+**Issue:** count decreases, making condition permanently true
+
+#### ✅ Right:
+```java
+// CORRECT
+int count = 0;
+
+while (count < 10) {
+    System.out.println("Running");
+    count++;  // Increments correctly
+}
+```
+
+**Why:** Counter must move toward the exit condition.
+
+**💡 Tip:** Trace loop variable values to ensure they approach the exit condition.
+
+---
+
+#### ❌ Wrong - Logic Error in Condition:
+```java
+// WRONG
+for (int i = 0; i != 10; i += 2) {  // i skips 10!
+    System.out.println(i);
+}
+// Prints 0,2,4,6,8,10,12,14... forever!
+```
+**Issue:** i skips 10 (goes from 8 to 10 to 12), never equals 10
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 10; i += 2) {  // Use < not !=
+    System.out.println(i);
+}
+// Prints 0,2,4,6,8
+```
+
+**Why:** != is dangerous with steps > 1; use < or <= instead.
+
+**💡 Tip:** Avoid != in loop conditions; use < or <= for safer bounds checking.
+
+---
+
+#### ❌ Wrong - Infinite Loop Missing break:
+```java
+// WRONG
+while (true) {
+    int input = getInput();
+    processInput(input);
+    // No break statement!
+}
+```
+**Issue:** Intentional infinite loop but missing exit condition
+
+#### ✅ Right:
+```java
+// CORRECT
+while (true) {
+    int input = getInput();
+    if (input == -1) {
+        break;  // Exit condition
+    }
+    processInput(input);
+}
+```
+
+**Why:** Infinite loops need explicit break to exit.
+
+**💡 Tip:** Always provide an exit mechanism in intentional infinite loops.
+
+---
+
+### 2. Off-by-One Errors
+
+#### ❌ Wrong - Array Index Off-by-One:
+```java
+// WRONG
+int[] arr = {10, 20, 30, 40, 50};
+
+for (int i = 0; i <= arr.length; i++) {  // <= is wrong!
+    System.out.println(arr[i]);  // ArrayIndexOutOfBoundsException!
+}
+```
+**Issue:** Tries to access arr[5] which doesn't exist (indices are 0-4)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {10, 20, 30, 40, 50};
+
+for (int i = 0; i < arr.length; i++) {  // Use <
+    System.out.println(arr[i]);  // Correctly accesses 0-4
+}
+```
+
+**Why:** Array indices are 0 to length-1, not 0 to length.
+
+**💡 Tip:** Use `< arr.length`, not `<= arr.length`; or use enhanced for loop.
+
+---
+
+#### ❌ Wrong - Loop Iterations Off-by-One:
+```java
+// WRONG
+for (int i = 1; i < 10; i++) {  // Executes 9 times!
+    System.out.print(i + " ");
+}
+// Prints: 1 2 3 4 5 6 7 8 9 (missing 10)
+```
+**Issue:** Executes 9 times (i = 1 to 9), not 10 times as intended
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 1; i <= 10; i++) {  // Use <=
+    System.out.print(i + " ");
+}
+// Prints: 1 2 3 4 5 6 7 8 9 10
+```
+
+**Why:** Using < instead of <= excludes the final value.
+
+**💡 Tip:** For n iterations starting at 1, use `i <= n`; starting at 0, use `i < n`.
+
+---
+
+#### ❌ Wrong - Starting at Wrong Index:
+```java
+// WRONG
+int[] numbers = {5, 10, 15, 20, 25};
+int sum = 0;
+
+for (int i = 1; i < numbers.length; i++) {  // Starts at 1!
+    sum += numbers[i];
+}
+System.out.println(sum);  // Prints 70, not 75 (missed first element)
+```
+**Issue:** Starts at index 1, missing first element (index 0)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = {5, 10, 15, 20, 25};
+int sum = 0;
+
+for (int i = 0; i < numbers.length; i++) {  // Starts at 0
+    sum += numbers[i];
+}
+System.out.println(sum);  // Prints 75
+```
+
+**Why:** Arrays start at index 0, not 1.
+
+**💡 Tip:** Always start array loops at index 0 unless you have a specific reason not to.
+
+---
+
+#### ❌ Wrong - Boundary Condition Error:
+```java
+// WRONG
+for (int i = 0; i <= 100; i++) {  // 101 iterations!
+    // Process 0 to 100
+}
+```
+**Issue:** Executes 101 times (0 to 100 inclusive), not 100 times
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 100; i++) {  // 100 iterations
+    // Process 0 to 99
+}
+// OR if you need 0 to 100:
+for (int i = 0; i <= 99; i++) {  // Also 100 iterations
+    // Process 0 to 99
+}
+```
+
+**Why:** `<=` includes both endpoints.
+
+**💡 Tip:** Be clear about inclusive vs exclusive boundaries.
+
+---
+
+### 3. Semicolon Errors
+
+#### ❌ Wrong - Accidental Semicolon After for:
+```java
+// WRONG
+for (int i = 0; i < 10; i++);  // Semicolon here!
+{
+    System.out.println(i);  // Compilation error: i out of scope
+}
+```
+**Issue:** Loop executes 10 times with empty body; block is outside loop
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 10; i++) {  // No semicolon
+    System.out.println(i);  // Loop body
+}
+```
+
+**Why:** Semicolon creates empty statement as loop body; following block is separate.
+
+**💡 Tip:** Never put semicolon after for, while conditions (except do-while).
+
+---
+
+#### ❌ Wrong - Semicolon After while:
+```java
+// WRONG
+int i = 0;
+
+while (i < 5);  // Infinite empty loop!
+{
+    System.out.println(i);  // Never executes
+    i++;
+}
+```
+**Issue:** Infinite empty loop; block outside never runs
+
+#### ✅ Right:
+```java
+// CORRECT
+int i = 0;
+
+while (i < 5) {  // No semicolon
+    System.out.println(i);
+    i++;
+}
+```
+
+**Why:** Semicolon makes while loop empty; i never increments.
+
+**💡 Tip:** Watch for accidental semicolons in all loop headers.
+
+---
+
+#### ❌ Wrong - Missing Semicolon After do-while:
+```java
+// WRONG
+int i = 0;
+
+do {
+    System.out.println(i);
+    i++;
+} while (i < 5)  // Compilation error! Missing semicolon
+```
+**Issue:** do-while requires semicolon after condition
+
+#### ✅ Right:
+```java
+// CORRECT
+int i = 0;
+
+do {
+    System.out.println(i);
+    i++;
+} while (i < 5);  // Semicolon required!
+```
+
+**Why:** do-while is the only loop that requires semicolon after the condition.
+
+**💡 Tip:** Remember: do-while is unique - it NEEDS semicolon at the end.
+
+---
+
+### 4. for-each Loop Issues
+
+#### ❌ Wrong - Trying to Modify Array via for-each:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+
 for (int num : arr) {
     num = num * 2;  // Doesn't change array!
 }
+
+System.out.println(Arrays.toString(arr));  // Prints [1, 2, 3, 4, 5]
+```
+**Issue:** num is a copy, not a reference to array element
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = 0; i < arr.length; i++) {
+    arr[i] = arr[i] * 2;  // Directly modifies array
+}
+
+System.out.println(Arrays.toString(arr));  // Prints [2, 4, 6, 8, 10]
 ```
 
-### 4. Semicolon After for:
+**Why:** for-each gives you a copy of each element, not the actual element.
+
+**💡 Tip:** Use regular for loop with index when you need to modify array elements.
+
+---
+
+#### ❌ Wrong - Need Index But Using for-each:
 ```java
-for (int i = 0; i < 10; i++);  // Empty loop!
-{
-    System.out.println(i);  // Error: i not in scope
+// WRONG
+String[] names = {"Alice", "Bob", "Charlie"};
+
+for (String name : names) {
+    // How to print index? Can't!
+    System.out.println("Name: " + name);
+}
+```
+**Issue:** Cannot access index in for-each loop
+
+#### ✅ Right:
+```java
+// CORRECT
+String[] names = {"Alice", "Bob", "Charlie"};
+
+for (int i = 0; i < names.length; i++) {
+    System.out.println(i + ": " + names[i]);
+}
+// Output: 0: Alice, 1: Bob, 2: Charlie
+```
+
+**Why:** for-each doesn't provide index access.
+
+**💡 Tip:** Use regular for loop when you need the index.
+
+---
+
+#### ❌ Wrong - Trying to Iterate Backwards with for-each:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+
+// Cannot iterate backwards with for-each!
+for (int num : arr) {  // Always goes forward
+    System.out.print(num + " ");
+}
+```
+**Issue:** for-each always iterates forward
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = arr.length - 1; i >= 0; i--) {  // Backwards
+    System.out.print(arr[i] + " ");
+}
+// Prints: 5 4 3 2 1
+```
+
+**Why:** for-each only goes forward; use regular for loop to go backwards.
+
+**💡 Tip:** for-each is read-only, forward-only; use indexed loop for more control.
+
+---
+
+### 5. Loop Variable Scope
+
+#### ❌ Wrong - Accessing Loop Variable Outside Scope:
+```java
+// WRONG
+for (int i = 0; i < 10; i++) {
+    System.out.println(i);
+}
+
+System.out.println("Final i: " + i);  // Compilation error!
+```
+**Issue:** i is not accessible outside the for loop
+
+#### ✅ Right:
+```java
+// CORRECT
+int i;  // Declare outside
+
+for (i = 0; i < 10; i++) {
+    System.out.println(i);
+}
+
+System.out.println("Final i: " + i);  // Works! Prints 10
+```
+
+**Why:** Variables declared in for loop initialization are scoped to the loop.
+
+**💡 Tip:** Declare loop variable before the loop if you need to access it afterwards.
+
+---
+
+#### ❌ Wrong - Shadowing Variable in Nested Loop:
+```java
+// WRONG (compiles but confusing)
+for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {  // Shadows outer i!
+        System.out.println(i);
+    }
+}
+```
+**Issue:** Inner loop variable shadows outer loop variable
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {  // Different name
+        System.out.println("i=" + i + ", j=" + j);
+    }
 }
 ```
 
-### 5. Wrong Loop Choice:
+**Why:** Shadowing makes code confusing and error-prone.
+
+**💡 Tip:** Use different variable names (i, j, k) for nested loops.
+
+---
+
+### 6. Wrong Loop Choice
+
+#### ❌ Wrong - Using while When for is Better:
 ```java
-// Bad: using while when for is better
+// WRONG (works but less clear)
 int i = 0;
 while (i < 10) {
     System.out.println(i);
     i++;
 }
+```
+**Issue:** Counter initialization and update are separated
 
-// Good: use for loop
+#### ✅ Right:
+```java
+// CORRECT (clearer)
 for (int i = 0; i < 10; i++) {
     System.out.println(i);
 }
 ```
+
+**Why:** for loop is designed for counter-based iteration.
+
+**💡 Tip:** Use for when you know iteration count; while when condition-based.
+
+---
+
+#### ❌ Wrong - Using for When while is Better:
+```java
+// WRONG (awkward)
+for (; !done; ) {
+    done = processNextItem();
+}
+```
+**Issue:** Empty initialization and update make for loop awkward
+
+#### ✅ Right:
+```java
+// CORRECT
+while (!done) {
+    done = processNextItem();
+}
+```
+
+**Why:** while loop is clearer for condition-based loops.
+
+**💡 Tip:** Use while when loop continuation depends on a condition, not a counter.
+
+---
+
+#### ❌ Wrong - Using while Instead of do-while:
+```java
+// WRONG (menu runs zero times if user doesn't want it)
+int choice = -1;
+while (choice != 0) {  // Doesn't run if choice is 0!
+    displayMenu();
+    choice = getChoice();
+}
+```
+**Issue:** Menu never displays if choice starts at 0
+
+#### ✅ Right:
+```java
+// CORRECT
+int choice;
+do {
+    displayMenu();
+    choice = getChoice();
+} while (choice != 0);  // Runs at least once
+```
+
+**Why:** do-while guarantees at least one execution.
+
+**💡 Tip:** Use do-while when you need to execute loop body before checking condition.
+
+---
+
+### 7. break and continue Issues
+
+#### ❌ Wrong - Using break When continue is Needed:
+```java
+// WRONG
+for (int i = 1; i <= 10; i++) {
+    if (i == 5) {
+        break;  // Exits loop entirely!
+    }
+    System.out.print(i + " ");
+}
+// Prints: 1 2 3 4 (stops at 5)
+```
+**Issue:** break exits entire loop; wanted to skip only 5
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 1; i <= 10; i++) {
+    if (i == 5) {
+        continue;  // Skips just this iteration
+    }
+    System.out.print(i + " ");
+}
+// Prints: 1 2 3 4 6 7 8 9 10 (skips 5)
+```
+
+**Why:** break exits the loop completely; continue skips to next iteration.
+
+**💡 Tip:** break = "stop the loop", continue = "skip this iteration".
+
+---
+
+#### ❌ Wrong - break Only Exits Inner Loop:
+```java
+// WRONG
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+        if (j == 1) {
+            break;  // Only exits inner loop!
+        }
+        System.out.println("i=" + i + ", j=" + j);
+    }
+}
+// Inner loop breaks at j=1, but outer continues
+```
+**Issue:** break only exits inner loop, outer loop continues
+
+#### ✅ Right:
+```java
+// CORRECT
+outer:
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+        if (j == 1) {
+            break outer;  // Exits both loops
+        }
+        System.out.println("i=" + i + ", j=" + j);
+    }
+}
+```
+
+**Why:** break without label only exits the immediate enclosing loop.
+
+**💡 Tip:** Use labeled break to exit outer loop from inside nested loop.
+
+---
+
+#### ❌ Wrong - continue in Wrong Place:
+```java
+// WRONG
+for (int i = 0; i < 10; i++) {
+    continue;  // Skips everything!
+    System.out.println(i);  // Never executes
+}
+// Prints nothing!
+```
+**Issue:** continue at start skips all code in loop body
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 10; i++) {
+    if (i % 2 == 0) {
+        continue;  // Skip only even numbers
+    }
+    System.out.println(i);  // Prints odd numbers
+}
+```
+
+**Why:** continue should be used conditionally, not unconditionally.
+
+**💡 Tip:** Use continue with an if condition to skip specific iterations.
+
+---
+
+#### ❌ Wrong - Unreachable Code After break:
+```java
+// WRONG
+while (true) {
+    break;
+    System.out.println("Never reached");  // Unreachable!
+}
+```
+**Issue:** Code after break never executes
+
+#### ✅ Right:
+```java
+// CORRECT
+while (true) {
+    if (condition) {
+        break;
+    }
+    System.out.println("May execute");
+}
+```
+
+**Why:** break immediately exits; code after it is unreachable.
+
+**💡 Tip:** Place break inside conditional; don't put code after unconditional break.
+
+---
+
+#### ❌ Wrong - Using continue in switch Inside Loop:
+```java
+// WRONG
+for (int i = 0; i < 5; i++) {
+    switch (i) {
+        case 2:
+            continue;  // Continues loop, not switch!
+        case 3:
+            System.out.println(i);
+            break;
+    }
+}
+```
+**Issue:** continue applies to loop, not switch
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 5; i++) {
+    switch (i) {
+        case 2:
+            break;  // Exits switch, continues loop
+        case 3:
+            System.out.println(i);
+            break;
+    }
+}
+```
+
+**Why:** continue affects the loop, not the switch.
+
+**💡 Tip:** Use break to exit switch; continue exits current loop iteration.
+
+---
+
+### 8. Loop Counter Issues
+
+#### ❌ Wrong - Counter Overflow:
+```java
+// WRONG
+for (int i = Integer.MAX_VALUE - 1; i <= Integer.MAX_VALUE + 1; i++) {
+    System.out.println(i);
+}
+// Infinite loop! i overflows to negative
+```
+**Issue:** i overflows and wraps to negative, never reaches MAX_VALUE + 1
+
+#### ✅ Right:
+```java
+// CORRECT
+for (long i = Integer.MAX_VALUE - 1; i <= (long)Integer.MAX_VALUE + 1; i++) {
+    System.out.println(i);
+}
+```
+
+**Why:** Integer overflow causes wrapping to negative values.
+
+**💡 Tip:** Be careful with loop boundaries near Integer.MAX_VALUE; use long if needed.
+
+---
+
+#### ❌ Wrong - Counter Modified in Wrong Place:
+```java
+// WRONG
+for (int i = 0; i < 10; i++) {
+    System.out.println(i);
+    i++;  // Incremented twice!
+}
+// Prints only even numbers: 0, 2, 4, 6, 8
+```
+**Issue:** i incremented both in loop header and body (twice per iteration)
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 10; i++) {
+    System.out.println(i);
+    // Don't modify i in loop body
+}
+```
+
+**Why:** Loop counter should only be updated in one place.
+
+**💡 Tip:** Don't modify loop counter inside loop body; let the header handle it.
+
+---
+
+#### ❌ Wrong - Multiple Counters Confusion:
+```java
+// WRONG
+for (int i = 0, j = 10; i < j; i++, j++) {  // j also increments!
+    System.out.println("i=" + i + ", j=" + j);
+}
+// Infinite loop! i and j both increase, never meet
+```
+**Issue:** Both counters increment, condition never becomes false
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0, j = 10; i < j; i++, j--) {  // j decrements
+    System.out.println("i=" + i + ", j=" + j);
+}
+// They meet in the middle
+```
+
+**Why:** Counters must move toward each other for condition to become false.
+
+**💡 Tip:** When using multiple counters, ensure they eventually make condition false.
+
+---
+
+### 9. Condition Issues
+
+#### ❌ Wrong - Side Effect in Loop Condition:
+```java
+// WRONG (confusing)
+int i = 0;
+
+while (i++ < 10) {  // i incremented in condition!
+    System.out.println(i);
+}
+// Prints 1 to 10 (not 0 to 9)
+```
+**Issue:** i is incremented in condition, prints 1-10 instead of 0-9
+
+#### ✅ Right:
+```java
+// CORRECT (clear)
+int i = 0;
+
+while (i < 10) {
+    System.out.println(i);
+    i++;  // Increment in expected location
+}
+// Prints 0 to 9
+```
+
+**Why:** Side effects in conditions make code hard to read and debug.
+
+**💡 Tip:** Keep loop conditions simple; put updates in the update section or loop body.
+
+---
+
+#### ❌ Wrong - Wrong Comparison Operator:
+```java
+// WRONG
+for (int i = 0; i <= 10; i++) {  // Should be <
+    processItem(i);
+}
+// Processes 11 items (0 to 10), not 10
+```
+**Issue:** Using <= instead of < adds extra iteration
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 10; i++) {  // Correct operator
+    processItem(i);
+}
+// Processes 10 items (0 to 9)
+```
+
+**Why:** <= includes both endpoints; < excludes the end.
+
+**💡 Tip:** For n iterations starting at 0, use `< n`, not `<= n`.
+
+---
+
+#### ❌ Wrong - Complex Condition Error:
+```java
+// WRONG
+int i = 0;
+while (i < 10 && i > 0) {  // Never true initially!
+    System.out.println(i);
+    i++;
+}
+// Loop never executes!
+```
+**Issue:** Condition is false from start (0 is not > 0)
+
+#### ✅ Right:
+```java
+// CORRECT
+int i = 0;
+while (i < 10) {  // Correct condition
+    System.out.println(i);
+    i++;
+}
+```
+
+**Why:** Complex conditions can have logic errors.
+
+**💡 Tip:** Test loop conditions with initial values to ensure they work correctly.
+
+---
+
+### 10. Empty Loop Issues
+
+#### ❌ Wrong - Empty Loop Without Comment:
+```java
+// WRONG
+int i = 0;
+while (++i < 1000);  // What's this doing?
+```
+**Issue:** Empty loop without explanation looks like a bug
+
+#### ✅ Right:
+```java
+// CORRECT
+int i = 0;
+while (++i < 1000) {
+    // Intentionally empty - just incrementing i to 1000
+}
+```
+
+**Why:** Empty loops look like mistakes and confuse readers.
+
+**💡 Tip:** If you intentionally have an empty loop body, add a comment explaining why.
+
+---
+
+#### ❌ Wrong - Accidental Empty Loop:
+```java
+// WRONG
+for (int i = 0; i < 10; i++);  // Accidental semicolon
+System.out.println("Done");  // Executes once after empty loop
+```
+**Issue:** Semicolon creates empty loop; following code not in loop
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 10; i++) {
+    processItem(i);
+}
+System.out.println("Done");
+```
+
+**Why:** Accidental semicolon creates unintended empty loop.
+
+**💡 Tip:** Avoid semicolons after loop headers unless using do-while.
+
+---
+
+### 11. Nested Loop Issues
+
+#### ❌ Wrong - Using Same Variable Name:
+```java
+// WRONG
+for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {  // Shadows outer i!
+        System.out.println(i);
+    }
+}
+```
+**Issue:** Inner loop variable shadows outer, causing confusion
+
+#### ✅ Right:
+```java
+// CORRECT
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {  // Different name
+        System.out.println("i=" + i + ", j=" + j);
+    }
+}
+```
+
+**Why:** Shadowing makes code hard to understand and maintain.
+
+**💡 Tip:** Use i, j, k for nested loop variables; never reuse names.
+
+---
+
+#### ❌ Wrong - Inefficient Nested Loops:
+```java
+// WRONG (O(n²) when O(n) possible)
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = 0; i < arr.length; i++) {
+    for (int j = 0; j < arr.length; j++) {
+        // Only need inner loop when checking pairs
+    }
+}
+```
+**Issue:** Nested loops create O(n²) complexity unnecessarily
+
+#### ✅ Right:
+```java
+// CORRECT (consider if inner loop is really needed)
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = 0; i < arr.length; i++) {
+    // Often you can avoid nested loop
+    process(arr[i]);
+}
+```
+
+**Why:** Nested loops multiply complexity; avoid when possible.
+
+**💡 Tip:** Think twice before nesting loops; often there's a better way.
+
+---
+
+#### ❌ Wrong - Wrong Bounds in Nested Loop:
+```java
+// WRONG
+int[][] matrix = new int[3][4];  // 3 rows, 4 columns
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix.length; j++) {  // Wrong! Uses rows for columns
+        matrix[i][j] = i + j;  // ArrayIndexOutOfBoundsException!
+    }
+}
+```
+**Issue:** Inner loop uses matrix.length instead of matrix[i].length
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = new int[3][4];
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix[i].length; j++) {  // Correct column count
+        matrix[i][j] = i + j;
+    }
+}
+```
+
+**Why:** 2D arrays can have different row lengths.
+
+**💡 Tip:** Use matrix[i].length for columns, not matrix.length.
+
+---
+
+### 12. do-while Specific Issues
+
+#### ❌ Wrong - Not Executing When Intended:
+```java
+// WRONG (do-while when while was needed)
+int count = 10;
+
+do {
+    System.out.println(count);  // Prints once!
+} while (count < 5);  // Condition false, but already ran
+```
+**Issue:** do-while executes once even when condition is false
+
+#### ✅ Right:
+```java
+// CORRECT (use while if shouldn't run when condition false)
+int count = 10;
+
+while (count < 5) {
+    System.out.println(count);  // Doesn't run
+}
+```
+
+**Why:** do-while guarantees at least one execution; use while if not desired.
+
+**💡 Tip:** Use do-while only when you need guaranteed first execution.
+
+---
+
+This comprehensive list now contains **40+ loop mistakes** covering every aspect of Day 5: Control Flow - Loops!
 
 ---
 

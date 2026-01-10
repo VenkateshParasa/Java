@@ -1682,16 +1682,881 @@ public class StudentGradeSystem {
 
 ---
 
-## ⚠️ Common Mistakes to Avoid
+## ⚠️ Common Mistakes
 
-1. **Off-by-One Errors**: Remember arrays are zero-indexed
-2. **Integer Division**: `5 / 2 = 2`, not `2.5`
-3. **Comparing Strings**: Use `.equals()`, not `==`
-4. **Modifying in for-each**: Cannot change array elements
-5. **Uninitialized Arrays**: Must allocate memory before use
-6. **Missing break in switch**: Causes fall-through
-7. **Infinite Loops**: Always update loop condition
-8. **ArrayIndexOutOfBoundsException**: Check array bounds
+### 1. Multi-dimensional Array Declaration Issues
+
+#### ❌ Wrong - Wrong 2D Array Declaration Syntax:
+```java
+// WRONG - Cannot specify dimensions in type
+int[3][4] matrix;  // Compilation error!
+int[][] matrix[3][4];  // Compilation error!
+```
+**Issue:** Dimensions specified in wrong place
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = new int[3][4];  // 3 rows, 4 columns
+
+// OR declare then allocate
+int[][] matrix;
+matrix = new int[3][4];
+```
+
+**Why:** Dimensions go with `new` during allocation, not with type declaration.
+
+**💡 Tip:** Syntax is `dataType[][] name = new dataType[rows][cols];`
+
+---
+
+#### ❌ Wrong - Confusing Rows and Columns:
+```java
+// WRONG - Mixing up which dimension is rows and which is columns
+int[][] matrix = new int[4][3];  // Think it's 3 rows, 4 columns
+
+// Actually creates 4 rows and 3 columns!
+matrix[3][0] = 10;  // Exists
+matrix[2][3] = 20;  // ArrayIndexOutOfBoundsException!
+```
+**Issue:** First dimension is rows, second is columns - easy to confuse
+
+#### ✅ Right:
+```java
+// CORRECT - First number is rows, second is columns
+int[][] matrix = new int[3][4];  // 3 rows, 4 columns
+
+System.out.println("Rows: " + matrix.length);        // 3
+System.out.println("Columns: " + matrix[0].length);  // 4
+```
+
+**Why:** Convention is `[rows][columns]` but conceptually think "array of rows".
+
+**💡 Tip:** Remember: `matrix.length` = rows, `matrix[0].length` = columns.
+
+---
+
+#### ❌ Wrong - Not Initializing Rows in Jagged Array:
+```java
+// WRONG
+int[][] jagged = new int[3][];  // Only rows allocated
+
+jagged[0][0] = 10;  // NullPointerException! Row not initialized
+```
+**Issue:** In jagged arrays, rows themselves must be initialized
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] jagged = new int[3][];
+jagged[0] = new int[2];  // Initialize each row
+jagged[1] = new int[4];
+jagged[2] = new int[3];
+
+jagged[0][0] = 10;  // Now works
+```
+
+**Why:** Jagged array is array of arrays; each row must be separately allocated.
+
+**💡 Tip:** For jagged arrays, allocate rows individually: `arr[i] = new int[size];`
+
+---
+
+#### ❌ Wrong - Wrong Initialization Order:
+```java
+// WRONG
+int[][] matrix = new int[][3];  // Compilation error!
+```
+**Issue:** Cannot specify only second dimension without first
+
+#### ✅ Right:
+```java
+// CORRECT - Must specify first dimension
+int[][] matrix = new int[3][];  // 3 rows, columns later
+
+// Then specify columns for each row
+matrix[0] = new int[3];
+matrix[1] = new int[3];
+matrix[2] = new int[3];
+```
+
+**Why:** Must specify first dimension; second dimension can vary (jagged) or be specified later.
+
+**💡 Tip:** First dimension mandatory, second optional: `new int[rows][]` is valid.
+
+---
+
+#### ❌ Wrong - Using new with Inline Initialization:
+```java
+// WRONG
+int[][] matrix = new int[3][4]{{1,2,3,4}, {5,6,7,8}, {9,10,11,12}};  // Error!
+```
+**Issue:** Cannot specify size and provide values together
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: No size with values
+int[][] matrix = {{1,2,3,4}, {5,6,7,8}, {9,10,11,12}};
+
+// CORRECT - Method 2: Size without values
+int[][] matrix = new int[3][4];
+// Then populate manually
+```
+
+**Why:** When providing values, compiler infers dimensions automatically.
+
+**💡 Tip:** Either specify size OR provide values, not both.
+
+---
+
+### 2. Index and Access Issues
+
+#### ❌ Wrong - Reversed Row/Column Indices:
+```java
+// WRONG
+int[][] matrix = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+};
+
+// Want element in row 1, column 2 (value 6)
+int value = matrix[2][1];  // Wrong! Gets 8 (row 2, column 1)
+```
+**Issue:** Indices in wrong order
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+};
+
+int value = matrix[1][2];  // Correct: row 1, column 2 = 6
+```
+
+**Why:** Syntax is `matrix[row][column]`, not `matrix[column][row]`.
+
+**💡 Tip:** Always think `[row][column]` - like reading row first, then column.
+
+---
+
+#### ❌ Wrong - Assuming Rectangular When Jagged:
+```java
+// WRONG
+int[][] jagged = {
+    {1, 2},
+    {3, 4, 5, 6},
+    {7, 8, 9}
+};
+
+// Assuming all rows have 4 columns
+for (int i = 0; i < jagged.length; i++) {
+    for (int j = 0; j < 4; j++) {  // Wrong!
+        System.out.print(jagged[i][j] + " ");  // Crashes on row 0 and 2!
+    }
+}
+```
+**Issue:** Hardcoded column count doesn't work for jagged arrays
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] jagged = {
+    {1, 2},
+    {3, 4, 5, 6},
+    {7, 8, 9}
+};
+
+for (int i = 0; i < jagged.length; i++) {
+    for (int j = 0; j < jagged[i].length; j++) {  // Use row's length
+        System.out.print(jagged[i][j] + " ");
+    }
+    System.out.println();
+}
+```
+
+**Why:** Each row can have different length in jagged arrays.
+
+**💡 Tip:** Always use `matrix[i].length` for columns, not a fixed number.
+
+---
+
+#### ❌ Wrong - Off-by-One in 2D Loops:
+```java
+// WRONG
+int[][] matrix = new int[3][4];
+
+for (int i = 0; i <= matrix.length; i++) {  // <= is wrong!
+    for (int j = 0; j <= matrix[i].length; j++) {  // <= is wrong!
+        matrix[i][j] = i + j;  // ArrayIndexOutOfBoundsException!
+    }
+}
+```
+**Issue:** Using `<=` includes invalid indices
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = new int[3][4];
+
+for (int i = 0; i < matrix.length; i++) {  // Use <
+    for (int j = 0; j < matrix[i].length; j++) {  // Use <
+        matrix[i][j] = i + j;
+    }
+}
+```
+
+**Why:** Indices range from 0 to length-1, so condition must be `<` not `<=`.
+
+**💡 Tip:** Standard 2D loop: `i < rows` and `j < columns`.
+
+---
+
+#### ❌ Wrong - Accessing Null Row in Jagged Array:
+```java
+// WRONG
+int[][] jagged = new int[3][];
+jagged[0] = new int[]{1, 2, 3};
+// jagged[1] not initialized - still null!
+jagged[2] = new int[]{7, 8, 9};
+
+int value = jagged[1][0];  // NullPointerException!
+```
+**Issue:** Accessing uninitialized row
+
+#### ✅ Right:
+```java
+// CORRECT - Check for null before accessing
+int[][] jagged = new int[3][];
+jagged[0] = new int[]{1, 2, 3};
+jagged[2] = new int[]{7, 8, 9};
+
+for (int i = 0; i < jagged.length; i++) {
+    if (jagged[i] != null) {  // Check for null
+        for (int j = 0; j < jagged[i].length; j++) {
+            System.out.print(jagged[i][j] + " ");
+        }
+    }
+}
+```
+
+**Why:** In jagged arrays, rows can be null if not initialized.
+
+**💡 Tip:** Check `jagged[i] != null` before accessing row elements.
+
+---
+
+#### ❌ Wrong - Using matrix.length for Columns:
+```java
+// WRONG
+int[][] matrix = new int[3][4];  // 3 rows, 4 columns
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix.length; j++) {  // Wrong! Uses rows for columns
+        matrix[i][j] = i + j;  // ArrayIndexOutOfBoundsException!
+    }
+}
+```
+**Issue:** Using row count (matrix.length) for column count
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = new int[3][4];
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix[i].length; j++) {  // Use row's column count
+        matrix[i][j] = i + j;
+    }
+}
+```
+
+**Why:** `matrix.length` gives rows; `matrix[i].length` gives columns in row i.
+
+**💡 Tip:** Rows: `matrix.length`, Columns: `matrix[i].length`.
+
+---
+
+### 3. Loop and Traversal Mistakes
+
+#### ❌ Wrong - Wrong Nested Loop Bounds:
+```java
+// WRONG
+int[][] matrix = {
+    {1, 2, 3},
+    {4, 5, 6}
+};  // 2 rows, 3 columns
+
+for (int i = 0; i < 3; i++) {  // Hardcoded 3 - wrong!
+    for (int j = 0; j < 2; j++) {  // Hardcoded 2 - wrong!
+        System.out.print(matrix[i][j]);  // Crashes at i=2
+    }
+}
+```
+**Issue:** Hardcoded bounds don't match actual array dimensions
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+
+for (int i = 0; i < matrix.length; i++) {  // Use matrix.length
+    for (int j = 0; j < matrix[i].length; j++) {  // Use row length
+        System.out.print(matrix[i][j]);
+    }
+}
+```
+
+**Why:** Array dimensions should be determined at runtime, not hardcoded.
+
+**💡 Tip:** Always use `.length` properties instead of hardcoded numbers.
+
+---
+
+#### ❌ Wrong - Modifying 2D Array in for-each:
+```java
+// WRONG
+int[][] matrix = {{1, 2}, {3, 4}};
+
+for (int[] row : matrix) {
+    for (int element : row) {
+        element = element * 2;  // Doesn't modify array!
+    }
+}
+// matrix unchanged: {{1, 2}, {3, 4}}
+```
+**Issue:** for-each provides copy of elements, not references
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = {{1, 2}, {3, 4}};
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix[i].length; j++) {
+        matrix[i][j] = matrix[i][j] * 2;  // Direct modification
+    }
+}
+// matrix modified: {{2, 4}, {6, 8}}
+```
+
+**Why:** for-each gives read-only access; use indexed loops to modify.
+
+**💡 Tip:** Use indexed loops when you need to modify 2D array elements.
+
+---
+
+#### ❌ Wrong - Wrong Loop Order in Matrix Operations:
+```java
+// WRONG - Transpose by swapping in place
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix[i].length; j++) {  // Wrong! Swaps twice
+        int temp = matrix[i][j];
+        matrix[i][j] = matrix[j][i];
+        matrix[j][i] = temp;
+    }
+}
+// Matrix incorrect!
+```
+**Issue:** Swapping all elements swaps each pair twice (undoing the swap)
+
+#### ✅ Right:
+```java
+// CORRECT - Only swap upper triangle
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = i + 1; j < matrix[i].length; j++) {  // Start j from i+1
+        int temp = matrix[i][j];
+        matrix[i][j] = matrix[j][i];
+        matrix[j][i] = temp;
+    }
+}
+```
+
+**Why:** For in-place transpose, only swap upper triangle to avoid double swap.
+
+**💡 Tip:** For transpose in place: `j` starts from `i+1`, not 0.
+
+---
+
+### 4. Arrays Utility Class Mistakes
+
+#### ❌ Wrong - Using binarySearch on Unsorted Array:
+```java
+// WRONG
+import java.util.Arrays;
+
+int[] numbers = {5, 2, 8, 1, 9, 3};  // Unsorted!
+
+int index = Arrays.binarySearch(numbers, 8);
+System.out.println("Found at: " + index);  // Unpredictable result!
+```
+**Issue:** binarySearch requires sorted array; gives wrong result on unsorted
+
+#### ✅ Right:
+```java
+// CORRECT - Sort first
+import java.util.Arrays;
+
+int[] numbers = {5, 2, 8, 1, 9, 3};
+
+Arrays.sort(numbers);  // Sort first: {1, 2, 3, 5, 8, 9}
+
+int index = Arrays.binarySearch(numbers, 8);
+System.out.println("Found at: " + index);  // Correct: 4
+```
+
+**Why:** Binary search algorithm assumes array is sorted to work correctly.
+
+**💡 Tip:** Always sort before using `Arrays.binarySearch()`.
+
+---
+
+#### ❌ Wrong - Wrong copyOfRange Indices:
+```java
+// WRONG
+import java.util.Arrays;
+
+int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// Want elements at indices 2, 3, 4 (values 3, 4, 5)
+int[] copy = Arrays.copyOfRange(numbers, 2, 5);  // Looks right...
+System.out.println(Arrays.toString(copy));  // Prints [3, 4, 5] - correct by luck!
+
+// But if you want to include index 5:
+int[] copy2 = Arrays.copyOfRange(numbers, 2, 5);  // Doesn't include 5!
+```
+**Issue:** End index is exclusive (not included in result)
+
+#### ✅ Right:
+```java
+// CORRECT
+import java.util.Arrays;
+
+int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// To include indices 2, 3, 4 (values 3, 4, 5), end index must be 5
+int[] copy1 = Arrays.copyOfRange(numbers, 2, 5);  // [3, 4, 5]
+
+// To include indices 2 through 6 (values 3 through 7), end must be 7
+int[] copy2 = Arrays.copyOfRange(numbers, 2, 7);  // [3, 4, 5, 6, 7]
+```
+
+**Why:** copyOfRange is exclusive of end index: `[start, end)`.
+
+**💡 Tip:** End index is exclusive: use `start` to `end-1` elements.
+
+---
+
+#### ❌ Wrong - toString() vs deepToString() Confusion:
+```java
+// WRONG
+import java.util.Arrays;
+
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}};
+
+System.out.println(Arrays.toString(matrix));
+// Prints: [[I@15db9742, [I@6d06d69c] - not useful!
+```
+**Issue:** toString() doesn't work for 2D arrays
+
+#### ✅ Right:
+```java
+// CORRECT
+import java.util.Arrays;
+
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}};
+
+System.out.println(Arrays.deepToString(matrix));
+// Prints: [[1, 2, 3], [4, 5, 6]] - readable!
+```
+
+**Why:** toString() is for 1D arrays; use deepToString() for multi-dimensional.
+
+**💡 Tip:** 1D: `Arrays.toString()`, Multi-D: `Arrays.deepToString()`.
+
+---
+
+#### ❌ Wrong - equals() vs deepEquals() for 2D Arrays:
+```java
+// WRONG
+import java.util.Arrays;
+
+int[][] arr1 = {{1, 2}, {3, 4}};
+int[][] arr2 = {{1, 2}, {3, 4}};
+
+System.out.println(Arrays.equals(arr1, arr2));  // FALSE!
+```
+**Issue:** equals() only compares references for 2D arrays, not contents
+
+#### ✅ Right:
+```java
+// CORRECT
+import java.util.Arrays;
+
+int[][] arr1 = {{1, 2}, {3, 4}};
+int[][] arr2 = {{1, 2}, {3, 4}};
+
+System.out.println(Arrays.deepEquals(arr1, arr2));  // TRUE!
+```
+
+**Why:** equals() doesn't recursively compare nested arrays; use deepEquals().
+
+**💡 Tip:** 1D: `Arrays.equals()`, Multi-D: `Arrays.deepEquals()`.
+
+---
+
+#### ❌ Wrong - fill() Range Parameters:
+```java
+// WRONG
+import java.util.Arrays;
+
+int[] arr = new int[10];
+
+Arrays.fill(arr, 5, 2, 99);  // IllegalArgumentException! Start > end
+```
+**Issue:** Start index must be before end index
+
+#### ✅ Right:
+```java
+// CORRECT
+import java.util.Arrays;
+
+int[] arr = new int[10];
+
+Arrays.fill(arr, 2, 7, 99);  // Fill indices 2-6 with 99
+System.out.println(Arrays.toString(arr));  // [0, 0, 99, 99, 99, 99, 99, 0, 0, 0]
+```
+
+**Why:** Range is `[start, end)` where start < end.
+
+**💡 Tip:** fill(arr, start, end, value) fills from start to end-1.
+
+---
+
+#### ❌ Wrong - Thinking sort() Doesn't Modify Original:
+```java
+// WRONG
+import java.util.Arrays;
+
+int[] original = {5, 2, 8, 1, 9};
+Arrays.sort(original);  // Assume original unchanged?
+
+System.out.println(Arrays.toString(original));
+// Prints [1, 2, 5, 8, 9] - MODIFIED!
+```
+**Issue:** sort() modifies the array in-place
+
+#### ✅ Right:
+```java
+// CORRECT - Copy first if you need original
+import java.util.Arrays;
+
+int[] original = {5, 2, 8, 1, 9};
+int[] sorted = original.clone();  // Create copy
+Arrays.sort(sorted);  // Sort the copy
+
+System.out.println("Original: " + Arrays.toString(original));  // [5, 2, 8, 1, 9]
+System.out.println("Sorted: " + Arrays.toString(sorted));      // [1, 2, 5, 8, 9]
+```
+
+**Why:** Arrays.sort() modifies array in-place; clone first to preserve original.
+
+**💡 Tip:** Clone before sorting if you need to keep original order.
+
+---
+
+### 5. Copying Mistakes
+
+#### ❌ Wrong - Shallow Copy of 2D Arrays:
+```java
+// WRONG
+int[][] original = {{1, 2}, {3, 4}};
+int[][] copy = original.clone();  // Shallow copy!
+
+copy[0][0] = 100;  // Modifies original too!
+System.out.println(original[0][0]);  // Prints 100!
+```
+**Issue:** clone() creates shallow copy for 2D arrays (copies row references)
+
+#### ✅ Right:
+```java
+// CORRECT - Deep copy each row
+int[][] original = {{1, 2}, {3, 4}};
+int[][] copy = new int[original.length][];
+
+for (int i = 0; i < original.length; i++) {
+    copy[i] = original[i].clone();  // Clone each row
+}
+
+copy[0][0] = 100;  // Doesn't affect original
+System.out.println(original[0][0]);  // Still 1
+```
+
+**Why:** 2D arrays need deep copy (copying each row separately).
+
+**💡 Tip:** For 2D arrays, clone each row individually for true independent copy.
+
+---
+
+#### ❌ Wrong - Reference Assignment Instead of Copy:
+```java
+// WRONG
+int[][] original = {{1, 2}, {3, 4}};
+int[][] copy = original;  // Not a copy! Same reference
+
+copy[0][0] = 100;
+System.out.println(original[0][0]);  // 100 - both changed!
+```
+**Issue:** Assignment copies reference, not array data
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] original = {{1, 2}, {3, 4}};
+int[][] copy = new int[original.length][];
+
+for (int i = 0; i < original.length; i++) {
+    copy[i] = original[i].clone();
+}
+
+copy[0][0] = 100;
+System.out.println(original[0][0]);  // Still 1
+```
+
+**Why:** = operator copies reference; must manually copy data.
+
+**💡 Tip:** Assignment copies reference; use clone() or loops for actual copy.
+
+---
+
+#### ❌ Wrong - Wrong System.arraycopy Parameters:
+```java
+// WRONG
+int[] source = {1, 2, 3, 4, 5};
+int[] dest = new int[5];
+
+System.arraycopy(source, dest, 0, 0, 5);  // Wrong parameter order!
+// Throws ArrayStoreException or unexpected behavior
+```
+**Issue:** Parameters in wrong order
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] source = {1, 2, 3, 4, 5};
+int[] dest = new int[5];
+
+System.arraycopy(source, 0, dest, 0, 5);
+// Parameters: (src, srcPos, dest, destPos, length)
+```
+
+**Why:** Parameter order is: source, source position, destination, destination position, length.
+
+**💡 Tip:** Remember order: `arraycopy(from, fromPos, to, toPos, count)`.
+
+---
+
+#### ❌ Wrong - Not Copying All Rows in 2D Array:
+```java
+// WRONG
+int[][] original = {{1, 2}, {3, 4}, {5, 6}};
+int[][] copy = new int[original.length][];
+
+// Forgot to copy row 2!
+copy[0] = original[0].clone();
+copy[1] = original[1].clone();
+// copy[2] is null!
+
+copy[2][0] = 10;  // NullPointerException!
+```
+**Issue:** Not all rows copied
+
+#### ✅ Right:
+```java
+// CORRECT - Use loop to ensure all rows copied
+int[][] original = {{1, 2}, {3, 4}, {5, 6}};
+int[][] copy = new int[original.length][];
+
+for (int i = 0; i < original.length; i++) {
+    copy[i] = original[i].clone();  // Copy every row
+}
+
+copy[2][0] = 10;  // Works
+```
+
+**Why:** Must copy all rows; easy to miss some when done manually.
+
+**💡 Tip:** Use loop to copy all rows systematically.
+
+---
+
+### 6. Matrix Operation Errors
+
+#### ❌ Wrong - Wrong Matrix Multiplication Dimensions:
+```java
+// WRONG
+int[][] m1 = new int[2][3];  // 2x3
+int[][] m2 = new int[4][2];  // 4x2
+
+// Cannot multiply 2x3 by 4x2 (columns of m1 ≠ rows of m2)
+int[][] result = new int[2][2];  // Wrong dimensions!
+
+for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+        for (int k = 0; k < 3; k++) {  // Wrong!
+            result[i][j] += m1[i][k] * m2[k][j];  // Crashes!
+        }
+    }
+}
+```
+**Issue:** Matrix multiplication requires m1 columns = m2 rows
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] m1 = new int[2][3];  // 2x3
+int[][] m2 = new int[3][4];  // 3x4 (m1 columns = m2 rows)
+
+int[][] result = new int[2][4];  // Result is 2x4
+
+for (int i = 0; i < m1.length; i++) {
+    for (int j = 0; j < m2[0].length; j++) {
+        for (int k = 0; k < m1[0].length; k++) {
+            result[i][j] += m1[i][k] * m2[k][j];
+        }
+    }
+}
+```
+
+**Why:** For multiplication, m1[rows1×cols1] × m2[rows2×cols2], need cols1 = rows2.
+
+**💡 Tip:** Check dimensions before multiplying: m1 columns must equal m2 rows.
+
+---
+
+#### ❌ Wrong - Incorrect Transpose Dimensions:
+```java
+// WRONG
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}};  // 2x3
+
+int[][] transpose = new int[2][3];  // Wrong dimensions!
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix[i].length; j++) {
+        transpose[j][i] = matrix[i][j];  // ArrayIndexOutOfBoundsException!
+    }
+}
+```
+**Issue:** Transpose dimensions are swapped (rows become columns)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}};  // 2x3
+
+int[][] transpose = new int[3][2];  // Swap dimensions: 3x2
+
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix[i].length; j++) {
+        transpose[j][i] = matrix[i][j];  // Now works
+    }
+}
+```
+
+**Why:** Transpose swaps rows and columns; dimensions must be swapped too.
+
+**💡 Tip:** Transpose of m×n matrix is n×m: swap dimensions.
+
+---
+
+#### ❌ Wrong - Wrong Diagonal Access:
+```java
+// WRONG
+int[][] matrix = {
+    {1, 2, 3, 4},
+    {5, 6, 7, 8},
+    {9, 10, 11, 12}
+};  // 3x4 - not square!
+
+int diagonalSum = 0;
+for (int i = 0; i < matrix.length; i++) {
+    diagonalSum += matrix[i][i];  // ArrayIndexOutOfBoundsException!
+}
+```
+**Issue:** Non-square matrix doesn't have full main diagonal
+
+#### ✅ Right:
+```java
+// CORRECT - Check if square first
+int[][] matrix = {
+    {1, 2, 3, 4},
+    {5, 6, 7, 8},
+    {9, 10, 11, 12}
+};
+
+if (matrix.length == matrix[0].length) {
+    int diagonalSum = 0;
+    for (int i = 0; i < matrix.length; i++) {
+        diagonalSum += matrix[i][i];
+    }
+    System.out.println("Diagonal sum: " + diagonalSum);
+} else {
+    System.out.println("Matrix is not square");
+}
+```
+
+**Why:** Diagonal access `matrix[i][i]` only works for square matrices.
+
+**💡 Tip:** Check if matrix is square before accessing diagonal.
+
+---
+
+#### ❌ Wrong - Incorrect Row/Column Sum Logic:
+```java
+// WRONG - Column sum logic error
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+for (int j = 0; j < matrix[0].length; j++) {
+    int colSum = 0;
+    for (int i = 0; i < matrix[j].length; i++) {  // Wrong! matrix[j]
+        colSum += matrix[i][j];  // ArrayIndexOutOfBoundsException!
+    }
+    System.out.println("Column " + j + ": " + colSum);
+}
+```
+**Issue:** Using matrix[j].length instead of matrix.length for column iteration
+
+#### ✅ Right:
+```java
+// CORRECT
+int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+for (int j = 0; j < matrix[0].length; j++) {
+    int colSum = 0;
+    for (int i = 0; i < matrix.length; i++) {  // Use matrix.length
+        colSum += matrix[i][j];
+    }
+    System.out.println("Column " + j + ": " + colSum);
+}
+```
+
+**Why:** For column sum, outer loop is columns (j), inner is rows (i) using matrix.length.
+
+**💡 Tip:** Column sums: outer loop columns, inner loop rows using matrix.length.
+
+---
+
+This comprehensive list now contains **30+ mistakes** covering all aspects of Day 7: Multi-dimensional Arrays, Jagged Arrays, Arrays Utility Class, and Array Copying!
 
 ---
 

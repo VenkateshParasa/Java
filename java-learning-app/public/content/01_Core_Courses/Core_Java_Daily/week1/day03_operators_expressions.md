@@ -416,7 +416,28 @@ float result2 = b + f;  // byte promoted to float
 
 ## 💻 Practical Exercises
 
-### Exercise 1: Simple Calculator
+```exercise
+title: Exercise 1: Simple Calculator
+description: Create a Java program that performs all five basic arithmetic operations (addition, subtraction, multiplication, division, and modulus) on two numbers entered by the user. This exercise demonstrates the use of arithmetic operators and user input handling.
+requirements:
+- Import Scanner class for user input
+- Accept two numbers from the user (use double for decimal support)
+- Perform all five arithmetic operations: +, -, *, /, %
+- Display results for each operation with clear labels
+- Close the Scanner resource after use
+testcases:
+- input: "num1 = 10, num2 = 3"
+  output: "Addition: 13.0\nSubtraction: 7.0\nMultiplication: 30.0\nDivision: 3.333...\nModulus: 1.0"
+- input: "num1 = 20, num2 = 4"
+  output: "Addition: 24.0\nSubtraction: 16.0\nMultiplication: 80.0\nDivision: 5.0\nModulus: 0.0"
+- input: "num1 = 15.5, num2 = 2.5"
+  output: "Addition: 18.0\nSubtraction: 13.0\nMultiplication: 38.75\nDivision: 6.2\nModulus: 0.5"
+hints:
+- Use Scanner's nextDouble() method to read decimal numbers
+- Remember to import java.util.Scanner
+- Use parentheses in println to ensure arithmetic happens before concatenation
+- Division by zero will cause an error - consider adding a check
+solution:
 ```java
 import java.util.Scanner;
 
@@ -441,10 +462,34 @@ public class SimpleCalculator {
     }
 }
 ```
+```
 
 ---
 
-### Exercise 2: Even/Odd Checker
+```exercise
+title: Exercise 2: Even/Odd Checker
+description: Write a program that determines whether a number entered by the user is even or odd using the modulus operator. This demonstrates the practical use of the modulus operator (%) and conditional logic.
+requirements:
+- Accept an integer input from the user
+- Use the modulus operator (%) to check if the number is divisible by 2
+- Display whether the number is EVEN or ODD
+- Use proper conditional statements (if-else)
+- Close the Scanner resource
+testcases:
+- input: "number = 10"
+  output: "10 is EVEN"
+- input: "number = 7"
+  output: "7 is ODD"
+- input: "number = 0"
+  output: "0 is EVEN"
+- input: "number = -5"
+  output: "-5 is ODD"
+hints:
+- A number is even if number % 2 == 0
+- A number is odd if number % 2 != 0 (or == 1)
+- The modulus operator returns the remainder of division
+- Even zero is considered even
+solution:
 ```java
 import java.util.Scanner;
 
@@ -465,10 +510,34 @@ public class EvenOddChecker {
     }
 }
 ```
+```
 
 ---
 
-### Exercise 3: Temperature Converter
+```exercise
+title: Exercise 3: Temperature Converter
+description: Create a program that converts temperature from Celsius to Fahrenheit using the conversion formula. This exercise demonstrates arithmetic operators, formula implementation, and working with floating-point numbers.
+requirements:
+- Accept temperature in Celsius from the user
+- Use the formula: F = (C × 9/5) + 32
+- Display the result in Fahrenheit with proper formatting
+- Use double data type for decimal precision
+- Close the Scanner resource
+testcases:
+- input: "celsius = 0"
+  output: "0.0°C = 32.0°F"
+- input: "celsius = 100"
+  output: "100.0°C = 212.0°F"
+- input: "celsius = 37"
+  output: "37.0°C = 98.6°F"
+- input: "celsius = -40"
+  output: "-40.0°C = -40.0°F"
+hints:
+- Use 9.0 and 5.0 (not 9 and 5) to ensure floating-point division
+- The formula is: (celsius * 9.0 / 5.0) + 32
+- Remember operator precedence: multiplication and division before addition
+- -40°C equals -40°F (interesting fact!)
+solution:
 ```java
 import java.util.Scanner;
 
@@ -487,6 +556,7 @@ public class TemperatureConverter {
         scanner.close();
     }
 }
+```
 ```
 
 ---
@@ -752,42 +822,811 @@ public class LeapYearChecker {
 
 ## ⚠️ Common Mistakes
 
-### 1. Integer Division:
+### 1. Integer Division Pitfall
+
+#### ❌ Wrong - Integer Division Truncates Decimals:
 ```java
-int result = 5 / 2;      // result = 2 (not 2.5!)
-double result = 5 / 2;   // result = 2.0 (still wrong!)
-double result = 5.0 / 2; // result = 2.5 (correct)
+// WRONG
+int result = 5 / 2;  // result = 2 (not 2.5!) - decimal part lost
+System.out.println(result);  // Prints 2
+```
+**Issue:** result = 2 (not 2.5!) - decimal part is lost
+
+#### ✅ Right:
+```java
+// CORRECT
+double result = 5.0 / 2;  // result = 2.5 (correct decimal result)
+System.out.println(result);  // Prints 2.5
 ```
 
-### 2. Assignment vs Comparison:
+**Why:** When both operands are integers, Java performs integer division which truncates the decimal part.
+
+**💡 Tip:** Use at least one double value (5.0) or cast one operand: `(double)5 / 2`
+
+---
+
+#### ❌ Wrong - Double Variable Doesn't Fix Integer Division:
 ```java
+// WRONG
+double result = 5 / 2;  // result = 2.0 (division happens first as integers!)
+System.out.println(result);  // Prints 2.0
+```
+**Issue:** result = 2.0 (division happens first as integers, then converted to double)
+
+#### ✅ Right:
+```java
+// CORRECT
+double result = 5.0 / 2;  // result = 2.5 (one operand is double)
+System.out.println(result);  // Prints 2.5
+```
+
+**Why:** Variable type doesn't affect the division operation; operand types determine the division type.
+
+**💡 Tip:** The division itself must involve a double/float, not just the result variable.
+
+---
+
+#### ❌ Wrong - Integer Division in Complex Calculations:
+```java
+// WRONG
+int totalPoints = 87;
+int numTests = 5;
+double average = totalPoints / numTests;  // average = 17.0 (not 17.4!)
+```
+**Issue:** Integer division happens before assignment to double
+
+#### ✅ Right:
+```java
+// CORRECT
+int totalPoints = 87;
+int numTests = 5;
+double average = (double) totalPoints / numTests;  // average = 17.4
+```
+
+**Why:** Cast at least one operand to double to trigger floating-point division.
+
+**💡 Tip:** For averages, always ensure at least one operand is double or cast it.
+
+---
+
+### 2. Assignment vs Comparison
+
+#### ❌ Wrong - Using = Instead of == in Conditions:
+```java
+// WRONG
 int x = 5;
-if (x = 10) { }  // ERROR! Should be x == 10
-if (x == 10) { } // CORRECT
+if (x = 10) { }  // Compilation error in Java (assignment in condition)
+```
+**Issue:** Assigns 10 to x instead of comparing (compilation error in Java)
+
+#### ✅ Right:
+```java
+// CORRECT
+int x = 5;
+if (x == 10) { }  // Correctly compares x with 10
 ```
 
-### 3. Logical Operator Confusion:
-```java
-// Wrong: checking if x is between 10 and 20
-if (10 < x < 20) { }  // ERROR! Invalid syntax
+**Why:** Single = is assignment operator, double == is comparison operator.
 
-// Correct
-if (x > 10 && x < 20) { }
+**💡 Tip:** Read = as "gets the value" and == as "equals to". Java prevents this in if conditions.
+
+---
+
+#### ❌ Wrong - Confusing = with == in While Loops:
+```java
+// WRONG
+int count = 0;
+while (count = 5) {  // Compilation error! Assignment instead of comparison
+    System.out.println(count);
+}
+```
+**Issue:** Assignment returns the assigned value, not a boolean
+
+#### ✅ Right:
+```java
+// CORRECT
+int count = 0;
+while (count < 5) {  // Correct comparison
+    System.out.println(count);
+    count++;
+}
 ```
 
-### 4. Increment/Decrement Confusion:
+**Why:** Loop conditions need boolean expressions, not assignments.
+
+**💡 Tip:** Always use comparison operators (==, <, >, etc.) in loop conditions.
+
+---
+
+### 3. Logical Operator Confusion
+
+#### ❌ Wrong - Chaining Comparison Operators:
 ```java
+// WRONG
+int x = 15;
+if (10 < x < 20) { }  // Compilation error! Invalid syntax
+```
+**Issue:** Cannot chain comparisons like mathematical notation
+
+#### ✅ Right:
+```java
+// CORRECT
+int x = 15;
+if (x > 10 && x < 20) { }  // Use logical AND (&&) to combine conditions
+```
+
+**Why:** Java evaluates 10 < x first (returns boolean), then tries boolean < 20 which is invalid.
+
+**💡 Tip:** Always use logical operators (&&, ||) to combine multiple conditions.
+
+---
+
+#### ❌ Wrong - OR When AND is Needed:
+```java
+// WRONG
+int age = 25;
+if (age >= 18 || age <= 65) {  // Always true!
+    System.out.println("Working age");
+}
+```
+**Issue:** Condition is always true (every number is >= 18 OR <= 65)
+
+#### ✅ Right:
+```java
+// CORRECT
+int age = 25;
+if (age >= 18 && age <= 65) {  // Both conditions must be true
+    System.out.println("Working age");
+}
+```
+
+**Why:** OR (||) means at least one true; AND (&&) means both must be true.
+
+**💡 Tip:** Ask yourself: "both conditions?" (use &&) or "either condition?" (use ||).
+
+---
+
+#### ❌ Wrong - Negating Complex Conditions Incorrectly:
+```java
+// WRONG
+int age = 25;
+if (!(age >= 18 && age <= 65)) { }  // Correct but confusing
+// Beginners often write:
+if (!age >= 18 && !age <= 65) { }  // Compilation error!
+```
+**Issue:** ! only negates what immediately follows it
+
+#### ✅ Right:
+```java
+// CORRECT
+int age = 25;
+if (age < 18 || age > 65) {  // Clear: outside the range
+    System.out.println("Not working age");
+}
+```
+
+**Why:** De Morgan's Law: !(A && B) = !A || !B
+
+**💡 Tip:** Rewrite negated complex conditions using opposite operators for clarity.
+
+---
+
+#### ❌ Wrong - Using & or | Instead of && or ||:
+```java
+// WRONG (works but inefficient and confusing)
+int x = 5;
+if (x > 0 & x < 10) {  // Bitwise AND, no short-circuit
+    System.out.println("Valid");
+}
+```
+**Issue:** Uses bitwise operator instead of logical operator, no short-circuiting
+
+#### ✅ Right:
+```java
+// CORRECT
+int x = 5;
+if (x > 0 && x < 10) {  // Logical AND with short-circuit
+    System.out.println("Valid");
+}
+```
+
+**Why:** && and || short-circuit (stop early), & and | evaluate both sides.
+
+**💡 Tip:** Use && and || for boolean logic, & and | only for bit manipulation.
+
+---
+
+### 4. Increment/Decrement Confusion
+
+#### ❌ Wrong - Pre vs Post Increment in Expressions:
+```java
+// WRONG (confusing)
 int i = 5;
-System.out.println(i++);  // Prints 5, then i becomes 6
-System.out.println(++i);  // i becomes 7, then prints 7
+int result = i++;  // result = 5, i = 6 (post-increment uses old value)
+System.out.println("result = " + result + ", i = " + i);  // result = 5, i = 6
+```
+**Issue:** result gets 5, then i becomes 6 (post-increment uses old value first)
+
+#### ✅ Right:
+```java
+// CORRECT (clear intent)
+int i = 5;
+int result = ++i;  // i = 6, result = 6 (pre-increment updates first)
+System.out.println("result = " + result + ", i = " + i);  // result = 6, i = 6
 ```
 
-### 5. Modulus with Negative Numbers:
+**Why:** Post-increment (i++) uses value then increments; Pre-increment (++i) increments first then uses value.
+
+**💡 Tip:** When in doubt, use increment/decrement on its own line: `i++; result = i;`
+
+---
+
+#### ❌ Wrong - Increment in Complex Expressions:
 ```java
-System.out.println(-5 % 3);   // -2 (not 1!)
-System.out.println(5 % -3);   // 2
-System.out.println(-5 % -3);  // -2
+// WRONG (very confusing!)
+int x = 5;
+int y = x++ + ++x;  // y = 5 + 7 = 12 (x is 5, becomes 6, then becomes 7)
+System.out.println("x = " + x + ", y = " + y);  // x = 7, y = 12
 ```
+**Issue:** Multiple increments in one expression are hard to read and can vary by compiler
+
+#### ✅ Right:
+```java
+// CORRECT (clear and predictable)
+int x = 5;
+x++;  // x = 6
+x++;  // x = 7
+int y = x + x;  // y = 14
+System.out.println("x = " + x + ", y = " + y);  // x = 7, y = 14
+```
+
+**Why:** Separate statements make the order of operations explicit.
+
+**💡 Tip:** Never use multiple ++/-- operators in the same expression; split into separate statements.
+
+---
+
+#### ❌ Wrong - Using ++ in Array Index:
+```java
+// WRONG (confusing)
+int[] arr = {10, 20, 30};
+int i = 0;
+System.out.println(arr[i++]);  // Prints 10, then i becomes 1
+System.out.println(arr[i++]);  // Prints 20, then i becomes 2
+```
+**Issue:** Hard to track what index is being accessed
+
+#### ✅ Right:
+```java
+// CORRECT (clear)
+int[] arr = {10, 20, 30};
+int i = 0;
+System.out.println(arr[i]);  // Prints 10
+i++;
+System.out.println(arr[i]);  // Prints 20
+i++;
+```
+
+**Why:** Separating increment from array access makes code more readable.
+
+**💡 Tip:** Avoid ++ or -- inside array index expressions for clarity.
+
+---
+
+#### ❌ Wrong - Decrement with Unsigned Behavior Expectation:
+```java
+// WRONG (unexpected for beginners)
+int i = 0;
+i--;
+System.out.println(i);  // Prints -1 (not max int value!)
+```
+**Issue:** Java integers are signed; decrementing 0 gives -1, not wraparound
+
+#### ✅ Right:
+```java
+// CORRECT
+int i = 0;
+if (i > 0) {
+    i--;  // Only decrement if positive
+}
+System.out.println(i);  // Prints 0
+```
+
+**Why:** Java doesn't have unsigned integers by default; 0 - 1 = -1.
+
+**💡 Tip:** Check bounds before decrementing to avoid negative values if needed.
+
+---
+
+### 5. Modulus with Negative Numbers
+
+#### ❌ Wrong - Expecting Positive Modulo Result:
+```java
+// WRONG (unexpected result)
+int result = -5 % 3;  // result = -2 (not 1!)
+System.out.println(result);  // Prints -2
+```
+**Issue:** Output is -2, not 1 (sign matches first operand)
+
+#### ✅ Right:
+```java
+// CORRECT
+int result = Math.abs(-5) % 3;  // result = 2
+System.out.println(result);  // Prints 2
+// OR for always positive modulo:
+int result2 = ((-5 % 3) + 3) % 3;  // result2 = 1
+System.out.println(result2);  // Prints 1
+```
+
+**Why:** In Java, result of modulus takes the sign of the dividend (first operand).
+
+**💡 Tip:** For positive results with negative numbers, use `((a % b) + b) % b` or `Math.abs()`.
+
+---
+
+#### ❌ Wrong - Modulo with Floating-Point:
+```java
+// WRONG (works but often unintended)
+double result = 5.5 % 2.0;  // result = 1.5
+System.out.println(result);  // Prints 1.5
+```
+**Issue:** Modulo with doubles can give unexpected decimal remainders
+
+#### ✅ Right:
+```java
+// CORRECT (use integers for modulo)
+int result = 5 % 2;  // result = 1
+System.out.println(result);  // Prints 1
+// OR explicitly cast if needed:
+int result2 = (int)(5.5 % 2.0);  // result2 = 1
+```
+
+**Why:** Modulo is typically used with integers; floating-point modulo is rarely needed.
+
+**💡 Tip:** Prefer integer modulo for clearer intent; cast to int if working with doubles.
+
+---
+
+### 6. Operator Precedence Issues
+
+#### ❌ Wrong - Forgetting Multiplication Before Addition:
+```java
+// WRONG (developer expects 16)
+int result = 5 + 3 * 2;  // result = 11 (not 16!)
+System.out.println(result);  // Prints 11
+```
+**Issue:** result = 11 (multiplication happens first: 3 * 2 = 6, then 5 + 6 = 11)
+
+#### ✅ Right:
+```java
+// CORRECT
+int result = (5 + 3) * 2;  // result = 16 (parentheses force addition first)
+System.out.println(result);  // Prints 16
+```
+
+**Why:** Multiplication has higher precedence than addition.
+
+**💡 Tip:** Use parentheses to make order of operations explicit, even when not required.
+
+---
+
+#### ❌ Wrong - Complex Boolean Expression Without Parentheses:
+```java
+// WRONG (hard to read)
+boolean result = x > 5 && y < 10 || z == 0;  // What's the grouping?
+```
+**Issue:** Evaluates as (x > 5 && y < 10) || z == 0 - hard to read intent
+
+#### ✅ Right:
+```java
+// CORRECT
+boolean result = ((x > 5) && (y < 10)) || (z == 0);  // Clear grouping
+```
+
+**Why:** && has higher precedence than ||, but relying on precedence reduces readability.
+
+**💡 Tip:** Always use parentheses in complex boolean expressions for clarity.
+
+---
+
+#### ❌ Wrong - Mixing Arithmetic and Shift Operators:
+```java
+// WRONG (confusing precedence)
+int result = 5 + 3 << 2;  // What's evaluated first?
+System.out.println(result);  // Prints 32: (5 + 3) << 2 = 8 << 2 = 32
+```
+**Issue:** Shift operators have lower precedence than arithmetic, causing confusion
+
+#### ✅ Right:
+```java
+// CORRECT (explicit with parentheses)
+int result = (5 + 3) << 2;  // Clearly (8) << 2 = 32
+System.out.println(result);  // Prints 32
+```
+
+**Why:** Addition happens before shift, but it's unclear without parentheses.
+
+**💡 Tip:** Always use parentheses with shift operators to make precedence explicit.
+
+---
+
+### 7. Short-Circuit Evaluation Issues
+
+#### ❌ Wrong - Side Effects After Short-Circuit:
+```java
+// WRONG (side effect may not execute)
+int x = 5, y = 0;
+boolean result = (x > 0) || (y++ > 0);  // y++ never executes!
+System.out.println("y = " + y);  // Prints y = 0 (not 1!)
+```
+**Issue:** If x > 0 is true, y++ never executes (short-circuit)
+
+#### ✅ Right:
+```java
+// CORRECT (separate side effect)
+int x = 5, y = 0;
+y++;  // Execute increment first
+boolean result = (x > 0) || (y > 0);
+System.out.println("y = " + y);  // Prints y = 1
+```
+
+**Why:** || stops evaluating when first condition is true; && stops when first is false.
+
+**💡 Tip:** Never rely on side effects (like ++) inside logical expressions; separate them.
+
+---
+
+#### ❌ Wrong - Division by Zero Not Prevented:
+```java
+// WRONG (may throw exception)
+int divisor = 0;
+boolean safe = divisor != 0 & 10 / divisor > 5;  // Throws ArithmeticException!
+```
+**Issue:** Bitwise & doesn't short-circuit, so 10 / divisor is evaluated even when divisor is 0
+
+#### ✅ Right:
+```java
+// CORRECT (short-circuit prevents division by zero)
+int divisor = 0;
+boolean safe = divisor != 0 && 10 / divisor > 5;  // No exception!
+System.out.println(safe);  // Prints false
+```
+
+**Why:** && short-circuits; if first condition is false, second is never evaluated.
+
+**💡 Tip:** Use && and || for conditions that might cause errors; short-circuiting protects you.
+
+---
+
+### 8. String Concatenation Issues
+
+#### ❌ Wrong - Addition vs Concatenation Order:
+```java
+// WRONG
+System.out.println("Result: " + 5 + 3);  // Prints "Result: 53" (not "Result: 8"!)
+```
+**Issue:** Left-to-right evaluation: "Result: " + 5 = "Result: 5", then + 3 = "Result: 53"
+
+#### ✅ Right:
+```java
+// CORRECT
+System.out.println("Result: " + (5 + 3));  // Prints "Result: 8"
+```
+
+**Why:** Parentheses force arithmetic before concatenation.
+
+**💡 Tip:** Use parentheses around arithmetic operations when mixing with strings.
+
+---
+
+#### ❌ Wrong - Starting with Numbers:
+```java
+// WRONG (unexpected)
+System.out.println(5 + 3 + " is the sum");  // Prints "8 is the sum" (OK)
+System.out.println("The sum is " + 5 + 3);  // Prints "The sum is 53" (WRONG!)
+```
+**Issue:** Once string appears, everything becomes concatenation
+
+#### ✅ Right:
+```java
+// CORRECT
+System.out.println("The sum is " + (5 + 3));  // Prints "The sum is 8"
+```
+
+**Why:** String turns all subsequent + into concatenation operators.
+
+**💡 Tip:** When string comes first, wrap arithmetic in parentheses.
+
+---
+
+### 9. Compound Assignment Issues
+
+#### ❌ Wrong - Compound Assignment with Narrow Types:
+```java
+// WRONG
+byte b = 10;
+b = b + 5;  // Compilation error! int cannot be assigned to byte
+```
+**Issue:** b + 5 promotes to int, cannot assign back to byte without cast
+
+#### ✅ Right:
+```java
+// CORRECT
+byte b = 10;
+b += 5;  // Works! Compound assignment includes implicit cast
+System.out.println(b);  // Prints 15
+```
+
+**Why:** b + 5 evaluates as int; b += 5 includes automatic narrowing cast.
+
+**💡 Tip:** Use compound operators (+=, -=) for automatic casting with narrow types.
+
+---
+
+#### ❌ Wrong - Assuming += Behaves Same as =:
+```java
+// WRONG (unexpected for complex expressions)
+int x = 5;
+x =+ 3;  // Typo! This is x = +3, not x += 3
+System.out.println(x);  // Prints 3 (not 8!)
+```
+**Issue:** =+ is parsed as = +, assigning +3 (which is just 3)
+
+#### ✅ Right:
+```java
+// CORRECT
+int x = 5;
+x += 3;  // Correctly adds 3 to x
+System.out.println(x);  // Prints 8
+```
+
+**Why:** += is a single operator; =+ is = followed by unary +.
+
+**💡 Tip:** Ensure no space between compound operator symbols.
+
+---
+
+### 10. Floating-Point Comparison
+
+#### ❌ Wrong - Direct Equality Check for Doubles:
+```java
+// WRONG
+double d1 = 0.1 + 0.2;  // d1 = 0.30000000000000004
+if (d1 == 0.3) {  // FALSE!
+    System.out.println("Equal");
+} else {
+    System.out.println("Not equal");  // This prints!
+}
+```
+**Issue:** Condition is false due to floating-point precision (d1 = 0.30000000000000004)
+
+#### ✅ Right:
+```java
+// CORRECT
+double d1 = 0.1 + 0.2;
+if (Math.abs(d1 - 0.3) < 0.0001) {  // TRUE!
+    System.out.println("Equal");  // This prints!
+}
+```
+
+**Why:** Floating-point arithmetic has precision limitations.
+
+**💡 Tip:** Never use == for double/float; use threshold comparison: `Math.abs(a - b) < epsilon`
+
+---
+
+#### ❌ Wrong - Using != for Floating-Point:
+```java
+// WRONG
+double price = 19.99;
+if (price != 20.0) {  // May fail unexpectedly
+    System.out.println("Not 20");
+}
+```
+**Issue:** != also affected by floating-point precision issues
+
+#### ✅ Right:
+```java
+// CORRECT
+double price = 19.99;
+if (Math.abs(price - 20.0) >= 0.0001) {  // Threshold comparison
+    System.out.println("Not 20");
+}
+```
+
+**Why:** Use threshold for all floating-point comparisons (==, !=, <, >, etc.).
+
+**💡 Tip:** Define epsilon constant: `final double EPSILON = 0.0001;` for consistency.
+
+---
+
+### 11. Unary Operator Mistakes
+
+#### ❌ Wrong - Double Negation Confusion:
+```java
+// WRONG (confusing)
+boolean flag = true;
+if (!!flag) {  // Double negation
+    System.out.println("True");
+}
+```
+**Issue:** Double negation is confusing and unnecessary
+
+#### ✅ Right:
+```java
+// CORRECT
+boolean flag = true;
+if (flag) {  // Direct usage
+    System.out.println("True");
+}
+```
+
+**Why:** !!flag equals flag; double negation adds no value.
+
+**💡 Tip:** Avoid double negation; use the boolean directly.
+
+---
+
+#### ❌ Wrong - Negating Integer Instead of Comparison:
+```java
+// WRONG
+int age = -25;  // Negative age
+if (!age >= 18) {  // Compilation error! Can't negate int
+    System.out.println("Not adult");
+}
+```
+**Issue:** ! only works on booleans, not integers
+
+#### ✅ Right:
+```java
+// CORRECT
+int age = 25;
+if (!(age >= 18)) {  // Negate the boolean result
+    System.out.println("Not adult");
+}
+// OR better:
+if (age < 18) {  // Use opposite operator
+    System.out.println("Not adult");
+}
+```
+
+**Why:** ! (NOT) operator requires boolean operand.
+
+**💡 Tip:** Negate the entire comparison, or use opposite operator for clarity.
+
+---
+
+### 12. Ternary Operator Mistakes
+
+#### ❌ Wrong - Nested Ternary Without Parentheses:
+```java
+// WRONG (very hard to read!)
+int score = 75;
+String grade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : "F";
+```
+**Issue:** Difficult to read with multiple nested ternary operators
+
+#### ✅ Right:
+```java
+// CORRECT (use if-else for multiple conditions)
+int score = 75;
+String grade;
+if (score >= 90) grade = "A";
+else if (score >= 80) grade = "B";
+else if (score >= 70) grade = "C";
+else grade = "F";
+```
+
+**Why:** if-else ladder is clearer for multiple conditions.
+
+**💡 Tip:** Use ternary only for simple two-way assignments; use if-else for complex logic.
+
+---
+
+#### ❌ Wrong - Side Effects in Ternary:
+```java
+// WRONG (confusing)
+int count = 0;
+boolean result = true;
+int value = result ? count++ : count--;  // Side effect in ternary
+```
+**Issue:** Side effects in ternary expressions are hard to track
+
+#### ✅ Right:
+```java
+// CORRECT (separate side effect)
+int count = 0;
+boolean result = true;
+if (result) {
+    count++;
+} else {
+    count--;
+}
+int value = count;
+```
+
+**Why:** Explicit if-else makes side effects clear.
+
+**💡 Tip:** Avoid side effects (++, --, assignments) in ternary expressions.
+
+---
+
+### 13. Bitwise Operator Confusion
+
+#### ❌ Wrong - Using Bitwise Instead of Logical:
+```java
+// WRONG (works but no short-circuit)
+if (x > 0 & y > 0) {  // Bitwise AND, both sides always evaluated
+    System.out.println("Both positive");
+}
+```
+**Issue:** Bitwise & doesn't short-circuit, evaluates both conditions
+
+#### ✅ Right:
+```java
+// CORRECT (logical AND with short-circuit)
+if (x > 0 && y > 0) {  // Logical AND, may skip second condition
+    System.out.println("Both positive");
+}
+```
+
+**Why:** && short-circuits for efficiency; & is for bit manipulation.
+
+**💡 Tip:** Use && and || for boolean logic; reserve &, |, ^ for bitwise operations on integers.
+
+---
+
+### 14. Overflow in Arithmetic Operations
+
+#### ❌ Wrong - Multiplication Causing Overflow:
+```java
+// WRONG
+int big = 1000000;
+int result = big * big;  // Overflow! Result is wrong
+System.out.println(result);  // Prints -727379968 (overflow wraps!)
+```
+**Issue:** Multiplication exceeds int range, causing overflow
+
+#### ✅ Right:
+```java
+// CORRECT
+long big = 1000000L;
+long result = big * big;  // Use long for large calculations
+System.out.println(result);  // Prints 1000000000000
+```
+
+**Why:** int range is limited; use long for large multiplications.
+
+**💡 Tip:** For large arithmetic, ensure at least one operand is long.
+
+---
+
+### 15. Mixed Type Operations
+
+#### ❌ Wrong - Unexpected Type Promotion:
+```java
+// WRONG (unexpected result type)
+byte b1 = 10, b2 = 20;
+byte result = b1 + b2;  // Compilation error! Result is int
+```
+**Issue:** byte + byte promotes to int
+
+#### ✅ Right:
+```java
+// CORRECT
+byte b1 = 10, b2 = 20;
+int result = b1 + b2;  // Result is int (30)
+// OR if you need byte:
+byte result2 = (byte)(b1 + b2);  // Explicit cast
+```
+
+**Why:** Java promotes byte, short to int in arithmetic operations.
+
+**💡 Tip:** Arithmetic on byte/short always results in int; cast back if needed.
+
+---
+
+This comprehensive list now contains **35+ operator-related mistakes** covering every aspect of Day 3: Operators & Expressions!
 
 ---
 

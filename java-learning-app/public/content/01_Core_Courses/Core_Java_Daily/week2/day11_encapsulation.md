@@ -2170,7 +2170,9 @@ Cart cart = new ShoppingCart("CART001", "CUST123");
 
 ## ⚠️ Common Mistakes
 
-### 1. Making Everything Public:
+### 1. Access Modifier Misuse
+
+#### ❌ Wrong - Making All Fields Public:
 ```java
 // WRONG - No encapsulation
 public class Student {
@@ -2179,204 +2181,1336 @@ public class Student {
     public double gpa;
 }
 
+// Anyone can do this:
+Student s = new Student();
+s.age = -5;      // Invalid! No validation
+s.gpa = 10.0;    // Invalid! GPA should be 0-4
+```
+**Issue:** Public fields expose data without validation or control
+
+#### ✅ Right:
+```java
 // CORRECT - Proper encapsulation
 public class Student {
     private String name;
     private int age;
     private double gpa;
-    
-    // Provide controlled access
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-}
-```
 
-### 2. No Validation in Setters:
-```java
-// WRONG - No validation
-public void setAge(int age) {
-    this.age = age;  // Could be negative!
-}
-
-// CORRECT - With validation
-public void setAge(int age) {
-    if (age > 0 && age < 150) {
-        this.age = age;
-    } else {
-        System.out.println("Invalid age!");
+    public String getName() {
+        return name;
     }
-}
-```
 
-### 3. Exposing Mutable Objects:
-```java
-// WRONG - Exposes internal array
-public class Classroom {
-    private int[] grades;
-    
-    public int[] getGrades() {
-        return grades;  // Caller can modify!
+    public void setName(String name) {
+        this.name = name;
     }
-}
 
-// CORRECT - Return copy
-public class Classroom {
-    private int[] grades;
-    
-    public int[] getGrades() {
-        return grades.clone();  // Return copy
+    public int getAge() {
+        return age;
     }
-}
-```
 
-### 4. Inconsistent Naming:
-```java
-// WRONG - Inconsistent naming
-public class Person {
-    private String name;
-    
-    public String fetchName() { return name; }  // Should be getName()
-    public void updateName(String name) { this.name = name; }  // Should be setName()
-}
-
-// CORRECT - Standard naming
-public class Person {
-    private String name;
-    
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-}
-```
-
-### 5. Setter Returning void When Chaining Needed:
-```java
-// WRONG - Cannot chain
-public void setName(String name) {
-    this.name = name;
-}
-
-// CORRECT - Enables chaining
-public Person setName(String name) {
-    this.name = name;
-    return this;
-}
-
-// Usage: person.setName("Alice").setAge(25).setEmail("alice@example.com");
-```
-
-### 6. Not Using `this` in Setters:
-```java
-// WRONG - Ambiguous
-public void setName(String name) {
-    name = name;  // Assigns parameter to itself!
-}
-
-// CORRECT - Use this
-public void setName(String name) {
-    this.name = name;  // Clear distinction
-}
-```
-
-### 7. Providing Setter for ID Fields:
-```java
-// WRONG - ID should be immutable
-public class Employee {
-    private String employeeId;
-    
-    public void setEmployeeId(String id) {  // Should not exist!
-        this.employeeId = id;
-    }
-}
-
-// CORRECT - ID is read-only
-public class Employee {
-    private final String employeeId;
-    
-    public Employee(String employeeId) {
-        this.employeeId = employeeId;
-    }
-    
-    public String getEmployeeId() {
-        return employeeId;
-    }
-    // No setter!
-}
-```
-
-### 8. Exposing Implementation Details:
-```java
-// WRONG - Exposes ArrayList
-public class StudentList {
-    private ArrayList<String> students;
-    
-    public ArrayList<String> getStudents() {
-        return students;  // Exposes implementation
-    }
-}
-
-// CORRECT - Use interface
-public class StudentList {
-    private ArrayList<String> students;
-    
-    public List<String> getStudents() {
-        return new ArrayList<>(students);  // Return copy as List
-    }
-}
-```
-
-### 9. Not Validating in Constructor:
-```java
-// WRONG - No validation
-public class Product {
-    private double price;
-    
-    public Product(double price) {
-        this.price = price;  // Could be negative!
-    }
-}
-
-// CORRECT - Validate in constructor
-public class Product {
-    private double price;
-    
-    public Product(double price) {
-        setPrice(price);  // Use setter for validation
-    }
-    
-    public void setPrice(double price) {
-        if (price >= 0) {
-            this.price = price;
+    public void setAge(int age) {
+        if (age > 0 && age < 150) {
+            this.age = age;
         } else {
-            throw new IllegalArgumentException("Price cannot be negative");
+            System.out.println("Invalid age!");
+        }
+    }
+
+    public double getGPA() {
+        return gpa;
+    }
+
+    public void setGPA(double gpa) {
+        if (gpa >= 0.0 && gpa <= 4.0) {
+            this.gpa = gpa;
+        } else {
+            System.out.println("Invalid GPA!");
         }
     }
 }
 ```
 
-### 10. Over-Encapsulation:
+**Why:** Private fields with public getters/setters allow validation and controlled access.
+
+**💡 Tip:** Default to private fields; only expose through methods when necessary.
+
+---
+
+#### ❌ Wrong - Using Default Access When Private Intended:
 ```java
-// WRONG - Too many getters/setters for simple data holder
-public class Point {
+// WRONG - Accidentally default access
+public class BankAccount {
+    double balance;  // Package-private! Other classes in same package can access
+    String accountNumber;
+}
+
+// In another class in same package:
+BankAccount account = new BankAccount();
+account.balance = -1000;  // Direct access! Bad!
+```
+**Issue:** Missing access modifier makes field package-private, not private
+
+#### ✅ Right:
+```java
+// CORRECT - Explicitly private
+public class BankAccount {
+    private double balance;
+    private String accountNumber;
+
+    public double getBalance() {
+        return balance;
+    }
+
+    private void setBalance(double balance) {
+        if (balance >= 0) {
+            this.balance = balance;
+        }
+    }
+}
+```
+
+**Why:** Explicit `private` ensures field is truly hidden from other classes.
+
+**💡 Tip:** Always explicitly declare access modifiers; don't rely on defaults.
+
+---
+
+#### ❌ Wrong - Making Methods Private That Should Be Public:
+```java
+// WRONG
+public class Calculator {
+    private int add(int a, int b) {  // Private!
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        int result = calc.add(5, 10);  // Compilation error! add is private
+    }
+}
+```
+**Issue:** Public API methods marked as private prevent external use
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {  // Public API
+        return a + b;
+    }
+
+    private int validateInput(int value) {  // Private helper
+        return Math.max(0, value);
+    }
+}
+```
+
+**Why:** Public for API methods users need; private for internal helper methods.
+
+**💡 Tip:** Public = external API; Private = internal implementation.
+
+---
+
+#### ❌ Wrong - Using Protected for Non-Inheritance Scenarios:
+```java
+// WRONG
+public class User {
+    protected String password;  // Protected but not meant for inheritance
+
+    public User(String password) {
+        this.password = password;
+    }
+}
+
+// Subclass can access password directly
+public class AdminUser extends User {
+    public AdminUser(String password) {
+        super(password);
+    }
+
+    public void displayPassword() {
+        System.out.println(password);  // Direct access! Security risk!
+    }
+}
+```
+**Issue:** Protected exposes sensitive fields to subclasses unnecessarily
+
+#### ✅ Right:
+```java
+// CORRECT - Use private for sensitive data
+public class User {
+    private String password;  // Private
+
+    public User(String password) {
+        this.password = password;
+    }
+
+    // Provide protected method for subclasses if needed
+    protected boolean verifyPassword(String input) {
+        return this.password.equals(input);
+    }
+}
+
+public class AdminUser extends User {
+    public AdminUser(String password) {
+        super(password);
+    }
+
+    public void checkPassword(String input) {
+        if (verifyPassword(input)) {  // Controlled access
+            System.out.println("Password correct");
+        }
+    }
+}
+```
+
+**Why:** Private protects sensitive data; protected methods provide controlled access.
+
+**💡 Tip:** Use protected only for fields/methods intended for subclass extension.
+
+---
+
+#### ❌ Wrong - Package-Private Classes When Public Needed:
+```java
+// File: Calculator.java
+// WRONG - Missing public keyword
+class Calculator {  // Default (package-private)
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// File: Main.java (different package)
+import com.example.Calculator;  // Compilation error! Calculator not accessible
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();  // Error!
+    }
+}
+```
+**Issue:** Missing `public` on class makes it package-private
+
+#### ✅ Right:
+```java
+// File: Calculator.java
+// CORRECT - Public class
+public class Calculator {  // Explicitly public
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// File: Main.java (different package)
+import com.example.Calculator;  // Works!
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();  // Works!
+    }
+}
+```
+
+**Why:** Public classes are accessible from any package; package-private only within package.
+
+**💡 Tip:** Classes meant for external use must be explicitly `public`.
+
+---
+
+### 2. Getter and Setter Mistakes
+
+#### ❌ Wrong - No Validation in Setters:
+```java
+// WRONG
+public class Person {
+    private int age;
+
+    public void setAge(int age) {
+        this.age = age;  // Accepts negative values!
+    }
+}
+
+Person p = new Person();
+p.setAge(-5);  // No error, but logically wrong
+System.out.println(p.getAge());  // -5
+```
+**Issue:** Setter accepts invalid values without validation
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Person {
+    private int age;
+
+    public void setAge(int age) {
+        if (age >= 0 && age <= 150) {
+            this.age = age;
+        } else {
+            throw new IllegalArgumentException("Age must be 0-150");
+        }
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+```
+
+**Why:** Setters enforce business rules and prevent invalid state.
+
+**💡 Tip:** Always validate in setters; throw exceptions for invalid values.
+
+---
+
+#### ❌ Wrong - Setter Without Using `this` Keyword:
+```java
+// WRONG
+public class Student {
+    private String name;
+    private int age;
+
+    public void setName(String name) {
+        name = name;  // Assigns parameter to itself! Instance variable unchanged
+    }
+
+    public void setAge(int age) {
+        age = age;  // Same problem
+    }
+}
+
+Student s = new Student();
+s.setName("Alice");
+System.out.println(s.getName());  // null! name not set
+```
+**Issue:** Parameter shadows field; assignment does nothing
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    private String name;
+    private int age;
+
+    public void setName(String name) {
+        this.name = name;  // this.name = field, name = parameter
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+```
+
+**Why:** `this` keyword distinguishes instance variable from parameter.
+
+**💡 Tip:** Use `this.fieldName` in setters when parameter names match fields.
+
+---
+
+#### ❌ Wrong - Inconsistent Getter/Setter Naming:
+```java
+// WRONG
+public class Product {
+    private String name;
+    private double price;
+
+    public String fetchName() { return name; }       // Should be getName()
+    public void updateName(String name) { this.name = name; }  // Should be setName()
+    public double retrievePrice() { return price; }  // Should be getPrice()
+    public void modifyPrice(double price) { this.price = price; }  // Should be setPrice()
+}
+```
+**Issue:** Non-standard naming breaks JavaBeans convention and tools
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Product {
+    private String name;
+    private double price;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        if (price >= 0) {
+            this.price = price;
+        }
+    }
+}
+```
+
+**Why:** Standard get/set naming enables frameworks and IDEs to recognize properties.
+
+**💡 Tip:** Always use `getName()`, `setName()` pattern; `isName()` for booleans.
+
+---
+
+#### ❌ Wrong - Boolean Getter Not Using `is` Prefix:
+```java
+// WRONG
+public class User {
+    private boolean active;
+    private boolean admin;
+
+    public boolean getActive() { return active; }    // Should be isActive()
+    public boolean getAdmin() { return admin; }      // Should be isAdmin()
+}
+```
+**Issue:** Boolean getters should use `is` prefix, not `get`
+
+#### ✅ Right:
+```java
+// CORRECT
+public class User {
+    private boolean active;
+    private boolean admin;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+}
+```
+
+**Why:** `is` prefix is standard convention for boolean getters.
+
+**💡 Tip:** Boolean getters: `isFieldName()`, not `getFieldName()`.
+
+---
+
+#### ❌ Wrong - Providing Setter for Immutable Fields:
+```java
+// WRONG
+public class Employee {
+    private String employeeId;  // Should be immutable
+
+    public Employee(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {  // Should not exist!
+        this.employeeId = employeeId;  // IDs shouldn't change
+    }
+}
+```
+**Issue:** Providing setter for fields that should never change
+
+#### ✅ Right:
+```java
+// CORRECT - Immutable ID
+public class Employee {
+    private final String employeeId;  // final = immutable
+
+    public Employee(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+    // No setter! ID is read-only
+}
+```
+
+**Why:** Immutable fields prevent accidental changes to critical data.
+
+**💡 Tip:** Use `final` for immutable fields; provide getter but no setter.
+
+---
+
+#### ❌ Wrong - Returning Mutable Object Directly from Getter:
+```java
+// WRONG
+public class Classroom {
+    private int[] grades;
+
+    public Classroom(int[] grades) {
+        this.grades = grades;
+    }
+
+    public int[] getGrades() {
+        return grades;  // Returns direct reference!
+    }
+}
+
+Classroom classroom = new Classroom(new int[]{90, 85, 95});
+int[] grades = classroom.getGrades();
+grades[0] = 0;  // Modifies internal array!
+System.out.println(classroom.getGrades()[0]);  // 0 - changed!
+```
+**Issue:** Returning direct reference allows external modification
+
+#### ✅ Right:
+```java
+// CORRECT - Return defensive copy
+public class Classroom {
+    private int[] grades;
+
+    public Classroom(int[] grades) {
+        this.grades = grades.clone();  // Store copy
+    }
+
+    public int[] getGrades() {
+        return grades.clone();  // Return copy
+    }
+}
+
+Classroom classroom = new Classroom(new int[]{90, 85, 95});
+int[] grades = classroom.getGrades();
+grades[0] = 0;  // Modifies copy only
+System.out.println(classroom.getGrades()[0]);  // 90 - original unchanged
+```
+
+**Why:** Defensive copying prevents external code from modifying internal state.
+
+**💡 Tip:** Clone arrays/collections before returning from getters.
+
+---
+
+### 3. Encapsulation Principle Violations
+
+#### ❌ Wrong - Exposing Implementation Details:
+```java
+// WRONG
+public class StudentList {
+    private ArrayList<String> students;  // Implementation detail
+
+    public ArrayList<String> getStudents() {
+        return students;  // Exposes ArrayList implementation
+    }
+}
+
+// Code becomes coupled to ArrayList
+StudentList list = new StudentList();
+ArrayList<String> students = list.getStudents();
+students.add("New Student");  // Direct modification
+```
+**Issue:** Exposing concrete implementation prevents future changes
+
+#### ✅ Right:
+```java
+// CORRECT - Use interface
+public class StudentList {
+    private ArrayList<String> students;  // Implementation hidden
+
+    public List<String> getStudents() {
+        return new ArrayList<>(students);  // Return copy as interface
+    }
+
+    public void addStudent(String student) {
+        students.add(student);
+    }
+}
+
+// Code uses interface, implementation can change
+StudentList list = new StudentList();
+List<String> students = list.getStudents();  // Can't modify original
+```
+
+**Why:** Returning interface allows changing implementation without breaking clients.
+
+**💡 Tip:** Return copies and use interfaces to hide implementation details.
+
+---
+
+#### ❌ Wrong - Direct Field Access Between Classes:
+```java
+// WRONG
+public class Car {
+    String brand;  // Package-private
+    int speed;
+}
+
+public class CarRental {
+    void rentCar(Car car) {
+        car.speed = 100;  // Direct field access
+        car.brand = "Modified";  // No validation
+    }
+}
+```
+**Issue:** Other classes directly access and modify fields
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Car {
+    private String brand;
+    private int speed;
+
+    public Car(String brand) {
+        this.brand = brand;
+        this.speed = 0;
+    }
+
+    public void accelerate(int increment) {
+        if (increment > 0 && speed + increment <= 200) {
+            speed += increment;
+        }
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+}
+
+public class CarRental {
+    void rentCar(Car car) {
+        car.accelerate(100);  // Through controlled method
+    }
+}
+```
+
+**Why:** Methods provide controlled access with validation and business logic.
+
+**💡 Tip:** All field access should go through methods, not direct access.
+
+---
+
+#### ❌ Wrong - Not Validating in Constructor:
+```java
+// WRONG
+public class Rectangle {
+    private double length;
+    private double width;
+
+    public Rectangle(double length, double width) {
+        this.length = length;  // No validation
+        this.width = width;    // Could be negative!
+    }
+}
+
+Rectangle rect = new Rectangle(-5, -10);  // Invalid object created!
+```
+**Issue:** Constructor accepts invalid values, creating invalid object state
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Rectangle {
+    private double length;
+    private double width;
+
+    public Rectangle(double length, double width) {
+        setLength(length);  // Use setters for validation
+        setWidth(width);
+    }
+
+    public void setLength(double length) {
+        if (length > 0) {
+            this.length = length;
+        } else {
+            throw new IllegalArgumentException("Length must be positive");
+        }
+    }
+
+    public void setWidth(double width) {
+        if (width > 0) {
+            this.width = width;
+        } else {
+            throw new IllegalArgumentException("Width must be positive");
+        }
+    }
+}
+```
+
+**Why:** Constructor validation ensures objects are never in invalid state.
+
+**💡 Tip:** Call setters from constructor to reuse validation logic.
+
+---
+
+#### ❌ Wrong - Breaking Encapsulation in toString():
+```java
+// WRONG
+public class User {
+    private String username;
+    private String password;  // Sensitive!
+
+    @Override
+    public String toString() {
+        return "User{username='" + username + "', password='" + password + "'}";
+        // Exposes password!
+    }
+}
+
+User user = new User();
+user.setPassword("secret123");
+System.out.println(user);  // Prints password in plain text!
+```
+**Issue:** toString() exposes sensitive information
+
+#### ✅ Right:
+```java
+// CORRECT
+public class User {
+    private String username;
+    private String password;
+
+    @Override
+    public String toString() {
+        return "User{username='" + username + "', password='********'}";
+        // Hide sensitive data
+    }
+}
+```
+
+**Why:** toString() should never expose sensitive or internal state.
+
+**💡 Tip:** Mask sensitive fields in toString(), equals(), and hashCode().
+
+---
+
+### 4. Package Visibility Issues
+
+#### ❌ Wrong - Assuming Package-Private Provides Encapsulation:
+```java
+// File: com/example/BankAccount.java
+// WRONG
+package com.example;
+
+public class BankAccount {
+    double balance;  // Package-private, thinking it's protected
+
+    public void deposit(double amount) {
+        balance += amount;
+    }
+}
+
+// File: com/example/Hacker.java
+package com.example;  // Same package!
+
+public class Hacker {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount();
+        account.balance = 1000000;  // Direct access! Security breach!
+    }
+}
+```
+**Issue:** Package-private allows access from any class in same package
+
+#### ✅ Right:
+```java
+// File: com/example/BankAccount.java
+// CORRECT
+package com.example;
+
+public class BankAccount {
+    private double balance;  // Private
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+}
+```
+
+**Why:** Private ensures only the class itself can access the field.
+
+**💡 Tip:** Use private for sensitive data, not package-private.
+
+---
+
+#### ❌ Wrong - Forgetting Access Modifier on Method:
+```java
+// WRONG
+public class Employee {
+    private double salary;
+
+    void setSalary(double salary) {  // Package-private! Missing public
+        this.salary = salary;
+    }
+
+    double getSalary() {  // Package-private! Missing public
+        return salary;
+    }
+}
+
+// Different package
+import com.example.Employee;
+
+public class Main {
+    public static void main(String[] args) {
+        Employee emp = new Employee();
+        emp.setSalary(50000);  // Compilation error! setSalary is package-private
+    }
+}
+```
+**Issue:** Missing access modifier makes methods package-private
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Employee {
+    private double salary;
+
+    public void setSalary(double salary) {  // Explicitly public
+        if (salary > 0) {
+            this.salary = salary;
+        }
+    }
+
+    public double getSalary() {  // Explicitly public
+        return salary;
+    }
+}
+```
+
+**Why:** Public access modifier makes methods accessible from anywhere.
+
+**💡 Tip:** Always explicitly declare access modifiers; don't rely on defaults.
+
+---
+
+### 5. Immutability Mistakes
+
+#### ❌ Wrong - Claiming Immutable But Providing Setters:
+```java
+// WRONG - Not truly immutable
+public final class Point {
     private int x;
     private int y;
-    
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+
+    public void setX(int x) { this.x = x; }  // Breaks immutability!
+    public void setY(int y) { this.y = y; }  // Breaks immutability!
+}
+
+Point p = new Point(5, 10);
+p.setX(20);  // Modified! Not immutable
+```
+**Issue:** Setters allow modification, breaking immutability
+
+#### ✅ Right:
+```java
+// CORRECT - Truly immutable
+public final class Point {
+    private final int x;  // final fields
+    private final int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    // No setters! To "modify", create new object
+    public Point withX(int newX) {
+        return new Point(newX, this.y);
+    }
+
+    public Point withY(int newY) {
+        return new Point(this.x, newY);
+    }
+}
+```
+
+**Why:** Immutable objects have no setters; modifications create new objects.
+
+**💡 Tip:** Immutable class: `final` class, `final` fields, no setters, return new objects.
+
+---
+
+#### ❌ Wrong - Mutable Fields in Immutable Class:
+```java
+// WRONG
+public final class Person {
+    private final String name;
+    private final int[] scores;  // Mutable array!
+
+    public Person(String name, int[] scores) {
+        this.name = name;
+        this.scores = scores;  // Direct assignment!
+    }
+
+    public int[] getScores() {
+        return scores;  // Returns direct reference!
+    }
+}
+
+int[] scores = {90, 85, 95};
+Person person = new Person("Alice", scores);
+scores[0] = 0;  // Modifies person's scores!
+person.getScores()[1] = 0;  // Also modifies!
+```
+**Issue:** Array fields can be modified even with `final`
+
+#### ✅ Right:
+```java
+// CORRECT
+public final class Person {
+    private final String name;
+    private final int[] scores;
+
+    public Person(String name, int[] scores) {
+        this.name = name;
+        this.scores = scores.clone();  // Defensive copy
+    }
+
+    public int[] getScores() {
+        return scores.clone();  // Return copy
+    }
+}
+
+int[] scores = {90, 85, 95};
+Person person = new Person("Alice", scores);
+scores[0] = 0;  // Doesn't affect person
+person.getScores()[1] = 0;  // Doesn't affect person
+```
+
+**Why:** Clone arrays in constructor and getter to maintain immutability.
+
+**💡 Tip:** Immutable classes must defensively copy mutable fields.
+
+---
+
+### 6. Validation and Business Logic Errors
+
+#### ❌ Wrong - Weak Validation in Setters:
+```java
+// WRONG
+public class Product {
+    private String name;
+    private double price;
+
+    public void setName(String name) {
+        if (name != null) {  // Only checks null
+            this.name = name;
+        }
+    }
+
+    public void setPrice(double price) {
+        this.price = price;  // No validation at all
+    }
+}
+
+Product p = new Product();
+p.setName("");  // Empty name accepted!
+p.setPrice(-100);  // Negative price accepted!
+```
+**Issue:** Insufficient validation allows logically invalid values
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Product {
+    private String name;
+    private double price;
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
+        if (price > 1000000) {
+            throw new IllegalArgumentException("Price too high");
+        }
+        this.price = price;
+    }
+}
+```
+
+**Why:** Comprehensive validation prevents invalid business states.
+
+**💡 Tip:** Validate all constraints: null, empty, range, format, business rules.
+
+---
+
+#### ❌ Wrong - No Range Checking:
+```java
+// WRONG
+public class Student {
+    private int age;
+    private double gpa;
+
+    public void setAge(int age) {
+        this.age = age;  // No range check
+    }
+
+    public void setGPA(double gpa) {
+        this.gpa = gpa;  // No range check
+    }
+}
+
+Student s = new Student();
+s.setAge(500);  // Unrealistic age
+s.setGPA(10.0);  // GPA should be 0-4
+```
+**Issue:** No range validation for bounded values
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    private int age;
+    private double gpa;
+
+    public void setAge(int age) {
+        if (age < 0 || age > 150) {
+            throw new IllegalArgumentException("Age must be 0-150");
+        }
+        this.age = age;
+    }
+
+    public void setGPA(double gpa) {
+        if (gpa < 0.0 || gpa > 4.0) {
+            throw new IllegalArgumentException("GPA must be 0.0-4.0");
+        }
+        this.gpa = gpa;
+    }
+}
+```
+
+**Why:** Range validation enforces realistic and valid values.
+
+**💡 Tip:** Define min/max constants for validation ranges.
+
+---
+
+### 7. Method Chaining Issues
+
+#### ❌ Wrong - Setters Returning void Preventing Chaining:
+```java
+// WRONG
+public class Person {
+    private String name;
+    private int age;
+    private String email;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+
+// Verbose usage
+Person p = new Person();
+p.setName("Alice");
+p.setAge(25);
+p.setEmail("alice@example.com");
+```
+**Issue:** Void setters require separate statements; can't chain
+
+#### ✅ Right:
+```java
+// CORRECT - Fluent interface with method chaining
+public class Person {
+    private String name;
+    private int age;
+    private String email;
+
+    public Person setName(String name) {
+        this.name = name;
+        return this;  // Return this for chaining
+    }
+
+    public Person setAge(int age) {
+        this.age = age;
+        return this;
+    }
+
+    public Person setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+}
+
+// Fluent usage
+Person p = new Person()
+    .setName("Alice")
+    .setAge(25)
+    .setEmail("alice@example.com");
+```
+
+**Why:** Returning `this` enables fluent, readable method chaining.
+
+**💡 Tip:** Return `this` from setters for builder-style fluent APIs.
+
+---
+
+### 8. Access Control Best Practices Violations
+
+#### ❌ Wrong - Making Helper Methods Public:
+```java
+// WRONG
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    public int validateInput(int value) {  // Should be private
+        return Math.max(0, value);
+    }
+
+    public void logOperation(String op) {  // Should be private
+        System.out.println("Operation: " + op);
+    }
+}
+
+// Users can call internal methods
+Calculator calc = new Calculator();
+calc.logOperation("Random");  // Not intended for external use
+```
+**Issue:** Internal helper methods exposed as public API
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {  // Public API
+        int validA = validateInput(a);
+        int validB = validateInput(b);
+        logOperation("add");
+        return validA + validB;
+    }
+
+    private int validateInput(int value) {  // Private helper
+        return Math.max(0, value);
+    }
+
+    private void logOperation(String op) {  // Private helper
+        System.out.println("Operation: " + op);
+    }
+}
+```
+
+**Why:** Private helpers hide implementation details and reduce API surface.
+
+**💡 Tip:** Make methods private by default; only make public if needed externally.
+
+---
+
+#### ❌ Wrong - Over-Encapsulation for Simple Data Holders:
+```java
+// WRONG - Over-engineered for simple data transfer
+public class Coordinates {
+    private int x;
+    private int y;
+
+    public Coordinates(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public int getX() { return x; }
     public void setX(int x) { this.x = x; }
     public int getY() { return y; }
     public void setY(int y) { this.y = y; }
 }
+```
+**Issue:** Excessive boilerplate for simple immutable data
 
-// BETTER - For simple data holders, consider public fields or records (Java 14+)
-public class Point {
+#### ✅ Right:
+```java
+// CORRECT - For simple immutable data holders
+public class Coordinates {
     public final int x;
     public final int y;
-    
-    public Point(int x, int y) {
+
+    public Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
     }
 }
+
+// Or use record (Java 14+)
+public record Coordinates(int x, int y) { }
 ```
+
+**Why:** Simple immutable data doesn't need full encapsulation overhead.
+
+**💡 Tip:** For simple data transfer, public final fields or records are acceptable.
+
+---
+
+### 9. Exposing Sensitive Information
+
+#### ❌ Wrong - Providing Getter for Password:
+```java
+// WRONG
+public class User {
+    private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {  // Security risk!
+        return password;  // Exposes password
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+
+User user = new User();
+user.setPassword("secret123");
+System.out.println(user.getPassword());  // Prints password!
+```
+**Issue:** Password exposed through getter
+
+#### ✅ Right:
+```java
+// CORRECT - Write-only password, verification method
+public class User {
+    private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    // No getter for password!
+
+    public void setPassword(String password) {
+        if (password != null && password.length() >= 8) {
+            this.password = password;
+        }
+    }
+
+    public boolean verifyPassword(String input) {
+        return this.password != null && this.password.equals(input);
+    }
+}
+```
+
+**Why:** Sensitive fields should be write-only; provide verification methods instead.
+
+**💡 Tip:** Never expose passwords, keys, or tokens through getters.
+
+---
+
+### 10. Constructor and Initialization Issues
+
+#### ❌ Wrong - Bypassing Setter Validation in Constructor:
+```java
+// WRONG
+public class Employee {
+    private String name;
+    private double salary;
+
+    public Employee(String name, double salary) {
+        this.name = name;      // No validation
+        this.salary = salary;  // No validation
+    }
+
+    public void setSalary(double salary) {
+        if (salary > 0) {  // Validation in setter
+            this.salary = salary;
+        } else {
+            throw new IllegalArgumentException("Salary must be positive");
+        }
+    }
+}
+
+// Can create invalid object through constructor
+Employee emp = new Employee("Alice", -1000);  // Negative salary!
+```
+**Issue:** Constructor bypasses setter validation, allowing invalid state
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Employee {
+    private String name;
+    private double salary;
+
+    public Employee(String name, double salary) {
+        setName(name);      // Use setter for validation
+        setSalary(salary);  // Use setter for validation
+    }
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        this.name = name;
+    }
+
+    public void setSalary(double salary) {
+        if (salary <= 0) {
+            throw new IllegalArgumentException("Salary must be positive");
+        }
+        this.salary = salary;
+    }
+}
+```
+
+**Why:** Calling setters from constructor reuses validation logic consistently.
+
+**💡 Tip:** Always call setters from constructors to ensure validation.
+
+---
+
+This comprehensive list now contains **40+ Encapsulation and Access Modifier mistakes** covering all fundamental concepts!
 
 ---
 

@@ -6,6 +6,9 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import { Check } from 'lucide-react';
 import { markCourseViewed, markDayComplete, unmarkDayComplete, getProgress } from '../utils/progressStorage';
+import { CustomBlockquote } from '../utils/markdownHelpers';
+import Exercise from '../components/Exercise';
+import CollapsibleCode from '../components/CollapsibleCode';
 import './CoursePage.css';
 
 function CoursePage() {
@@ -34,6 +37,26 @@ function CoursePage() {
       'day12': 'day12_inheritance',
       'day13': 'day13_polymorphism',
       'day14': 'day14_abstraction'
+    },
+    'week3': {
+      'day15': 'day15_strings',
+      'day16': 'day16_packages_static',
+      'day17': 'day17_exception_handling_part1',
+      'day18': 'day18_exception_handling_part2',
+      'day19': 'day19_collections_list_set',
+      'day20': 'day20_collections_map',
+      'day21': 'day21_generics'
+    },
+    'week4': {
+      'day22': 'day22_file_io',
+      'day23': 'day23_file_operations',
+      'day24': 'day24_serialization',
+      'day25': 'day25_multithreading_basics',
+      'day26': 'day26_thread_synchronization',
+      'day27': 'day27_lambda_expressions',
+      'day28': 'day28_stream_api',
+      'day29': 'day29_date_time_api',
+      'day30': 'day30_final_review'
     }
   };
 
@@ -87,6 +110,83 @@ function CoursePage() {
     }
   };
 
+  // Parse exercise content from markdown
+  const parseExerciseContent = (content) => {
+    const lines = content.split('\n');
+    const exercise = {
+      title: '',
+      description: '',
+      requirements: [],
+      testCases: [],
+      hints: [],
+      solutionCode: ''
+    };
+    
+    let currentSection = null;
+    let currentTestCase = null;
+    let solutionLines = [];
+    let inSolutionCodeBlock = false;
+    let codeBlockCount = 0;
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+      
+      if (trimmed.startsWith('title:')) {
+        exercise.title = trimmed.substring(6).trim();
+      } else if (trimmed.startsWith('description:')) {
+        exercise.description = trimmed.substring(12).trim();
+        currentSection = 'description';
+      } else if (trimmed === 'requirements:') {
+        currentSection = 'requirements';
+      } else if (trimmed === 'testcases:') {
+        currentSection = 'testcases';
+      } else if (trimmed === 'hints:') {
+        currentSection = 'hints';
+      } else if (trimmed === 'solution:') {
+        currentSection = 'solution';
+      } else if (currentSection === 'solution' && trimmed.startsWith('```java')) {
+        inSolutionCodeBlock = true;
+        codeBlockCount++;
+      } else if (currentSection === 'solution' && trimmed === '```' && inSolutionCodeBlock) {
+        inSolutionCodeBlock = false;
+        // Don't break, continue to capture all code
+      } else if (currentSection === 'solution' && inSolutionCodeBlock) {
+        solutionLines.push(line);
+      } else if (currentSection === 'description' && trimmed && !trimmed.startsWith('-') && !trimmed.startsWith('requirements:')) {
+        exercise.description += ' ' + trimmed;
+      } else if (currentSection === 'requirements' && trimmed.startsWith('-')) {
+        exercise.requirements.push(trimmed.substring(1).trim());
+      } else if (currentSection === 'testcases') {
+        if (trimmed.startsWith('- input:')) {
+          if (currentTestCase) {
+            exercise.testCases.push(currentTestCase);
+          }
+          currentTestCase = {
+            input: trimmed.substring(8).trim().replace(/^["']|["']$/g, ''),
+            output: ''
+          };
+        } else if (trimmed.startsWith('output:') && currentTestCase) {
+          currentTestCase.output = trimmed.substring(7).trim().replace(/^["']|["']$/g, '');
+        }
+      } else if (currentSection === 'hints' && trimmed.startsWith('-')) {
+        exercise.hints.push(trimmed.substring(1).trim());
+      }
+    }
+    
+    // Add last test case if exists
+    if (currentTestCase) {
+      exercise.testCases.push(currentTestCase);
+    }
+    
+    // Set solution code
+    if (solutionLines.length > 0) {
+      exercise.solutionCode = solutionLines.join('\n');
+    }
+    
+    return exercise;
+  };
+
   const handleToggleComplete = () => {
     if (isCompleted) {
       unmarkDayComplete(day);
@@ -136,8 +236,56 @@ function CoursePage() {
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
+            h2({ node, children, ...props }) {
+              // Track when we enter "Practical Exercises" section
+              const text = String(children);
+              if (text.includes('Practical Exercises') || text.includes('💻')) {
+                // Set a flag that we're in exercises section
+                if (typeof window !== 'undefined') {
+                  window.__inExercisesSection = true;
+                }
+              } else if (text.match(/^(Key Takeaways|Common Mistakes|Navigation|Checklist)/)) {
+                // Clear flag when we leave exercises section
+                if (typeof window !== 'undefined') {
+                  window.__inExercisesSection = false;
+                }
+              }
+              return <h2 {...props}>{children}</h2>;
+            },
+            h3({ node, children, ...props }) {
+              // Track individual exercises
+              const text = String(children);
+              if (text.startsWith('Exercise')) {
+                if (typeof window !== 'undefined') {
+                  window.__inExercise = true;
+                }
+              }
+              return <h3 {...props}>{children}</h3>;
+            },
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
+              
+              // Check if this is an exercise block
+              if (!inline && match && match[1] === 'exercise') {
+                const content = String(children).replace(/\n$/, '');
+                const exercise = parseExerciseContent(content);
+                
+                if (exercise) {
+                  return <Exercise {...exercise} />;
+                }
+              }
+              
+              // Make Java code blocks collapsible ONLY in exercises section
+              if (!inline && match && match[1] === 'java') {
+                const code = String(children).replace(/\n$/, '');
+                const inExercises = typeof window !== 'undefined' && window.__inExercisesSection;
+                
+                if (inExercises) {
+                  return <CollapsibleCode code={code} language="java" />;
+                }
+              }
+              
+              // Regular code blocks
               return !inline && match ? (
                 <SyntaxHighlighter
                   style={vscDarkPlus}
@@ -159,7 +307,8 @@ function CoursePage() {
                 return <Link to={href} {...props}>{children}</Link>;
               }
               return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
-            }
+            },
+            blockquote: CustomBlockquote
           }}
         >
           {content}

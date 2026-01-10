@@ -931,55 +931,1045 @@ public class ArrayPalindrome {
 
 ## ⚠️ Common Mistakes
 
-### 1. Forgetting Zero-Based Indexing:
-```java
-int[] arr = new int[5];
-// Valid indices: 0, 1, 2, 3, 4
-// NOT: 1, 2, 3, 4, 5
+### 1. Declaration and Initialization Issues
 
-arr[5] = 10;  // ERROR! Index out of bounds
-arr[4] = 10;  // CORRECT: last element
+#### ❌ Wrong - Array Size in Declaration:
+```java
+// WRONG - Cannot specify size in declaration
+int[5] numbers;  // Compilation error!
+int[] numbers[5];  // Compilation error!
+```
+**Issue:** Size cannot be part of the type declaration
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers;  // Declare
+numbers = new int[5];  // Then allocate size
+
+// OR combine
+int[] numbers = new int[5];  // Declare and allocate together
 ```
 
-### 2. Using length() Instead of length:
-```java
-int[] arr = {1, 2, 3};
-System.out.println(arr.length());  // ERROR! length is property
-System.out.println(arr.length);    // CORRECT
-```
+**Why:** In Java, array size is specified during allocation with `new`, not in the type declaration.
 
-### 3. Not Initializing Array:
+**💡 Tip:** Syntax is `dataType[] arrayName = new dataType[size];` - size comes with `new`, not with the type.
+
+---
+
+#### ❌ Wrong - Not Initializing Before Use:
 ```java
+// WRONG
 int[] numbers;
-numbers[0] = 10;  // ERROR! Array not initialized
+numbers[0] = 10;  // NullPointerException! Array not initialized
+```
+**Issue:** Array variable declared but not allocated memory
 
-int[] numbers = new int[5];  // CORRECT
-numbers[0] = 10;
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = new int[5];  // Allocate memory first
+numbers[0] = 10;  // Now can assign values
 ```
 
-### 4. Modifying Array in for-each:
+**Why:** Declaration creates a reference variable; must allocate memory with `new` before use.
+
+**💡 Tip:** Always initialize arrays before accessing elements: `int[] arr = new int[size];`
+
+---
+
+#### ❌ Wrong - Using new with Array Initializer in Declaration:
 ```java
-int[] arr = {1, 2, 3};
+// WRONG
+int[] numbers = new int[5]{1, 2, 3, 4, 5};  // Compilation error!
+```
+**Issue:** Cannot specify both size and initializer values together
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1
+int[] numbers = {1, 2, 3, 4, 5};  // No 'new' or size
+
+// CORRECT - Method 2
+int[] numbers = new int[]{1, 2, 3, 4, 5};  // 'new' but no size
+```
+
+**Why:** When providing values, compiler determines size automatically.
+
+**💡 Tip:** Either specify size OR values, not both: `new int[5]` or `{1,2,3,4,5}`.
+
+---
+
+#### ❌ Wrong - Trying to Resize Array:
+```java
+// WRONG
+int[] numbers = new int[5];
+numbers = new int[10];  // Creates new array, doesn't resize!
+numbers[7] = 50;  // Old array lost, new array has default values
+```
+**Issue:** Arrays have fixed size; assignment creates new array, losing old data
+
+#### ✅ Right:
+```java
+// CORRECT - If need to resize, must copy data
+int[] numbers = new int[5];
+// ... populate numbers ...
+
+int[] larger = new int[10];
+for (int i = 0; i < numbers.length; i++) {
+    larger[i] = numbers[i];  // Copy old data
+}
+numbers = larger;  // Replace reference
+```
+
+**Why:** Arrays cannot change size after creation; must create new array and copy.
+
+**💡 Tip:** If size changes frequently, use ArrayList instead of arrays.
+
+---
+
+#### ❌ Wrong - Brackets on Variable Instead of Type:
+```java
+// WRONG (compiles but confusing)
+int numbers[];  // C-style syntax, not recommended in Java
+```
+**Issue:** While valid, this syntax is less clear and not Java convention
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers;  // Java-style syntax, preferred
+```
+
+**Why:** Placing brackets after type makes array nature of variable immediately clear.
+
+**💡 Tip:** Always use `int[] arr` syntax for consistency with Java conventions.
+
+---
+
+#### ❌ Wrong - Anonymous Array Without new:
+```java
+// WRONG
+int[] numbers;
+numbers = {1, 2, 3, 4, 5};  // Compilation error!
+```
+**Issue:** Array initializer syntax only works in declaration, not assignment
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers;
+numbers = new int[]{1, 2, 3, 4, 5};  // Need 'new' keyword
+```
+
+**Why:** After declaration, must use `new int[]{...}` for anonymous array.
+
+**💡 Tip:** Shortcut `{...}` only works at declaration: `int[] arr = {...};`
+
+---
+
+### 2. Index-Related Mistakes
+
+#### ❌ Wrong - Off-by-One Error (Using length):
+```java
+// WRONG
+int[] arr = {10, 20, 30, 40, 50};
+
+for (int i = 0; i <= arr.length; i++) {  // <= is wrong!
+    System.out.println(arr[i]);  // ArrayIndexOutOfBoundsException!
+}
+```
+**Issue:** Loop tries to access arr[5] which doesn't exist (indices 0-4)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {10, 20, 30, 40, 50};
+
+for (int i = 0; i < arr.length; i++) {  // Use < not <=
+    System.out.println(arr[i]);  // Correctly accesses 0-4
+}
+```
+
+**Why:** Array of length 5 has indices 0-4, not 0-5.
+
+**💡 Tip:** Always use `i < arr.length`, not `i <= arr.length` in loops.
+
+---
+
+#### ❌ Wrong - Starting Index at 1:
+```java
+// WRONG
+int[] scores = {85, 90, 78, 92, 88};
+
+for (int i = 1; i < scores.length; i++) {  // Starts at 1!
+    System.out.println(scores[i]);
+}
+// Prints 90, 78, 92, 88 - misses first element (85)!
+```
+**Issue:** First element at index 0 is skipped
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] scores = {85, 90, 78, 92, 88};
+
+for (int i = 0; i < scores.length; i++) {  // Starts at 0
+    System.out.println(scores[i]);
+}
+// Prints all elements: 85, 90, 78, 92, 88
+```
+
+**Why:** Java arrays are zero-based; first element is at index 0.
+
+**💡 Tip:** Always start loops at 0 for arrays unless you have specific reason to skip first element.
+
+---
+
+#### ❌ Wrong - Using length() Instead of length:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+for (int i = 0; i < arr.length(); i++) {  // Compilation error!
+    System.out.println(arr[i]);
+}
+```
+**Issue:** length is a property (field), not a method
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+for (int i = 0; i < arr.length; i++) {  // No parentheses
+    System.out.println(arr[i]);
+}
+```
+
+**Why:** Arrays use `length` property; Strings use `length()` method.
+
+**💡 Tip:** Remember: `array.length` (no parentheses), `string.length()` (with parentheses).
+
+---
+
+#### ❌ Wrong - Negative Index:
+```java
+// WRONG
+int[] numbers = {10, 20, 30, 40, 50};
+int value = numbers[-1];  // ArrayIndexOutOfBoundsException!
+```
+**Issue:** Negative indices are invalid in Java (unlike Python)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = {10, 20, 30, 40, 50};
+int lastValue = numbers[numbers.length - 1];  // Access last element
+```
+
+**Why:** Java doesn't support negative indexing; use `length - 1` for last element.
+
+**💡 Tip:** For last element, use `arr[arr.length - 1]`, not `arr[-1]`.
+
+---
+
+#### ❌ Wrong - Confusing Index with Value:
+```java
+// WRONG
+int[] numbers = {10, 20, 30, 40, 50};
+int index = 20;  // This is a value, not index!
+System.out.println(numbers[index]);  // ArrayIndexOutOfBoundsException!
+```
+**Issue:** Using element value as index instead of finding the position
+
+#### ✅ Right:
+```java
+// CORRECT - Find index of value 20
+int[] numbers = {10, 20, 30, 40, 50};
+int targetValue = 20;
+int index = -1;
+
+for (int i = 0; i < numbers.length; i++) {
+    if (numbers[i] == targetValue) {
+        index = i;  // Found at index 1
+        break;
+    }
+}
+System.out.println("Value " + targetValue + " at index " + index);
+```
+
+**Why:** Index is the position (0-4); value is the element stored at that position.
+
+**💡 Tip:** Index = position in array; Value = data stored at that position.
+
+---
+
+#### ❌ Wrong - Accessing Last Element Wrong:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+int last = arr[arr.length];  // ArrayIndexOutOfBoundsException!
+```
+**Issue:** arr.length is 5, but last index is 4
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+int last = arr[arr.length - 1];  // Correct: arr[4]
+```
+
+**Why:** Array of length n has indices 0 to n-1.
+
+**💡 Tip:** Last element is always at `arr.length - 1`, not `arr.length`.
+
+---
+
+#### ❌ Wrong - Index Calculation Error in Reverse:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = 0; i < arr.length / 2; i++) {
+    int temp = arr[i];
+    arr[i] = arr[arr.length - i];  // Wrong! Should be length - 1 - i
+    arr[arr.length - i] = temp;  // ArrayIndexOutOfBoundsException!
+}
+```
+**Issue:** Accessing arr[5] which is out of bounds
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = 0; i < arr.length / 2; i++) {
+    int temp = arr[i];
+    arr[i] = arr[arr.length - 1 - i];  // Correct formula
+    arr[arr.length - 1 - i] = temp;
+}
+```
+
+**Why:** Opposite index of i is `length - 1 - i`, not `length - i`.
+
+**💡 Tip:** For reverse operations, opposite index formula is `length - 1 - i`.
+
+---
+
+#### ❌ Wrong - Empty Array Access:
+```java
+// WRONG
+int[] arr = new int[0];  // Empty array
+int first = arr[0];  // ArrayIndexOutOfBoundsException!
+```
+**Issue:** Cannot access elements in an empty array
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = new int[0];
+
+if (arr.length > 0) {
+    int first = arr[0];  // Safe access
+} else {
+    System.out.println("Array is empty");
+}
+```
+
+**Why:** Empty arrays have length 0 and no accessible indices.
+
+**💡 Tip:** Always check `arr.length > 0` before accessing elements.
+
+---
+
+### 3. Loop Iteration Mistakes
+
+#### ❌ Wrong - Wrong Loop Condition:
+```java
+// WRONG
+int[] numbers = {10, 20, 30, 40, 50};
+
+for (int i = 0; i <= numbers.length; i++) {  // <= causes problem
+    System.out.println(numbers[i]);  // Crashes at i=5
+}
+```
+**Issue:** Condition `<=` includes invalid index (length itself)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = {10, 20, 30, 40, 50};
+
+for (int i = 0; i < numbers.length; i++) {  // Use <
+    System.out.println(numbers[i]);  // Stops at i=4
+}
+```
+
+**Why:** Valid indices are 0 to length-1, so condition must be `< length`.
+
+**💡 Tip:** Standard array loop: `for (int i = 0; i < arr.length; i++)`
+
+---
+
+#### ❌ Wrong - Modifying Array in for-each:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+
 for (int num : arr) {
-    num = num * 2;  // Doesn't change array!
+    num = num * 2;  // Doesn't modify array!
 }
 
-// Use regular for loop to modify
+System.out.println(Arrays.toString(arr));  // Prints [1, 2, 3, 4, 5]
+```
+**Issue:** for-each creates a copy of each element; modifying copy doesn't affect array
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+
 for (int i = 0; i < arr.length; i++) {
-    arr[i] = arr[i] * 2;  // This works
+    arr[i] = arr[i] * 2;  // Directly modifies array
+}
+
+System.out.println(Arrays.toString(arr));  // Prints [2, 4, 6, 8, 10]
+```
+
+**Why:** for-each loop provides read-only access to elements.
+
+**💡 Tip:** Use indexed for loop when you need to modify array elements.
+
+---
+
+#### ❌ Wrong - Need Index But Using for-each:
+```java
+// WRONG
+String[] names = {"Alice", "Bob", "Charlie"};
+
+for (String name : names) {
+    // How to print index? Can't access it!
+    System.out.println("Name: " + name);
+}
+```
+**Issue:** for-each doesn't provide index information
+
+#### ✅ Right:
+```java
+// CORRECT
+String[] names = {"Alice", "Bob", "Charlie"};
+
+for (int i = 0; i < names.length; i++) {
+    System.out.println("Index " + i + ": " + names[i]);
 }
 ```
 
-### 5. Comparing Arrays with ==:
+**Why:** for-each only provides elements, not their positions.
+
+**💡 Tip:** Use indexed for loop when you need both element and its index.
+
+---
+
+#### ❌ Wrong - Infinite Loop with Array Modification:
 ```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+int i = 0;
+
+while (i < arr.length) {
+    System.out.println(arr[i]);
+    // Forgot to increment i!
+}
+// Infinite loop!
+```
+**Issue:** Loop counter never increments
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+int i = 0;
+
+while (i < arr.length) {
+    System.out.println(arr[i]);
+    i++;  // Increment counter
+}
+```
+
+**Why:** Must increment loop counter to eventually exit.
+
+**💡 Tip:** Always update loop variable when using while loops.
+
+---
+
+#### ❌ Wrong - Wrong Bounds for Partial Iteration:
+```java
+// WRONG - Want to process first 3 elements
+int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+for (int i = 0; i <= 3; i++) {  // Processes 4 elements (0,1,2,3)!
+    System.out.println(arr[i]);
+}
+```
+**Issue:** Condition `<= 3` includes 4th element (index 3)
+
+#### ✅ Right:
+```java
+// CORRECT - Process first 3 elements
+int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+for (int i = 0; i < 3; i++) {  // Processes indices 0,1,2 (3 elements)
+    System.out.println(arr[i]);
+}
+```
+
+**Why:** To process n elements starting at 0, use condition `< n`.
+
+**💡 Tip:** For n items starting at 0: use `i < n`, not `i <= n`.
+
+---
+
+### 4. Array Comparison and Copying
+
+#### ❌ Wrong - Using == to Compare Arrays:
+```java
+// WRONG
+int[] arr1 = {1, 2, 3, 4, 5};
+int[] arr2 = {1, 2, 3, 4, 5};
+
+if (arr1 == arr2) {  // FALSE! Compares references
+    System.out.println("Equal");
+}
+// Nothing prints even though contents are same
+```
+**Issue:** == compares memory addresses, not array contents
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr1 = {1, 2, 3, 4, 5};
+int[] arr2 = {1, 2, 3, 4, 5};
+
+// Manual comparison
+boolean equal = true;
+if (arr1.length == arr2.length) {
+    for (int i = 0; i < arr1.length; i++) {
+        if (arr1[i] != arr2[i]) {
+            equal = false;
+            break;
+        }
+    }
+}
+
+if (equal) {
+    System.out.println("Equal");
+}
+```
+
+**Why:** == checks if both variables point to same array object in memory.
+
+**💡 Tip:** Use Arrays.equals() (covered in Day 7) for content comparison.
+
+---
+
+#### ❌ Wrong - Shallow Copy (Reference Assignment):
+```java
+// WRONG
+int[] original = {1, 2, 3, 4, 5};
+int[] copy = original;  // Not a copy! Same reference
+
+copy[0] = 100;  // Modifies original!
+System.out.println(original[0]);  // Prints 100
+```
+**Issue:** Assignment copies reference, not array; both variables point to same array
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Manual copy
+int[] original = {1, 2, 3, 4, 5};
+int[] copy = new int[original.length];
+
+for (int i = 0; i < original.length; i++) {
+    copy[i] = original[i];
+}
+
+// CORRECT - Method 2: Using clone()
+int[] copy2 = original.clone();
+
+copy[0] = 100;  // Doesn't affect original
+System.out.println(original[0]);  // Prints 1
+```
+
+**Why:** Arrays are objects; assignment copies reference, not contents.
+
+**💡 Tip:** Use manual loop or clone() to create independent copy of array.
+
+---
+
+#### ❌ Wrong - Not Creating New Array for Copy:
+```java
+// WRONG
+int[] source = {1, 2, 3, 4, 5};
+int[] destination;  // Just declared, not allocated
+
+for (int i = 0; i < source.length; i++) {
+    destination[i] = source[i];  // NullPointerException!
+}
+```
+**Issue:** Destination array not allocated memory before copying
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] source = {1, 2, 3, 4, 5};
+int[] destination = new int[source.length];  // Allocate memory
+
+for (int i = 0; i < source.length; i++) {
+    destination[i] = source[i];  // Now works
+}
+```
+
+**Why:** Must allocate memory for destination array before copying elements.
+
+**💡 Tip:** Always create destination array with proper size before copying.
+
+---
+
+#### ❌ Wrong - Comparing Array with null Using ==:
+```java
+// WRONG (but common pattern with wrong assumption)
+int[] arr1 = {1, 2, 3};
+int[] arr2 = null;
+
+if (arr1 == arr2) {  // Works, but doesn't check contents
+    System.out.println("Same");
+}
+```
+**Issue:** == is appropriate for null check, but not for content comparison
+
+#### ✅ Right:
+```java
+// CORRECT - Check null first, then contents
 int[] arr1 = {1, 2, 3};
 int[] arr2 = {1, 2, 3};
 
-if (arr1 == arr2) { }  // Compares references, not content!
-
-// Use Arrays.equals() (Day 7)
-if (Arrays.equals(arr1, arr2)) { }  // Compares content
+if (arr1 != null && arr2 != null) {
+    boolean equal = arr1.length == arr2.length;
+    for (int i = 0; equal && i < arr1.length; i++) {
+        if (arr1[i] != arr2[i]) {
+            equal = false;
+        }
+    }
+    System.out.println(equal ? "Equal" : "Not equal");
+}
 ```
+
+**Why:** Must check null before comparing contents to avoid NullPointerException.
+
+**💡 Tip:** Check for null before array operations: `if (arr != null)`
+
+---
+
+### 5. Default Values and Null Issues
+
+#### ❌ Wrong - Assuming Non-Zero Default Values:
+```java
+// WRONG
+int[] numbers = new int[5];
+int sum = 0;
+
+for (int num : numbers) {
+    sum += num;
+}
+
+if (sum == 0) {
+    System.out.println("Array is empty or all zeros?");
+    // Can't tell the difference!
+}
+```
+**Issue:** New arrays have default values (0 for int), can't distinguish from intentional zeros
+
+#### ✅ Right:
+```java
+// CORRECT - Initialize with sentinel value or track separately
+int[] numbers = new int[5];
+boolean initialized = false;
+
+// ... fill array ...
+
+if (initialized) {
+    int sum = 0;
+    for (int num : numbers) {
+        sum += num;
+    }
+    System.out.println("Sum: " + sum);
+} else {
+    System.out.println("Array not yet populated");
+}
+```
+
+**Why:** Default int value is 0; cannot distinguish uninitialized from zero.
+
+**💡 Tip:** Default values: int=0, double=0.0, boolean=false, Object=null.
+
+---
+
+#### ❌ Wrong - Null Pointer with Reference Arrays:
+```java
+// WRONG
+String[] names = new String[3];
+
+System.out.println(names[0].length());  // NullPointerException!
+```
+**Issue:** String array created but elements are null by default
+
+#### ✅ Right:
+```java
+// CORRECT
+String[] names = new String[3];
+
+if (names[0] != null) {
+    System.out.println(names[0].length());
+} else {
+    System.out.println("Element is null");
+}
+
+// OR initialize when creating
+String[] names2 = {"Alice", "Bob", "Charlie"};
+System.out.println(names2[0].length());  // Safe, elements not null
+```
+
+**Why:** Reference type arrays initialize elements to null, not empty objects.
+
+**💡 Tip:** Always check for null before calling methods on array elements.
+
+---
+
+#### ❌ Wrong - Accessing Elements of Null Array:
+```java
+// WRONG
+int[] numbers = null;
+System.out.println(numbers.length);  // NullPointerException!
+```
+**Issue:** Array variable is null (not allocated)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = null;
+
+if (numbers != null) {
+    System.out.println("Length: " + numbers.length);
+} else {
+    System.out.println("Array is null");
+}
+```
+
+**Why:** Must allocate array before accessing any properties or elements.
+
+**💡 Tip:** Check `arr != null` before any array operations.
+
+---
+
+### 6. Type Issues
+
+#### ❌ Wrong - Type Mismatch in Array Assignment:
+```java
+// WRONG
+int[] numbers = {1, 2, 3, 4, 5};
+numbers[0] = 10.5;  // Compilation error! Cannot assign double to int
+```
+**Issue:** Array is typed; cannot assign incompatible type
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = {1, 2, 3, 4, 5};
+numbers[0] = (int) 10.5;  // Cast to int: 10
+
+// OR use double array
+double[] decimals = {1.0, 2.0, 3.0, 4.0, 5.0};
+decimals[0] = 10.5;  // Works
+```
+
+**Why:** Arrays are homogeneous; all elements must be same type.
+
+**💡 Tip:** Array type determines element type; cast if needed or use appropriate array type.
+
+---
+
+#### ❌ Wrong - Mixing Primitive and Wrapper Types:
+```java
+// WRONG (causes confusion)
+int[] primitives = {1, 2, 3};
+Integer[] wrappers = new Integer[3];
+
+// Cannot directly assign
+wrappers = primitives;  // Compilation error! Incompatible types
+```
+**Issue:** int[] and Integer[] are different types despite auto-boxing
+
+#### ✅ Right:
+```java
+// CORRECT - Manual conversion needed
+int[] primitives = {1, 2, 3};
+Integer[] wrappers = new Integer[primitives.length];
+
+for (int i = 0; i < primitives.length; i++) {
+    wrappers[i] = primitives[i];  // Auto-boxing works per element
+}
+```
+
+**Why:** int[] and Integer[] are completely different array types.
+
+**💡 Tip:** Cannot directly convert between primitive and wrapper arrays; must copy element-by-element.
+
+---
+
+### 7. Array Operations Mistakes
+
+#### ❌ Wrong - Wrong Logic in Find Max:
+```java
+// WRONG
+int[] numbers = {45, 23, 67, 12, 89, 34};
+int max = 0;  // Assumes max is at least 0!
+
+for (int num : numbers) {
+    if (num > max) {
+        max = num;
+    }
+}
+System.out.println("Max: " + max);  // Wrong if all numbers are negative!
+```
+**Issue:** Initial max value of 0 is wrong if all numbers are negative
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = {45, 23, 67, 12, 89, 34};
+int max = numbers[0];  // Initialize to first element
+
+for (int i = 1; i < numbers.length; i++) {
+    if (numbers[i] > max) {
+        max = numbers[i];
+    }
+}
+System.out.println("Max: " + max);  // Correct
+```
+
+**Why:** Initial value matters; start with first element or Integer.MIN_VALUE.
+
+**💡 Tip:** Initialize max to first element or Integer.MIN_VALUE, not 0.
+
+---
+
+#### ❌ Wrong - Integer Division in Average:
+```java
+// WRONG
+int[] scores = {85, 90, 78, 92, 88};
+int sum = 0;
+
+for (int score : scores) {
+    sum += score;
+}
+
+int average = sum / scores.length;  // Integer division!
+System.out.println("Average: " + average);  // Prints 86, not 86.6
+```
+**Issue:** Integer division truncates decimal part
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] scores = {85, 90, 78, 92, 88};
+int sum = 0;
+
+for (int score : scores) {
+    sum += score;
+}
+
+double average = (double) sum / scores.length;  // Cast to double
+System.out.println("Average: " + average);  // Prints 86.6
+```
+
+**Why:** Dividing two ints produces int result; cast to double for decimal result.
+
+**💡 Tip:** Cast sum to double before division to get decimal average.
+
+---
+
+#### ❌ Wrong - Not Handling Empty Array:
+```java
+// WRONG
+int[] numbers = {};  // Empty array
+
+int max = numbers[0];  // ArrayIndexOutOfBoundsException!
+for (int num : numbers) {
+    if (num > max) max = num;
+}
+```
+**Issue:** Cannot access first element of empty array
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] numbers = {};
+
+if (numbers.length == 0) {
+    System.out.println("Array is empty");
+} else {
+    int max = numbers[0];
+    for (int num : numbers) {
+        if (num > max) max = num;
+    }
+    System.out.println("Max: " + max);
+}
+```
+
+**Why:** Must check array length before accessing elements.
+
+**💡 Tip:** Always validate array is not empty before operations that access elements.
+
+---
+
+#### ❌ Wrong - Incorrect Reverse Algorithm:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = 0; i < arr.length; i++) {  // Reverses twice!
+    int temp = arr[i];
+    arr[i] = arr[arr.length - 1 - i];
+    arr[arr.length - 1 - i] = temp;
+}
+// Array ends up unchanged!
+```
+**Issue:** Loop runs through entire array, swapping twice (undoing the reverse)
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+
+for (int i = 0; i < arr.length / 2; i++) {  // Only go halfway
+    int temp = arr[i];
+    arr[i] = arr[arr.length - 1 - i];
+    arr[arr.length - 1 - i] = temp;
+}
+// Array reversed: {5, 4, 3, 2, 1}
+```
+
+**Why:** Reversing swaps pairs from outside in; only need to go halfway.
+
+**💡 Tip:** Reverse loop condition: `i < arr.length / 2`, not full length.
+
+---
+
+### 8. Common Logic Errors
+
+#### ❌ Wrong - Incorrect Swap Logic:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+
+// Trying to swap without temp variable
+arr[0] = arr[1];  // arr[0] becomes 2
+arr[1] = arr[0];  // arr[1] becomes 2 (not 1!)
+// Both elements now have value 2!
+```
+**Issue:** First assignment overwrites arr[0] before copying to arr[1]
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+
+int temp = arr[0];  // Save arr[0]
+arr[0] = arr[1];    // Copy arr[1] to arr[0]
+arr[1] = temp;      // Copy saved value to arr[1]
+// Now arr[0]=2, arr[1]=1 (swapped correctly)
+```
+
+**Why:** Need temporary variable to preserve value during swap.
+
+**💡 Tip:** Standard swap: `temp = a; a = b; b = temp;`
+
+---
+
+#### ❌ Wrong - Off-by-One in Array Rotation:
+```java
+// WRONG
+int[] arr = {1, 2, 3, 4, 5};
+
+// Rotate right by 1
+int last = arr[arr.length - 1];
+for (int i = arr.length - 1; i >= 0; i--) {  // Includes 0!
+    arr[i] = arr[i - 1];  // ArrayIndexOutOfBoundsException at i=0!
+}
+arr[0] = last;
+```
+**Issue:** Loop tries to access arr[-1] when i=0
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr = {1, 2, 3, 4, 5};
+
+int last = arr[arr.length - 1];
+for (int i = arr.length - 1; i > 0; i--) {  // Stop at 1, not 0
+    arr[i] = arr[i - 1];
+}
+arr[0] = last;
+// Array rotated: {5, 1, 2, 3, 4}
+```
+
+**Why:** Loop must stop before reaching index 0 to avoid negative index.
+
+**💡 Tip:** In rotation, loop condition must be `i > 0` not `i >= 0`.
+
+---
+
+#### ❌ Wrong - Wrong Merge Array Size:
+```java
+// WRONG
+int[] arr1 = {1, 2, 3};
+int[] arr2 = {4, 5, 6, 7, 8};
+
+int[] merged = new int[arr1.length];  // Too small!
+
+for (int i = 0; i < arr1.length; i++) {
+    merged[i] = arr1[i];
+}
+
+for (int i = 0; i < arr2.length; i++) {
+    merged[arr1.length + i] = arr2[i];  // ArrayIndexOutOfBoundsException!
+}
+```
+**Issue:** Merged array size should be sum of both arrays
+
+#### ✅ Right:
+```java
+// CORRECT
+int[] arr1 = {1, 2, 3};
+int[] arr2 = {4, 5, 6, 7, 8};
+
+int[] merged = new int[arr1.length + arr2.length];  // Correct size
+
+for (int i = 0; i < arr1.length; i++) {
+    merged[i] = arr1[i];
+}
+
+for (int i = 0; i < arr2.length; i++) {
+    merged[arr1.length + i] = arr2[i];
+}
+```
+
+**Why:** Merged array must have space for all elements from both arrays.
+
+**💡 Tip:** Merged array size = arr1.length + arr2.length.
+
+---
+
+This comprehensive list now contains **35+ array mistakes** covering every aspect of Day 6: Arrays - Part 1!
 
 ---
 

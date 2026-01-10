@@ -996,58 +996,979 @@ public class TestTime {
 
 ## ⚠️ Common Mistakes
 
-### 1. Forgetting to Create Object:
-```java
-Student student;  // Only declaration, no object created
-student.name = "Alice";  // ERROR! NullPointerException
+### 1. Class Definition and Structure Issues
 
-Student student = new Student();  // CORRECT
-student.name = "Alice";
+#### ❌ Wrong - Missing 'new' Keyword When Creating Object:
+```java
+// WRONG
+Student student;  // Only declaration, no object created
+student.name = "Alice";  // NullPointerException!
+```
+**Issue:** Variable declared but no object instantiated; reference is null
+
+#### ✅ Right:
+```java
+// CORRECT
+Student student = new Student();  // Object created in heap
+student.name = "Alice";  // Now safe to access
 ```
 
-### 2. Class Name vs Filename:
+**Why:** Object declaration creates a reference variable; must use `new` to actually create the object in heap memory.
+
+**💡 Tip:** Always initialize object references with `new` before accessing members.
+
+---
+
+#### ❌ Wrong - Class Name Doesn't Match Filename:
 ```java
 // File: Student.java
-public class Student { }  // CORRECT
+public class Person { }  // Compilation error!
+```
+**Issue:** Public class name must exactly match the filename
 
-// File: MyClass.java
-public class Student { }  // ERROR! Class name must match filename
+#### ✅ Right:
+```java
+// File: Student.java
+public class Student { }  // Correct: matches filename
+
+// OR for non-public classes:
+// File: MyClasses.java
+class Student { }  // OK: non-public class
+class Teacher { }  // OK: non-public class
 ```
 
-### 3. Accessing Non-Static Members from Static Context:
+**Why:** Java requires public class name to match filename for proper compilation and class loading.
+
+**💡 Tip:** Filename must be `ClassName.java` where ClassName is the public class name.
+
+---
+
+#### ❌ Wrong - Multiple Public Classes in One File:
 ```java
-public class Test {
-    int x = 10;
-    
-    public static void main(String[] args) {
-        System.out.println(x);  // ERROR! Cannot access non-static from static
-        
-        Test obj = new Test();
-        System.out.println(obj.x);  // CORRECT
+// File: Test.java
+// WRONG
+public class Student { }
+public class Teacher { }  // Compilation error!
+```
+**Issue:** Only one public class allowed per file
+
+#### ✅ Right:
+```java
+// File: Student.java
+// CORRECT - Method 1: One public class per file
+public class Student { }
+
+// File: Teacher.java
+public class Teacher { }
+
+// OR Method 2: One public, rest non-public
+// File: Student.java
+public class Student { }
+class Teacher { }  // Non-public, OK in same file
+```
+
+**Why:** Java's file organization requires one public class per file for clarity and proper class loading.
+
+**💡 Tip:** Create separate files for public classes; non-public helper classes can share a file.
+
+---
+
+#### ❌ Wrong - Wrong Class Naming Convention:
+```java
+// WRONG - Not following PascalCase
+public class student { }       // Starts with lowercase
+public class bank_account { }  // Uses underscores
+public class EMPLOYEE { }      // All uppercase
+```
+**Issue:** Class names should use PascalCase convention
+
+#### ✅ Right:
+```java
+// CORRECT - PascalCase
+public class Student { }
+public class BankAccount { }
+public class Employee { }
+public class CarEngine { }
+```
+
+**Why:** Java naming conventions improve code readability and follow industry standards.
+
+**💡 Tip:** Classes: PascalCase, methods/variables: camelCase, constants: UPPER_CASE.
+
+---
+
+#### ❌ Wrong - Missing Class Body Braces:
+```java
+// WRONG
+public class Student;  // Compilation error!
+```
+**Issue:** Class must have a body enclosed in braces, even if empty
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student { }  // Empty class is valid
+
+// OR with members
+public class Student {
+    String name;
+    int age;
+}
+```
+
+**Why:** Class syntax requires braces to define the class body.
+
+**💡 Tip:** Every class needs `{ }` even if it's empty.
+
+---
+
+### 2. Object Creation and Instantiation Mistakes
+
+#### ❌ Wrong - Trying to Use Class Name as Object:
+```java
+// WRONG
+public class Student {
+    String name;
+}
+
+Student.name = "Alice";  // Compilation error!
+```
+**Issue:** Trying to access instance members through class name
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+}
+
+Student student = new Student();
+student.name = "Alice";  // Access through object reference
+```
+
+**Why:** Instance variables belong to objects, not the class itself.
+
+**💡 Tip:** Create an object first, then access its members through the reference variable.
+
+---
+
+#### ❌ Wrong - Assigning One Object Reference to Another Without Understanding:
+```java
+// WRONG (conceptual mistake)
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = student1;  // Both point to same object!
+student2.name = "Bob";
+
+System.out.println(student1.name);  // Prints "Bob", not "Alice"!
+```
+**Issue:** Assignment copies reference, not the object; both variables point to same object
+
+#### ✅ Right:
+```java
+// CORRECT - Create separate objects
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = new Student();  // New object
+student2.name = "Bob";
+
+System.out.println(student1.name);  // Prints "Alice"
+System.out.println(student2.name);  // Prints "Bob"
+```
+
+**Why:** Reference assignment creates an alias, not a copy of the object.
+
+**💡 Tip:** Each `new` creates a separate object in memory; assignment copies references.
+
+---
+
+#### ❌ Wrong - Creating Array of Objects Without Initializing Elements:
+```java
+// WRONG
+Student[] students = new Student[3];  // Array created
+students[0].name = "Alice";  // NullPointerException!
+```
+**Issue:** Array of objects only creates array; each element is null
+
+#### ✅ Right:
+```java
+// CORRECT
+Student[] students = new Student[3];  // Array created
+students[0] = new Student();  // Create object
+students[0].name = "Alice";   // Now safe
+
+// OR initialize all elements
+for (int i = 0; i < students.length; i++) {
+    students[i] = new Student();
+}
+```
+
+**Why:** Array allocation doesn't create the objects, only creates space for references.
+
+**💡 Tip:** After creating object array, initialize each element with `new`.
+
+---
+
+#### ❌ Wrong - Not Checking for Null Before Access:
+```java
+// WRONG
+Student student = null;
+System.out.println(student.name);  // NullPointerException!
+```
+**Issue:** Accessing member on null reference
+
+#### ✅ Right:
+```java
+// CORRECT
+Student student = null;
+
+if (student != null) {
+    System.out.println(student.name);
+} else {
+    System.out.println("Student is null");
+}
+```
+
+**Why:** Null references don't point to any object; accessing members causes runtime error.
+
+**💡 Tip:** Always check for null before accessing object members.
+
+---
+
+### 3. Instance Variable (Field) Mistakes
+
+#### ❌ Wrong - Declaring Variables Inside Methods as Instance Variables:
+```java
+// WRONG
+public class Student {
+    void setName() {
+        String name;  // Local variable, not instance variable!
+    }
+
+    void displayName() {
+        System.out.println(name);  // Compilation error! name not found
+    }
+}
+```
+**Issue:** Variable declared inside method is local, not accessible elsewhere
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;  // Instance variable (field)
+
+    void setName(String n) {
+        name = n;  // Accessible throughout class
+    }
+
+    void displayName() {
+        System.out.println(name);  // Works!
     }
 }
 ```
 
-### 4. Not Initializing Fields:
+**Why:** Instance variables declared at class level; local variables exist only within their method.
+
+**💡 Tip:** Declare fields at class level (outside methods) for class-wide access.
+
+---
+
+#### ❌ Wrong - Using Uninitialized Instance Variables in Calculations:
 ```java
+// WRONG (logic error)
+public class Calculator {
+    int result;  // Default: 0
+
+    void add(int a, int b) {
+        result = result + a + b;  // First call: 0 + a + b
+    }
+}
+
+Calculator calc = new Calculator();
+calc.add(5, 10);  // result = 15
+calc.add(3, 7);   // result = 25 (includes previous 15)
+```
+**Issue:** Not resetting or aware result accumulates across method calls
+
+#### ✅ Right:
+```java
+// CORRECT - Be explicit about accumulation
+public class Calculator {
+    int result;
+
+    void add(int a, int b) {
+        result = a + b;  // Replace, don't accumulate
+    }
+
+    // OR if accumulation intended:
+    void addToResult(int value) {
+        result += value;  // Clear that we're accumulating
+    }
+}
+```
+
+**Why:** Instance variables retain values between method calls; be intentional about accumulation.
+
+**💡 Tip:** Reset instance variables when needed; make accumulation explicit.
+
+---
+
+#### ❌ Wrong - Shadowing Instance Variables with Parameters:
+```java
+// WRONG (confusing)
+public class Student {
+    String name;
+    int age;
+
+    void setDetails(String name, int age) {
+        name = name;  // Assigns parameter to itself!
+        age = age;    // Doesn't update instance variable!
+    }
+}
+```
+**Issue:** Parameter names shadow instance variables; assignment does nothing
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Use 'this' keyword
+public class Student {
+    String name;
+    int age;
+
+    void setDetails(String name, int age) {
+        this.name = name;  // 'this' refers to instance variable
+        this.age = age;
+    }
+}
+
+// CORRECT - Method 2: Different parameter names
+public class Student {
+    String name;
+    int age;
+
+    void setDetails(String n, int a) {
+        name = n;
+        age = a;
+    }
+}
+```
+
+**Why:** When parameter and field have same name, parameter takes precedence; use `this` to access field.
+
+**💡 Tip:** Use `this.fieldName` when parameter shadows instance variable.
+
+---
+
+#### ❌ Wrong - Wrong Field Naming Convention:
+```java
+// WRONG
+public class Student {
+    String Name;           // PascalCase (wrong for fields)
+    int roll_number;       // snake_case (wrong)
+    String STUDENT_ID;     // UPPER_CASE (for constants only)
+}
+```
+**Issue:** Fields should use camelCase, not other conventions
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;           // camelCase
+    int rollNumber;        // camelCase
+    String studentId;      // camelCase
+    final int MAX_AGE = 150;  // UPPER_CASE for constants
+}
+```
+
+**Why:** Java conventions use camelCase for fields and methods; UPPER_CASE for constants.
+
+**💡 Tip:** Fields: camelCase, Constants: UPPER_CASE with final keyword.
+
+---
+
+### 4. Method-Related Mistakes
+
+#### ❌ Wrong - Missing Return Statement:
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        int sum = a + b;
+        // Missing return statement! Compilation error!
+    }
+}
+```
+**Issue:** Method with non-void return type must return a value
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        int sum = a + b;
+        return sum;  // Must return int value
+    }
+
+    // OR directly
+    int multiply(int a, int b) {
+        return a * b;
+    }
+}
+```
+
+**Why:** Non-void methods must return a value matching the declared return type.
+
+**💡 Tip:** Every code path in a non-void method must have a return statement.
+
+---
+
+#### ❌ Wrong - Returning Value from Void Method:
+```java
+// WRONG
+public class Display {
+    void showMessage() {
+        return "Hello";  // Compilation error! void can't return value
+    }
+}
+```
+**Issue:** Void methods cannot return values
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Change to String return type
+public class Display {
+    String getMessage() {
+        return "Hello";
+    }
+}
+
+// CORRECT - Method 2: Keep void, just print
+public class Display {
+    void showMessage() {
+        System.out.println("Hello");
+        return;  // Optional; void methods can have empty return
+    }
+}
+```
+
+**Why:** void means no return value; change return type if you need to return data.
+
+**💡 Tip:** Use void for methods that perform actions without returning data.
+
+---
+
+#### ❌ Wrong - Wrong Return Type:
+```java
+// WRONG
+public class Calculator {
+    int divide(int a, int b) {
+        return a / b;  // Integer division loses decimal!
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.divide(10, 3));  // Prints 3, not 3.333...
+```
+**Issue:** int return type causes truncation; decimal part lost
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    double divide(int a, int b) {
+        return (double) a / b;  // Cast to double for decimal result
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.divide(10, 3));  // Prints 3.333...
+```
+
+**Why:** Choose return type based on expected result; use double for decimal values.
+
+**💡 Tip:** Use double for division when you need decimal precision.
+
+---
+
+#### ❌ Wrong - Calling Method Without Object (Non-Static):
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int result = Calculator.add(5, 10);  // Compilation error!
+    }
+}
+```
+**Issue:** Non-static methods require an object to be called
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();  // Create object
+        int result = calc.add(5, 10);  // Call through object
+        System.out.println(result);
+    }
+}
+```
+
+**Why:** Non-static methods belong to objects; must create object first.
+
+**💡 Tip:** Instance methods require object; static methods can be called on class.
+
+---
+
+#### ❌ Wrong - Method Name Not Following camelCase:
+```java
+// WRONG
+public class Student {
+    void DisplayInfo() { }      // PascalCase (wrong)
+    void display_info() { }     // snake_case (wrong)
+    void DISPLAYINFO() { }      // All uppercase (wrong)
+}
+```
+**Issue:** Method names should follow camelCase convention
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    void displayInfo() { }      // camelCase
+    void calculateGrade() { }   // camelCase
+    void setStudentName() { }   // camelCase
+}
+```
+
+**Why:** Java conventions use camelCase for method names.
+
+**💡 Tip:** Methods start with lowercase, capitalize each subsequent word.
+
+---
+
+### 5. Static vs Non-Static Confusion
+
+#### ❌ Wrong - Accessing Instance Members from Static Context:
+```java
+// WRONG
+public class Test {
+    int instanceVar = 10;
+
+    public static void main(String[] args) {
+        System.out.println(instanceVar);  // Compilation error!
+    }
+}
+```
+**Issue:** Static methods can't directly access instance members
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Test {
+    int instanceVar = 10;
+
+    public static void main(String[] args) {
+        Test obj = new Test();  // Create object
+        System.out.println(obj.instanceVar);  // Access through object
+    }
+}
+```
+
+**Why:** Static methods belong to class; instance members belong to objects.
+
+**💡 Tip:** Create object to access instance members from static context.
+
+---
+
+#### ❌ Wrong - Calling Instance Method from Static Method:
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        int result = add(5, 10);  // Compilation error!
+    }
+}
+```
+**Issue:** Can't call instance method without object from static context
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        int result = calc.add(5, 10);  // Call through object
+        System.out.println(result);
+    }
+}
+```
+
+**Why:** Instance methods need an object; static methods don't have implicit object reference.
+
+**💡 Tip:** From static context, create object first to call instance methods.
+
+---
+
+### 6. Dot Operator and Access Issues
+
+#### ❌ Wrong - Forgetting Dot Operator:
+```java
+// WRONG
 Student student = new Student();
-System.out.println(student.name);  // null (default value)
-System.out.println(student.age);   // 0 (default value)
-
-// Better: Initialize before use
-student.name = "Alice";
-student.age = 20;
+student name = "Alice";  // Syntax error!
 ```
+**Issue:** Missing dot operator to access member
 
-### 5. Confusing Class and Object:
+#### ✅ Right:
 ```java
-// Wrong thinking
-Student.name = "Alice";  // ERROR! Student is a class, not an object
-
-// Correct
-Student student1 = new Student();
-student1.name = "Alice";  // Object has the data
+// CORRECT
+Student student = new Student();
+student.name = "Alice";  // Dot operator required
 ```
+
+**Why:** Dot operator (.) is required to access object members.
+
+**💡 Tip:** Syntax is `objectName.memberName` with the dot.
+
+---
+
+#### ❌ Wrong - Chaining Dots Incorrectly:
+```java
+// WRONG
+public class Address {
+    String city;
+}
+
+public class Student {
+    Address address;  // Not initialized!
+    String name;
+}
+
+Student student = new Student();
+student.address.city = "New York";  // NullPointerException!
+```
+**Issue:** Intermediate reference (address) is null
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Address {
+    String city;
+}
+
+public class Student {
+    Address address;
+    String name;
+}
+
+Student student = new Student();
+student.address = new Address();  // Initialize first
+student.address.city = "New York";  // Now safe
+```
+
+**Why:** Must initialize all references in the chain before accessing nested members.
+
+**💡 Tip:** Initialize reference fields before accessing their members.
+
+---
+
+### 7. Parameter and Argument Mistakes
+
+#### ❌ Wrong - Wrong Number of Arguments:
+```java
+// WRONG
+public class Rectangle {
+    void setDimensions(double length, double width) {
+        // ...
+    }
+}
+
+Rectangle rect = new Rectangle();
+rect.setDimensions(10.5);  // Compilation error! Missing argument
+```
+**Issue:** Method expects 2 arguments, only 1 provided
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Rectangle {
+    void setDimensions(double length, double width) {
+        // ...
+    }
+}
+
+Rectangle rect = new Rectangle();
+rect.setDimensions(10.5, 5.0);  // Both arguments provided
+```
+
+**Why:** Must provide exact number of arguments matching method signature.
+
+**💡 Tip:** Check method signature for required parameters and their types.
+
+---
+
+#### ❌ Wrong - Wrong Argument Type:
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add("5", "10");  // Compilation error! Strings not ints
+```
+**Issue:** Passing String arguments to int parameters
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add(5, 10);  // Correct types
+```
+
+**Why:** Argument types must match parameter types (or be compatible).
+
+**💡 Tip:** Ensure argument types match method parameter types.
+
+---
+
+### 8. Default Values Misunderstanding
+
+#### ❌ Wrong - Assuming Non-Default Values:
+```java
+// WRONG (logic error)
+public class Counter {
+    int count;  // Default: 0
+
+    void increment() {
+        count++;
+    }
+}
+
+Counter counter = new Counter();
+if (counter.count == 1) {  // False! count is 0, not 1
+    System.out.println("One");
+}
+```
+**Issue:** Assuming count starts at 1; actually starts at 0 (default)
+
+#### ✅ Right:
+```java
+// CORRECT - Be aware of default values
+public class Counter {
+    int count = 1;  // Explicitly initialize if not 0
+
+    void increment() {
+        count++;
+    }
+}
+
+// OR check the actual default
+Counter counter = new Counter();
+if (counter.count == 0) {  // Correct! Default is 0
+    System.out.println("Zero");
+}
+```
+
+**Why:** Numeric fields default to 0; explicitly initialize if different value needed.
+
+**💡 Tip:** Know default values: numbers=0, boolean=false, references=null.
+
+---
+
+#### ❌ Wrong - Using Reference Type Defaults Without Initialization:
+```java
+// WRONG
+public class Student {
+    String name;  // Default: null
+
+    void printLength() {
+        System.out.println(name.length());  // NullPointerException!
+    }
+}
+
+Student student = new Student();
+student.printLength();  // Crashes!
+```
+**Issue:** String field is null by default; calling methods on null causes error
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name = "";  // Initialize to empty string
+
+    void printLength() {
+        System.out.println(name.length());  // Works! Prints 0
+    }
+}
+
+// OR check for null
+public class Student {
+    String name;
+
+    void printLength() {
+        if (name != null) {
+            System.out.println(name.length());
+        } else {
+            System.out.println("Name not set");
+        }
+    }
+}
+```
+
+**Why:** Reference types default to null; initialize or check before use.
+
+**💡 Tip:** Initialize String fields to "" or check for null before operations.
+
+---
+
+### 9. Memory and Reference Confusion
+
+#### ❌ Wrong - Comparing Objects with ==:
+```java
+// WRONG (logic error)
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = new Student();
+student2.name = "Alice";
+
+if (student1 == student2) {  // False! Different objects
+    System.out.println("Same");
+}
+```
+**Issue:** == compares references, not object contents
+
+#### ✅ Right:
+```java
+// CORRECT - Compare field values
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = new Student();
+student2.name = "Alice";
+
+if (student1.name.equals(student2.name)) {  // True! Same names
+    System.out.println("Same name");
+}
+
+// For complete object comparison, override equals() (Day 12)
+```
+
+**Why:** == checks if references point to same object, not if contents are equal.
+
+**💡 Tip:** Use == for reference equality; compare fields or use equals() for content equality.
+
+---
+
+#### ❌ Wrong - Modifying Shared Reference Unknowingly:
+```java
+// WRONG (logic error)
+Student original = new Student();
+original.name = "Alice";
+original.age = 20;
+
+Student copy = original;  // Both point to same object!
+copy.age = 25;  // Modifies the only object
+
+System.out.println(original.age);  // Prints 25, not 20!
+```
+**Issue:** Assignment copies reference; both variables point to same object
+
+#### ✅ Right:
+```java
+// CORRECT - Create separate object
+Student original = new Student();
+original.name = "Alice";
+original.age = 20;
+
+Student copy = new Student();  // New object
+copy.name = original.name;
+copy.age = 25;
+
+System.out.println(original.age);  // Prints 20
+System.out.println(copy.age);      // Prints 25
+```
+
+**Why:** Reference assignment creates alias; to copy, must create new object.
+
+**💡 Tip:** Use `new` to create independent copy; assignment only copies reference.
+
+---
+
+### 10. Scope and Visibility Issues
+
+#### ❌ Wrong - Accessing Local Variable from Another Method:
+```java
+// WRONG
+public class Test {
+    void method1() {
+        int x = 10;
+    }
+
+    void method2() {
+        System.out.println(x);  // Compilation error! x not in scope
+    }
+}
+```
+**Issue:** Local variables exist only within their method
+
+#### ✅ Right:
+```java
+// CORRECT - Use instance variable
+public class Test {
+    int x;  // Instance variable
+
+    void method1() {
+        x = 10;  // Set instance variable
+    }
+
+    void method2() {
+        System.out.println(x);  // Access instance variable
+    }
+}
+```
+
+**Why:** Local variables have method scope; instance variables have class scope.
+
+**💡 Tip:** Use instance variables for data shared across methods.
+
+---
+
+This comprehensive list now contains **35+ OOP and Class mistakes** covering all fundamental concepts!
 
 ---
 

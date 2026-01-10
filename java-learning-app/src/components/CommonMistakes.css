@@ -1,0 +1,150 @@
+/* Common Mistakes Box */
+.common-mistakes-box {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  margin: 2rem 0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+}
+
+.common-mistakes-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: #fbbf24;
+  color: #78350f;
+  border-bottom: 1px solid #f59e0b;
+}
+
+.common-mistakes-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.common-mistakes-content {
+  padding: 1.5rem;
+}
+
+.mistake-item {
+  margin-bottom: 1.5rem;
+}
+
+.mistake-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Code Comparison Layout */
+.code-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .code-comparison {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wrong-code,
+.right-code {
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid;
+}
+
+.wrong-code {
+  border-color: #dc2626;
+}
+
+.right-code {
+  border-color: #16a34a;
+}
+
+.code-label {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wrong-label {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.right-label {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.code-comparison pre {
+  margin: 0;
+  padding: 0.75rem;
+  background: #1e1e1e;
+  overflow-x: auto;
+}
+
+.code-comparison code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  color: #d4d4d4;
+  line-height: 1.5;
+}
+
+.code-note {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.wrong-note {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.right-note {
+  background: #dcfce7;
+  color: #14532d;
+}
+
+/* Mistake Description */
+.mistake-description {
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border-left: 3px solid #f59e0b;
+  margin-bottom: 0.75rem;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+.mistake-description strong {
+  color: #92400e;
+}
+
+/* Mistake Tip */
+.mistake-tip {
+  padding: 1rem;
+  background: #dbeafe;
+  border-radius: 6px;
+  border-left: 3px solid #3b82f6;
+  color: #1e3a8a;
+  line-height: 1.6;
+}
+
+.mistake-tip strong {
+  color: #1e40af;
+}
+
+/* Syntax Highlighting Override for this component */
+.common-mistakes-box pre code {
+  background: transparent !important;
+}
