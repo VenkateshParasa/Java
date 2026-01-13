@@ -11,15 +11,18 @@ import Exercise from '../components/Exercise';
 import CollapsibleCode from '../components/CollapsibleCode';
 import './CoursePage.css';
 
-function CoursePage() {
+function CoursePage({ course: courseProp }) {
   const { week, day } = useParams();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  
+  // Determine course from prop or default to 'java'
+  const course = courseProp || 'java';
 
-  // Map day numbers to actual filenames
-  const dayFileMap = {
+  // Map day numbers to actual filenames for Java
+  const javaFileMap = {
     'week1': {
       'day1': 'day01_introduction_setup',
       'day2': 'day02_variables_datatypes',
@@ -84,14 +87,20 @@ function CoursePage() {
       setLoading(true);
       setError(null);
       
-      // Get the actual filename from the map
-      const filename = dayFileMap[week]?.[day];
-      if (!filename) {
-        throw new Error('Invalid week or day');
-      }
+      let path;
       
-      // Construct the path to the markdown file
-      const path = `/content/01_Core_Courses/Core_Java_Daily/${week}/${filename}.md`;
+      if (course === 'selenium') {
+        // For Selenium, use simple day numbering
+        const dayNum = day.replace('day', '');
+        path = `/content/01_Core_Courses/Selenium_Automation_Daily/week1/day0${dayNum}_selenium_introduction.md`;
+      } else {
+        // For Java, use the existing file map
+        const filename = javaFileMap[week]?.[day];
+        if (!filename) {
+          throw new Error('Invalid week or day');
+        }
+        path = `/content/01_Core_Courses/Core_Java_Daily/${week}/${filename}.md`;
+      }
       
       const response = await fetch(path);
       if (!response.ok) {

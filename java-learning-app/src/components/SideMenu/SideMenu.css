@@ -14,14 +14,67 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  padding-top: 73px; /* Height of header to avoid overlap */
 }
 
 /* Mobile: Hidden by default */
 @media (max-width: 1023px) {
+  /* Course Toggle */
+  .course-toggle {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .course-toggle-btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .course-toggle-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary-color);
+  }
+  
+  .course-toggle-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+  }
+  
+  .course-toggle-btn.active:hover {
+    background: var(--primary-hover);
+  }
+  
   .side-menu {
     transform: translateX(-100%);
   }
 
+  .side-menu.open {
+    transform: translateX(0);
+  }
+}
+
+/* Desktop: Allow toggle behavior */
+@media (min-width: 1024px) {
+  .side-menu:not(.open) {
+    transform: translateX(-100%);
+  }
+  
   .side-menu.open {
     transform: translateX(0);
   }

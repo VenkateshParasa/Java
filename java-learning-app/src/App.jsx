@@ -63,6 +63,9 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/assessments" element={<AssessmentList />} />
                 <Route path="/course/:week/:day" element={<CoursePage />} />
+                
+                {/* Selenium Course Routes */}
+                <Route path="/selenium/day1" element={<CoursePage course="selenium" day="1" />} />
 
                 {/* Week 1 Routes */}
                 <Route path="/assessment/day1" element={<AssessmentPage assessmentId="day1" />} />
@@ -99,6 +102,26 @@ function App() {
                 <Route path="/assessment/day26" element={<AssessmentPage assessmentId="day26" />} />
                 <Route path="/assessment/day27" element={<AssessmentPage assessmentId="day27" />} />
                 <Route path="/assessment/day28" element={<AssessmentPage assessmentId="day28" />} />
+
+                {/* Selenium Week 1 Routes */}
+                <Route path="/assessment/selenium-day1" element={<AssessmentPage assessmentId="selenium-day1" />} />
+                
+                {/* Selenium Week 3 Routes (Days 16-21) */}
+                <Route path="/assessment/selenium-day16" element={<AssessmentPage assessmentId="selenium-day16" />} />
+                <Route path="/assessment/selenium-day17" element={<AssessmentPage assessmentId="selenium-day17" />} />
+                <Route path="/assessment/selenium-day18" element={<AssessmentPage assessmentId="selenium-day18" />} />
+                <Route path="/assessment/selenium-day19" element={<AssessmentPage assessmentId="selenium-day19" />} />
+                <Route path="/assessment/selenium-day20" element={<AssessmentPage assessmentId="selenium-day20" />} />
+                <Route path="/assessment/selenium-day21" element={<AssessmentPage assessmentId="selenium-day21" />} />
+
+                {/* Selenium Week 4 Routes (Days 22-28) */}
+                <Route path="/assessment/selenium-day22" element={<AssessmentPage assessmentId="selenium-day22" />} />
+                <Route path="/assessment/selenium-day23" element={<AssessmentPage assessmentId="selenium-day23" />} />
+                <Route path="/assessment/selenium-day24" element={<AssessmentPage assessmentId="selenium-day24" />} />
+                <Route path="/assessment/selenium-day25" element={<AssessmentPage assessmentId="selenium-day25" />} />
+                <Route path="/assessment/selenium-day26" element={<AssessmentPage assessmentId="selenium-day26" />} />
+                <Route path="/assessment/selenium-day27" element={<AssessmentPage assessmentId="selenium-day27" />} />
+                <Route path="/assessment/selenium-day28" element={<AssessmentPage assessmentId="selenium-day28" />} />
               </Routes>
             </main>
           </div>
@@ -118,12 +141,17 @@ function Home() {
       <div className="hero-section">
         <h2>Welcome to Java Learning Platform</h2>
         <p className="hero-description">
-          Master Java programming with our comprehensive assessment system featuring
+          Master Java programming and Selenium automation with our comprehensive assessment system featuring
           adaptive difficulty, exam mode, and detailed performance tracking.
         </p>
-        <Link to="/course/week1/day1" className="cta-button">
-          Start Learning
-        </Link>
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link to="/course/week1/day1" className="cta-button">
+            Start Java Course
+          </Link>
+          <Link to="/selenium/day1" className="cta-button" style={{ background: '#10b981' }}>
+            Start Selenium Course
+          </Link>
+        </div>
       </div>
 
       <div className="features-grid">

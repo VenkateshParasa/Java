@@ -6,6 +6,7 @@ import SearchBar from './SearchBar';
 import WeekSection from './WeekSection';
 import MenuOverlay from './MenuOverlay';
 import courseStructure from '../../data/navigation/courseStructure';
+import seleniumCourseStructure from '../../data/navigation/seleniumCourseStructure';
 import { getOverallProgress } from '../../utils/progressStorage';
 import './SideMenu.css';
 
@@ -15,17 +16,25 @@ function SideMenu() {
   const [searchQuery, setSearchQuery] = useState('');
   const [collapsedWeeks, setCollapsedWeeks] = useState({});
   const [overallProgress, setOverallProgress] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(() => {
+    return localStorage.getItem('selectedCourse') || 'java';
+  });
   const [menuWidth, setMenuWidth] = useState(() => {
     const saved = localStorage.getItem('sideMenuWidth');
     return saved ? parseInt(saved) : 280;
   });
   const [isResizing, setIsResizing] = useState(false);
   const sideMenuRef = useRef(null);
+  
+  // Get current course structure
+  const currentCourseStructure = selectedCourse === 'selenium'
+    ? seleniumCourseStructure
+    : courseStructure;
 
-  // Load progress on mount and when location changes
+  // Load progress on mount and when location or course changes
   useEffect(() => {
-    setOverallProgress(getOverallProgress(courseStructure));
-  }, [location]);
+    setOverallProgress(getOverallProgress(currentCourseStructure));
+  }, [location, selectedCourse, currentCourseStructure]);
 
   // Listen for progress updates
   useEffect(() => {
@@ -54,6 +63,12 @@ function SideMenu() {
       ...prev,
       [weekNumber]: !prev[weekNumber],
     }));
+  };
+  
+  const handleCourseChange = (course) => {
+    setSelectedCourse(course);
+    localStorage.setItem('selectedCourse', course);
+    setCollapsedWeeks({}); // Reset collapsed state when switching courses
   };
 
   // Handle resize
@@ -102,6 +117,22 @@ function SideMenu() {
         style={{ width: window.innerWidth >= 1024 ? `${menuWidth}px` : '280px' }}
       >
         <MenuHeader />
+        
+        {/* Course Toggle */}
+        <div className="course-toggle">
+          <button
+            className={`course-toggle-btn ${selectedCourse === 'java' ? 'active' : ''}`}
+            onClick={() => handleCourseChange('java')}
+          >
+            ☕ Java
+          </button>
+          <button
+            className={`course-toggle-btn ${selectedCourse === 'selenium' ? 'active' : ''}`}
+            onClick={() => handleCourseChange('selenium')}
+          >
+            🔧 Selenium
+          </button>
+        </div>
 
         <div className="menu-progress">
           <div className="progress-label">Overall Progress</div>
@@ -119,7 +150,7 @@ function SideMenu() {
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
         <nav className="menu-content">
-          {courseStructure.map((week) => (
+          {currentCourseStructure.map((week) => (
             <WeekSection
               key={week.weekNumber}
               week={week}

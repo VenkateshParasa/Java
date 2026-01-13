@@ -5,6 +5,20 @@ import { week2Assessments, week2Info } from './java/week2/index.js';
 import { week3Assessments, week3Info } from './java/week3/index.js';
 import { week4Assessments, week4Info } from './java/week4/index.js';
 
+// Import Selenium assessments
+import {
+  week1Assessments as seleniumWeek1Assessments,
+  week1Info as seleniumWeek1Info
+} from './selenium/week1/index.js';
+import {
+  week3Assessments as seleniumWeek3Assessments,
+  week3Info as seleniumWeek3Info
+} from './selenium/week3/index.js';
+import {
+  week4Assessments as seleniumWeek4Assessments,
+  week4Info as seleniumWeek4Info
+} from './selenium/week4/index.js';
+
 // Import all day assessments (for backward compatibility)
 import day1 from './java/week1/day1.js';
 import day2 from './java/week1/day2.js';
@@ -36,6 +50,9 @@ import day27 from './java/week4/day27.js';
 import day28 from './java/week4/day28.js';
 // import day29 from './java/week4/day29.js';
 // import day30 from './java/week4/day30.js';
+
+// Import Selenium day assessments
+import seleniumDay1 from './selenium/week1/day1.js';
 
 // Export assessments object
 export const assessments = {
@@ -69,9 +86,13 @@ export const assessments = {
   'java-day28': day28,
   // 'java-day29': day29,
   // 'java-day30': day30,
-  // Add Selenium assessments as they are created
-  // 'selenium-day1': seleniumDay1,
-  // ... up to day45
+  // Selenium Week 1 assessments
+  'selenium-day1': seleniumDay1,
+  // Selenium Week 3 assessments
+  ...seleniumWeek3Assessments,
+  // Selenium Week 4 assessments
+  ...seleniumWeek4Assessments,
+  // More Selenium weeks will be added as they are created
 };
 
 /**
@@ -310,6 +331,11 @@ export { week1Assessments, week1Info };
 export { week2Assessments, week2Info };
 export { week3Assessments, week3Info };
 export { week4Assessments, week4Info };
+
+// Export Selenium week assessments
+export { seleniumWeek1Assessments, seleniumWeek1Info };
+export { seleniumWeek3Assessments, seleniumWeek3Info };
+export { seleniumWeek4Assessments, seleniumWeek4Info };
 
 // Removed default export to fix "Importing binding name 'default' cannot be resolved by star export entries" error
 // This conflict occurs when you have both re-exports and a default export

@@ -5,7 +5,11 @@
       "Bash(ls:*)",
       "Bash(wc:*)",
       "Bash(find:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(for i in {1..7})",
+      "Bash(do touch week$i/README.md)",
+      "Bash(done)",
+      "Bash(tree:*)"
     ]
   }
 }
