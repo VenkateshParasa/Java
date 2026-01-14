@@ -122,6 +122,15 @@ function App() {
                 <Route path="/assessment/selenium-day26" element={<AssessmentPage assessmentId="selenium-day26" />} />
                 <Route path="/assessment/selenium-day27" element={<AssessmentPage assessmentId="selenium-day27" />} />
                 <Route path="/assessment/selenium-day28" element={<AssessmentPage assessmentId="selenium-day28" />} />
+
+                {/* Selenium Week 5 Routes (Days 29-35) */}
+                <Route path="/assessment/selenium-day29" element={<AssessmentPage assessmentId="selenium-day29" />} />
+                <Route path="/assessment/selenium-day30" element={<AssessmentPage assessmentId="selenium-day30" />} />
+                <Route path="/assessment/selenium-day31" element={<AssessmentPage assessmentId="selenium-day31" />} />
+                <Route path="/assessment/selenium-day32" element={<AssessmentPage assessmentId="selenium-day32" />} />
+                <Route path="/assessment/selenium-day33" element={<AssessmentPage assessmentId="selenium-day33" />} />
+                <Route path="/assessment/selenium-day34" element={<AssessmentPage assessmentId="selenium-day34" />} />
+                <Route path="/assessment/selenium-day35" element={<AssessmentPage assessmentId="selenium-day35" />} />
               </Routes>
             </main>
           </div>

@@ -18,6 +18,10 @@ import {
   week4Assessments as seleniumWeek4Assessments,
   week4Info as seleniumWeek4Info
 } from './selenium/week4/index.js';
+import {
+  week5Assessments as seleniumWeek5Assessments,
+  week5Info as seleniumWeek5Info
+} from './selenium/week5/index.js';
 
 // Import all day assessments (for backward compatibility)
 import day1 from './java/week1/day1.js';
@@ -92,6 +96,8 @@ export const assessments = {
   ...seleniumWeek3Assessments,
   // Selenium Week 4 assessments
   ...seleniumWeek4Assessments,
+  // Selenium Week 5 assessments
+  ...seleniumWeek5Assessments,
   // More Selenium weeks will be added as they are created
 };
 
@@ -336,6 +342,7 @@ export { week4Assessments, week4Info };
 export { seleniumWeek1Assessments, seleniumWeek1Info };
 export { seleniumWeek3Assessments, seleniumWeek3Info };
 export { seleniumWeek4Assessments, seleniumWeek4Info };
+export { seleniumWeek5Assessments, seleniumWeek5Info };
 
 // Removed default export to fix "Importing binding name 'default' cannot be resolved by star export entries" error
 // This conflict occurs when you have both re-exports and a default export

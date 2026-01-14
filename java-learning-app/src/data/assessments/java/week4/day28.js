@@ -188,7 +188,7 @@ export default {
         }
         
         void accessOuterThis() {
-            System.out.println("\\nOuter.this reference:");
+            System.out.println("\\n" + "Outer.this reference:");
             System.out.println(Outer.this.outerField);
         }
     }

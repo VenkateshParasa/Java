@@ -90,9 +90,11 @@ function CoursePage({ course: courseProp }) {
       let path;
       
       if (course === 'selenium') {
-        // For Selenium, use simple day numbering
-        const dayNum = day.replace('day', '');
-        path = `/content/01_Core_Courses/Selenium_Automation_Daily/week1/day0${dayNum}_selenium_introduction.md`;
+        // For Selenium, extract day number from URL parameter
+        // URL will be like /selenium/day1, and day param will be "1"
+        const dayNum = day || '1';
+        const paddedDay = dayNum.padStart(2, '0');
+        path = `/content/01_Core_Courses/Selenium_Automation_Daily/week1/day${paddedDay}_selenium_introduction.md`;
       } else {
         // For Java, use the existing file map
         const filename = javaFileMap[week]?.[day];
