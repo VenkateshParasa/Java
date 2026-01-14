@@ -1,4 +1,4 @@
-# Exercise Format Guide
+m# Exercise Format Guide
 
 This guide shows how to format exercises in markdown files to use the new collapsible Exercise component.
 

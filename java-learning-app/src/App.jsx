@@ -64,8 +64,8 @@ function App() {
                 <Route path="/assessments" element={<AssessmentList />} />
                 <Route path="/course/:week/:day" element={<CoursePage />} />
                 
-                {/* Selenium Course Routes */}
-                <Route path="/selenium/day1" element={<CoursePage course="selenium" day="1" />} />
+                {/* Selenium Course Content Routes - All 49 Days */}
+                <Route path="/selenium/:day" element={<CoursePage course="selenium" />} />
 
                 {/* Week 1 Routes */}
                 <Route path="/assessment/day1" element={<AssessmentPage assessmentId="day1" />} />
@@ -103,10 +103,26 @@ function App() {
                 <Route path="/assessment/day27" element={<AssessmentPage assessmentId="day27" />} />
                 <Route path="/assessment/day28" element={<AssessmentPage assessmentId="day28" />} />
 
-                {/* Selenium Week 1 Routes */}
+                {/* Selenium Week 1 Routes (Days 1-7) */}
                 <Route path="/assessment/selenium-day1" element={<AssessmentPage assessmentId="selenium-day1" />} />
+                <Route path="/assessment/selenium-day2" element={<AssessmentPage assessmentId="selenium-day2" />} />
+                <Route path="/assessment/selenium-day3" element={<AssessmentPage assessmentId="selenium-day3" />} />
+                <Route path="/assessment/selenium-day4" element={<AssessmentPage assessmentId="selenium-day4" />} />
+                <Route path="/assessment/selenium-day5" element={<AssessmentPage assessmentId="selenium-day5" />} />
+                <Route path="/assessment/selenium-day6" element={<AssessmentPage assessmentId="selenium-day6" />} />
+                <Route path="/assessment/selenium-day7" element={<AssessmentPage assessmentId="selenium-day7" />} />
                 
-                {/* Selenium Week 3 Routes (Days 16-21) */}
+                {/* Selenium Week 2 Routes (Days 8-14) */}
+                <Route path="/assessment/selenium-day8" element={<AssessmentPage assessmentId="selenium-day8" />} />
+                <Route path="/assessment/selenium-day9" element={<AssessmentPage assessmentId="selenium-day9" />} />
+                <Route path="/assessment/selenium-day10" element={<AssessmentPage assessmentId="selenium-day10" />} />
+                <Route path="/assessment/selenium-day11" element={<AssessmentPage assessmentId="selenium-day11" />} />
+                <Route path="/assessment/selenium-day12" element={<AssessmentPage assessmentId="selenium-day12" />} />
+                <Route path="/assessment/selenium-day13" element={<AssessmentPage assessmentId="selenium-day13" />} />
+                <Route path="/assessment/selenium-day14" element={<AssessmentPage assessmentId="selenium-day14" />} />
+                
+                {/* Selenium Week 3 Routes (Days 15-21) - Note: Day 15 is week2 review transition */}
+                <Route path="/assessment/selenium-day15" element={<AssessmentPage assessmentId="selenium-day15" />} />
                 <Route path="/assessment/selenium-day16" element={<AssessmentPage assessmentId="selenium-day16" />} />
                 <Route path="/assessment/selenium-day17" element={<AssessmentPage assessmentId="selenium-day17" />} />
                 <Route path="/assessment/selenium-day18" element={<AssessmentPage assessmentId="selenium-day18" />} />
@@ -131,6 +147,24 @@ function App() {
                 <Route path="/assessment/selenium-day33" element={<AssessmentPage assessmentId="selenium-day33" />} />
                 <Route path="/assessment/selenium-day34" element={<AssessmentPage assessmentId="selenium-day34" />} />
                 <Route path="/assessment/selenium-day35" element={<AssessmentPage assessmentId="selenium-day35" />} />
+                
+                {/* Selenium Week 6 Routes (Days 36-42) */}
+                <Route path="/assessment/selenium-day36" element={<AssessmentPage assessmentId="selenium-day36" />} />
+                <Route path="/assessment/selenium-day37" element={<AssessmentPage assessmentId="selenium-day37" />} />
+                <Route path="/assessment/selenium-day38" element={<AssessmentPage assessmentId="selenium-day38" />} />
+                <Route path="/assessment/selenium-day39" element={<AssessmentPage assessmentId="selenium-day39" />} />
+                <Route path="/assessment/selenium-day40" element={<AssessmentPage assessmentId="selenium-day40" />} />
+                <Route path="/assessment/selenium-day41" element={<AssessmentPage assessmentId="selenium-day41" />} />
+                <Route path="/assessment/selenium-day42" element={<AssessmentPage assessmentId="selenium-day42" />} />
+                
+                {/* Selenium Week 7 Routes (Days 43-49) */}
+                <Route path="/assessment/selenium-day43" element={<AssessmentPage assessmentId="selenium-day43" />} />
+                <Route path="/assessment/selenium-day44" element={<AssessmentPage assessmentId="selenium-day44" />} />
+                <Route path="/assessment/selenium-day45" element={<AssessmentPage assessmentId="selenium-day45" />} />
+                <Route path="/assessment/selenium-day46" element={<AssessmentPage assessmentId="selenium-day46" />} />
+                <Route path="/assessment/selenium-day47" element={<AssessmentPage assessmentId="selenium-day47" />} />
+                <Route path="/assessment/selenium-day48" element={<AssessmentPage assessmentId="selenium-day48" />} />
+                <Route path="/assessment/selenium-day49" element={<AssessmentPage assessmentId="selenium-day49" />} />
               </Routes>
             </main>
           </div>

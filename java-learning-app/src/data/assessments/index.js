@@ -11,6 +11,10 @@ import {
   week1Info as seleniumWeek1Info
 } from './selenium/week1/index.js';
 import {
+  week2Assessments as seleniumWeek2Assessments,
+  week2Info as seleniumWeek2Info
+} from './selenium/week2/index.js';
+import {
   week3Assessments as seleniumWeek3Assessments,
   week3Info as seleniumWeek3Info
 } from './selenium/week3/index.js';
@@ -22,6 +26,14 @@ import {
   week5Assessments as seleniumWeek5Assessments,
   week5Info as seleniumWeek5Info
 } from './selenium/week5/index.js';
+import {
+  week6Assessments as seleniumWeek6Assessments,
+  week6Info as seleniumWeek6Info
+} from './selenium/week6/index.js';
+import {
+  week7Assessments as seleniumWeek7Assessments,
+  week7Info as seleniumWeek7Info
+} from './selenium/week7/index.js';
 
 // Import all day assessments (for backward compatibility)
 import day1 from './java/week1/day1.js';
@@ -91,14 +103,19 @@ export const assessments = {
   // 'java-day29': day29,
   // 'java-day30': day30,
   // Selenium Week 1 assessments
-  'selenium-day1': seleniumDay1,
+  ...seleniumWeek1Assessments,
+  // Selenium Week 2 assessments
+  ...seleniumWeek2Assessments,
   // Selenium Week 3 assessments
   ...seleniumWeek3Assessments,
   // Selenium Week 4 assessments
   ...seleniumWeek4Assessments,
   // Selenium Week 5 assessments
   ...seleniumWeek5Assessments,
-  // More Selenium weeks will be added as they are created
+  // Selenium Week 6 assessments
+  ...seleniumWeek6Assessments,
+  // Selenium Week 7 assessments
+  ...seleniumWeek7Assessments,
 };
 
 /**
@@ -340,9 +357,12 @@ export { week4Assessments, week4Info };
 
 // Export Selenium week assessments
 export { seleniumWeek1Assessments, seleniumWeek1Info };
+export { seleniumWeek2Assessments, seleniumWeek2Info };
 export { seleniumWeek3Assessments, seleniumWeek3Info };
 export { seleniumWeek4Assessments, seleniumWeek4Info };
 export { seleniumWeek5Assessments, seleniumWeek5Info };
+export { seleniumWeek6Assessments, seleniumWeek6Info };
+export { seleniumWeek7Assessments, seleniumWeek7Info };
 
 // Removed default export to fix "Importing binding name 'default' cannot be resolved by star export entries" error
 // This conflict occurs when you have both re-exports and a default export

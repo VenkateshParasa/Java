@@ -250,10 +250,10 @@ export default {
           mode: ['full'],
           question: 'How can you enter text into a disabled input field using JavascriptExecutor?',
           options: [
-            'js.executeScript("arguments[0].sendKeys(\\'text\\');", element);',
-            'js.executeScript("arguments[0].value=\\'text\\';", element);',
-            'js.executeScript("arguments[0].setText(\\'text\\');", element);',
-            'js.executeScript("arguments[0].input=\\'text\\';", element);'
+            'js.executeScript("arguments[0].sendKeys(\'text\');", element);',
+            'js.executeScript("arguments[0].value=\'text\';", element);',
+            'js.executeScript("arguments[0].setText(\'text\');", element);',
+            'js.executeScript("arguments[0].input=\'text\';", element);'
           ],
           correctAnswer: 1,
           explanation: 'Setting arguments[0].value="text" directly changes the value property of the input field, bypassing disabled state.',

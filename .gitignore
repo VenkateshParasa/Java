@@ -26,6 +26,7 @@ Thumbs.db
 
 # Testing
 coverage/
+_OBSOLETE_FILES_TO_DELETE/
 
 # Temporary files
 *.tmp

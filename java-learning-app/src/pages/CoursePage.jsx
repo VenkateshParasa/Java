@@ -63,9 +63,62 @@ function CoursePage({ course: courseProp }) {
     }
   };
 
+  // Map day numbers to actual filenames for Selenium (all 49 days across 7 weeks)
+  const seleniumFileMap = {
+    '1': { week: 'week1', file: 'day01_selenium_introduction' },
+    '2': { week: 'week1', file: 'day02_selenium_locators' },
+    '3': { week: 'week1', file: 'day03_webdriver_commands' },
+    '4': { week: 'week1', file: 'day04_web_elements' },
+    '5': { week: 'week1', file: 'day05_waits' },
+    '6': { week: 'week1', file: 'day06_dropdowns_alerts_frames' },
+    '7': { week: 'week1', file: 'day07_framework_setup_review' },
+    '8': { week: 'week2', file: 'day08_actions_class' },
+    '9': { week: 'week2', file: 'day09_drag_drop_sliders' },
+    '10': { week: 'week2', file: 'day10_web_tables' },
+    '11': { week: 'week2', file: 'day11_file_upload_download' },
+    '12': { week: 'week2', file: 'day12_javascript_executor_advanced' },
+    '13': { week: 'week2', file: 'day13_advanced_scenarios' },
+    '14': { week: 'week2', file: 'day14_week2_review' },
+    '15': { week: 'week3', file: 'day15_week2_review_transition' },
+    '16': { week: 'week3', file: 'day16_screenshots_visual_testing' },
+    '17': { week: 'week3', file: 'day17_browser_options_capabilities' },
+    '18': { week: 'week3', file: 'day18_testng_part1' },
+    '19': { week: 'week3', file: 'day19_testng_part2' },
+    '20': { week: 'week3', file: 'day20_testng_part3' },
+    '21': { week: 'week3', file: 'day21_testng_part4' },
+    '22': { week: 'week3', file: 'day22_testng_part5' },
+    '23': { week: 'week4', file: 'day23_pom_part1' },
+    '24': { week: 'week4', file: 'day24_pom_part2' },
+    '25': { week: 'week4', file: 'day25_properties_files' },
+    '26': { week: 'week4', file: 'day26_excel_data_reading' },
+    '27': { week: 'week4', file: 'day27_json_csv_data' },
+    '28': { week: 'week4', file: 'day28_parallel_execution' },
+    '29': { week: 'week4', file: 'day29_cross_browser_testing' },
+    '30': { week: 'week5', file: 'day30_advanced_pom_patterns' },
+    '31': { week: 'week5', file: 'day31_external_data' },
+    '32': { week: 'week5', file: 'day32_logging_reporting_part1' },
+    '33': { week: 'week5', file: 'day33_logging_reporting_part2' },
+    '34': { week: 'week5', file: 'day34_configuration_management' },
+    '35': { week: 'week5', file: 'day35_utility_classes' },
+    '36': { week: 'week5', file: 'day36_exception_handling' },
+    '37': { week: 'week6', file: 'day37_ci_cd_integration' },
+    '38': { week: 'week6', file: 'day38_bdd_cucumber' },
+    '39': { week: 'week6', file: 'day39_api_testing_integration' },
+    '40': { week: 'week6', file: 'day40_database_testing' },
+    '41': { week: 'week6', file: 'day41_performance_security_testing' },
+    '42': { week: 'week6', file: 'day42_framework_best_practices' },
+    '43': { week: 'week7', file: 'day43_cross_browser_testing' },
+    '44': { week: 'week7', file: 'day44_mobile_web_testing' },
+    '45': { week: 'week7', file: 'day45_docker_containerization' },
+    '46': { week: 'week7', file: 'day46_cloud_testing' },
+    '47': { week: 'week7', file: 'day47_visual_regression' },
+    '48': { week: 'week7', file: 'day48_test_maintenance' },
+    '49': { week: 'week7', file: 'day49_capstone_project' }
+  };
+
   useEffect(() => {
     loadContent();
-  }, [week, day]);
+  }, [week, day, course]);
 
   // Check if day is manually completed
   useEffect(() => {
@@ -90,11 +143,16 @@ function CoursePage({ course: courseProp }) {
       let path;
       
       if (course === 'selenium') {
-        // For Selenium, extract day number from URL parameter
-        // URL will be like /selenium/day1, and day param will be "1"
-        const dayNum = day || '1';
-        const paddedDay = dayNum.padStart(2, '0');
-        path = `/content/01_Core_Courses/Selenium_Automation_Daily/week1/day${paddedDay}_selenium_introduction.md`;
+        // For Selenium, extract the day number from the day parameter
+        // The day parameter will be like "day1", "day2", etc. or just "1", "2", etc.
+        const dayNum = day ? day.replace('day', '') : '1';
+        const seleniumDay = seleniumFileMap[dayNum];
+        
+        if (!seleniumDay) {
+          throw new Error(`Invalid Selenium day: ${dayNum}`);
+        }
+        
+        path = `/content/01_Core_Courses/Selenium_Automation_Daily/${seleniumDay.week}/${seleniumDay.file}.md`;
       } else {
         // For Java, use the existing file map
         const filename = javaFileMap[week]?.[day];
@@ -109,7 +167,14 @@ function CoursePage({ course: courseProp }) {
         throw new Error('Content not found');
       }
       
-      const text = await response.text();
+      let text = await response.text();
+      
+      // Remove YAML frontmatter if present
+      text = removeFrontmatter(text);
+      
+      // Remove heading IDs like {#introduction}
+      text = removeHeadingIds(text);
+      
       setContent(text);
 
       // Mark course as viewed for progress tracking
@@ -119,6 +184,37 @@ function CoursePage({ course: courseProp }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to remove YAML frontmatter from markdown
+  const removeFrontmatter = (markdown) => {
+    // Check if content starts with frontmatter delimiter
+    if (markdown.trim().startsWith('---')) {
+      // Find the closing delimiter
+      const lines = markdown.split('\n');
+      let endIndex = -1;
+      
+      // Start from line 1 (skip first ---)
+      for (let i = 1; i < lines.length; i++) {
+        if (lines[i].trim() === '---') {
+          endIndex = i;
+          break;
+        }
+      }
+      
+      // If we found the closing delimiter, remove frontmatter
+      if (endIndex > 0) {
+        return lines.slice(endIndex + 1).join('\n').trim();
+      }
+    }
+    
+    return markdown;
+  };
+
+  // Helper function to remove heading IDs like {#introduction}
+  const removeHeadingIds = (markdown) => {
+    // Remove {#id} patterns from headings
+    return markdown.replace(/\s*\{#[\w-]+\}/g, '');
   };
 
   // Parse exercise content from markdown
@@ -228,6 +324,30 @@ function CoursePage({ course: courseProp }) {
 
   return (
     <div className="course-page">
+      {/* Breadcrumb Navigation */}
+      <nav className="mb-6 text-sm text-gray-600" style={{ marginBottom: '1.5rem', fontSize: '0.875rem', color: '#4b5563', padding: '0 2rem', paddingTop: '1rem' }}>
+        <Link to="/" className="hover:text-primary-600" style={{ color: '#4b5563', textDecoration: 'none' }}>Home</Link>
+        <span style={{ margin: '0 0.5rem' }}>/</span>
+        <Link to="/" className="hover:text-primary-600" style={{ color: '#4b5563', textDecoration: 'none' }}>
+          {course === 'selenium' ? 'Selenium' : 'Java'}
+        </Link>
+        <span style={{ margin: '0 0.5rem' }}>/</span>
+        {course === 'java' && week && (
+          <>
+            <Link to={`/course/${week}/day1`} className="hover:text-primary-600" style={{ color: '#4b5563', textDecoration: 'none' }}>
+              {week.charAt(0).toUpperCase() + week.slice(1)}
+            </Link>
+            <span style={{ margin: '0 0.5rem' }}>/</span>
+          </>
+        )}
+        <span style={{ color: '#111827', fontWeight: '500' }}>
+          {course === 'selenium'
+            ? `Day ${day?.replace('day', '') || '1'}`
+            : day ? day.charAt(0).toUpperCase() + day.slice(1) : 'Day 1'
+          }
+        </span>
+      </nav>
+
       <div className="course-navigation">
         <div className="nav-left">
           <Link to="/" className="nav-button">← Home</Link>

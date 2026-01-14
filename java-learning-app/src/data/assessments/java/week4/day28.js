@@ -188,7 +188,7 @@ export default {
         }
         
         void accessOuterThis() {
-            System.out.println("\\n" + "Outer.this reference:");
+            System.out.println("\\nOuter.this reference:");
             System.out.println(Outer.this.outerField);
         }
     }
@@ -212,7 +212,7 @@ public class InnerClassDemo {
         Outer outer = new Outer();
         outer.createInner();
         
-        System.out.println("\\n" + "=".repeat(50));
+        System.out.println("\\n" + "==================================================");
         
         // Create inner class instance from outside
         Outer.Inner inner = outer.new Inner();
@@ -220,7 +220,7 @@ public class InnerClassDemo {
         inner.accessOuterThis();
         
         // Multiple inner instances
-        System.out.println("\\n" + "=".repeat(50));
+        System.out.println("\\n" + "==================================================");
         System.out.println("Multiple inner instances:");
         
         Outer outer2 = new Outer();

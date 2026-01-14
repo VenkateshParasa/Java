@@ -118,20 +118,33 @@ function SideMenu() {
       >
         <MenuHeader />
         
-        {/* Course Toggle */}
-        <div className="course-toggle">
-          <button
-            className={`course-toggle-btn ${selectedCourse === 'java' ? 'active' : ''}`}
-            onClick={() => handleCourseChange('java')}
-          >
-            ☕ Java
-          </button>
-          <button
-            className={`course-toggle-btn ${selectedCourse === 'selenium' ? 'active' : ''}`}
-            onClick={() => handleCourseChange('selenium')}
-          >
-            🔧 Selenium
-          </button>
+        {/* Course Toggle - Segmented Control */}
+        <div className="course-toggle-container">
+          <div className="course-toggle-label">Course</div>
+          <div className="course-toggle">
+            <button
+              className={`course-toggle-btn ${selectedCourse === 'java' ? 'active' : ''}`}
+              onClick={() => handleCourseChange('java')}
+              aria-label="Switch to Java course"
+            >
+              <span className="course-icon">☕</span>
+              <span className="course-name">Java</span>
+            </button>
+            <button
+              className={`course-toggle-btn ${selectedCourse === 'selenium' ? 'active' : ''}`}
+              onClick={() => handleCourseChange('selenium')}
+              aria-label="Switch to Selenium course"
+            >
+              <span className="course-icon">⚡</span>
+              <span className="course-name">Selenium</span>
+            </button>
+            <div
+              className="course-toggle-slider"
+              style={{
+                transform: selectedCourse === 'selenium' ? 'translateX(100%)' : 'translateX(0)'
+              }}
+            />
+          </div>
         </div>
 
         <div className="menu-progress">

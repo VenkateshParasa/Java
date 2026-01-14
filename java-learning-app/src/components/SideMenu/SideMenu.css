@@ -17,55 +17,96 @@
   padding-top: 73px; /* Height of header to avoid overlap */
 }
 
+/* Course Toggle Container */
+.course-toggle-container {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f7fafc;
+  flex-shrink: 0;
+}
+
+.course-toggle-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+/* Segmented Control */
+.course-toggle {
+  position: relative;
+  display: flex;
+  background: #e2e8f0;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.course-toggle-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.course-toggle-btn {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+  padding: 0.625rem 1rem;
+  border: none;
+  background: transparent;
+  color: #4a5568;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 6px;
+  outline: none;
+}
+
+.course-toggle-btn:hover {
+  color: #2d3748;
+}
+
+.course-toggle-btn.active {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.course-icon {
+  font-size: 1.125rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.course-toggle-btn:hover .course-icon {
+  transform: scale(1.1);
+}
+
+.course-toggle-btn.active .course-icon {
+  transform: scale(1.15);
+}
+
+.course-name {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
 /* Mobile: Hidden by default */
 @media (max-width: 1023px) {
-  /* Course Toggle */
-  .course-toggle {
-    display: flex;
-    gap: 0;
-    padding: 0.75rem 1rem;
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .course-toggle-btn {
-    flex: 1;
-    padding: 0.6rem 1rem;
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    position: relative;
-    border-radius: 6px;
-  }
-  
-  .course-toggle-btn:hover {
-    background: var(--bg-hover);
-    color: var(--text-primary);
-  }
-  
-  .course-toggle-btn.active {
-    background: var(--primary-color);
-    color: white;
-    font-weight: 600;
-  }
-  
-  .course-toggle-btn.active:hover {
-    background: var(--primary-hover);
-  }
-  
-  /* Add subtle separator between buttons */
-  .course-toggle-btn:first-child {
-    margin-right: 0.25rem;
-  }
-  
   .side-menu {
     transform: translateX(-100%);
   }

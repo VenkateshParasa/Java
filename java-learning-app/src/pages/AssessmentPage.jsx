@@ -12,7 +12,8 @@ const AssessmentPage = ({ assessmentId: propAssessmentId }) => {
   const navigate = useNavigate();
   
   const dayId = propAssessmentId || paramDayId;
-  const assessmentId = `java-${dayId}`;
+  // Check if the ID already has a prefix (selenium- or java-)
+  const assessmentId = dayId.includes('-') ? dayId : `java-${dayId}`;
   
   const [assessment, setAssessment] = useState(null);
   const [assessmentModes, setAssessmentModes] = useState(null);
