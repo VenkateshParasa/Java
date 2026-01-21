@@ -1633,6 +1633,662 @@ String base64 = ScreenshotUtils.takeScreenshotAsBase64(driver);
 
 ---
 
+---
+
+## Hands-On Exercises
+
+### Exercise 1: Building BrowserUtils for Browser Management (45 minutes)
+
+**Objective**: Create a comprehensive BrowserUtils class with methods for browser window operations, navigation, scrolling, and JavaScript execution.
+
+**Scenario**: Your automation framework needs reusable browser management methods. Build BrowserUtils to handle common browser operations consistently across all tests.
+
+**Tasks**:
+1. Create BrowserUtils class with private constructor
+2. Implement window management methods (maximize, minimize, resize)
+3. Add navigation methods (back, forward, refresh)
+4. Implement scroll operations (to element, to top, to bottom)
+5. Add JavaScript execution methods
+6. Create cookie management methods
+7. Test all methods in a sample test class
+
+**Code Template**:
+
+```java
+// TODO 1: Complete BrowserUtils class
+package utils;
+
+import org.openqa.selenium.*;
+
+public final class BrowserUtils {
+
+    // TODO: Add private constructor
+    private BrowserUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    // TODO: Implement window operations
+    public static void maximizeWindow(WebDriver driver) {
+        // TODO: Maximize browser window
+    }
+
+    public static void setWindowSize(WebDriver driver, int width, int height) {
+        // TODO: Set custom window size
+    }
+
+    // TODO: Implement navigation methods
+    public static void navigateTo(WebDriver driver, String url) {
+        // TODO: Navigate to URL
+    }
+
+    public static void refreshPage(WebDriver driver) {
+        // TODO: Refresh current page
+    }
+
+    // TODO: Implement scroll operations
+    public static void scrollToElement(WebDriver driver, WebElement element) {
+        // TODO: Scroll to element using JavaScript
+    }
+
+    public static void scrollToBottom(WebDriver driver) {
+        // TODO: Scroll to page bottom
+    }
+
+    // TODO: Implement JavaScript operations
+    public static void clickWithJS(WebDriver driver, WebElement element) {
+        // TODO: Click element using JavaScript
+    }
+
+    public static void highlightElement(WebDriver driver, WebElement element) {
+        // TODO: Highlight element with red border and yellow background
+        // TODO: Wait 500ms then restore original style
+    }
+
+    // TODO: Implement cookie operations
+    public static void deleteAllCookies(WebDriver driver) {
+        // TODO: Delete all browser cookies
+    }
+
+    // TODO: Implement utility methods
+    public static boolean isPageLoaded(WebDriver driver) {
+        // TODO: Check if document.readyState equals "complete"
+        return false;
+    }
+}
+
+// TODO 2: Create test class
+public class BrowserUtilsTest {
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+    }
+
+    @Test
+    public void testBrowserUtils() {
+        // TODO: Test maximize
+        BrowserUtils.maximizeWindow(driver);
+
+        // TODO: Test navigation
+        BrowserUtils.navigateTo(driver, "https://example.com");
+
+        // TODO: Test scroll
+        WebElement element = driver.findElement(By.id("footer"));
+        BrowserUtils.scrollToElement(driver, element);
+
+        // TODO: Test highlight
+        BrowserUtils.highlightElement(driver, element);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        driver.quit();
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ Browser window maximized successfully
+✓ Navigation methods working correctly
+✓ Scroll operations functioning properly
+✓ JavaScript execution successful
+✓ Element highlighting visible
+✓ Cookie operations working
+✓ Page load check accurate
+```
+
+**Common Mistakes**:
+1. Not making class final
+2. Forgetting private constructor
+3. Not casting to JavascriptExecutor
+4. Incorrect JavaScript syntax
+5. Not handling null WebDriver
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+```java
+public static void scrollToElement(WebDriver driver, WebElement element) {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("arguments[0].scrollIntoView(true);", element);
+}
+
+public static void highlightElement(WebDriver driver, WebElement element) {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    String originalStyle = element.getAttribute("style");
+    js.executeScript("arguments[0].setAttribute('style', 'border: 2px solid red; background: yellow;');", element);
+    sleep(500);
+    js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, originalStyle);
+}
+```
+</details>
+
+---
+
+### Exercise 2: Creating WaitUtils for Explicit Waits (50 minutes)
+
+**Objective**: Build a comprehensive WaitUtils class with methods for all common wait scenarios using ExpectedConditions.
+
+**Scenario**: Your tests need reliable wait mechanisms for dynamic elements. Create WaitUtils with various wait methods for visibility, clickability, text presence, and more.
+
+**Tasks**:
+1. Create WaitUtils class with private constructor
+2. Implement visibility wait methods
+3. Add clickability wait methods
+4. Implement text presence waits
+5. Add alert and frame waits
+6. Create fluent wait implementation
+7. Test with dynamic elements
+
+**Code Template**:
+
+```java
+package utils;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.*;
+import java.time.Duration;
+
+public final class WaitUtils {
+
+    private static final int DEFAULT_TIMEOUT = 30;
+
+    private WaitUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    // TODO: Implement visibility waits
+    public static WebElement waitForVisibility(WebDriver driver, By locator, int timeout) {
+        // TODO: Create WebDriverWait
+        // TODO: Wait for visibility of element located by locator
+        return null;
+    }
+
+    public static WebElement waitForVisibility(WebDriver driver, WebElement element, int timeout) {
+        // TODO: Wait for visibility of WebElement
+        return null;
+    }
+
+    // TODO: Implement clickability waits
+    public static WebElement waitForClickability(WebDriver driver, WebElement element, int timeout) {
+        // TODO: Wait until element is clickable
+        return null;
+    }
+
+    // TODO: Implement text presence waits
+    public static boolean waitForTextPresent(WebDriver driver, By locator, String text, int timeout) {
+        // TODO: Wait for text to be present in element
+        return false;
+    }
+
+    // TODO: Implement alert waits
+    public static Alert waitForAlert(WebDriver driver, int timeout) {
+        // TODO: Wait for alert to be present
+        return null;
+    }
+
+    // TODO: Implement frame waits
+    public static WebDriver waitForFrame(WebDriver driver, String frameNameOrId, int timeout) {
+        // TODO: Wait for frame and switch to it
+        return null;
+    }
+
+    // TODO: Implement fluent wait
+    public static WebElement fluentWaitForElement(WebDriver driver, By locator, int timeout, int polling) {
+        // TODO: Create FluentWait with timeout and polling
+        // TODO: Ignore NoSuchElementException
+        // TODO: Wait for element
+        return null;
+    }
+
+    // TODO: Implement custom wait conditions
+    public static boolean waitForCondition(WebDriver driver, ExpectedCondition<?> condition, int timeout) {
+        // TODO: Wait for custom condition
+        return false;
+    }
+}
+
+// TODO: Test WaitUtils
+@Test
+public void testWaitUtils() {
+    driver.get("https://example.com/dynamic-content");
+
+    // Test visibility wait
+    WebElement element = WaitUtils.waitForVisibility(driver, By.id("dynamic-element"), 10);
+
+    // Test text wait
+    boolean textPresent = WaitUtils.waitForTextPresent(driver, By.id("message"), "Success", 5);
+
+    // Test fluent wait
+    WebElement fluentElement = WaitUtils.fluentWaitForElement(driver, By.id("slow-element"), 30, 500);
+}
+```
+
+**Expected Output**:
+```
+✓ Visibility waits working for dynamic elements
+✓ Clickability waits preventing StaleElementException
+✓ Text presence waits detecting text changes
+✓ Alert waits handling JavaScript alerts
+✓ Frame waits switching to iframes successfully
+✓ Fluent waits with polling working correctly
+```
+
+**Common Mistakes**:
+1. Using wrong Duration API (seconds vs milliseconds)
+2. Not handling TimeoutException
+3. Mixing implicit and explicit waits
+4. Not ignoring appropriate exceptions in fluent wait
+5. Using very long timeouts unnecessarily
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+```java
+public static WebElement waitForVisibility(WebDriver driver, By locator, int timeout) {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
+    return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+}
+
+public static WebElement fluentWaitForElement(WebDriver driver, By locator, int timeout, int polling) {
+    FluentWait<WebDriver> wait = new FluentWait<>(driver)
+            .withTimeout(Duration.ofSeconds(timeout))
+            .pollingEvery(Duration.ofMillis(polling))
+            .ignoring(NoSuchElementException.class);
+    return wait.until(driver1 -> driver1.findElement(locator));
+}
+```
+</details>
+
+---
+
+### Exercise 3: Developing ElementUtils for Interactions (45 minutes)
+
+**Objective**: Create ElementUtils class with methods for element interactions, dropdown operations, and state checks.
+
+**Scenario**: Build a utility class that simplifies common element operations like clicking, typing, dropdown selection, and checking element states.
+
+**Tasks**:
+1. Implement basic interaction methods (click, type, clear)
+2. Add advanced click operations (double-click, right-click)
+3. Implement dropdown selection methods
+4. Add element state check methods
+5. Create checkbox and radio button helpers
+6. Test all methods
+
+**Code Template**:
+
+```java
+package utils;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+
+public final class ElementUtils {
+
+    private ElementUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    // TODO: Basic interactions
+    public static void click(WebElement element) {
+        // TODO: Click element
+    }
+
+    public static void type(WebElement element, String text) {
+        // TODO: Clear and type text
+    }
+
+    // TODO: Advanced clicks
+    public static void doubleClick(WebDriver driver, WebElement element) {
+        // TODO: Double-click using Actions
+    }
+
+    public static void rightClick(WebDriver driver, WebElement element) {
+        // TODO: Right-click using Actions
+    }
+
+    // TODO: Hover operations
+    public static void hoverOver(WebDriver driver, WebElement element) {
+        // TODO: Move to element using Actions
+    }
+
+    // TODO: Dropdown operations
+    public static void selectByVisibleText(WebElement element, String text) {
+        // TODO: Create Select object and select by visible text
+    }
+
+    public static void selectByValue(WebElement element, String value) {
+        // TODO: Select by value
+    }
+
+    public static String getSelectedOption(WebElement element) {
+        // TODO: Get first selected option text
+        return null;
+    }
+
+    // TODO: Element state checks
+    public static boolean isDisplayed(WebElement element) {
+        // TODO: Check if displayed, handle exceptions
+        return false;
+    }
+
+    public static boolean isEnabled(WebElement element) {
+        // TODO: Check if enabled
+        return false;
+    }
+
+    public static boolean isSelected(WebElement element) {
+        // TODO: Check if selected
+        return false;
+    }
+
+    // TODO: Checkbox operations
+    public static void checkCheckbox(WebElement checkbox) {
+        // TODO: Check if not already selected, then click
+    }
+
+    public static void uncheckCheckbox(WebElement checkbox) {
+        // TODO: Uncheck if selected, then click
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ All interaction methods working correctly
+✓ Advanced clicks (double, right) functioning
+✓ Dropdown selections successful
+✓ Element state checks accurate
+✓ Checkbox operations working as expected
+✓ No exceptions for null or stale elements
+```
+
+---
+
+### Exercise 4: Building WindowUtils and AlertUtils (40 minutes)
+
+**Objective**: Create utility classes for handling multiple windows/tabs and JavaScript alerts.
+
+**Tasks**:
+1. Implement WindowUtils for window management
+2. Add methods to switch between windows
+3. Implement AlertUtils for alert handling
+4. Test with multiple windows and alerts
+
+**Code Template**:
+
+```java
+// TODO: WindowUtils implementation
+package utils;
+
+import org.openqa.selenium.WebDriver;
+import java.util.*;
+
+public final class WindowUtils {
+
+    private WindowUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    // TODO: Get window handles
+    public static String getCurrentWindowHandle(WebDriver driver) {
+        // TODO: Return current window handle
+        return null;
+    }
+
+    public static Set<String> getAllWindowHandles(WebDriver driver) {
+        // TODO: Return all window handles
+        return null;
+    }
+
+    // TODO: Switch operations
+    public static void switchToNewWindow(WebDriver driver) {
+        // TODO: Switch to new window (not current)
+    }
+
+    public static void switchToWindowByTitle(WebDriver driver, String title) {
+        // TODO: Iterate through windows and switch by title
+    }
+
+    // TODO: Close operations
+    public static void closeAllWindowsExceptMain(WebDriver driver, String mainWindowHandle) {
+        // TODO: Close all windows except main
+        // TODO: Switch back to main
+    }
+}
+
+// TODO: AlertUtils implementation
+package utils;
+
+import org.openqa.selenium.*;
+
+public final class AlertUtils {
+
+    private AlertUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    // TODO: Alert operations
+    public static boolean isAlertPresent(WebDriver driver) {
+        // TODO: Check if alert is present
+        return false;
+    }
+
+    public static void acceptAlert(WebDriver driver) {
+        // TODO: Accept alert
+    }
+
+    public static void dismissAlert(WebDriver driver) {
+        // TODO: Dismiss alert
+    }
+
+    public static String getAlertText(WebDriver driver) {
+        // TODO: Get alert text
+        return null;
+    }
+
+    public static void typeInAlert(WebDriver driver, String text) {
+        // TODO: Send keys to alert (for prompt)
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ Window handle retrieval working
+✓ Switching between windows successful
+✓ Closing specific windows functional
+✓ Alert detection accurate
+✓ Alert accept/dismiss operations working
+✓ Prompt text input functioning
+```
+
+---
+
+### Exercise 5: Creating ScreenshotUtils with Advanced Features (35 minutes)
+
+**Objective**: Build ScreenshotUtils with multiple screenshot capture methods including element screenshots and Base64 encoding.
+
+**Tasks**:
+1. Implement full page screenshot capture
+2. Add element-specific screenshot method
+3. Create timestamp-based filename generation
+4. Implement Base64 screenshot capture
+5. Add screenshot comparison capability
+
+**Code Template**:
+
+```java
+package utils;
+
+import org.openqa.selenium.*;
+import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public final class ScreenshotUtils {
+
+    private static final String SCREENSHOT_DIR = "screenshots/";
+    private static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
+
+    private ScreenshotUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    // TODO: Basic screenshot
+    public static String takeScreenshot(WebDriver driver, String fileName) {
+        // TODO: Take screenshot
+        // TODO: Save to file with timestamp
+        // TODO: Return file path
+        return null;
+    }
+
+    // TODO: Element screenshot
+    public static String takeElementScreenshot(WebElement element, String fileName) {
+        // TODO: Take element screenshot
+        // TODO: Save to file
+        return null;
+    }
+
+    // TODO: Base64 screenshot
+    public static String takeScreenshotAsBase64(WebDriver driver) {
+        // TODO: Return screenshot as Base64 string
+        return null;
+    }
+
+    // TODO: Screenshot on failure
+    public static String takeScreenshotOnFailure(WebDriver driver, String testName) {
+        // TODO: Add "FAILED_" prefix
+        // TODO: Capture and save screenshot
+        return null;
+    }
+
+    // TODO: Helper methods
+    private static String getTimestamp() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        return dateFormat.format(new Date());
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ Full page screenshots captured successfully
+✓ Element screenshots working correctly
+✓ Base64 encoding functional
+✓ Timestamps added to filenames
+✓ Screenshot directory created automatically
+✓ Failure screenshots clearly labeled
+```
+
+---
+
+### Exercise 6: Building Complete Utility Framework (60 minutes)
+
+**Objective**: Integrate all utility classes into a cohesive framework and create comprehensive tests.
+
+**Tasks**:
+1. Organize all utility classes in proper package structure
+2. Create BaseTest using all utilities
+3. Implement sample tests demonstrating all utilities
+4. Add proper exception handling
+5. Create documentation for each utility
+6. Build complete test suite
+
+**Code Template**:
+
+```java
+// TODO: Create comprehensive BaseTest
+package tests;
+
+import utils.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
+
+public class BaseTest {
+
+    protected WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+        BrowserUtils.maximizeWindow(driver);
+        BrowserUtils.setImplicitWait(driver, 10);
+    }
+
+    @AfterMethod
+    public void teardown(ITestResult result) {
+        // TODO: Capture screenshot on failure
+        if (result.getStatus() == ITestResult.FAILURE) {
+            ScreenshotUtils.takeScreenshotOnFailure(driver, result.getName());
+        }
+
+        // TODO: Close browser
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+
+// TODO: Create comprehensive test demonstrating all utilities
+@Test
+public void testCompleteUtilityFramework() {
+    // Use BrowserUtils
+    BrowserUtils.navigateTo(driver, "https://example.com");
+
+    // Use WaitUtils
+    WebElement element = WaitUtils.waitForVisibility(driver, By.id("element"), 10);
+
+    // Use ElementUtils
+    ElementUtils.hoverOver(driver, element);
+    ElementUtils.click(element);
+
+    // Use ScreenshotUtils
+    ScreenshotUtils.takeScreenshot(driver, "test_page");
+
+    // TODO: Demonstrate all utility classes
+}
+```
+
+**Expected Output**:
+```
+✓ All utility classes integrated successfully
+✓ BaseTest using utilities correctly
+✓ Exception handling robust
+✓ Tests running smoothly
+✓ Screenshots captured on failures
+✓ Framework ready for production use
+```
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 40: Configuration Management](./day40_configuration_management.md)

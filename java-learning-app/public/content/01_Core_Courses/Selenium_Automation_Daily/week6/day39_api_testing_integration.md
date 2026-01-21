@@ -3039,6 +3039,1025 @@ The combination of API and UI testing creates a robust, efficient, and maintaina
 
 ---
 
+## Beginner-Friendly Exercises
+
+### Exercise 1: Create Your First API Test with REST Assured (40 minutes)
+
+**Objective**: Learn the basics of REST Assured by creating simple GET, POST, PUT, and DELETE tests using a public API.
+
+**Real-world Scenario**: You're testing a blog application's API that allows creating, reading, updating, and deleting posts. You need to verify that all CRUD operations work correctly.
+
+**Requirements**:
+1. Set up REST Assured dependencies in your project
+2. Create tests for GET request to retrieve all posts
+3. Create test for POST request to create a new post
+4. Create test for PUT request to update a post
+5. Create test for DELETE request to remove a post
+
+**Code Template**:
+```java
+package com.automation.api.exercises;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Exercise1_BasicAPITests {
+
+    @BeforeClass
+    public void setup() {
+        // TODO: Set baseURI to "https://jsonplaceholder.typicode.com"
+        RestAssured.baseURI = "";
+    }
+
+    @Test(priority = 1)
+    public void testGetAllPosts() {
+        // TODO: Send GET request to /posts endpoint
+        // TODO: Verify status code is 200
+        // TODO: Verify response body contains at least 1 post
+        // TODO: Verify first post has "userId", "id", and "title" fields
+    }
+
+    @Test(priority = 2)
+    public void testGetSinglePost() {
+        // TODO: Send GET request to /posts/1
+        // TODO: Verify status code is 200
+        // TODO: Verify response has id = 1
+        // TODO: Verify title is not null
+    }
+
+    @Test(priority = 3)
+    public void testCreateNewPost() {
+        // TODO: Create request body with userId, title, and body
+        Map<String, Object> requestBody = new HashMap<>();
+        // Add fields here
+
+        // TODO: Send POST request to /posts with the request body
+        // TODO: Verify status code is 201 (Created)
+        // TODO: Verify response contains the created post data
+        // TODO: Extract and print the created post ID
+    }
+
+    @Test(priority = 4)
+    public void testUpdatePost() {
+        // TODO: Create update body with changed title
+
+        // TODO: Send PUT request to /posts/1
+        // TODO: Verify status code is 200
+        // TODO: Verify response contains updated data
+    }
+
+    @Test(priority = 5)
+    public void testDeletePost() {
+        // TODO: Send DELETE request to /posts/1
+        // TODO: Verify status code is 200
+    }
+}
+```
+
+**Expected Outcome**:
+- All 5 test methods should pass successfully
+- GET requests should retrieve and validate post data
+- POST request should create a new post and return status 201
+- PUT request should update the post with new data
+- DELETE request should remove the post successfully
+
+**Common Mistakes to Avoid**:
+1. Forgetting to set `baseURI` in setup method
+2. Not using `ContentType.JSON` for POST/PUT requests
+3. Not verifying both status code and response body
+4. Using wrong HTTP method for the operation
+5. Not handling response extraction properly
+
+**Solution Approach (Hints)**:
+- Use `given().when().get("/posts").then().statusCode(200)` pattern
+- For POST: `.contentType(ContentType.JSON).body(requestBody)`
+- Use Hamcrest matchers: `equalTo()`, `notNullValue()`, `hasSize()`
+- Extract response: `.extract().response()` then use `response.jsonPath().getInt("id")`
+- Print responses to console to understand the structure
+
+---
+
+### Exercise 2: API Authentication and Token Management (50 minutes)
+
+**Objective**: Implement authentication handling by obtaining a token and using it for subsequent API requests.
+
+**Real-world Scenario**: You're testing an e-commerce API that requires authentication. You need to login, obtain an auth token, and use that token for accessing protected endpoints.
+
+**Requirements**:
+1. Create a login method to obtain authentication token
+2. Store and reuse the token across multiple tests
+3. Test accessing protected endpoints with valid token
+4. Test accessing protected endpoints without token (should fail)
+5. Implement a token refresh mechanism
+
+**Code Template**:
+```java
+package com.automation.api.exercises;
+
+import io.restassured.response.Response;
+import static io.restassured.RestAssured.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
+public class Exercise2_AuthenticationTests {
+
+    private String authToken;
+    private static final String BASE_URI = "https://reqres.in/api";
+
+    @BeforeClass
+    public void setup() {
+        // TODO: Set baseURI
+    }
+
+    @Test(priority = 1)
+    public void testLogin() {
+        // TODO: Create login request body with email and password
+        // Use: email = "eve.holt@reqres.in", password = "cityslicka"
+
+        // TODO: Send POST request to /login
+
+        // TODO: Verify status code is 200
+        // TODO: Extract token from response
+        // TODO: Store token in authToken variable
+        // TODO: Print the token
+    }
+
+    @Test(priority = 2, dependsOnMethods = "testLogin")
+    public void testGetUsersWithToken() {
+        // TODO: Send GET request to /users with Authorization header
+        // Use: .header("Authorization", "Bearer " + authToken)
+
+        // TODO: Verify status code is 200
+        // TODO: Verify response contains user data
+    }
+
+    @Test(priority = 3)
+    public void testUnauthorizedAccess() {
+        // TODO: Send GET request to /users without token
+
+        // TODO: Verify appropriate response (may still be 200 for this API)
+        // Note: Some APIs return 401, this one doesn't require auth for GET
+    }
+
+    @Test(priority = 4)
+    public void testInvalidLogin() {
+        // TODO: Create login request with invalid credentials
+
+        // TODO: Send POST request to /login
+        // TODO: Verify status code is 400
+        // TODO: Verify error message is present
+    }
+
+    @Test(priority = 5, dependsOnMethods = "testLogin")
+    public void testCreateUserWithAuth() {
+        // TODO: Create user data
+        // TODO: Send POST request to /users with Authorization header
+        // TODO: Verify status code is 201
+        // TODO: Verify created user data
+    }
+}
+```
+
+**Expected Outcome**:
+- Login test successfully obtains and stores authentication token
+- Protected endpoints work with valid token
+- Unauthorized access is properly handled
+- Invalid credentials return appropriate error response
+- Token is successfully reused across multiple tests
+
+**Common Mistakes to Avoid**:
+1. Not extracting token properly from login response
+2. Forgetting to include "Bearer " prefix in Authorization header
+3. Not handling token expiration scenarios
+4. Hardcoding sensitive credentials in test code
+5. Not using `dependsOnMethods` for tests that need authentication
+
+**Solution Approach (Hints)**:
+- Extract token: `response.jsonPath().getString("token")`
+- Add auth header: `.header("Authorization", "Bearer " + authToken)`
+- Use `@BeforeClass` to login once for all tests
+- Consider creating a TokenManager utility class
+- Store token as static variable for reuse
+
+---
+
+### Exercise 3: JSON Response Validation and Schema Testing (50 minutes)
+
+**Objective**: Master JSON response validation techniques including path-based validation, schema validation, and complex JSON parsing.
+
+**Real-world Scenario**: You're testing a user management API that returns complex JSON responses. You need to validate nested objects, arrays, and ensure the response structure matches the expected schema.
+
+**Requirements**:
+1. Validate simple JSON fields using JsonPath
+2. Validate nested JSON objects
+3. Validate JSON arrays and their elements
+4. Implement JSON schema validation
+5. Extract and use values from complex JSON responses
+
+**Code Template**:
+```java
+package com.automation.api.exercises;
+
+import io.restassured.response.Response;
+import io.restassured.path.json.JsonPath;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+import static io.restassured.module.jsv.JsonSchemaValidator.*;
+import org.testng.annotations.*;
+import java.util.List;
+
+public class Exercise3_JSONValidation {
+
+    @BeforeClass
+    public void setup() {
+        // TODO: Set baseURI to "https://reqres.in/api"
+    }
+
+    @Test(priority = 1)
+    public void testSimpleJSONValidation() {
+        // TODO: Send GET request to /users/2
+        given()
+            .when()
+            .get("/users/2")
+            .then()
+            // TODO: Verify status code 200
+            // TODO: Verify data.id equals 2
+            // TODO: Verify data.email contains "@"
+            // TODO: Verify data.first_name is not null
+            .log().all();
+    }
+
+    @Test(priority = 2)
+    public void testNestedJSONValidation() {
+        // TODO: Send GET request to /users/2
+
+        // TODO: Verify data.id exists
+        // TODO: Verify data.email format
+        // TODO: Verify support.url exists
+        // TODO: Verify support.text is not empty
+    }
+
+    @Test(priority = 3)
+    public void testJSONArrayValidation() {
+        // TODO: Send GET request to /users?page=1
+
+        // TODO: Verify data array has size of 6
+        // TODO: Verify all items in data have "id" field
+        // TODO: Verify all items in data have "email" field
+        // TODO: Verify first user's email contains "@"
+    }
+
+    @Test(priority = 4)
+    public void testExtractValuesFromJSON() {
+        // TODO: Send GET request to /users?page=1 and extract response
+        Response response = null; // Replace with actual request
+
+        // TODO: Extract first user's email
+        // String firstEmail = ...
+
+        // TODO: Extract all user IDs into a list
+        // List<Integer> allIds = ...
+
+        // TODO: Extract user with email containing "janet"
+        // String janetUser = ...
+
+        // TODO: Print extracted values
+        // TODO: Add assertions to verify extracted data
+    }
+
+    @Test(priority = 5)
+    public void testJSONSchemaValidation() {
+        // TODO: Create a JSON schema file user-schema.json in src/test/resources/schemas/
+        // Schema should validate: data (object), support (object), required fields
+
+        given()
+            .when()
+            .get("/users/2")
+            .then()
+            .statusCode(200)
+            // TODO: Add schema validation
+            // .body(matchesJsonSchemaInClasspath("schemas/user-schema.json"));
+    }
+
+    @Test(priority = 6)
+    public void testComplexJSONQueries() {
+        // TODO: Send GET request to /users?page=1
+
+        // TODO: Find user with specific ID using JsonPath
+        // TODO: Get count of users with email containing ".biz"
+        // TODO: Verify all users have avatar field
+        // TODO: Extract list of all first names
+    }
+}
+```
+
+**user-schema.json** (create in src/test/resources/schemas/):
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer"},
+        "email": {"type": "string"},
+        "first_name": {"type": "string"},
+        "last_name": {"type": "string"},
+        "avatar": {"type": "string"}
+      },
+      "required": ["id", "email", "first_name", "last_name"]
+    },
+    "support": {
+      "type": "object",
+      "properties": {
+        "url": {"type": "string"},
+        "text": {"type": "string"}
+      }
+    }
+  },
+  "required": ["data", "support"]
+}
+```
+
+**Expected Outcome**:
+- Simple field validation works correctly
+- Nested object fields are validated successfully
+- Array elements are properly validated
+- Values are extracted and used correctly
+- JSON schema validation passes
+- Complex JsonPath queries return expected results
+
+**Common Mistakes to Avoid**:
+1. Using incorrect JsonPath syntax (e.g., "data.id" vs "data[0].id" for arrays)
+2. Not creating schema file in correct location
+3. Forgetting to add json-schema-validator dependency
+4. Using wrong matcher types (e.g., `equals()` instead of `equalTo()`)
+5. Not handling null values in optional fields
+
+**Solution Approach (Hints)**:
+- Use `.body("data.id", equalTo(2))` for simple validation
+- For arrays: `.body("data", hasSize(6))`
+- Extract with: `response.jsonPath().getString("data.email")`
+- For all items: `.body("data.id", everyItem(notNullValue()))`
+- JsonPath queries: `"data.find { it.id == 2 }.email"`
+
+---
+
+### Exercise 4: Building a Reusable API Test Framework (60 minutes)
+
+**Objective**: Create a structured API test framework with reusable components including APIClient, POJO models, and configuration management.
+
+**Real-world Scenario**: Your team needs a maintainable API test framework that can be used across multiple projects. You need to create reusable components that follow best practices.
+
+**Requirements**:
+1. Create an APIClient class with reusable HTTP methods
+2. Create POJO classes for request/response models
+3. Create a configuration management class
+4. Implement request/response logging
+5. Create tests using the framework components
+
+**Code Template**:
+
+**APIClient.java**:
+```java
+package com.automation.api.framework;
+
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import static io.restassured.RestAssured.*;
+import io.restassured.http.ContentType;
+
+public class APIClient {
+    private String baseURI;
+    private String basePath;
+
+    public APIClient(String baseURI, String basePath) {
+        // TODO: Initialize baseURI and basePath
+        // TODO: Set RestAssured baseURI and basePath
+    }
+
+    private RequestSpecification getRequestSpec() {
+        // TODO: Create and return request specification with:
+        // - ContentType JSON
+        // - Accept JSON
+        // - Logging
+        return null;
+    }
+
+    public Response get(String endpoint) {
+        // TODO: Implement GET request
+        // TODO: Use getRequestSpec()
+        // TODO: Log request and response
+        // TODO: Return response
+        return null;
+    }
+
+    public Response post(String endpoint, Object body) {
+        // TODO: Implement POST request
+        // TODO: Include request body
+        // TODO: Return response
+        return null;
+    }
+
+    public Response put(String endpoint, Object body) {
+        // TODO: Implement PUT request
+        return null;
+    }
+
+    public Response delete(String endpoint) {
+        // TODO: Implement DELETE request
+        return null;
+    }
+
+    public Response get(String endpoint, Map<String, String> queryParams) {
+        // TODO: Implement GET with query parameters
+        return null;
+    }
+}
+```
+
+**User.java** (POJO):
+```java
+package com.automation.api.framework.models;
+
+public class User {
+    private Integer id;
+    private String name;
+    private String email;
+    private String job;
+
+    // TODO: Add constructors
+    public User() {}
+
+    public User(String name, String job) {
+        // TODO: Initialize fields
+    }
+
+    // TODO: Add getters and setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    // Add remaining getters/setters
+}
+```
+
+**APIConfig.java**:
+```java
+package com.automation.api.framework.config;
+
+import java.io.FileInputStream;
+import java.util.Properties;
+
+public class APIConfig {
+    private static Properties properties;
+    private static final String CONFIG_FILE = "src/test/resources/api-config.properties";
+
+    static {
+        // TODO: Load properties from file
+    }
+
+    public static String getBaseURI() {
+        // TODO: Return base.uri from properties
+        return null;
+    }
+
+    public static String getBasePath() {
+        // TODO: Return base.path from properties
+        return null;
+    }
+
+    public static int getTimeout() {
+        // TODO: Return timeout value
+        return 30000;
+    }
+}
+```
+
+**api-config.properties** (create in src/test/resources/):
+```properties
+base.uri=https://reqres.in
+base.path=/api
+timeout=30000
+```
+
+**Exercise4_FrameworkTests.java**:
+```java
+package com.automation.api.exercises;
+
+import com.automation.api.framework.APIClient;
+import com.automation.api.framework.models.User;
+import com.automation.api.framework.config.APIConfig;
+import io.restassured.response.Response;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
+public class Exercise4_FrameworkTests {
+
+    private APIClient apiClient;
+
+    @BeforeClass
+    public void setup() {
+        // TODO: Initialize APIClient with config values
+        apiClient = new APIClient(APIConfig.getBaseURI(), APIConfig.getBasePath());
+    }
+
+    @Test(priority = 1)
+    public void testGetUserUsingFramework() {
+        // TODO: Use apiClient.get() to retrieve user
+        // TODO: Verify response status code
+        // TODO: Verify response body
+    }
+
+    @Test(priority = 2)
+    public void testCreateUserUsingPOJO() {
+        // TODO: Create User object with name and job
+        User newUser = new User("John Doe", "QA Engineer");
+
+        // TODO: Use apiClient.post() to create user
+        // TODO: Verify status code 201
+        // TODO: Deserialize response to User object
+        // TODO: Verify created user data
+    }
+
+    @Test(priority = 3)
+    public void testUpdateUserUsingFramework() {
+        // TODO: Create updated user data
+        // TODO: Use apiClient.put() to update user
+        // TODO: Verify update was successful
+    }
+
+    @Test(priority = 4)
+    public void testDeleteUserUsingFramework() {
+        // TODO: Use apiClient.delete() to remove user
+        // TODO: Verify deletion was successful
+    }
+
+    @Test(priority = 5)
+    public void testGetUsersWithQueryParams() {
+        // TODO: Create query parameters map (page=2)
+        // TODO: Use apiClient.get() with query params
+        // TODO: Verify response contains correct page data
+    }
+}
+```
+
+**Expected Outcome**:
+- APIClient provides reusable HTTP methods for all tests
+- POJO classes allow type-safe request/response handling
+- Configuration is externalized and easy to manage
+- All tests pass using the framework components
+- Code is clean, maintainable, and follows best practices
+
+**Common Mistakes to Avoid**:
+1. Not initializing RestAssured baseURI in APIClient constructor
+2. Hardcoding URLs and configurations in test code
+3. Not handling null responses properly
+4. Forgetting to set ContentType for POST/PUT requests
+5. Not implementing proper exception handling
+
+**Solution Approach (Hints)**:
+- In APIClient constructor: `RestAssured.baseURI = this.baseURI;`
+- Use `given().contentType(ContentType.JSON)` for all requests
+- Return `.then().extract().response()` from HTTP methods
+- Load properties in static block: `properties.load(new FileInputStream(CONFIG_FILE))`
+- Deserialize: `response.as(User.class)`
+
+---
+
+### Exercise 5: Hybrid Testing - API Setup with UI Validation (55 minutes)
+
+**Objective**: Combine API and UI testing by using APIs for test data setup and cleanup while validating functionality through the UI.
+
+**Real-world Scenario**: You're testing an e-commerce application where user registration can be done via API, but you need to verify that the registered user can successfully login through the web UI.
+
+**Requirements**:
+1. Create test user via API
+2. Login with API-created user through UI
+3. Verify user details in UI match API data
+4. Perform UI action and verify via API
+5. Cleanup test data via API
+
+**Code Template**:
+```java
+package com.automation.hybrid.exercises;
+
+import com.automation.api.framework.APIClient;
+import com.automation.api.framework.models.User;
+import io.restassured.response.Response;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class Exercise5_HybridTesting {
+
+    private WebDriver driver;
+    private APIClient apiClient;
+    private User testUser;
+    private Integer userId;
+
+    @BeforeClass
+    public void setup() {
+        // TODO: Setup WebDriver
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+
+        // TODO: Setup API Client (use a real test API)
+        // For this exercise, we'll simulate with reqres.in
+        apiClient = new APIClient("https://reqres.in", "/api");
+    }
+
+    @Test(priority = 1)
+    public void testCreateUserViaAPI() {
+        // TODO: Create user data
+        testUser = new User();
+        testUser.setName("Test User " + System.currentTimeMillis());
+        testUser.setJob("QA Tester");
+
+        // TODO: Send POST request to create user
+        Response response = apiClient.post("/users", testUser);
+
+        // TODO: Verify status code 201
+        assertEquals(response.getStatusCode(), 201, "User creation failed");
+
+        // TODO: Extract and store user ID
+        userId = response.jsonPath().getInt("id");
+
+        // TODO: Print created user details
+        System.out.println("Created user with ID: " + userId);
+        System.out.println("User name: " + response.jsonPath().getString("name"));
+    }
+
+    @Test(priority = 2, dependsOnMethods = "testCreateUserViaAPI")
+    public void testVerifyUserViaAPI() {
+        // TODO: Send GET request to retrieve created user
+        // Note: reqres.in doesn't actually store data, so we'll skip retrieval
+        // In real scenario: Response response = apiClient.get("/users/" + userId);
+
+        // TODO: Verify user data matches what was created
+        // assertEquals(response.jsonPath().getString("data.name"), testUser.getName());
+
+        System.out.println("User verification via API would happen here");
+    }
+
+    @Test(priority = 3, dependsOnMethods = "testCreateUserViaAPI")
+    public void testUIValidation() {
+        // TODO: Navigate to application (use reqres.in for this example)
+        driver.get("https://reqres.in");
+
+        // TODO: In real scenario, you would:
+        // 1. Navigate to login page
+        // 2. Login with API-created credentials
+        // 3. Verify user name/email is displayed correctly
+        // 4. Verify user role/permissions are correct
+
+        // For this exercise, just verify page loads
+        assertTrue(driver.getTitle().length() > 0, "Page should have a title");
+
+        System.out.println("UI validation completed");
+        System.out.println("Page title: " + driver.getTitle());
+    }
+
+    @Test(priority = 4, dependsOnMethods = "testUIValidation")
+    public void testUIActionWithAPIVerification() {
+        // TODO: Simulate UI action (e.g., update profile)
+        // In real scenario:
+        // 1. Navigate to profile page via UI
+        // 2. Update user information (name, email, etc.)
+        // 3. Save changes via UI
+
+        // TODO: Verify changes via API
+        // Response response = apiClient.get("/users/" + userId);
+        // Verify updated data matches UI changes
+
+        System.out.println("UI action with API verification would happen here");
+    }
+
+    @Test(priority = 5, dependsOnMethods = "testCreateUserViaAPI")
+    public void testHybridWorkflow() {
+        // TODO: Complete hybrid workflow:
+        // 1. Create product via API
+        // 2. Login via UI
+        // 3. Search for API-created product via UI
+        // 4. Add product to cart via UI
+        // 5. Verify cart contents via API
+        // 6. Complete checkout via UI
+        // 7. Verify order via API
+
+        System.out.println("Complete hybrid workflow demonstration");
+
+        // Simulate success
+        assertTrue(true, "Hybrid workflow completed");
+    }
+
+    @AfterClass
+    public void cleanup() {
+        // TODO: Delete test user via API
+        if (userId != null) {
+            Response response = apiClient.delete("/users/" + userId);
+            System.out.println("Cleanup: Deleted user " + userId);
+            System.out.println("Delete status: " + response.getStatusCode());
+        }
+
+        // TODO: Close browser
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Test user is successfully created via API
+- User data is verified through API response
+- UI loads and displays correct information
+- Hybrid workflow combining API and UI works smoothly
+- Test data is properly cleaned up via API
+- No manual cleanup needed after test execution
+
+**Common Mistakes to Avoid**:
+1. Not waiting for UI elements to load after API actions
+2. Forgetting to cleanup test data after tests complete
+3. Not verifying API response before proceeding to UI tests
+4. Hardcoding test data instead of using dynamic values
+5. Not using `dependsOnMethods` for sequential test execution
+
+**Solution Approach (Hints)**:
+- Always extract and store created resource IDs for cleanup
+- Use timestamp in test data: `"user" + System.currentTimeMillis()`
+- Add WebDriverWait for UI elements: `new WebDriverWait(driver, Duration.ofSeconds(10))`
+- Verify API response first: `assertEquals(response.getStatusCode(), 201)`
+- Store created data in class variables for use across tests
+
+---
+
+### Exercise 6: API Test Data Management and Parameterization (50 minutes)
+
+**Objective**: Implement data-driven API testing using TestNG DataProvider and external data sources like JSON files.
+
+**Real-world Scenario**: You need to test user registration with multiple datasets including valid data, invalid data, and edge cases. Managing this data efficiently requires parameterization and external data files.
+
+**Requirements**:
+1. Create DataProvider for multiple test scenarios
+2. Read test data from JSON file
+3. Implement parameterized API tests
+4. Handle multiple test scenarios (positive and negative)
+5. Generate test report with all scenarios
+
+**Code Template**:
+
+**test-users.json** (create in src/test/resources/testdata/):
+```json
+[
+  {
+    "name": "Valid User",
+    "job": "Software Engineer",
+    "expectedStatus": 201,
+    "shouldSucceed": true
+  },
+  {
+    "name": "Another User",
+    "job": "QA Engineer",
+    "expectedStatus": 201,
+    "shouldSucceed": true
+  },
+  {
+    "name": "",
+    "job": "Tester",
+    "expectedStatus": 400,
+    "shouldSucceed": false
+  },
+  {
+    "name": "User Without Job",
+    "job": "",
+    "expectedStatus": 400,
+    "shouldSucceed": false
+  }
+]
+```
+
+**Exercise6_DataDrivenTests.java**:
+```java
+package com.automation.api.exercises;
+
+import com.automation.api.framework.APIClient;
+import com.automation.api.framework.models.User;
+import io.restassured.response.Response;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.FileReader;
+import java.util.List;
+import java.util.Map;
+
+public class Exercise6_DataDrivenTests {
+
+    private APIClient apiClient;
+
+    @BeforeClass
+    public void setup() {
+        // TODO: Initialize API Client
+        apiClient = new APIClient("https://reqres.in", "/api");
+    }
+
+    // DataProvider for simple scenarios
+    @DataProvider(name = "userData")
+    public Object[][] getUserData() {
+        // TODO: Return test data array
+        // Format: {name, job, expectedStatus}
+        return new Object[][] {
+            {"John Doe", "Engineer", 201},
+            {"Jane Smith", "Manager", 201},
+            {"Bob Wilson", "Tester", 201}
+        };
+    }
+
+    @Test(dataProvider = "userData")
+    public void testCreateUserWithDataProvider(String name, String job, int expectedStatus) {
+        // TODO: Create user object
+        User user = new User(name, job);
+
+        // TODO: Send POST request
+        Response response = apiClient.post("/users", user);
+
+        // TODO: Verify status code matches expected
+        assertEquals(response.getStatusCode(), expectedStatus,
+            "Status code mismatch for user: " + name);
+
+        // TODO: Verify response contains created user data
+        assertEquals(response.jsonPath().getString("name"), name);
+        assertEquals(response.jsonPath().getString("job"), job);
+
+        // TODO: Print test result
+        System.out.println("Test passed for: " + name + " - " + job);
+    }
+
+    // DataProvider reading from JSON file
+    @DataProvider(name = "userDataFromJson")
+    public Object[][] getUserDataFromJson() {
+        // TODO: Read test data from JSON file
+        try {
+            Gson gson = new Gson();
+            FileReader reader = new FileReader("src/test/resources/testdata/test-users.json");
+
+            // TODO: Parse JSON to List of Maps
+            TypeToken<List<Map<String, Object>>> typeToken =
+                new TypeToken<List<Map<String, Object>>>() {};
+            List<Map<String, Object>> testData = gson.fromJson(reader, typeToken.getType());
+
+            // TODO: Convert to Object[][]
+            Object[][] data = new Object[testData.size()][4];
+            for (int i = 0; i < testData.size(); i++) {
+                Map<String, Object> row = testData.get(i);
+                data[i][0] = row.get("name");
+                data[i][1] = row.get("job");
+                data[i][2] = ((Double) row.get("expectedStatus")).intValue();
+                data[i][3] = row.get("shouldSucceed");
+            }
+
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Object[][] {};
+        }
+    }
+
+    @Test(dataProvider = "userDataFromJson")
+    public void testCreateUserWithJsonData(String name, String job,
+                                          int expectedStatus, boolean shouldSucceed) {
+        // TODO: Create user object
+        User user = new User(name, job);
+
+        // TODO: Send POST request
+        Response response = apiClient.post("/users", user);
+
+        // TODO: Verify based on shouldSucceed flag
+        if (shouldSucceed) {
+            assertEquals(response.getStatusCode(), expectedStatus,
+                "Expected success for: " + name);
+            assertNotNull(response.jsonPath().getString("id"),
+                "User ID should not be null");
+        } else {
+            // Note: reqres.in doesn't validate, so this might still return 201
+            System.out.println("Negative test case for: " + name);
+        }
+
+        // TODO: Log test execution
+        System.out.println(String.format(
+            "Test: %s | Job: %s | Status: %d | Should Succeed: %s",
+            name, job, response.getStatusCode(), shouldSucceed
+        ));
+    }
+
+    // DataProvider for login scenarios
+    @DataProvider(name = "loginData")
+    public Object[][] getLoginData() {
+        // TODO: Create login test data
+        return new Object[][] {
+            {"eve.holt@reqres.in", "cityslicka", 200, true},
+            {"invalid@test.com", "wrongpass", 400, false},
+            {"", "password", 400, false},
+            {"user@test.com", "", 400, false}
+        };
+    }
+
+    @Test(dataProvider = "loginData")
+    public void testLoginWithMultipleCredentials(String email, String password,
+                                                 int expectedStatus, boolean shouldSucceed) {
+        // TODO: Create login request body
+        Map<String, String> credentials = Map.of(
+            "email", email,
+            "password", password
+        );
+
+        // TODO: Send POST request to /login
+        Response response = apiClient.post("/login", credentials);
+
+        // TODO: Verify status code
+        assertEquals(response.getStatusCode(), expectedStatus,
+            "Status code mismatch for email: " + email);
+
+        // TODO: Verify response based on shouldSucceed
+        if (shouldSucceed) {
+            assertNotNull(response.jsonPath().getString("token"),
+                "Token should be present for successful login");
+            System.out.println("Login successful for: " + email);
+        } else {
+            assertNotNull(response.jsonPath().getString("error"),
+                "Error message should be present for failed login");
+            System.out.println("Login failed as expected for: " + email);
+        }
+    }
+
+    @Test(priority = 5)
+    public void testBulkUserCreation() {
+        // TODO: Create multiple users from data file
+        // TODO: Store created user IDs
+        List<Integer> createdUserIds = new java.util.ArrayList<>();
+
+        // TODO: Read data and create users in loop
+        Object[][] userData = getUserData();
+        for (Object[] data : userData) {
+            User user = new User((String) data[0], (String) data[1]);
+            Response response = apiClient.post("/users", user);
+
+            if (response.getStatusCode() == 201) {
+                int userId = response.jsonPath().getInt("id");
+                createdUserIds.add(userId);
+            }
+        }
+
+        // TODO: Verify all users created successfully
+        assertEquals(createdUserIds.size(), userData.length,
+            "All users should be created");
+
+        // TODO: Print summary
+        System.out.println("Created " + createdUserIds.size() + " users");
+        System.out.println("User IDs: " + createdUserIds);
+
+        // TODO: Cleanup - delete all created users
+        for (Integer userId : createdUserIds) {
+            apiClient.delete("/users/" + userId);
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Data-driven tests execute with all provided datasets
+- JSON file data is successfully read and used in tests
+- Both positive and negative scenarios are tested
+- Test results clearly show which scenarios passed/failed
+- Bulk operations handle multiple records efficiently
+- All created test data is properly cleaned up
+
+**Common Mistakes to Avoid**:
+1. Not handling file not found exceptions when reading JSON
+2. Incorrect data type conversion from JSON (Double to Integer)
+3. Not validating data before using in tests
+4. Forgetting to close FileReader after reading
+5. Not cleaning up bulk-created test data
+
+**Solution Approach (Hints)**:
+- Use Gson library for JSON parsing: `new Gson().fromJson(reader, type)`
+- Convert Double to Integer: `((Double) value).intValue()`
+- Always wrap file operations in try-catch
+- Use `@DataProvider` with descriptive names
+- Store created IDs in a List for bulk cleanup
+- Print detailed logs for each test iteration
+
+---
+
 **Next Steps:**
 - Practice REST Assured with public APIs
 - Build a complete hybrid framework

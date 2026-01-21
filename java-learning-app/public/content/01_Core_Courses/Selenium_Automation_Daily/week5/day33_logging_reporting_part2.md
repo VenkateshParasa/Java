@@ -2077,6 +2077,1004 @@ public void logEnvironmentDetails() {
 
 ---
 
+---
+
+## Hands-On Exercises
+
+### Exercise 1: Setting Up Extent Reports with TestNG (45 minutes)
+
+**Objective**: Configure Extent Reports 5 from scratch and create basic test reports with system information.
+
+**Scenario**: You're building a test automation framework for an e-commerce website. Set up Extent Reports to generate beautiful HTML reports with test execution details.
+
+**Tasks**:
+1. Add Extent Reports Maven dependency (version 5.1.1)
+2. Create ExtentManager class to initialize Extent Reports
+3. Create ExtentTestManager class for thread-safe test management
+4. Implement BaseTest with Extent Reports integration
+5. Add system information (OS, Browser, Environment, User)
+6. Configure report theme (DARK or STANDARD)
+7. Create sample tests and verify report generation
+
+**Code Template**:
+
+```java
+// TODO 1: Complete ExtentManager class
+package reports;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
+
+public class ExtentManager {
+
+    private static ExtentReports extent;
+
+    public static ExtentReports createInstance(String fileName) {
+        // TODO: Create ExtentSparkReporter with fileName
+        // TODO: Configure theme, document title, and report name
+        // TODO: Set timestamp format
+        // TODO: Create ExtentReports instance
+        // TODO: Attach SparkReporter
+        // TODO: Add system information (OS, User, Java Version, Environment, Browser)
+
+        return extent;
+    }
+
+    public static ExtentReports getInstance() {
+        return extent;
+    }
+}
+
+// TODO 2: Complete BaseTest with Extent Reports
+package tests;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
+
+public class BaseTest {
+
+    protected WebDriver driver;
+    protected static ExtentReports extent;
+    protected ExtentTest test;
+
+    @BeforeSuite
+    public void setupSuite() {
+        // TODO: Initialize Extent Reports
+    }
+
+    @BeforeMethod
+    public void setup(ITestResult result) {
+        // TODO: Initialize browser
+        // TODO: Start Extent Test with test name and description
+        // TODO: Log test start
+    }
+
+    @AfterMethod
+    public void teardown(ITestResult result) {
+        // TODO: Log test result based on status (PASS/FAIL/SKIP)
+        // TODO: Close browser
+    }
+
+    @AfterSuite
+    public void teardownSuite() {
+        // TODO: Flush Extent Reports
+    }
+}
+
+// TODO 3: Create sample test
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+public class ExtentReportDemoTest extends BaseTest {
+
+    @Test(description = "Verify Extent Reports setup")
+    public void testExtentReportsSetup() {
+        // TODO: Log test steps
+        // TODO: Navigate to a website
+        // TODO: Verify page title
+        // TODO: Log pass/fail status
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ ExtentReport.html generated in test-output/
+✓ Report contains test execution details
+✓ System information displayed correctly
+✓ Test logs with timestamps visible
+✓ Pass/Fail status color-coded (green/red)
+```
+
+**Common Mistakes to Avoid**:
+1. Forgetting to call `extent.flush()` - reports won't be generated
+2. Not creating ExtentTest before logging - causes NullPointerException
+3. Using wrong file path for report - file not found errors
+4. Forgetting to add Maven dependency
+5. Not maximizing browser - screenshots may look incomplete
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+1. **ExtentManager setup**:
+```java
+ExtentSparkReporter sparkReporter = new ExtentSparkReporter(fileName);
+sparkReporter.config().setTheme(Theme.DARK);
+sparkReporter.config().setDocumentTitle("Test Report");
+extent = new ExtentReports();
+extent.attachReporter(sparkReporter);
+extent.setSystemInfo("OS", System.getProperty("os.name"));
+```
+
+2. **BaseTest setup**:
+```java
+@BeforeSuite
+public void setupSuite() {
+    extent = ExtentManager.createInstance("test-output/ExtentReport.html");
+}
+
+@BeforeMethod
+public void setup(ITestResult result) {
+    driver = new ChromeDriver();
+    String testName = result.getMethod().getMethodName();
+    test = extent.createTest(testName);
+    test.log(Status.INFO, "Test started: " + testName);
+}
+```
+
+3. **Logging in tests**:
+```java
+test.log(Status.INFO, "Navigating to homepage");
+driver.get("https://example.com");
+test.log(Status.PASS, "Navigation successful");
+```
+</details>
+
+---
+
+### Exercise 2: Adding Screenshots to Extent Reports (40 minutes)
+
+**Objective**: Implement screenshot capture functionality and attach screenshots to Extent Reports on test failures.
+
+**Scenario**: Your team wants to see screenshots whenever a test fails to quickly identify the issue. Implement screenshot capture using both file path and Base64 encoding methods.
+
+**Tasks**:
+1. Create ScreenshotUtils class with multiple capture methods
+2. Modify BaseTest to capture screenshots on failure
+3. Attach screenshots to Extent Reports using file path
+4. Attach screenshots using Base64 encoding
+5. Create organized screenshot directory structure
+6. Add timestamps to screenshot filenames
+7. Test with intentional failures to verify screenshots
+
+**Code Template**:
+
+```java
+// TODO 1: Complete ScreenshotUtils class
+package utils;
+
+import org.openqa.selenium.*;
+import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class ScreenshotUtils {
+
+    // TODO: Implement captureScreenshot() method
+    public static String captureScreenshot(WebDriver driver, String screenshotName) {
+        // TODO: Create timestamp
+        // TODO: Define screenshot path with timestamp
+        // TODO: Create screenshots directory if not exists
+        // TODO: Take screenshot using TakesScreenshot
+        // TODO: Copy file to destination
+        // TODO: Return screenshot path
+
+        return null;
+    }
+
+    // TODO: Implement getScreenshotBase64() method
+    public static String getScreenshotBase64(WebDriver driver) {
+        // TODO: Take screenshot as Base64
+        // TODO: Return Base64 string
+
+        return null;
+    }
+}
+
+// TODO 2: Update BaseTest with screenshot on failure
+@Override
+@AfterMethod
+public void teardown(ITestResult result) {
+    String screenshotPath = null;
+
+    if (result.getStatus() == ITestResult.FAILURE) {
+        // TODO: Capture screenshot
+        // TODO: Log failure with reason
+        // TODO: Attach screenshot to report using MediaEntityBuilder
+    } else if (result.getStatus() == ITestResult.SUCCESS) {
+        // TODO: Log success
+    }
+
+    // TODO: Close browser
+}
+
+// TODO 3: Create helper method to add screenshots during test execution
+public void addScreenshotToReport(String message) {
+    // TODO: Get Base64 screenshot
+    // TODO: Attach to report with message
+}
+
+// TODO 4: Create test with intentional failure
+@Test(description = "Test to verify screenshot on failure")
+public void testScreenshotOnFailure() {
+    // TODO: Navigate to website
+    // TODO: Cause intentional assertion failure
+    // TODO: Verify screenshot is captured
+}
+```
+
+**Expected Output**:
+```
+✓ Screenshot captured on test failure
+✓ Screenshot visible in Extent Report
+✓ Screenshot filename includes timestamp
+✓ Screenshots directory created automatically
+✓ Base64 screenshots embedded in HTML report
+✓ File path screenshots saved separately
+```
+
+**Common Mistakes to Avoid**:
+1. Forgetting to create screenshots directory - IOException
+2. Not handling screenshot capture exceptions
+3. Using absolute paths instead of relative paths
+4. Taking screenshot after browser is closed
+5. Not adding Apache Commons IO dependency
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+1. **Screenshot capture**:
+```java
+String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+String fileName = screenshotName + "_" + timestamp + ".png";
+TakesScreenshot ts = (TakesScreenshot) driver;
+File source = ts.getScreenshotAs(OutputType.FILE);
+FileUtils.copyFile(source, new File(destination));
+```
+
+2. **Attach to report**:
+```java
+test.fail("Screenshot on failure",
+    MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+```
+
+3. **Base64 screenshot**:
+```java
+String base64 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+test.info(message,
+    MediaEntityBuilder.createScreenCaptureFromBase64String(base64).build());
+```
+</details>
+
+---
+
+### Exercise 3: Implementing Categories, Authors, and Nodes (35 minutes)
+
+**Objective**: Organize test reports using categories, authors, devices, and hierarchical test nodes for better test organization.
+
+**Scenario**: Your automation framework has multiple test types (Smoke, Regression, Sanity) executed by different team members on various browsers. Organize reports with proper categorization.
+
+**Tasks**:
+1. Add categories to tests (Smoke, Regression, Sanity)
+2. Assign authors/owners to tests
+3. Assign device/browser information
+4. Create parent-child test structure using nodes
+5. Create tests with multiple scenarios as child nodes
+6. Filter tests by categories in report
+7. Verify categorization in generated report
+
+**Code Template**:
+
+```java
+// TODO 1: Create test with categories and metadata
+package tests;
+
+import com.aventstack.extentreports.ExtentTest;
+import org.testng.annotations.Test;
+
+public class CategorizedTests extends BaseTest {
+
+    @Test(description = "Login test with valid credentials")
+    public void testValidLogin() {
+        // TODO: Assign categories: "Smoke Test", "Login Tests", "Priority 1"
+        // TODO: Assign author: Your name
+        // TODO: Assign device: "Chrome Browser", "Windows 11"
+
+        // TODO: Log test steps
+        test.info("Step 1: Navigate to login page");
+        test.info("Step 2: Enter credentials");
+        test.info("Step 3: Click login");
+        test.pass("Login successful");
+    }
+
+    @Test(description = "Comprehensive checkout flow test")
+    public void testCheckoutFlowWithNodes() {
+        // TODO: Assign categories and metadata
+
+        // TODO: Create child node for "Add to Cart"
+        ExtentTest addToCartNode = test.createNode("Add Product to Cart");
+        // TODO: Log steps in this node
+
+        // TODO: Create child node for "Proceed to Checkout"
+        ExtentTest checkoutNode = test.createNode("Proceed to Checkout");
+        // TODO: Log steps in this node
+
+        // TODO: Create child node for "Payment"
+        ExtentTest paymentNode = test.createNode("Complete Payment");
+        // TODO: Log steps in this node
+    }
+
+    @Test(description = "Search functionality test")
+    public void testSearchFunctionality() {
+        // TODO: Assign categories: "Regression", "Search"
+        // TODO: Assign author and device
+        // TODO: Implement test logic with proper logging
+    }
+}
+
+// TODO 2: Create test suite with multiple test categories
+public class TestSuiteWithCategories extends BaseTest {
+
+    @Test(description = "Homepage load test")
+    public void testHomepageLoad() {
+        // Category: "Smoke Test"
+        // TODO: Implement test
+    }
+
+    @Test(description = "User registration flow")
+    public void testUserRegistration() {
+        // Category: "Regression", "User Management"
+        // TODO: Implement test
+    }
+
+    @Test(description = "Database connectivity check")
+    public void testDatabaseConnection() {
+        // Category: "Sanity", "Database"
+        // TODO: Implement test
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ Tests grouped by categories in report
+✓ Author names visible for each test
+✓ Device/browser information displayed
+✓ Hierarchical test structure with parent-child nodes
+✓ Category filter working in report dashboard
+✓ Test counts per category displayed correctly
+```
+
+**Common Mistakes to Avoid**:
+1. Calling `assignCategory()` after test execution starts
+2. Using inconsistent category naming
+3. Not creating child nodes properly
+4. Forgetting to log in child nodes
+5. Mixing node creation with regular logging
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+1. **Assign categories and metadata**:
+```java
+test.assignCategory("Smoke Test");
+test.assignCategory("Login Tests");
+test.assignAuthor("John Doe");
+test.assignDevice("Chrome Browser");
+```
+
+2. **Create child nodes**:
+```java
+ExtentTest childNode = test.createNode("Node Name");
+childNode.info("Step in child node");
+childNode.pass("Child node passed");
+```
+
+3. **Multiple categories**:
+```java
+test.assignCategory("Regression", "Search", "Priority 2");
+```
+</details>
+
+---
+
+### Exercise 4: Setting Up Allure Reports with TestNG (50 minutes)
+
+**Objective**: Configure Allure Reports framework from scratch with TestNG integration, including Maven configuration and report generation.
+
+**Scenario**: Your organization wants to standardize on Allure Reports for all automation projects. Set up Allure with proper Maven configuration, AspectJ weaver, and generate comprehensive reports.
+
+**Tasks**:
+1. Add Allure TestNG dependencies to pom.xml
+2. Configure Maven Surefire plugin with AspectJ
+3. Add Allure Maven plugin
+4. Create tests with Allure annotations (@Epic, @Feature, @Story)
+5. Add @Description, @Severity, and @Owner annotations
+6. Generate Allure report using Maven command
+7. View report using `allure serve` command
+
+**Code Template**:
+
+```xml
+<!-- TODO 1: Add dependencies to pom.xml -->
+<dependencies>
+    <!-- Selenium -->
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>4.15.0</version>
+    </dependency>
+
+    <!-- TestNG -->
+    <!-- TODO: Add TestNG dependency -->
+
+    <!-- Allure TestNG -->
+    <!-- TODO: Add allure-testng dependency (version 2.24.0) -->
+
+    <!-- AspectJ Weaver -->
+    <!-- TODO: Add aspectjweaver dependency (version 1.9.20.1) -->
+</dependencies>
+
+<!-- TODO 2: Configure build plugins -->
+<build>
+    <plugins>
+        <!-- Maven Surefire Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0</version>
+            <configuration>
+                <!-- TODO: Add argLine with AspectJ weaver path -->
+            </configuration>
+        </plugin>
+
+        <!-- Allure Maven Plugin -->
+        <!-- TODO: Add allure-maven plugin (version 2.12.0) -->
+    </plugins>
+</build>
+```
+
+```java
+// TODO 3: Create tests with Allure annotations
+package tests;
+
+import io.qameta.allure.*;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+// TODO: Add @Epic annotation
+// TODO: Add @Feature annotation
+public class AllureAnnotationTests {
+
+    @Test
+    // TODO: Add @Story annotation
+    // TODO: Add @Severity annotation (CRITICAL)
+    // TODO: Add @Description annotation
+    // TODO: Add @Owner annotation with your name
+    public void testLoginWithValidCredentials() {
+        // TODO: Implement test with proper structure
+        System.out.println("Test implementation");
+        Assert.assertTrue(true);
+    }
+
+    @Test
+    // TODO: Add Allure annotations for checkout test
+    // TODO: Set severity to NORMAL
+    public void testCheckoutProcess() {
+        // TODO: Implement test
+    }
+}
+
+// TODO 4: Run Maven command to generate Allure report
+// Command: mvn clean test
+// Command: mvn allure:serve
+```
+
+**Expected Output**:
+```
+✓ Allure results generated in target/allure-results/
+✓ Tests organized by Epic > Feature > Story
+✓ Severity levels displayed correctly
+✓ Owner information visible in report
+✓ Test descriptions showing properly
+✓ Allure report opens in browser with `mvn allure:serve`
+```
+
+**Common Mistakes to Avoid**:
+1. Forgetting AspectJ weaver in argLine - annotations won't work
+2. Wrong path to aspectjweaver JAR in configuration
+3. Not running `mvn clean test` before `allure:serve`
+4. Using wrong Allure version - compatibility issues
+5. Forgetting @Epic, @Feature, or @Story annotations
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+1. **pom.xml dependencies**:
+```xml
+<dependency>
+    <groupId>io.qameta.allure</groupId>
+    <artifactId>allure-testng</artifactId>
+    <version>2.24.0</version>
+</dependency>
+```
+
+2. **Surefire configuration**:
+```xml
+<argLine>
+    -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/1.9.20.1/aspectjweaver-1.9.20.1.jar"
+</argLine>
+```
+
+3. **Test annotations**:
+```java
+@Epic("E-Commerce Application")
+@Feature("User Authentication")
+@Story("User Login")
+@Severity(SeverityLevel.CRITICAL)
+@Description("Test to verify user login with valid credentials")
+@Owner("John Doe")
+```
+</details>
+
+---
+
+### Exercise 5: Implementing Allure Steps and Attachments (40 minutes)
+
+**Objective**: Create tests with detailed steps using @Step annotation and attach screenshots, logs, and other files to Allure reports.
+
+**Scenario**: Create a comprehensive test with multiple steps that are clearly visible in Allure reports. Add screenshots at key points and attach test data files for better debugging.
+
+**Tasks**:
+1. Create helper methods with @Step annotations
+2. Use parameterized step descriptions
+3. Implement screenshot attachment utility
+4. Attach text logs to reports
+5. Attach JSON test data to reports
+6. Create nested steps (steps within steps)
+7. Verify all attachments in generated report
+
+**Code Template**:
+
+```java
+// TODO 1: Create Allure utilities for attachments
+package utils;
+
+import io.qameta.allure.Attachment;
+import org.openqa.selenium.*;
+
+public class AllureUtils {
+
+    // TODO: Create @Attachment method for screenshot
+    @Attachment(value = "Screenshot", type = "image/png")
+    public static byte[] saveScreenshot(WebDriver driver) {
+        // TODO: Take screenshot as bytes
+        // TODO: Return bytes
+        return null;
+    }
+
+    // TODO: Create @Attachment method for screenshot with custom name
+    @Attachment(value = "{name}", type = "image/png")
+    public static byte[] saveScreenshotWithName(WebDriver driver, String name) {
+        // TODO: Implement
+        return null;
+    }
+
+    // TODO: Create @Attachment method for text
+    @Attachment(value = "Test Log", type = "text/plain")
+    public static String attachText(String text) {
+        // TODO: Return text
+        return null;
+    }
+
+    // TODO: Create @Attachment method for JSON
+    @Attachment(value = "Test Data", type = "application/json")
+    public static String attachJson(String json) {
+        // TODO: Return JSON string
+        return null;
+    }
+}
+
+// TODO 2: Create test class with @Step methods
+package tests;
+
+import io.qameta.allure.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+
+@Epic("E-Commerce Application")
+@Feature("User Authentication")
+public class AllureStepsTest {
+
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+    }
+
+    @Test
+    @Story("Complete User Journey")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Test user journey from login to checkout with detailed steps")
+    public void testCompleteUserJourney() {
+        // TODO: Call step methods
+        openLoginPage("https://example.com/login");
+        enterCredentials("testuser", "password123");
+        clickLoginButton();
+        verifyDashboard();
+
+        // TODO: Add screenshot attachment
+        AllureUtils.saveScreenshot(driver);
+
+        // TODO: Add text log attachment
+        String testLog = "User successfully logged in and navigated to dashboard";
+        AllureUtils.attachText(testLog);
+    }
+
+    // TODO: Implement @Step methods
+    @Step("Open login page: {url}")
+    public void openLoginPage(String url) {
+        // TODO: Navigate to URL
+        // TODO: Add screenshot
+    }
+
+    @Step("Enter username: {username} and password")
+    public void enterCredentials(String username, String password) {
+        // TODO: Find and fill username field
+        // TODO: Find and fill password field
+    }
+
+    @Step("Click login button")
+    public void clickLoginButton() {
+        // TODO: Click login button
+    }
+
+    @Step("Verify user is on dashboard")
+    public void verifyDashboard() {
+        // TODO: Verify dashboard elements
+        // TODO: Add screenshot
+    }
+
+    // TODO: Create nested steps example
+    @Step("Complete checkout process")
+    public void completeCheckout() {
+        addProductToCart();
+        proceedToCheckout();
+        completePayment();
+    }
+
+    @Step("Add product to cart")
+    public void addProductToCart() {
+        // Nested step implementation
+    }
+
+    @Step("Proceed to checkout")
+    public void proceedToCheckout() {
+        // Nested step implementation
+    }
+
+    @Step("Complete payment")
+    public void completePayment() {
+        // Nested step implementation
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ Test steps visible in Allure report timeline
+✓ Parameterized step descriptions showing actual values
+✓ Screenshots attached at appropriate steps
+✓ Text logs attached to report
+✓ Nested steps showing hierarchical structure
+✓ All attachments viewable in report
+```
+
+**Common Mistakes to Avoid**:
+1. Forgetting @Attachment annotation - files won't appear in report
+2. Wrong MIME type in @Attachment annotation
+3. Not returning value from @Attachment methods
+4. Taking screenshots after browser is closed
+5. Not using parameterized step descriptions
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+1. **Screenshot attachment**:
+```java
+@Attachment(value = "Screenshot", type = "image/png")
+public static byte[] saveScreenshot(WebDriver driver) {
+    return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+}
+```
+
+2. **Step methods**:
+```java
+@Step("Open login page: {url}")
+public void openLoginPage(String url) {
+    driver.get(url);
+    AllureUtils.saveScreenshotWithName(driver, "Login Page");
+}
+```
+
+3. **Text attachment**:
+```java
+@Attachment(value = "Test Log", type = "text/plain")
+public static String attachText(String text) {
+    return text;
+}
+```
+</details>
+
+---
+
+### Exercise 6: Building a Complete Unified Reporting Framework (60 minutes)
+
+**Objective**: Create a comprehensive reporting framework that supports both Extent Reports and Allure Reports simultaneously with configuration options.
+
+**Scenario**: Build an enterprise-grade reporting solution that can generate both Extent and Allure reports from the same test execution, allowing teams to use their preferred reporting tool.
+
+**Tasks**:
+1. Create UnifiedReportManager class
+2. Support both Extent and Allure report generation
+3. Implement configuration to enable/disable each report type
+4. Create unified methods for logging (info, pass, fail)
+5. Implement unified screenshot attachment
+6. Create BaseTest that uses UnifiedReportManager
+7. Run tests and verify both reports are generated
+
+**Code Template**:
+
+```java
+// TODO 1: Create unified reporting manager
+package framework.reports;
+
+import com.aventstack.extentreports.*;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import io.qameta.allure.Attachment;
+import org.openqa.selenium.*;
+
+public class UnifiedReportManager {
+
+    private static ExtentReports extentReports;
+    private static ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
+    private static boolean useExtent = true;
+    private static boolean useAllure = true;
+
+    // TODO: Initialize reporting
+    public static void initReports(String reportPath, boolean extent, boolean allure) {
+        useExtent = extent;
+        useAllure = allure;
+
+        if (useExtent) {
+            // TODO: Initialize Extent Reports
+        }
+
+        System.out.println("Unified Reporting initialized - Extent: " + extent + ", Allure: " + allure);
+    }
+
+    // TODO: Start test
+    public static void startTest(String testName, String description) {
+        // TODO: Start Extent test if enabled
+        // TODO: Allure handles this automatically
+    }
+
+    // TODO: Log info message
+    public static void logInfo(String message) {
+        // TODO: Log to Extent if enabled
+        // TODO: Log to Allure if enabled (use @Attachment or Step)
+    }
+
+    // TODO: Log pass message
+    public static void logPass(String message) {
+        // TODO: Log to Extent if enabled
+        // TODO: Log to Allure if enabled
+    }
+
+    // TODO: Log fail message
+    public static void logFail(String message) {
+        // TODO: Log to Extent if enabled
+        // TODO: Log to Allure if enabled
+    }
+
+    // TODO: Attach screenshot to both reports
+    public static void attachScreenshot(WebDriver driver, String name) {
+        if (useExtent || useAllure) {
+            byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+
+            // TODO: Attach to Extent if enabled
+            // TODO: Attach to Allure if enabled
+        }
+    }
+
+    // TODO: Flush reports
+    public static void flushReports() {
+        if (useExtent && extentReports != null) {
+            extentReports.flush();
+        }
+    }
+
+    // Allure attachment helper
+    @Attachment(value = "Screenshot", type = "image/png")
+    private static byte[] attachAllureScreenshot(byte[] screenshot) {
+        return screenshot;
+    }
+
+    @Attachment(value = "Log", type = "text/plain")
+    private static String attachAllureLog(String message) {
+        return message;
+    }
+}
+
+// TODO 2: Create BaseTest using unified reporting
+package tests;
+
+import framework.reports.UnifiedReportManager;
+import io.qameta.allure.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
+
+public class UnifiedReportBaseTest {
+
+    protected WebDriver driver;
+
+    @BeforeSuite
+    public void setupSuite() {
+        // TODO: Initialize unified reporting
+        // Enable both Extent and Allure
+        UnifiedReportManager.initReports(
+            "test-output/UnifiedReport.html",
+            true,  // Enable Extent
+            true   // Enable Allure
+        );
+    }
+
+    @BeforeMethod
+    public void setup(ITestResult result) {
+        // TODO: Initialize browser
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+
+        // TODO: Start test in unified reporter
+        String testName = result.getMethod().getMethodName();
+        String description = result.getMethod().getDescription();
+        UnifiedReportManager.startTest(testName, description);
+        UnifiedReportManager.logInfo("Test started: " + testName);
+    }
+
+    @AfterMethod
+    public void teardown(ITestResult result) {
+        // TODO: Handle test result
+        if (result.getStatus() == ITestResult.FAILURE) {
+            UnifiedReportManager.logFail("Test failed: " + result.getName());
+            UnifiedReportManager.attachScreenshot(driver, "Failure Screenshot");
+        } else if (result.getStatus() == ITestResult.SUCCESS) {
+            UnifiedReportManager.logPass("Test passed: " + result.getName());
+        }
+
+        // TODO: Close browser
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    @AfterSuite
+    public void teardownSuite() {
+        UnifiedReportManager.flushReports();
+    }
+}
+
+// TODO 3: Create sample tests
+@Epic("Unified Reporting Framework")
+@Feature("Dual Report Generation")
+public class UnifiedReportingTests extends UnifiedReportBaseTest {
+
+    @Test(description = "Test with unified reporting")
+    @Story("Login Test")
+    @Severity(SeverityLevel.CRITICAL)
+    public void testLoginWithUnifiedReporting() {
+        // TODO: Implement test with unified logging
+        UnifiedReportManager.logInfo("Navigating to login page");
+        driver.get("https://example.com/login");
+
+        UnifiedReportManager.logInfo("Entering credentials");
+        // Simulate login
+
+        UnifiedReportManager.attachScreenshot(driver, "Login Page");
+        UnifiedReportManager.logPass("Login successful");
+    }
+
+    @Test(description = "Test to verify both reports generated")
+    @Story("Report Verification")
+    public void testBothReportsGenerated() {
+        // TODO: Implement test
+        UnifiedReportManager.logInfo("Starting report verification test");
+        driver.get("https://example.com");
+        UnifiedReportManager.logPass("Page loaded successfully");
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ Both Extent and Allure reports generated
+✓ Same test data in both reports
+✓ Screenshots attached to both reports
+✓ Logs synchronized across both reports
+✓ Extent report: test-output/UnifiedReport.html
+✓ Allure results: target/allure-results/
+✓ Configuration allows enabling/disabling each report type
+```
+
+**Common Mistakes to Avoid**:
+1. Not handling thread safety for Extent Reports
+2. Forgetting to flush Extent Reports
+3. Not returning byte[] from @Attachment methods for Allure
+4. Missing AspectJ configuration for Allure
+5. Not checking if report type is enabled before logging
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+1. **Initialize Extent Reports**:
+```java
+ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
+extentReports = new ExtentReports();
+extentReports.attachReporter(sparkReporter);
+```
+
+2. **Start test**:
+```java
+if (useExtent) {
+    ExtentTest test = extentReports.createTest(testName, description);
+    extentTest.set(test);
+}
+```
+
+3. **Unified logging**:
+```java
+public static void logInfo(String message) {
+    if (useExtent && extentTest.get() != null) {
+        extentTest.get().info(message);
+    }
+    if (useAllure) {
+        attachAllureLog(message);
+    }
+}
+```
+</details>
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 38: Logging & Reporting Part 1](./day38_logging_reporting_part1.md)

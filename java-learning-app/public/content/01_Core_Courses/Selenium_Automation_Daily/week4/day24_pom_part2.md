@@ -3110,26 +3110,857 @@ public void clickButton() {
 
 ## 15. Practical Exercises
 
-### Exercise 1: Create Fluent Page Object
-Create a registration page with fluent interface supporting method chaining for all form fields.
+---
 
-### Exercise 2: Build Page Component
-Create a reusable SearchBox component that can be used across multiple pages.
+### Exercise 1: Build Fluent Registration Page (30 min)
 
-### Exercise 3: Implement Custom Wait
-Create a custom wait condition that waits for a loading spinner to disappear and content to load.
+**Objective:** Create a registration page object using fluent interface pattern for method chaining.
 
-### Exercise 4: Handle Multiple Windows
-Create a page object that opens a terms and conditions popup, interacts with it, and returns to main window.
+**Scenario:** You're testing a user registration form that has multiple fields. You need to create a page object that allows elegant method chaining for a smooth test writing experience.
 
-### Exercise 5: iFrame Handling
-Create a page object for a WYSIWYG editor inside an iframe with formatting options.
+**Requirements:**
+1. Create `RegistrationPage` extending `BasePage`
+2. Include fields: firstName, lastName, email, password, confirmPassword, terms checkbox
+3. Implement fluent methods that return `this` for chaining
+4. Add `register()` method that submits and returns `HomePage`
+5. Include verification methods that also return `this`
+6. Write a test that demonstrates the fluent interface
 
-### Exercise 6: Refactor Legacy Test
-Take a provided non-POM test and refactor it into a complete POM structure with proper organization.
+**Code Template:**
 
-### Exercise 7: Complete E2E Framework
-Build a complete mini-framework with BasePage, components, utilities, and at least 3 interconnected page objects.
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class RegistrationPage extends BasePage {
+
+    @FindBy(id = "firstName")
+    private WebElement firstNameField;
+
+    @FindBy(id = "lastName")
+    private WebElement lastNameField;
+
+    @FindBy(id = "email")
+    private WebElement emailField;
+
+    @FindBy(id = "password")
+    private WebElement passwordField;
+
+    @FindBy(id = "confirmPassword")
+    private WebElement confirmPasswordField;
+
+    @FindBy(id = "terms")
+    private WebElement termsCheckbox;
+
+    @FindBy(id = "registerButton")
+    private WebElement registerButton;
+
+    @FindBy(className = "error-message")
+    private WebElement errorMessage;
+
+    public RegistrationPage(WebDriver driver) {
+        super(driver);
+    }
+
+    // TODO 1: Implement enterFirstName() that returns this
+    public RegistrationPage enterFirstName(String firstName) {
+        // Your code here
+        return this;
+    }
+
+    // TODO 2: Implement enterLastName() that returns this
+
+    // TODO 3: Implement enterEmail() that returns this
+
+    // TODO 4: Implement enterPassword() that returns this
+
+    // TODO 5: Implement confirmPassword() that returns this
+
+    // TODO 6: Implement acceptTerms() that returns this
+
+    // TODO 7: Implement register() that clicks button and returns HomePage
+    public HomePage register() {
+        // Your code here
+        return new HomePage(driver);
+    }
+
+    // TODO 8: Implement combined method registerUser() with all params
+    public HomePage registerUser(String firstName, String lastName,
+                                 String email, String password) {
+        // Use method chaining here
+        return this;
+    }
+
+    // TODO 9: Implement verifyErrorDisplayed() that returns this
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(registerButton);
+    }
+}
+```
+
+**Test Class:**
+
+```java
+@Test
+public void testFluentRegistration() {
+    // TODO: Use fluent interface to complete registration
+    HomePage homePage = registrationPage
+        .enterFirstName("John")
+        // Add more chained methods
+        .register();
+
+    Assert.assertTrue(homePage.isPageLoaded());
+}
+```
+
+**Expected Outcome:**
+- Clean, readable test code using method chaining
+- All input methods return `RegistrationPage` for chaining
+- Final action method returns next page (`HomePage`)
+- Test demonstrates fluent interface benefits
+
+**Common Mistakes to Avoid:**
+- Forgetting to return `this` in fluent methods
+- Breaking the chain by returning void
+- Not handling the final page transition correctly
+- Missing null checks before operations
+
+---
+
+### Exercise 2: Create Reusable Navigation Component (35 min)
+
+**Objective:** Build a navigation header component that can be reused across multiple page objects.
+
+**Scenario:** Your application has a consistent navigation header across all pages with search, cart, user menu, and category dropdowns. Create a component that all pages can use.
+
+**Requirements:**
+1. Create `NavigationComponent` extending `BasePage`
+2. Include: logo, search box, cart icon, user dropdown, category menu
+3. Implement methods: search(), viewCart(), openUserMenu(), selectCategory()
+4. Add getters: getCartCount(), getUsername(), isLoggedIn()
+5. Create `HomePage` and `ProductListingPage` that use this component
+6. Write tests demonstrating component reusability
+
+**Code Template:**
+
+```java
+package components;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import pages.BasePage;
+
+public class NavigationComponent extends BasePage {
+
+    @FindBy(id = "logo")
+    private WebElement logo;
+
+    @FindBy(id = "search-input")
+    private WebElement searchInput;
+
+    @FindBy(id = "search-button")
+    private WebElement searchButton;
+
+    @FindBy(id = "cart-icon")
+    private WebElement cartIcon;
+
+    @FindBy(id = "cart-count")
+    private WebElement cartCount;
+
+    @FindBy(id = "user-dropdown")
+    private WebElement userDropdown;
+
+    @FindBy(id = "logout-link")
+    private WebElement logoutLink;
+
+    @FindBy(css = ".category-menu")
+    private WebElement categoryMenu;
+
+    public NavigationComponent(WebDriver driver) {
+        super(driver);
+    }
+
+    // TODO 1: Implement search() method
+    public SearchResultsPage search(String query) {
+        // Your code here
+        return new SearchResultsPage(driver);
+    }
+
+    // TODO 2: Implement viewCart() method
+    public CartPage viewCart() {
+        // Your code here
+        return new CartPage(driver);
+    }
+
+    // TODO 3: Implement getCartCount() method
+    public int getCartCount() {
+        // Your code here
+        return 0;
+    }
+
+    // TODO 4: Implement openUserMenu() method
+
+    // TODO 5: Implement logout() method
+    public LoginPage logout() {
+        // Your code here
+        return new LoginPage(driver);
+    }
+
+    // TODO 6: Implement isLoggedIn() method
+    public boolean isLoggedIn() {
+        // Your code here
+        return false;
+    }
+
+    // TODO 7: Implement selectCategory() method
+    public ProductListingPage selectCategory(String categoryName) {
+        // Your code here
+        return new ProductListingPage(driver);
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(logo);
+    }
+}
+```
+
+**Page Using Component:**
+
+```java
+package pages;
+
+import components.NavigationComponent;
+
+public class HomePage extends BasePage {
+
+    private NavigationComponent navigation;
+
+    @FindBy(id = "hero-banner")
+    private WebElement heroBanner;
+
+    public HomePage(WebDriver driver) {
+        super(driver);
+        this.navigation = new NavigationComponent(driver);
+    }
+
+    // TODO: Provide access to navigation component
+    public NavigationComponent getNavigation() {
+        return navigation;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(heroBanner) && navigation.isPageLoaded();
+    }
+}
+```
+
+**Expected Outcome:**
+- Reusable navigation component working across pages
+- Clean separation of component logic
+- Multiple pages successfully using the same component
+- Tests demonstrate component functionality
+
+**Common Mistakes to Avoid:**
+- Creating separate component instances instead of sharing
+- Not initializing component in page constructor
+- Forgetting to check component loading state
+- Duplicating navigation code across pages
+
+---
+
+### Exercise 3: Implement Custom Wait Strategy for AJAX (40 min)
+
+**Objective:** Create custom wait conditions to handle dynamic AJAX content loading.
+
+**Scenario:** Your application uses AJAX to load content dynamically. You need custom wait strategies to handle loading spinners, content updates, and element attribute changes.
+
+**Requirements:**
+1. Create `CustomWaits` utility class
+2. Implement waitForLoadingSpinner(), waitForElementCountToChange()
+3. Implement waitForAttributeValue(), waitForTextToNotBe()
+4. Create `DynamicContentPage` using these waits
+5. Test AJAX-heavy page interactions
+6. Handle timeouts gracefully
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+import java.util.List;
+
+public class CustomWaits {
+
+    private WebDriver driver;
+    private WebDriverWait wait;
+
+    public CustomWaits(WebDriver driver, int timeoutInSeconds) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
+    }
+
+    // TODO 1: Implement waitForLoadingSpinnerToDisappear()
+    public void waitForLoadingSpinnerToDisappear(WebElement spinner) {
+        try {
+            // Wait for spinner to disappear
+            // Your code here
+        } catch (Exception e) {
+            // Spinner might not appear at all
+        }
+    }
+
+    // TODO 2: Implement waitForElementCountGreaterThan()
+    public boolean waitForElementCountGreaterThan(List<WebElement> elements,
+                                                  int expectedCount) {
+        ExpectedCondition<Boolean> condition = d -> {
+            // Your code here
+            return false;
+        };
+        return wait.until(condition);
+    }
+
+    // TODO 3: Implement waitForAttributeToBe()
+    public boolean waitForAttributeToBe(WebElement element, String attribute,
+                                       String expectedValue) {
+        // Your code here
+        return false;
+    }
+
+    // TODO 4: Implement waitForTextToNotBe()
+    public boolean waitForTextToNotBe(WebElement element, String textToAvoid) {
+        ExpectedCondition<Boolean> condition = d -> {
+            // Your code here
+            return false;
+        };
+        return wait.until(condition);
+    }
+
+    // TODO 5: Implement waitForJQueryToComplete()
+    public boolean waitForJQueryToComplete() {
+        ExpectedCondition<Boolean> jQueryLoad = d -> {
+            // Check if jQuery.active == 0
+            // Your code here
+            return false;
+        };
+        return wait.until(jQueryLoad);
+    }
+
+    // TODO 6: Implement waitForElementToBeStale()
+    public boolean waitForElementToBeStale(WebElement element) {
+        // Your code here
+        return false;
+    }
+}
+```
+
+**Page Using Custom Waits:**
+
+```java
+package pages;
+
+import utils.CustomWaits;
+
+public class DynamicContentPage extends BasePage {
+
+    private CustomWaits customWaits;
+
+    @FindBy(className = "loading-spinner")
+    private WebElement loadingSpinner;
+
+    @FindBy(css = ".product-item")
+    private List<WebElement> products;
+
+    @FindBy(id = "load-more")
+    private WebElement loadMoreButton;
+
+    public DynamicContentPage(WebDriver driver) {
+        super(driver);
+        this.customWaits = new CustomWaits(driver, 15);
+    }
+
+    // TODO: Implement waitForContentToLoad()
+    public DynamicContentPage waitForContentToLoad() {
+        // Use custom waits
+        return this;
+    }
+
+    // TODO: Implement loadMoreProducts()
+    public DynamicContentPage loadMoreProducts() {
+        // Wait for products to load
+        return this;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(loadMoreButton);
+    }
+}
+```
+
+**Expected Outcome:**
+- Custom wait conditions handling AJAX scenarios
+- No StaleElementReferenceException or timeouts
+- Clean wait logic encapsulated in utility
+- Tests passing reliably with dynamic content
+
+**Common Mistakes to Avoid:**
+- Not catching TimeoutException properly
+- Using Thread.sleep() instead of proper waits
+- Not handling cases where wait conditions never meet
+- Forgetting to reinitialize stale elements
+
+---
+
+### Exercise 4: Handle Multiple Windows and Tabs (35 min)
+
+**Objective:** Create a page object that manages multiple browser windows and tabs efficiently.
+
+**Scenario:** Your application opens product details in new tabs, social sharing in popups, and help documentation in new windows. You need clean window management.
+
+**Requirements:**
+1. Create `WindowManager` utility class
+2. Implement switchToNewWindow(), switchByTitle(), closeAndReturn()
+3. Create `ProductPage` with shareOnSocial() that handles popup
+4. Handle parent and child window switching
+5. Write tests for multi-window scenarios
+6. Ensure proper cleanup of windows
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.openqa.selenium.WebDriver;
+import java.util.Set;
+
+public class WindowManager {
+
+    private WebDriver driver;
+    private String parentWindowHandle;
+
+    public WindowManager(WebDriver driver) {
+        this.driver = driver;
+        this.parentWindowHandle = driver.getWindowHandle();
+    }
+
+    // TODO 1: Implement switchToNewWindow()
+    public void switchToNewWindow() {
+        Set<String> handles = driver.getWindowHandles();
+        // Your code here
+    }
+
+    // TODO 2: Implement switchToWindowByTitle()
+    public boolean switchToWindowByTitle(String title) {
+        // Your code here
+        return false;
+    }
+
+    // TODO 3: Implement switchToWindowByURL()
+    public boolean switchToWindowByURL(String urlFragment) {
+        // Your code here
+        return false;
+    }
+
+    // TODO 4: Implement switchToParentWindow()
+    public void switchToParentWindow() {
+        // Your code here
+    }
+
+    // TODO 5: Implement closeCurrentAndSwitchToParent()
+    public void closeCurrentAndSwitchToParent() {
+        // Your code here
+    }
+
+    // TODO 6: Implement closeAllExceptParent()
+    public void closeAllExceptParent() {
+        // Your code here
+    }
+
+    // TODO 7: Implement getWindowCount()
+    public int getWindowCount() {
+        return driver.getWindowHandles().size();
+    }
+}
+```
+
+**Page Using Window Manager:**
+
+```java
+package pages;
+
+import utils.WindowManager;
+
+public class ProductDetailsPage extends BasePage {
+
+    private WindowManager windowManager;
+
+    @FindBy(id = "share-facebook")
+    private WebElement shareFacebookLink;
+
+    @FindBy(id = "share-twitter")
+    private WebElement shareTwitterLink;
+
+    @FindBy(id = "help-link")
+    private WebElement helpLink;
+
+    public ProductDetailsPage(WebDriver driver) {
+        super(driver);
+        this.windowManager = new WindowManager(driver);
+    }
+
+    // TODO: Implement shareOnFacebook() that handles popup
+    public ProductDetailsPage shareOnFacebook() {
+        // Open popup, perform action, close and return
+        return this;
+    }
+
+    // TODO: Implement openHelpInNewTab()
+    public HelpPage openHelpInNewTab() {
+        // Your code here
+        return new HelpPage(driver);
+    }
+
+    public WindowManager getWindowManager() {
+        return windowManager;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(shareFacebookLink);
+    }
+}
+```
+
+**Expected Outcome:**
+- Clean window management without handle tracking in tests
+- Successful navigation between windows
+- Proper cleanup preventing window leaks
+- Tests working with multiple windows reliably
+
+**Common Mistakes to Avoid:**
+- Losing reference to parent window
+- Not closing windows properly
+- Assuming window order
+- Not waiting for new window to open
+
+---
+
+### Exercise 5: Master iFrame Interactions (40 min)
+
+**Objective:** Create page objects that handle nested iFrames and complex iframe interactions.
+
+**Scenario:** Your application has a WYSIWYG editor in an iframe, with nested frames for media gallery and formatting tools.
+
+**Requirements:**
+1. Create `FrameManager` utility class
+2. Implement switchToFrame(), switchToNestedFrames(), switchBack()
+3. Create `EditorPage` with iframe-based editor
+4. Handle nested frames (frame within frame)
+5. Test complex iframe interactions
+6. Ensure proper frame context switching
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+public class FrameManager {
+
+    private WebDriver driver;
+
+    public FrameManager(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    // TODO 1: Implement switchToFrame(WebElement)
+    public void switchToFrame(WebElement frameElement) {
+        // Your code here
+    }
+
+    // TODO 2: Implement switchToFrame(String nameOrId)
+    public void switchToFrame(String nameOrId) {
+        // Your code here
+    }
+
+    // TODO 3: Implement switchToFrame(int index)
+    public void switchToFrame(int index) {
+        // Your code here
+    }
+
+    // TODO 4: Implement switchToNestedFrames()
+    public void switchToNestedFrames(WebElement... frames) {
+        // Switch through multiple frames in sequence
+        // Your code here
+    }
+
+    // TODO 5: Implement switchToDefaultContent()
+    public void switchToDefaultContent() {
+        // Your code here
+    }
+
+    // TODO 6: Implement switchToParentFrame()
+    public void switchToParentFrame() {
+        // Your code here
+    }
+
+    // TODO 7: Implement executeInFrame()
+    public void executeInFrame(WebElement frameElement, Runnable action) {
+        // Switch to frame, execute action, switch back
+        // Your code here
+    }
+}
+```
+
+**Page Using Frame Manager:**
+
+```java
+package pages;
+
+import utils.FrameManager;
+
+public class ArticleEditorPage extends BasePage {
+
+    private FrameManager frameManager;
+
+    @FindBy(id = "editor-frame")
+    private WebElement editorFrame;
+
+    @FindBy(id = "media-frame")
+    private WebElement mediaFrame;
+
+    // Elements inside editor frame
+    @FindBy(css = ".editor-content")
+    private WebElement editorContent;
+
+    @FindBy(id = "bold-button")
+    private WebElement boldButton;
+
+    @FindBy(id = "save-button")
+    private WebElement saveButton;
+
+    public ArticleEditorPage(WebDriver driver) {
+        super(driver);
+        this.frameManager = new FrameManager(driver);
+    }
+
+    // TODO: Implement typeInEditor()
+    public ArticleEditorPage typeInEditor(String text) {
+        // Switch to editor frame, type, switch back
+        return this;
+    }
+
+    // TODO: Implement makeBold()
+    public ArticleEditorPage makeBold() {
+        // Switch to frame, click bold, switch back
+        return this;
+    }
+
+    // TODO: Implement insertMediaFromGallery()
+    public ArticleEditorPage insertMediaFromGallery(String mediaName) {
+        // Handle nested frames
+        return this;
+    }
+
+    // TODO: Implement getEditorContent()
+    public String getEditorContent() {
+        // Your code here
+        return "";
+    }
+
+    // TODO: Implement saveArticle()
+    public ArticleEditorPage saveArticle() {
+        // Save button is outside frame
+        return this;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(editorFrame);
+    }
+}
+```
+
+**Expected Outcome:**
+- Successful iframe switching and interaction
+- Nested frames handled correctly
+- No NoSuchElementException from wrong context
+- Clean abstraction of frame complexity
+
+**Common Mistakes to Avoid:**
+- Forgetting to switch back to default content
+- Not waiting for frame to be available
+- Mixing up frame switching order
+- Losing context after page refresh
+
+---
+
+### Exercise 6: Refactor Legacy Test to POM (45 min)
+
+**Objective:** Transform a messy non-POM test into clean, maintainable page object structure.
+
+**Scenario:** You inherited a legacy test with hardcoded locators, no page objects, and mixed concerns. Refactor it to follow POM best practices.
+
+**Legacy Test (What NOT to do):**
+
+```java
+public class LegacyCheckoutTest {
+
+    @Test
+    public void testCheckout() {
+        driver.get("https://example.com/products");
+
+        // Direct driver usage - BAD
+        driver.findElement(By.id("search-box")).sendKeys("laptop");
+        driver.findElement(By.id("search-btn")).click();
+
+        Thread.sleep(2000); // BAD
+
+        driver.findElement(By.cssSelector(".product-item:first-child")).click();
+        driver.findElement(By.id("add-to-cart")).click();
+        driver.findElement(By.id("cart-icon")).click();
+
+        WebElement checkoutBtn = driver.findElement(By.id("checkout"));
+        checkoutBtn.click();
+
+        // Hardcoded test data - BAD
+        driver.findElement(By.id("firstName")).sendKeys("John");
+        driver.findElement(By.id("lastName")).sendKeys("Doe");
+        driver.findElement(By.id("email")).sendKeys("john@test.com");
+
+        driver.findElement(By.id("submit-order")).click();
+
+        // Assertion in wrong place - BAD
+        String confirmation = driver.findElement(By.className("confirmation")).getText();
+        Assert.assertTrue(confirmation.contains("success"));
+    }
+}
+```
+
+**Requirements:**
+1. Create separate page objects: SearchPage, ProductPage, CartPage, CheckoutPage, ConfirmationPage
+2. Extract locators from test to page objects
+3. Use PageFactory and @FindBy annotations
+4. Implement BasePage with common methods
+5. Externalize test data
+6. Add proper waits instead of Thread.sleep
+7. Write clean, readable refactored test
+
+**Code Template:**
+
+```java
+// TODO 1: Create SearchPage
+package pages;
+
+public class SearchPage extends BasePage {
+
+    @FindBy(id = "search-box")
+    private WebElement searchBox;
+
+    @FindBy(id = "search-btn")
+    private WebElement searchButton;
+
+    // TODO: Implement search() method
+    public ProductListingPage search(String query) {
+        // Your code here
+        return new ProductListingPage(driver);
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(searchBox);
+    }
+}
+
+// TODO 2: Create ProductListingPage
+// TODO 3: Create ProductPage
+// TODO 4: Create CartPage
+// TODO 5: Create CheckoutPage
+// TODO 6: Create ConfirmationPage
+
+// TODO 7: Create refactored test
+package tests;
+
+public class RefactoredCheckoutTest extends BaseTest {
+
+    @Test
+    public void testCheckout() {
+        // TODO: Rewrite using page objects
+        // Should be clean and readable
+    }
+}
+```
+
+**Expected Outcome:**
+- Clean test with page object usage
+- No direct driver usage in test
+- Locators encapsulated in page classes
+- Proper waits instead of Thread.sleep
+- Test data externalized
+- Assertions only in test class
+
+**Common Mistakes to Avoid:**
+- Leaving some driver calls in test
+- Forgetting to initialize page objects
+- Not using proper waits
+- Keeping test data in page objects
+
+---
+
+## Solution Approach for Exercises
+
+### Exercise 1 Solution Hints:
+- Each fluent method should call BasePage methods (type, click)
+- Return `this` after each action except final submission
+- registerUser() should chain all individual methods
+- Use descriptive method names for readability
+
+### Exercise 2 Solution Hints:
+- NavigationComponent should be initialized in every page's constructor
+- Provide getNavigation() method in each page
+- Component methods should handle their own waits
+- Consider making component methods fluent too
+
+### Exercise 3 Solution Hints:
+- Use ExpectedCondition<Boolean> for custom waits
+- Handle TimeoutException gracefully
+- JavaScript Executor needed for jQuery wait
+- Test both success and timeout scenarios
+
+### Exercise 4 Solution Hints:
+- Store parent handle in constructor
+- Use Set<String> to iterate window handles
+- Always close windows you open
+- Switch back to parent after operations
+
+### Exercise 5 Solution Hints:
+- Wait for frame availability before switching
+- Always switch back to default content when done
+- Use try-finally to ensure switching back
+- Test frame switching order carefully
+
+### Exercise 6 Solution Hints:
+- Start by identifying page transitions
+- Create one page object per screen
+- Extract all findElement() calls to @FindBy
+- Move all actions to page objects
+- Keep only assertions in test
 
 ---
 

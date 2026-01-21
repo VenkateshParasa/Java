@@ -1737,6 +1737,529 @@ public class BaseTest {
 
 ---
 
+## Beginner-Friendly Exercises
+
+### Exercise 1: Create Basic Login Page Object (20 min)
+
+**Objective:** Build a simple LoginPage class without PageFactory to understand POM fundamentals.
+
+**Scenario:** You're automating login functionality for an e-commerce website.
+
+**Requirements:**
+1. Create a `LoginPage` class with locators for username, password, and login button
+2. Implement methods: `enterUsername()`, `enterPassword()`, `clickLogin()`
+3. Create a combined `login()` method that performs all actions
+4. Write a test class to verify valid login functionality
+
+**Code Template:**
+```java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class LoginPage {
+    WebDriver driver;
+
+    // TODO: Define locators
+    private By usernameField = By.id("___");
+    private By passwordField = By.id("___");
+    private By loginButton = By.id("___");
+
+    public LoginPage(WebDriver driver) {
+        // TODO: Initialize driver
+    }
+
+    public void enterUsername(String username) {
+        // TODO: Implement
+    }
+
+    public void enterPassword(String password) {
+        // TODO: Implement
+    }
+
+    public void clickLogin() {
+        // TODO: Implement
+    }
+
+    public void login(String username, String password) {
+        // TODO: Combine all actions
+    }
+}
+```
+
+**Expected Outcome:**
+- LoginPage class with proper locators
+- Methods performing correct actions
+- Test successfully logs in to application
+- Code is clean and maintainable
+
+**Solution Approach:**
+1. Identify web elements on login page using browser DevTools
+2. Create By locators for each element
+3. Initialize WebDriver in constructor
+4. Implement individual action methods using `driver.findElement()`
+5. Create login() method that calls all individual methods
+6. Write test class with setup, test, and teardown methods
+
+**Common Mistakes to Avoid:**
+- Hardcoding test data in page class
+- Adding assertions in page methods
+- Forgetting to initialize driver in constructor
+- Using public locators instead of private
+
+---
+
+### Exercise 2: Convert to PageFactory Implementation (25 min)
+
+**Objective:** Learn PageFactory by converting the previous exercise's LoginPage.
+
+**Scenario:** Refactor your LoginPage class to use PageFactory with @FindBy annotations.
+
+**Requirements:**
+1. Convert all By locators to @FindBy annotations
+2. Change WebElements to use @FindBy
+3. Initialize elements using `PageFactory.initElements()`
+4. Ensure all methods work correctly with new approach
+5. Compare code readability with previous version
+
+**Code Template:**
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class LoginPage {
+    WebDriver driver;
+
+    @FindBy(id = "username")
+    private WebElement usernameField;
+
+    @FindBy(id = "password")
+    private WebElement passwordField;
+
+    @FindBy(id = "loginBtn")
+    private WebElement loginButton;
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+        // TODO: Initialize PageFactory
+    }
+
+    // TODO: Implement methods using WebElements directly
+}
+```
+
+**Expected Outcome:**
+- Cleaner code with @FindBy annotations
+- PageFactory properly initialized
+- All methods working correctly
+- Understanding of lazy initialization concept
+
+**Solution Approach:**
+1. Replace By locators with @FindBy annotations
+2. Change `driver.findElement()` calls to direct WebElement usage
+3. Add `PageFactory.initElements(driver, this)` in constructor
+4. Test all methods to ensure functionality remains same
+5. Note improved code readability
+
+**Common Mistakes to Avoid:**
+- Forgetting `PageFactory.initElements()` call
+- Using public WebElements instead of private
+- Not understanding lazy initialization
+- Mixing By locators with @FindBy in same class
+
+---
+
+### Exercise 3: Implement BasePage with Common Methods (30 min)
+
+**Objective:** Create a reusable BasePage class with common WebDriver operations.
+
+**Scenario:** Multiple page objects share common functionality like clicks, typing, and waits.
+
+**Requirements:**
+1. Create `BasePage` class with protected WebDriver and WebDriverWait
+2. Implement common methods: `click()`, `type()`, `getText()`, `isDisplayed()`
+3. Add wait methods: `waitForElement()`, `waitForClickable()`
+4. Make LoginPage extend BasePage
+5. Refactor LoginPage methods to use BasePage methods
+
+**Code Template:**
+```java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+
+public class BasePage {
+    protected WebDriver driver;
+    protected WebDriverWait wait;
+
+    public BasePage(WebDriver driver) {
+        // TODO: Initialize driver and wait
+    }
+
+    protected WebElement waitForElement(By locator) {
+        // TODO: Implement explicit wait
+    }
+
+    protected void click(By locator) {
+        // TODO: Wait and click
+    }
+
+    protected void type(By locator, String text) {
+        // TODO: Wait, clear, and type
+    }
+
+    protected String getText(By locator) {
+        // TODO: Wait and get text
+    }
+
+    protected boolean isDisplayed(By locator) {
+        // TODO: Check if element is displayed
+    }
+}
+```
+
+**Expected Outcome:**
+- Reusable BasePage with common operations
+- Proper wait strategies implemented
+- LoginPage inherits and uses BasePage methods
+- Reduced code duplication
+
+**Solution Approach:**
+1. Create BasePage class with protected members
+2. Initialize WebDriverWait with appropriate timeout
+3. Implement wait methods using ExpectedConditions
+4. Add common action methods that use waits
+5. Make LoginPage extend BasePage
+6. Refactor LoginPage to use inherited methods
+
+**Common Mistakes to Avoid:**
+- Using private instead of protected for members
+- Not implementing waits in common methods
+- Hardcoding timeout values
+- Forgetting to call super() in page constructors
+
+---
+
+### Exercise 4: Create HomePage with Navigation (35 min)
+
+**Objective:** Build a HomePage object that demonstrates page navigation and method chaining.
+
+**Scenario:** After login, users land on HomePage with multiple navigation options.
+
+**Requirements:**
+1. Create `HomePage` class with PageFactory
+2. Implement navigation methods that return new page objects
+3. Add verification methods (e.g., `isLoggedIn()`, `getWelcomeMessage()`)
+4. Use method chaining where appropriate
+5. Update LoginPage to return HomePage after successful login
+
+**Code Template:**
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class HomePage extends BasePage {
+
+    @FindBy(className = "welcome-message")
+    private WebElement welcomeMessage;
+
+    @FindBy(linkText = "Products")
+    private WebElement productsLink;
+
+    @FindBy(linkText = "Cart")
+    private WebElement cartLink;
+
+    @FindBy(linkText = "Logout")
+    private WebElement logoutLink;
+
+    public HomePage(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(driver, this);
+    }
+
+    public boolean isLoggedIn() {
+        // TODO: Check if welcome message is displayed
+    }
+
+    public String getWelcomeMessage() {
+        // TODO: Return welcome message text
+    }
+
+    public ProductsPage goToProducts() {
+        // TODO: Click products link and return ProductsPage
+    }
+
+    public CartPage goToCart() {
+        // TODO: Click cart link and return CartPage
+    }
+
+    public LoginPage logout() {
+        // TODO: Click logout and return LoginPage
+    }
+}
+```
+
+**Expected Outcome:**
+- HomePage with navigation methods
+- Methods return appropriate page objects
+- Successful page-to-page navigation
+- Clean test flow using method returns
+
+**Solution Approach:**
+1. Create HomePage extending BasePage
+2. Define @FindBy elements for navigation
+3. Implement verification methods
+4. Create navigation methods that return new page objects
+5. Update LoginPage.login() to return HomePage
+6. Write end-to-end test: Login → Navigate → Logout
+
+**Common Mistakes to Avoid:**
+- Returning void from navigation methods
+- Not creating page object instances in navigation methods
+- Missing PageFactory initialization
+- Hardcoding verification logic instead of using methods
+
+---
+
+### Exercise 5: Build Complete Product Search Flow (40 min)
+
+**Objective:** Implement a complete user flow using multiple page objects.
+
+**Scenario:** User searches for a product, views details, and adds to cart.
+
+**Requirements:**
+1. Create `SearchPage` with search functionality
+2. Create `ProductListPage` to handle search results
+3. Create `ProductDetailsPage` for individual products
+4. Implement complete flow: Search → Select → Add to Cart
+5. Write test that covers entire flow with assertions
+
+**Code Template:**
+```java
+// SearchPage.java
+public class SearchPage extends BasePage {
+    @FindBy(id = "searchBox")
+    private WebElement searchBox;
+
+    @FindBy(id = "searchButton")
+    private WebElement searchButton;
+
+    public SearchPage(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(driver, this);
+    }
+
+    public ProductListPage searchFor(String product) {
+        // TODO: Enter search term and click search
+    }
+}
+
+// ProductListPage.java
+public class ProductListPage extends BasePage {
+    @FindBy(className = "product-item")
+    private List<WebElement> productItems;
+
+    public ProductListPage(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(driver, this);
+    }
+
+    public int getProductCount() {
+        // TODO: Return count of products
+    }
+
+    public ProductDetailsPage selectProduct(int index) {
+        // TODO: Click product at index
+    }
+}
+
+// ProductDetailsPage.java
+public class ProductDetailsPage extends BasePage {
+    @FindBy(id = "productTitle")
+    private WebElement productTitle;
+
+    @FindBy(id = "addToCart")
+    private WebElement addToCartButton;
+
+    public ProductDetailsPage(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(driver, this);
+    }
+
+    public String getProductTitle() {
+        // TODO: Return product title
+    }
+
+    public CartPage addToCart() {
+        // TODO: Click add to cart
+    }
+}
+```
+
+**Expected Outcome:**
+- Three interconnected page objects
+- Smooth navigation between pages
+- Complete test flow working end-to-end
+- Proper assertions at each step
+
+**Solution Approach:**
+1. Create each page object with appropriate locators
+2. Implement action methods that return next page
+3. Add verification methods for assertions
+4. Write test method that chains all actions
+5. Add assertions to verify each step succeeded
+6. Ensure proper cleanup after test
+
+**Common Mistakes to Avoid:**
+- Breaking page object chain by returning void
+- Adding business logic in page classes
+- Not handling dynamic elements properly
+- Missing assertions between steps
+
+---
+
+### Exercise 6: Handle Dynamic Elements and Dropdowns (45 min)
+
+**Objective:** Master handling dynamic elements, dropdowns, and complex UI interactions in POM.
+
+**Scenario:** Registration form with dropdowns, checkboxes, and dynamically loaded elements.
+
+**Requirements:**
+1. Create `RegistrationPage` with various form elements
+2. Handle dropdowns using Select class
+3. Implement checkbox and radio button methods
+4. Handle dynamically appearing elements with proper waits
+5. Add form validation verification
+6. Write comprehensive registration test
+
+**Code Template:**
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.Select;
+
+public class RegistrationPage extends BasePage {
+
+    @FindBy(id = "firstName")
+    private WebElement firstNameField;
+
+    @FindBy(id = "email")
+    private WebElement emailField;
+
+    @FindBy(id = "country")
+    private WebElement countryDropdown;
+
+    @FindBy(id = "agreeTerms")
+    private WebElement termsCheckbox;
+
+    @FindBy(id = "gender-male")
+    private WebElement genderMaleRadio;
+
+    @FindBy(id = "submit")
+    private WebElement submitButton;
+
+    @FindBy(className = "success-message")
+    private WebElement successMessage;
+
+    @FindBy(className = "error-message")
+    private WebElement errorMessage;
+
+    public RegistrationPage(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(driver, this);
+    }
+
+    public RegistrationPage enterFirstName(String firstName) {
+        // TODO: Type first name
+        return this;
+    }
+
+    public RegistrationPage enterEmail(String email) {
+        // TODO: Type email
+        return this;
+    }
+
+    public RegistrationPage selectCountry(String country) {
+        // TODO: Use Select class for dropdown
+        return this;
+    }
+
+    public RegistrationPage checkTermsCheckbox() {
+        // TODO: Click checkbox if not selected
+        return this;
+    }
+
+    public RegistrationPage selectGenderMale() {
+        // TODO: Click male radio button
+        return this;
+    }
+
+    public void submitForm() {
+        // TODO: Click submit button
+    }
+
+    public boolean isSuccessMessageDisplayed() {
+        // TODO: Wait and check for success message
+    }
+
+    public String getSuccessMessage() {
+        // TODO: Return success message text
+    }
+
+    public boolean isErrorMessageDisplayed() {
+        // TODO: Check if error message exists
+    }
+
+    public void registerUser(String firstName, String email, String country) {
+        // TODO: Complete registration flow using method chaining
+    }
+}
+```
+
+**Expected Outcome:**
+- Complete RegistrationPage handling various element types
+- Proper dropdown handling with Select class
+- Checkbox and radio button methods working
+- Dynamic element waits implemented correctly
+- Fluent interface with method chaining
+- Comprehensive test covering happy and sad paths
+
+**Solution Approach:**
+1. Create RegistrationPage with all form element locators
+2. Implement type() methods for text inputs
+3. Use Select class for dropdown interactions
+4. Check checkbox state before clicking
+5. Add explicit waits for dynamic success/error messages
+6. Implement registerUser() method with method chaining
+7. Write tests for both successful and failed registration
+
+**Common Mistakes to Avoid:**
+- Not using Select class for dropdowns
+- Clicking checkbox without checking current state
+- Missing waits for dynamically appearing messages
+- Not returning 'this' for method chaining
+- Forgetting to handle StaleElementReferenceException
+
+---
+
 ## Summary
 
 ### Key Takeaways

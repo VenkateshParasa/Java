@@ -440,35 +440,362 @@ Assert.fail("Test failed");
 
 ---
 
-## 7. Practice Exercise: Refactoring Preparation
+## 7. Beginner-Friendly Exercises
 
-### Exercise 1: Identify Improvements
+### Exercise 1: Code Analysis & Refactoring Plan
 
-Review your Week 2 code and identify:
-1. Repeated code blocks
-2. Hardcoded values
-3. Manual verifications
-4. Setup/teardown duplication
+**Objective:** Identify improvement areas in existing Selenium code to prepare for framework adoption.
 
-### Exercise 2: Plan Test Cases
+**Scenario:** You have a basic Selenium script that tests login functionality. Analyze it and identify what needs improvement before moving to TestNG.
 
-For a login feature, plan:
-1. Valid login test
-2. Invalid credentials test
-3. Empty fields test
-4. Remember me test
-5. Forgot password test
+**Requirements:**
+1. Review the provided code sample
+2. List all repeated code blocks
+3. Identify hardcoded values
+4. Note manual verifications that should be assertions
+5. Document setup/teardown duplication
 
-### Exercise 3: Design Test Data
+**Code Sample to Analyze:**
+```java
+public class LoginScript {
+    public static void main(String[] args) {
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
-Create a structure for:
+        // Test 1: Valid login
+        driver.get("https://example.com/login");
+        driver.findElement(By.id("username")).sendKeys("testuser");
+        driver.findElement(By.id("password")).sendKeys("pass123");
+        driver.findElement(By.id("loginBtn")).click();
+        if (driver.getCurrentUrl().contains("dashboard")) {
+            System.out.println("Test 1 Passed");
+        }
+        driver.quit();
+
+        // Test 2: Invalid login
+        WebDriver driver2 = new ChromeDriver();
+        driver2.manage().window().maximize();
+        driver2.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver2.get("https://example.com/login");
+        driver2.findElement(By.id("username")).sendKeys("wronguser");
+        driver2.findElement(By.id("password")).sendKeys("wrongpass");
+        driver2.findElement(By.id("loginBtn")).click();
+        if (driver2.findElement(By.className("error")).isDisplayed()) {
+            System.out.println("Test 2 Passed");
+        }
+        driver2.quit();
+    }
+}
 ```
-Test Data:
-- Valid users (username, password)
-- Invalid users
-- Test URLs
-- Expected messages
+
+**Expected Outcome:**
+- Documented list of at least 5 improvement areas
+- Identified all repeated setup code
+- Listed all hardcoded values (URLs, credentials, locators)
+- Noted manual verifications that need assertions
+
+**Solution Approach:**
+1. Create a document listing issues found
+2. Categorize issues: duplication, hardcoding, verification, structure
+3. For each issue, note why it's problematic
+4. Suggest how TestNG would solve each issue
+
+**Common Mistakes to Avoid:**
+- Ignoring subtle duplication like browser setup
+- Missing hardcoded values in locators
+- Not recognizing manual verifications as a problem
+- Focusing only on obvious issues
+
+---
+
+### Exercise 2: Test Case Planning for Framework
+
+**Objective:** Plan comprehensive test cases for a feature in a framework-ready structure.
+
+**Scenario:** You need to test a login feature. Create a detailed test plan that's ready for TestNG implementation.
+
+**Requirements:**
+1. Design at least 6 test cases covering different scenarios
+2. Include test case ID, description, test data, and expected result
+3. Identify which tests should be in smoke vs regression groups
+4. Plan test dependencies (which tests must run before others)
+5. Assign priority to each test
+
+**Test Case Template:**
 ```
+Test ID: TC_LOGIN_001
+Description: Verify successful login with valid credentials
+Test Data: username=validuser@example.com, password=Valid@123
+Priority: High
+Group: Smoke
+Depends On: None
+Expected Result: User redirected to dashboard
+```
+
+**Expected Outcome:**
+- At least 6 well-structured test cases
+- Clear categorization (smoke, regression)
+- Logical test priorities
+- Identified dependencies
+
+**Solution Approach:**
+1. Start with positive scenarios (valid login)
+2. Add negative scenarios (invalid credentials, empty fields)
+3. Consider edge cases (special characters, SQL injection)
+4. Think about UI validation (error messages, field validation)
+5. Plan security tests (password masking, session timeout)
+
+**Common Mistakes to Avoid:**
+- Creating only happy path tests
+- Ignoring edge cases and boundary values
+- Not considering security aspects
+- Missing UI validation tests
+- Poor test case organization
+
+---
+
+### Exercise 3: Test Data Structure Design
+
+**Objective:** Design a maintainable test data structure for data-driven testing.
+
+**Scenario:** Create a test data structure that can be easily used with TestNG DataProviders.
+
+**Requirements:**
+1. Design data structure for login tests (valid and invalid scenarios)
+2. Include at least 5 data sets
+3. Plan structure for different test types (login, search, checkout)
+4. Document how data will be organized
+5. Consider future scalability
+
+**Expected Outcome:**
+```java
+// Login Test Data
+String[][] loginData = {
+    // username, password, expectedResult, errorMessage
+    {"validuser@test.com", "Pass@123", "success", ""},
+    {"invaliduser@test.com", "wrong", "fail", "Invalid credentials"},
+    {"", "Pass@123", "fail", "Username required"},
+    {"validuser@test.com", "", "fail", "Password required"},
+    {"admin@test.com", "Admin@123", "success", ""}
+};
+
+// Search Test Data
+String[][] searchData = {
+    // searchTerm, expectedCount, category
+    {"laptop", "10+", "electronics"},
+    {"book", "20+", "books"},
+    {"xyz123", "0", "all"}
+};
+```
+
+**Solution Approach:**
+1. Identify all fields needed for each test type
+2. Use 2D arrays for TestNG DataProvider compatibility
+3. Include expected results in data structure
+4. Group related data together
+5. Document data structure format
+
+**Common Mistakes to Avoid:**
+- Creating inconsistent data structures
+- Missing expected results in test data
+- Not planning for negative scenarios
+- Hardcoding data instead of externalizing
+- Poor data organization
+
+---
+
+### Exercise 4: Migration Planning - From Script to Framework
+
+**Objective:** Create a detailed plan to migrate existing scripts to TestNG framework.
+
+**Scenario:** You have 10 existing Selenium scripts that need to be converted to TestNG tests.
+
+**Requirements:**
+1. Create a migration checklist
+2. Identify common setup code to extract to @BeforeMethod
+3. Plan test class structure
+4. Design base test class
+5. Document step-by-step migration process
+
+**Expected Outcome:**
+```
+Migration Plan:
+1. Analysis Phase
+   - Review all 10 scripts
+   - Identify common patterns
+   - List all unique test scenarios
+
+2. Design Phase
+   - Create BaseTest class with setup/teardown
+   - Design test class hierarchy
+   - Plan testng.xml structure
+
+3. Implementation Phase
+   - Convert main() methods to @Test methods
+   - Extract setup to @BeforeMethod
+   - Replace manual verifications with Assert
+   - Group tests (smoke, regression)
+
+4. Validation Phase
+   - Run all converted tests
+   - Compare results with original scripts
+   - Fix any failures
+```
+
+**Solution Approach:**
+1. Start with analysis of existing code
+2. Identify reusable components
+3. Create base classes first
+4. Convert one script as template
+5. Apply template to remaining scripts
+
+**Common Mistakes to Avoid:**
+- Converting everything at once without planning
+- Not creating base classes
+- Skipping validation phase
+- Not documenting the process
+- Ignoring code organization
+
+---
+
+### Exercise 5: Base Test Class Design
+
+**Objective:** Design a robust base test class that all test classes will extend.
+
+**Scenario:** Create a BaseTest class with proper setup, teardown, and utility methods.
+
+**Requirements:**
+1. Include WebDriver initialization
+2. Add browser configuration methods
+3. Implement common utility methods
+4. Add proper error handling
+5. Include logging statements
+
+**Code Template:**
+```java
+public class BaseTest {
+    protected WebDriver driver;
+    protected String baseUrl;
+
+    // TODO: Add @BeforeMethod for setup
+    // TODO: Add @AfterMethod for teardown
+    // TODO: Add utility methods (takeScreenshot, waitForElement)
+    // TODO: Add browser factory method
+    // TODO: Add logging
+}
+```
+
+**Expected Outcome:**
+```java
+public class BaseTest {
+    protected WebDriver driver;
+    protected String baseUrl = "https://example.com";
+
+    @BeforeMethod
+    public void setup() {
+        System.out.println("Setting up browser...");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    }
+
+    @AfterMethod
+    public void teardown() {
+        System.out.println("Closing browser...");
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    // Utility methods
+    protected void takeScreenshot(String testName) {
+        // Screenshot implementation
+    }
+
+    protected void waitForElement(By locator, int seconds) {
+        // Explicit wait implementation
+    }
+}
+```
+
+**Solution Approach:**
+1. Start with basic setup/teardown
+2. Add WebDriver management
+3. Implement utility methods
+4. Add error handling
+5. Include logging for debugging
+
+**Common Mistakes to Avoid:**
+- Not handling driver cleanup properly
+- Missing null checks
+- Hardcoding values instead of using variables
+- Not making methods reusable
+- Forgetting error handling
+
+---
+
+### Exercise 6: TestNG Configuration File Planning
+
+**Objective:** Design testng.xml files for different test execution scenarios.
+
+**Scenario:** Create multiple testng.xml configurations for smoke tests, regression tests, and full suite.
+
+**Requirements:**
+1. Create smoke-suite.xml for quick validation
+2. Create regression-suite.xml for comprehensive testing
+3. Create master-suite.xml that includes both
+4. Configure parallel execution
+5. Add parameters for browser and environment
+
+**Expected Outcome:**
+```xml
+<!-- smoke-suite.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Smoke Test Suite" parallel="methods" thread-count="2">
+    <parameter name="browser" value="chrome"/>
+    <parameter name="env" value="QA"/>
+
+    <test name="Critical Smoke Tests">
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.HomePageTest"/>
+        </classes>
+    </test>
+</suite>
+
+<!-- regression-suite.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Regression Suite" parallel="classes" thread-count="3">
+    <parameter name="browser" value="chrome"/>
+    <parameter name="env" value="QA"/>
+
+    <test name="Full Regression">
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.SearchTest"/>
+            <class name="tests.CheckoutTest"/>
+            <class name="tests.PaymentTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Solution Approach:**
+1. Identify test categories (smoke, regression)
+2. Group related tests together
+3. Configure appropriate parallel execution
+4. Add parameters for flexibility
+5. Test each configuration
+
+**Common Mistakes to Avoid:**
+- Not testing suite files before committing
+- Missing DOCTYPE declaration
+- Incorrect class paths
+- Over-complicating parallel execution
+- Not using parameters effectively
 
 ---
 

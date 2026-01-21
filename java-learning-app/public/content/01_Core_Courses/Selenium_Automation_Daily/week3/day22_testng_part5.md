@@ -1666,6 +1666,640 @@ public class ExecutionListener implements ITestListener {
 
 ---
 
+## 15. Practice Exercises
+
+### Exercise 1: Implement ThreadLocal for Thread-Safe WebDriver (25 minutes)
+
+**Objective:** Create a thread-safe WebDriver management system using ThreadLocal for parallel test execution.
+
+**Scenario:** You need to run tests in parallel, and each thread must have its own WebDriver instance to avoid conflicts.
+
+**Requirements:**
+1. Create a DriverManager class with ThreadLocal WebDriver
+2. Implement methods: setDriver(), getDriver(), quitDriver()
+3. Create a BaseTest class that uses DriverManager
+4. Implement 3 simple test methods
+5. Create testng.xml with parallel="methods" and thread-count="3"
+6. Verify each test gets its own driver instance
+
+**Code Template:**
+```java
+// DriverManager.java
+public class DriverManager {
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    public static void setDriver(WebDriver driverInstance) {
+        // Your implementation here
+    }
+
+    public static WebDriver getDriver() {
+        // Your implementation here
+    }
+
+    public static void quitDriver() {
+        // Your implementation here
+    }
+}
+
+// BaseTest.java
+public class BaseTest {
+    @BeforeMethod
+    public void setup() {
+        WebDriver webDriver = new ChromeDriver();
+        webDriver.manage().window().maximize();
+        DriverManager.setDriver(webDriver);
+        System.out.println("Thread " + Thread.currentThread().getId() + " - Driver initialized");
+    }
+
+    @AfterMethod
+    public void teardown() {
+        // Your implementation here
+    }
+}
+
+// ParallelTest.java
+public class ParallelTest extends BaseTest {
+    @Test
+    public void test1() {
+        WebDriver driver = DriverManager.getDriver();
+        driver.get("https://www.google.com");
+        System.out.println("Test1 on Thread: " + Thread.currentThread().getId());
+    }
+
+    // Add test2 and test3
+}
+```
+
+**Expected Outcome:**
+- Three tests run simultaneously
+- Each test has its own WebDriver instance
+- No conflicts or exceptions due to shared resources
+- Console shows different thread IDs for each test
+- All browsers properly close after tests
+
+**Solution Approach:**
+1. Implement ThreadLocal variable in DriverManager
+2. Use driver.set() in setDriver method
+3. Use driver.get() in getDriver method
+4. In quitDriver, quit driver and call driver.remove()
+5. Create BaseTest with setup and teardown
+6. Create multiple test methods
+7. Configure testng.xml with parallel="methods" and thread-count="3"
+
+**Common Mistakes to Avoid:**
+- Forgetting to call driver.remove() (causes memory leaks)
+- Not checking if driver is null before quitting
+- Using static WebDriver instead of ThreadLocal
+- Not synchronizing driver initialization
+- Forgetting to maximize window in each thread
+
+---
+
+### Exercise 2: Configure Parallel Execution Modes (20 minutes)
+
+**Objective:** Understand and implement different parallel execution modes (methods, tests, classes).
+
+**Scenario:** Create multiple test classes and experiment with different parallel execution modes to understand their behavior.
+
+**Requirements:**
+1. Create 3 test classes (LoginTest, SearchTest, CheckoutTest)
+2. Each class should have 2-3 test methods
+3. Create 3 testng.xml files:
+   - parallel="methods"
+   - parallel="tests"
+   - parallel="classes"
+4. Run each configuration and observe the execution
+5. Log thread IDs and timestamps to see execution patterns
+
+**Code Template:**
+```java
+// LoginTest.java
+public class LoginTest extends BaseTest {
+    @Test(priority = 1)
+    public void testValidLogin() {
+        System.out.println("LoginTest.testValidLogin - Thread: " + Thread.currentThread().getId() + " - Time: " + System.currentTimeMillis());
+        // Your test logic
+    }
+
+    @Test(priority = 2)
+    public void testInvalidLogin() {
+        System.out.println("LoginTest.testInvalidLogin - Thread: " + Thread.currentThread().getId() + " - Time: " + System.currentTimeMillis());
+        // Your test logic
+    }
+}
+
+// SearchTest.java and CheckoutTest.java - similar structure
+
+// testng-parallel-methods.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Parallel Methods Suite" parallel="methods" thread-count="3">
+    <test name="All Tests">
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.SearchTest"/>
+            <class name="tests.CheckoutTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome:**
+- Parallel methods: All test methods run in parallel
+- Parallel tests: Different `<test>` tags run in parallel
+- Parallel classes: Different classes run in parallel
+- Clear understanding of when to use each mode
+- Proper thread ID logging shows parallelization
+
+**Solution Approach:**
+1. Create 3 test classes with 2-3 methods each
+2. Add logging to track thread IDs and timestamps
+3. Create testng-parallel-methods.xml
+4. Create testng-parallel-tests.xml (with multiple `<test>` tags)
+5. Create testng-parallel-classes.xml
+6. Run each and compare console output
+7. Document the differences
+
+**Common Mistakes to Avoid:**
+- Confusing parallel modes
+- Using too many threads (more than CPU cores * 2)
+- Not considering test dependencies in parallel execution
+- Forgetting that priority works per thread, not globally
+- Not logging thread information to verify parallelization
+
+---
+
+### Exercise 3: Cross-Browser Parallel Testing (35 minutes)
+
+**Objective:** Implement a framework that runs tests in parallel across multiple browsers.
+
+**Scenario:** You need to run the same tests across Chrome, Firefox, and Edge simultaneously to save time.
+
+**Requirements:**
+1. Create DriverManager that supports multiple browsers
+2. Implement browser parameter handling
+3. Create testng.xml with parallel="tests" and 3 test tags (one per browser)
+4. Run same test class across all browsers in parallel
+5. Ensure each browser test is isolated
+6. Log which browser is being used by each thread
+
+**Code Template:**
+```java
+// DriverManager.java
+public class DriverManager {
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    public static void initializeDriver(String browser) {
+        WebDriver webDriver;
+
+        switch (browser.toLowerCase()) {
+            case "chrome":
+                webDriver = new ChromeDriver();
+                break;
+            case "firefox":
+                webDriver = new FirefoxDriver();
+                break;
+            case "edge":
+                webDriver = new EdgeDriver();
+                break;
+            default:
+                throw new IllegalArgumentException("Browser not supported: " + browser);
+        }
+
+        webDriver.manage().window().maximize();
+        driver.set(webDriver);
+        System.out.println("Thread " + Thread.currentThread().getId() + " - Browser: " + browser);
+    }
+
+    // Add getDriver() and quitDriver() methods
+}
+
+// BaseTest.java
+public class BaseTest {
+    @BeforeMethod
+    @Parameters("browser")
+    public void setup(@Optional("chrome") String browser) {
+        DriverManager.initializeDriver(browser);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        DriverManager.quitDriver();
+    }
+}
+
+// testng-cross-browser.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Cross Browser Suite" parallel="tests" thread-count="3">
+    <test name="Chrome Tests">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+        </classes>
+    </test>
+
+    <test name="Firefox Tests">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+        </classes>
+    </test>
+
+    <test name="Edge Tests">
+        <parameter name="browser" value="edge"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome:**
+- Three browser windows open simultaneously
+- Same tests run in all three browsers in parallel
+- No browser interference or conflicts
+- Each test completes successfully
+- Clear logging shows which browser each thread is using
+
+**Solution Approach:**
+1. Enhance DriverManager to support multiple browsers
+2. Add browser parameter to BaseTest setup
+3. Use switch statement to initialize correct browser
+4. Create testng.xml with three `<test>` tags
+5. Each test tag has different browser parameter
+6. Configure parallel="tests" and thread-count="3"
+7. Run and verify all browsers execute simultaneously
+
+**Common Mistakes to Avoid:**
+- Not handling browser parameter properly
+- Missing browser drivers (use WebDriverManager)
+- Not using ThreadLocal (causes browser conflicts)
+- Hardcoding browser selection
+- Not properly closing all browser instances
+- Using parallel="methods" instead of parallel="tests"
+
+---
+
+### Exercise 4: Manage Test Data Conflicts in Parallel Execution (30 minutes)
+
+**Objective:** Learn to handle test data conflicts when running tests in parallel.
+
+**Scenario:** Multiple tests try to create users with the same username simultaneously, causing conflicts. Implement unique test data generation.
+
+**Requirements:**
+1. Create tests that register users
+2. Implement unique data generation using UUID or timestamps
+3. Ensure each parallel test has unique test data
+4. Implement at least 3 user registration tests
+5. Run tests in parallel without data conflicts
+6. Verify each test creates unique user
+
+**Code Template:**
+```java
+public class UserRegistrationTest extends BaseTest {
+
+    private String generateUniqueUsername() {
+        // Generate unique username using UUID or timestamp
+        // Your implementation here
+    }
+
+    private String generateUniqueEmail() {
+        // Generate unique email
+        // Your implementation here
+    }
+
+    @Test
+    public void testUserRegistration1() {
+        String username = generateUniqueUsername();
+        String email = generateUniqueEmail();
+
+        System.out.println("Thread " + Thread.currentThread().getId() +
+                         " - Registering: " + username);
+
+        // Registration logic
+        WebDriver driver = DriverManager.getDriver();
+        driver.get("https://example.com/register");
+
+        // Fill registration form with unique data
+        // Your implementation here
+    }
+
+    @Test
+    public void testUserRegistration2() {
+        // Similar to test1 but separate unique data
+    }
+
+    @Test
+    public void testUserRegistration3() {
+        // Similar to test1 but separate unique data
+    }
+}
+```
+
+**Expected Outcome:**
+- All three tests run in parallel
+- Each test generates unique username and email
+- No conflicts or duplicate data errors
+- All registrations complete successfully
+- Console logs show different usernames for each thread
+
+**Solution Approach:**
+1. Create method to generate unique usernames (use UUID.randomUUID())
+2. Create method to generate unique emails (username + timestamp + @example.com)
+3. Call these methods in each test
+4. Log the generated data with thread ID
+5. Implement registration logic
+6. Configure parallel execution in testng.xml
+7. Run and verify no conflicts occur
+
+**Common Mistakes to Avoid:**
+- Using hardcoded test data (causes conflicts)
+- Not generating truly unique identifiers
+- Sharing static variables between tests
+- Not considering database primary key conflicts
+- Generating data that doesn't meet validation requirements
+- Not cleaning up test data after tests
+
+---
+
+### Exercise 5: Suite-Level Parameters and Inheritance (30 minutes)
+
+**Objective:** Master suite-level parameters and parameter inheritance across tests.
+
+**Scenario:** Create a test framework where environment settings are defined at suite level but can be overridden at test level.
+
+**Requirements:**
+1. Create testng.xml with suite-level parameters (env, browser, timeout)
+2. Create 3 test configurations that inherit and override parameters
+3. Implement BaseTest that uses these parameters
+4. Create tests that verify parameter values
+5. Demonstrate parameter inheritance and override behavior
+
+**Code Template:**
+```java
+// BaseTest.java
+public class BaseTest {
+    protected String environment;
+    protected String browser;
+    protected int timeout;
+
+    @BeforeMethod
+    @Parameters({"env", "browser", "timeout"})
+    public void setup(
+        @Optional("QA") String env,
+        @Optional("chrome") String browser,
+        @Optional("10") String timeout
+    ) {
+        this.environment = env;
+        this.browser = browser;
+        this.timeout = Integer.parseInt(timeout);
+
+        System.out.println("Thread: " + Thread.currentThread().getId());
+        System.out.println("Environment: " + this.environment);
+        System.out.println("Browser: " + this.browser);
+        System.out.println("Timeout: " + this.timeout);
+
+        // Initialize driver based on parameters
+    }
+}
+
+// testng-parameter-inheritance.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Parameter Suite">
+    <!-- Suite-level parameters (apply to all tests) -->
+    <parameter name="env" value="QA"/>
+    <parameter name="browser" value="chrome"/>
+    <parameter name="timeout" value="30"/>
+
+    <test name="Default Parameters Test">
+        <!-- Inherits all suite parameters -->
+        <classes>
+            <class name="tests.LoginTest"/>
+        </classes>
+    </test>
+
+    <test name="Override Browser Test">
+        <!-- Override browser parameter -->
+        <parameter name="browser" value="firefox"/>
+        <!-- Inherits env and timeout from suite -->
+        <classes>
+            <class name="tests.SearchTest"/>
+        </classes>
+    </test>
+
+    <test name="Override All Parameters Test">
+        <!-- Override all parameters -->
+        <parameter name="env" value="Staging"/>
+        <parameter name="browser" value="edge"/>
+        <parameter name="timeout" value="60"/>
+        <classes>
+            <class name="tests.CheckoutTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome:**
+- First test uses all suite-level parameters
+- Second test overrides browser, inherits others
+- Third test overrides all parameters
+- Clear logging shows parameter values for each test
+- Understanding of parameter inheritance hierarchy
+
+**Solution Approach:**
+1. Define suite-level parameters in XML
+2. Create multiple `<test>` tags
+3. Some tests inherit all parameters
+4. Some tests override specific parameters
+5. In BaseTest, use @Parameters with @Optional defaults
+6. Log all parameter values in setup
+7. Run suite and verify parameter behavior
+
+**Common Mistakes to Avoid:**
+- Misspelling parameter names (case-sensitive)
+- Not providing @Optional defaults
+- Not understanding inheritance order (test overrides suite)
+- Forgetting that parameters are strings (need type conversion)
+- Not logging parameters to verify behavior
+
+---
+
+### Exercise 6: Complete Parallel Execution Framework (45 minutes)
+
+**Objective:** Build a production-ready parallel execution framework with all best practices.
+
+**Scenario:** Create a comprehensive framework that supports parallel execution, multiple browsers, thread-safe operations, proper logging, and clean resource management.
+
+**Requirements:**
+1. Implement DriverManager with ThreadLocal
+2. Create comprehensive BaseTest with browser parameter support
+3. Implement test classes with proper synchronization
+4. Create Page Object classes (LoginPage, HomePage)
+5. Configure testng.xml for parallel execution
+6. Add logging to track thread execution
+7. Implement proper cleanup in @AfterMethod
+8. Create at least 6 test methods across 2-3 test classes
+
+**Code Template:**
+```java
+// DriverManager.java
+public class DriverManager {
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static ThreadLocal<String> sessionId = new ThreadLocal<>();
+
+    public static synchronized void setDriver(String browser) {
+        WebDriver webDriver;
+
+        switch (browser.toLowerCase()) {
+            case "chrome":
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--disable-notifications");
+                webDriver = new ChromeDriver(chromeOptions);
+                break;
+            case "firefox":
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                webDriver = new FirefoxDriver(firefoxOptions);
+                break;
+            default:
+                throw new IllegalArgumentException("Browser not supported: " + browser);
+        }
+
+        webDriver.manage().window().maximize();
+        webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.set(webDriver);
+        sessionId.set(String.valueOf(Thread.currentThread().getId()));
+
+        System.out.println("[Thread-" + sessionId.get() + "] Browser initialized: " + browser);
+    }
+
+    public static synchronized WebDriver getDriver() {
+        return driver.get();
+    }
+
+    public static synchronized void quitDriver() {
+        if (driver.get() != null) {
+            String session = sessionId.get();
+            driver.get().quit();
+            driver.remove();
+            sessionId.remove();
+            System.out.println("[Thread-" + session + "] Browser closed");
+        }
+    }
+}
+
+// BaseTest.java
+public class BaseTest {
+    @BeforeMethod
+    @Parameters("browser")
+    public void setup(@Optional("chrome") String browser) {
+        DriverManager.setDriver(browser);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        DriverManager.quitDriver();
+    }
+}
+
+// LoginPage.java (Page Object)
+public class LoginPage {
+    private WebDriver driver;
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public void login(String username, String password) {
+        // Implement login logic
+    }
+}
+
+// LoginTest.java
+public class LoginTest extends BaseTest {
+    @Test(priority = 1)
+    public void testValidLogin() {
+        WebDriver driver = DriverManager.getDriver();
+        System.out.println("[Thread-" + Thread.currentThread().getId() + "] Executing testValidLogin");
+
+        driver.get("https://example.com/login");
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("user@example.com", "password123");
+
+        // Add assertions
+    }
+
+    // Add more test methods
+}
+
+// testng-framework.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Parallel Framework Suite" parallel="tests" thread-count="3">
+    <parameter name="env" value="QA"/>
+
+    <test name="Chrome Tests">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.SearchTest"/>
+        </classes>
+    </test>
+
+    <test name="Firefox Tests">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.SearchTest"/>
+        </classes>
+    </test>
+
+    <test name="Edge Tests">
+        <parameter name="browser" value="edge"/>
+        <classes>
+            <class name="tests.CheckoutTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome:**
+- Framework supports parallel execution across multiple browsers
+- Thread-safe WebDriver management
+- Clean resource management (no browser leaks)
+- Proper logging with thread IDs
+- Page Object pattern implemented
+- Tests run reliably in parallel
+- Easy to add new tests and browsers
+
+**Solution Approach:**
+1. Implement DriverManager with ThreadLocal and synchronized methods
+2. Add session tracking with ThreadLocal<String>
+3. Create BaseTest with parameterized browser setup
+4. Implement Page Object classes with WebDriver
+5. Create test classes extending BaseTest
+6. Add comprehensive logging
+7. Configure testng.xml for parallel="tests"
+8. Add cleanup logic in teardown with alwaysRun = true
+9. Test with different browsers and verify stability
+
+**Common Mistakes to Avoid:**
+- Not using synchronized on DriverManager methods
+- Forgetting to remove ThreadLocal variables (memory leak)
+- Not checking for null before quitting driver
+- Poor logging (hard to debug parallel execution)
+- Not using Page Object pattern (makes tests fragile)
+- Creating test dependencies (breaks parallel execution)
+- Not properly handling waits and timeouts
+- Hardcoding test data (causes conflicts in parallel)
+
+---
+
 ## 15. Key Takeaways
 
 1. **Parallel execution** significantly reduces test execution time

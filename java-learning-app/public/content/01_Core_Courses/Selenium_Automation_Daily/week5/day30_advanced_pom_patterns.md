@@ -3108,30 +3108,1536 @@ public void clickButton() {
 
 ---
 
-## 15. Practical Exercises
+## 15. Hands-On Exercises
 
-### Exercise 1: Create Fluent Page Object
-Create a registration page with fluent interface supporting method chaining for all form fields.
-
-### Exercise 2: Build Page Component
-Create a reusable SearchBox component that can be used across multiple pages.
-
-### Exercise 3: Implement Custom Wait
-Create a custom wait condition that waits for a loading spinner to disappear and content to load.
-
-### Exercise 4: Handle Multiple Windows
-Create a page object that opens a terms and conditions popup, interacts with it, and returns to main window.
-
-### Exercise 5: iFrame Handling
-Create a page object for a WYSIWYG editor inside an iframe with formatting options.
-
-### Exercise 6: Refactor Legacy Test
-Take a provided non-POM test and refactor it into a complete POM structure with proper organization.
-
-### Exercise 7: Complete E2E Framework
-Build a complete mini-framework with BasePage, components, utilities, and at least 3 interconnected page objects.
+These progressive exercises will help you master advanced Page Object Model patterns. Start with Exercise 1 and work your way through each one.
 
 ---
+
+### Exercise 1: Build a Fluent Registration Page (30 minutes)
+
+**Objective:** Create a complete fluent page object for a registration form that supports method chaining.
+
+**Scenario:** Create a RegistrationPage that allows users to:
+- Enter first name, last name, email, password
+- Select country from dropdown
+- Accept terms and conditions
+- Submit the form
+- All methods should support chaining
+
+**Instructions:**
+
+1. Create `RegistrationPage.java` extending BasePage
+2. Add @FindBy annotations for all form fields
+3. Implement fluent methods that return `this`
+4. Add final submit method that returns next page
+5. Create test class to use the fluent interface
+
+**Code Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class RegistrationPage extends BasePage {
+
+    @FindBy(id = "firstName")
+    private WebElement firstNameField;
+
+    @FindBy(id = "lastName")
+    private WebElement lastNameField;
+
+    @FindBy(id = "email")
+    private WebElement emailField;
+
+    @FindBy(id = "password")
+    private WebElement passwordField;
+
+    @FindBy(id = "confirmPassword")
+    private WebElement confirmPasswordField;
+
+    @FindBy(id = "country")
+    private WebElement countryDropdown;
+
+    @FindBy(id = "termsCheckbox")
+    private WebElement termsCheckbox;
+
+    @FindBy(id = "registerButton")
+    private WebElement registerButton;
+
+    @FindBy(className = "success-message")
+    private WebElement successMessage;
+
+    public RegistrationPage(WebDriver driver) {
+        super(driver);
+    }
+
+    // TODO: Implement fluent method to enter first name
+    public RegistrationPage enterFirstName(String firstName) {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement fluent method to enter last name
+    public RegistrationPage enterLastName(String lastName) {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement fluent method to enter email
+    public RegistrationPage enterEmail(String email) {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement fluent method to enter password
+    public RegistrationPage enterPassword(String password) {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement fluent method to confirm password
+    public RegistrationPage confirmPassword(String password) {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement fluent method to select country
+    public RegistrationPage selectCountry(String country) {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement fluent method to accept terms
+    public RegistrationPage acceptTerms() {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement submit method returning next page
+    public WelcomePage submitRegistration() {
+        // Your code here
+        return new WelcomePage(driver);
+    }
+
+    // TODO: Implement combined fluent method for complete registration
+    public WelcomePage registerUser(String firstName, String lastName,
+                                    String email, String password,
+                                    String country) {
+        // Your code here - chain all methods
+        return submitRegistration();
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(firstNameField);
+    }
+}
+```
+
+**Test Class Template:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.RegistrationPage;
+import pages.WelcomePage;
+
+public class RegistrationTest extends BaseTest {
+
+    @Test
+    public void testFluentRegistration() {
+        RegistrationPage registrationPage = new RegistrationPage(driver);
+        driver.get("https://example.com/register");
+
+        // TODO: Use fluent interface to complete registration
+        WelcomePage welcomePage = registrationPage
+                // Chain methods here
+                ;
+
+        // TODO: Verify welcome page is displayed
+        Assert.assertTrue(welcomePage.isPageLoaded());
+    }
+
+    @Test
+    public void testCombinedRegistration() {
+        RegistrationPage registrationPage = new RegistrationPage(driver);
+        driver.get("https://example.com/register");
+
+        // TODO: Use combined method for registration
+        WelcomePage welcomePage = registrationPage.registerUser(
+                // Add parameters
+        );
+
+        Assert.assertTrue(welcomePage.isPageLoaded());
+    }
+}
+```
+
+**Expected Output:**
+- All fields should be filled correctly
+- Form should submit successfully
+- Welcome page should load
+- Test should pass with proper fluent chaining
+
+**Common Mistakes to Avoid:**
+1. ❌ Forgetting to return `this` in fluent methods
+2. ❌ Not using BasePage methods (type, click, selectByVisibleText)
+3. ❌ Missing PageFactory.initElements in constructor
+4. ❌ Not waiting for elements before interaction
+5. ❌ Returning wrong page object type from submit method
+
+**Solution Hints:**
+- Each fluent method should call BasePage methods and return `this`
+- Use `type()` from BasePage for text fields
+- Use `selectByVisibleText()` for dropdown
+- Use `click()` for checkbox and button
+- Chain all methods in the test using dot notation
+
+---
+
+### Exercise 2: Create Reusable Search Component (35 minutes)
+
+**Objective:** Build a SearchBox component that can be reused across multiple pages.
+
+**Scenario:** Your e-commerce site has a search box in the header on every page. Create a reusable SearchBox component that:
+- Accepts search query
+- Shows suggestions dropdown
+- Can be used from any page
+- Returns search results page
+
+**Instructions:**
+
+1. Create `SearchBox.java` as a component extending BasePage
+2. Add search field, search button, and suggestions dropdown
+3. Implement methods to search and select from suggestions
+4. Use this component in HomePage, ProductPage, and CartPage
+5. Write tests demonstrating reusability
+
+**Code Template:**
+
+```java
+package components;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import pages.BasePage;
+import pages.SearchResultsPage;
+import java.util.List;
+
+public class SearchBox extends BasePage {
+
+    @FindBy(id = "search-input")
+    private WebElement searchInput;
+
+    @FindBy(id = "search-button")
+    private WebElement searchButton;
+
+    @FindBy(css = ".search-suggestions")
+    private WebElement suggestionsDropdown;
+
+    @FindBy(css = ".suggestion-item")
+    private List<WebElement> suggestionItems;
+
+    @FindBy(className = "clear-search")
+    private WebElement clearSearchButton;
+
+    public SearchBox(WebDriver driver) {
+        super(driver);
+    }
+
+    // TODO: Implement method to type search query
+    public SearchBox typeSearchQuery(String query) {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Implement method to check if suggestions are displayed
+    public boolean areSuggestionsDisplayed() {
+        // Your code here
+        return false;
+    }
+
+    // TODO: Implement method to get all suggestion texts
+    public List<String> getSuggestions() {
+        // Your code here
+        return null;
+    }
+
+    // TODO: Implement method to select suggestion by text
+    public SearchResultsPage selectSuggestion(String suggestionText) {
+        // Your code here
+        return new SearchResultsPage(driver);
+    }
+
+    // TODO: Implement method to search (click search button)
+    public SearchResultsPage performSearch() {
+        // Your code here
+        return new SearchResultsPage(driver);
+    }
+
+    // TODO: Implement combined search method
+    public SearchResultsPage search(String query) {
+        // Your code here - type and click search
+        return new SearchResultsPage(driver);
+    }
+
+    // TODO: Implement method to clear search
+    public SearchBox clearSearch() {
+        // Your code here
+        return this;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(searchInput);
+    }
+}
+```
+
+**Page Integration Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import components.SearchBox;
+
+public class HomePage extends BasePage {
+
+    // TODO: Add SearchBox component
+    private SearchBox searchBox;
+
+    @FindBy(id = "hero-banner")
+    private WebElement heroBanner;
+
+    public HomePage(WebDriver driver) {
+        super(driver);
+        // TODO: Initialize SearchBox component
+        this.searchBox = new SearchBox(driver);
+    }
+
+    // TODO: Provide getter for SearchBox
+    public SearchBox getSearchBox() {
+        return searchBox;
+    }
+
+    public boolean isHeroBannerDisplayed() {
+        return isElementDisplayed(heroBanner);
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(heroBanner);
+    }
+}
+```
+
+**Test Template:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.HomePage;
+import pages.ProductPage;
+import pages.CartPage;
+import pages.SearchResultsPage;
+
+public class SearchBoxTest extends BaseTest {
+
+    @Test
+    public void testSearchFromHomePage() {
+        HomePage homePage = new HomePage(driver);
+        driver.get("https://example.com");
+
+        // TODO: Use search box component from home page
+        SearchResultsPage results = homePage.getSearchBox()
+                // Add search functionality
+                ;
+
+        Assert.assertTrue(results.isPageLoaded());
+    }
+
+    @Test
+    public void testSearchFromProductPage() {
+        ProductPage productPage = new ProductPage(driver);
+        driver.get("https://example.com/product/123");
+
+        // TODO: Use same search box component from product page
+        SearchResultsPage results = productPage.getSearchBox()
+                // Add search functionality
+                ;
+
+        Assert.assertTrue(results.isPageLoaded());
+    }
+
+    @Test
+    public void testSearchWithSuggestions() {
+        HomePage homePage = new HomePage(driver);
+        driver.get("https://example.com");
+
+        // TODO: Type query, wait for suggestions, select one
+        SearchResultsPage results = homePage.getSearchBox()
+                // Add suggestion selection logic
+                ;
+
+        Assert.assertTrue(results.isPageLoaded());
+    }
+}
+```
+
+**Expected Output:**
+- SearchBox component works on all pages
+- Suggestions appear when typing
+- Search returns correct results page
+- Component is truly reusable
+
+**Common Mistakes to Avoid:**
+1. ❌ Making SearchBox page-specific instead of generic
+2. ❌ Not initializing component in each page's constructor
+3. ❌ Exposing WebElements instead of methods
+4. ❌ Forgetting to wait for suggestions dropdown
+5. ❌ Not using BasePage methods for interactions
+
+**Solution Hints:**
+- SearchBox should extend BasePage
+- Initialize new SearchBox(driver) in each page's constructor
+- Use getTextFromElements() for getting all suggestions
+- Wait for suggestionsDropdown to be visible
+- Stream API helps find suggestion by text
+
+---
+
+### Exercise 3: Implement Custom Wait Conditions (40 minutes)
+
+**Objective:** Create custom wait conditions for application-specific scenarios.
+
+**Scenario:** Your application has:
+- Loading spinner that appears during AJAX calls
+- Dynamic product count that updates
+- Progress bar that shows completion
+- Notification messages that auto-dismiss
+
+Create custom waits to handle these scenarios.
+
+**Instructions:**
+
+1. Create `CustomWaitConditions.java` utility class
+2. Implement custom ExpectedCondition for each scenario
+3. Create a page object that uses these custom waits
+4. Write tests to verify the custom waits work correctly
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import java.util.List;
+
+public class CustomWaitConditions {
+
+    // TODO: Custom wait for loading spinner to disappear
+    public static ExpectedCondition<Boolean> loadingSpinnerDisappears(
+            WebElement loadingSpinner) {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                // Your code here
+                // Return true when spinner is not displayed
+                return false;
+            }
+        };
+    }
+
+    // TODO: Custom wait for element count to be greater than expected
+    public static ExpectedCondition<Boolean> elementCountGreaterThan(
+            List<WebElement> elements, int expectedCount) {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                // Your code here
+                // Return true when elements.size() > expectedCount
+                return false;
+            }
+        };
+    }
+
+    // TODO: Custom wait for progress bar to reach percentage
+    public static ExpectedCondition<Boolean> progressBarReaches(
+            WebElement progressBar, int percentage) {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                // Your code here
+                // Get aria-valuenow or style width, compare to percentage
+                return false;
+            }
+        };
+    }
+
+    // TODO: Custom wait for text to change from initial value
+    public static ExpectedCondition<Boolean> textChangesFrom(
+            WebElement element, String initialText) {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                // Your code here
+                // Return true when element text differs from initialText
+                return false;
+            }
+        };
+    }
+
+    // TODO: Custom wait for notification to disappear
+    public static ExpectedCondition<Boolean> notificationDisappears(
+            WebElement notification) {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                // Your code here
+                // Return true when notification is not displayed or stale
+                return false;
+            }
+        };
+    }
+
+    // TODO: Custom wait for AJAX calls to complete (jQuery)
+    public static ExpectedCondition<Boolean> jQueryAjaxComplete() {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                // Your code here
+                // Execute JS: return jQuery.active == 0
+                return false;
+            }
+        };
+    }
+}
+```
+
+**Page Object Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.CustomWaitConditions;
+import java.time.Duration;
+import java.util.List;
+
+public class DynamicContentPage extends BasePage {
+
+    private WebDriverWait wait;
+
+    @FindBy(className = "loading-spinner")
+    private WebElement loadingSpinner;
+
+    @FindBy(css = ".product-item")
+    private List<WebElement> productItems;
+
+    @FindBy(id = "progress-bar")
+    private WebElement progressBar;
+
+    @FindBy(id = "item-count")
+    private WebElement itemCount;
+
+    @FindBy(className = "notification")
+    private WebElement notification;
+
+    @FindBy(id = "load-more")
+    private WebElement loadMoreButton;
+
+    public DynamicContentPage(WebDriver driver) {
+        super(driver);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+    }
+
+    // TODO: Load products and wait for spinner to disappear
+    public DynamicContentPage loadProducts() {
+        click(loadMoreButton);
+        // Use CustomWaitConditions.loadingSpinnerDisappears
+        return this;
+    }
+
+    // TODO: Wait for minimum product count
+    public DynamicContentPage waitForProductCount(int minimumCount) {
+        // Use CustomWaitConditions.elementCountGreaterThan
+        return this;
+    }
+
+    // TODO: Wait for progress bar to complete
+    public DynamicContentPage waitForProgressCompletion() {
+        // Use CustomWaitConditions.progressBarReaches(100)
+        return this;
+    }
+
+    // TODO: Get product count after text changes
+    public int getUpdatedProductCount() {
+        String initialCount = getText(itemCount);
+        // Use CustomWaitConditions.textChangesFrom
+        return Integer.parseInt(getText(itemCount));
+    }
+
+    // TODO: Dismiss notification and wait for it to disappear
+    public DynamicContentPage dismissNotification() {
+        if (isElementDisplayed(notification)) {
+            click(notification);
+            // Use CustomWaitConditions.notificationDisappears
+        }
+        return this;
+    }
+
+    public int getCurrentProductCount() {
+        return productItems.size();
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(loadMoreButton);
+    }
+}
+```
+
+**Test Template:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.DynamicContentPage;
+
+public class CustomWaitTest extends BaseTest {
+
+    @Test
+    public void testLoadingSpinnerWait() {
+        DynamicContentPage page = new DynamicContentPage(driver);
+        driver.get("https://example.com/products");
+
+        // TODO: Click load more and verify spinner disappears
+        page.loadProducts();
+        Assert.assertTrue(page.getCurrentProductCount() > 0);
+    }
+
+    @Test
+    public void testWaitForProductCount() {
+        DynamicContentPage page = new DynamicContentPage(driver);
+        driver.get("https://example.com/products");
+
+        // TODO: Wait for at least 10 products to load
+        page.waitForProductCount(10);
+        Assert.assertTrue(page.getCurrentProductCount() >= 10);
+    }
+
+    @Test
+    public void testProgressBarWait() {
+        DynamicContentPage page = new DynamicContentPage(driver);
+        driver.get("https://example.com/upload");
+
+        // TODO: Upload file and wait for progress bar to complete
+        page.waitForProgressCompletion();
+        // Add verification
+    }
+
+    @Test
+    public void testTextChangeWait() {
+        DynamicContentPage page = new DynamicContentPage(driver);
+        driver.get("https://example.com/products");
+
+        // TODO: Load products and verify count updates
+        int initialCount = page.getCurrentProductCount();
+        page.loadProducts();
+        int updatedCount = page.getUpdatedProductCount();
+
+        Assert.assertTrue(updatedCount > initialCount);
+    }
+}
+```
+
+**Expected Output:**
+- Custom waits handle all dynamic scenarios
+- No fixed Thread.sleep() used
+- Tests are stable and don't flake
+- Wait conditions provide clear failure messages
+
+**Common Mistakes to Avoid:**
+1. ❌ Using Thread.sleep() instead of custom waits
+2. ❌ Not handling StaleElementReferenceException in wait conditions
+3. ❌ Forgetting to return Boolean from apply() method
+4. ❌ Not using JavascriptExecutor when needed for AJAX wait
+5. ❌ Setting wait timeout too short for slow operations
+
+**Solution Hints:**
+- ExpectedCondition<Boolean> requires apply(WebDriver) returning Boolean
+- Wrap element checks in try-catch for stale elements
+- Use JavascriptExecutor for jQuery.active check
+- getAttribute("aria-valuenow") for progress bars
+- isDisplayed() returns false for hidden elements
+
+---
+
+### Exercise 4: Multiple Window Handling (35 minutes)
+
+**Objective:** Create a page object that properly handles multiple windows and tabs.
+
+**Scenario:** Your application has links that open in new windows:
+- Terms and Conditions link opens in new window
+- Social media share opens in new tab
+- Help documentation opens in new window
+
+Handle these windows properly and return to the original window.
+
+**Instructions:**
+
+1. Enhance WindowHandler utility with missing methods
+2. Create ProductPage that opens terms in new window
+3. Create methods to handle social media windows
+4. Write tests that verify window switching works correctly
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.openqa.selenium.WebDriver;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public class WindowHandler {
+
+    private WebDriver driver;
+    private String mainWindowHandle;
+
+    public WindowHandler(WebDriver driver) {
+        this.driver = driver;
+        this.mainWindowHandle = driver.getWindowHandle();
+    }
+
+    // TODO: Switch to newly opened window
+    public void switchToNewWindow() {
+        // Your code here
+        // Get all windows, find one that's not mainWindowHandle, switch to it
+    }
+
+    // TODO: Switch to window by title
+    public boolean switchToWindowByTitle(String title) {
+        // Your code here
+        // Loop through windows, check title, switch if matches
+        return false;
+    }
+
+    // TODO: Switch to window by URL fragment
+    public boolean switchToWindowByUrl(String urlFragment) {
+        // Your code here
+        // Loop through windows, check URL contains fragment, switch
+        return false;
+    }
+
+    // TODO: Close current window and switch back to main
+    public void closeCurrentAndSwitchToMain() {
+        // Your code here
+        // Close current, switch to mainWindowHandle
+    }
+
+    // TODO: Close all windows except main
+    public void closeAllExceptMain() {
+        // Your code here
+        // Loop through windows, close all except mainWindowHandle
+    }
+
+    // TODO: Get count of open windows
+    public int getWindowCount() {
+        // Your code here
+        return 0;
+    }
+
+    // TODO: Wait for new window to open
+    public void waitForWindowCount(int expectedCount, int timeoutSeconds) {
+        // Your code here
+        // Poll getWindowHandles().size() until equals expectedCount
+    }
+
+    public String getMainWindowHandle() {
+        return mainWindowHandle;
+    }
+
+    public void switchToMainWindow() {
+        driver.switchTo().window(mainWindowHandle);
+    }
+}
+```
+
+**Page Object Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import utils.WindowHandler;
+
+public class ProductDetailsPage extends BasePage {
+
+    private WindowHandler windowHandler;
+
+    @FindBy(id = "product-title")
+    private WebElement productTitle;
+
+    @FindBy(linkText = "Terms and Conditions")
+    private WebElement termsLink;
+
+    @FindBy(id = "share-facebook")
+    private WebElement shareFacebookButton;
+
+    @FindBy(id = "share-twitter")
+    private WebElement shareTwitterButton;
+
+    @FindBy(linkText = "Help")
+    private WebElement helpLink;
+
+    @FindBy(id = "add-to-cart")
+    private WebElement addToCartButton;
+
+    public ProductDetailsPage(WebDriver driver) {
+        super(driver);
+        this.windowHandler = new WindowHandler(driver);
+    }
+
+    // TODO: Open terms in new window, verify, and close
+    public ProductDetailsPage readTermsAndConditions() {
+        // Your code here
+        // 1. Click terms link
+        // 2. Wait for new window
+        // 3. Switch to new window
+        // 4. Verify terms page loaded
+        // 5. Close and switch back
+        return this;
+    }
+
+    // TODO: Share on Facebook (opens new window)
+    public ProductDetailsPage shareOnFacebook() {
+        // Your code here
+        // Similar to terms but for Facebook
+        return this;
+    }
+
+    // TODO: Share on Twitter (opens new tab)
+    public ProductDetailsPage shareOnTwitter() {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Open help in new window and verify content
+    public ProductDetailsPage openHelp(String expectedHelpTopic) {
+        // Your code here
+        // Open help, switch, verify topic, close
+        return this;
+    }
+
+    // TODO: Verify we're on correct window
+    public boolean isOnProductPage() {
+        return driver.getWindowHandles().size() == 1 &&
+               isElementDisplayed(productTitle);
+    }
+
+    public String getProductTitle() {
+        return getText(productTitle);
+    }
+
+    public WindowHandler getWindowHandler() {
+        return windowHandler;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(productTitle);
+    }
+}
+```
+
+**Test Template:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.ProductDetailsPage;
+
+public class MultipleWindowTest extends BaseTest {
+
+    @Test
+    public void testTermsAndConditions() {
+        ProductDetailsPage productPage = new ProductDetailsPage(driver);
+        driver.get("https://example.com/product/123");
+
+        // TODO: Read terms and return to product page
+        productPage.readTermsAndConditions();
+
+        // Verify we're back on product page
+        Assert.assertTrue(productPage.isOnProductPage());
+        Assert.assertEquals(productPage.getWindowHandler().getWindowCount(), 1);
+    }
+
+    @Test
+    public void testSocialMediaSharing() {
+        ProductDetailsPage productPage = new ProductDetailsPage(driver);
+        driver.get("https://example.com/product/123");
+
+        // TODO: Share on Facebook and Twitter
+        productPage.shareOnFacebook()
+                   .shareOnTwitter();
+
+        // Verify we're still on product page
+        Assert.assertTrue(productPage.isOnProductPage());
+    }
+
+    @Test
+    public void testMultipleWindows() {
+        ProductDetailsPage productPage = new ProductDetailsPage(driver);
+        driver.get("https://example.com/product/123");
+
+        // TODO: Open terms and help simultaneously
+        // Verify window count increases
+        int initialWindows = productPage.getWindowHandler().getWindowCount();
+
+        // Open multiple windows
+
+        // Close all except main
+        productPage.getWindowHandler().closeAllExceptMain();
+
+        Assert.assertEquals(
+            productPage.getWindowHandler().getWindowCount(),
+            initialWindows
+        );
+    }
+}
+```
+
+**Expected Output:**
+- New windows open and close properly
+- Always returns to main window
+- Window count is correctly managed
+- No windows left open after test
+
+**Common Mistakes to Avoid:**
+1. ❌ Not storing main window handle at start
+2. ❌ Forgetting to close child windows
+3. ❌ Not waiting for new window to open
+4. ❌ Using wrong window handle after switch
+5. ❌ Not verifying window count after operations
+
+**Solution Hints:**
+- Store mainWindowHandle in constructor
+- Use Set<String> handles = driver.getWindowHandles()
+- Loop with for-each to find non-main windows
+- driver.close() closes current window
+- driver.switchTo().window(handle) switches to window
+
+---
+
+### Exercise 5: iFrame Editor Page Object (40 minutes)
+
+**Objective:** Create a page object that handles a complex WYSIWYG editor inside an iframe.
+
+**Scenario:** Build a blog post editor page where:
+- Editor content is inside an iframe
+- Toolbar (bold, italic, lists) is outside iframe
+- Need to switch context frequently
+- Preview is also in a separate iframe
+
+**Instructions:**
+
+1. Create FrameHandler utility (if not exists)
+2. Create BlogEditorPage that handles iframe switches
+3. Implement methods for formatting text
+4. Create methods to preview content
+5. Write tests that verify editor functionality
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+
+public class FrameHandler {
+
+    private WebDriver driver;
+    private WebDriverWait wait;
+
+    public FrameHandler(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+    // TODO: Switch to frame by WebElement
+    public void switchToFrame(WebElement frameElement) {
+        // Your code here
+        // Use wait.until for frame availability
+    }
+
+    // TODO: Switch to frame by index
+    public void switchToFrame(int index) {
+        // Your code here
+    }
+
+    // TODO: Switch to frame by name or ID
+    public void switchToFrame(String nameOrId) {
+        // Your code here
+    }
+
+    // TODO: Switch to default content (main page)
+    public void switchToDefaultContent() {
+        // Your code here
+    }
+
+    // TODO: Execute action in frame and return to main
+    public void executeInFrame(WebElement frameElement, Runnable action) {
+        // Your code here
+        // Switch to frame, run action, switch back
+    }
+
+    // TODO: Switch to nested frames
+    public void switchToNestedFrames(WebElement... frames) {
+        // Your code here
+        // Loop through frames, switching to each
+    }
+}
+```
+
+**Page Object Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import utils.FrameHandler;
+
+public class BlogEditorPage extends BasePage {
+
+    private FrameHandler frameHandler;
+
+    // Main page elements (outside iframe)
+    @FindBy(id = "editor-frame")
+    private WebElement editorFrame;
+
+    @FindBy(id = "preview-frame")
+    private WebElement previewFrame;
+
+    @FindBy(id = "bold-button")
+    private WebElement boldButton;
+
+    @FindBy(id = "italic-button")
+    private WebElement italicButton;
+
+    @FindBy(id = "bullet-list-button")
+    private WebElement bulletListButton;
+
+    @FindBy(id = "save-button")
+    private WebElement saveButton;
+
+    // Editor frame elements (inside iframe)
+    @FindBy(css = "body[contenteditable='true']")
+    private WebElement editorBody;
+
+    // Preview frame elements
+    @FindBy(css = ".preview-content")
+    private WebElement previewContent;
+
+    public BlogEditorPage(WebDriver driver) {
+        super(driver);
+        this.frameHandler = new FrameHandler(driver);
+    }
+
+    // TODO: Type text in editor (inside iframe)
+    public BlogEditorPage typeInEditor(String text) {
+        // Your code here
+        // 1. Switch to editor frame
+        // 2. Type in editorBody
+        // 3. Switch back to default content
+        return this;
+    }
+
+    // TODO: Get text from editor
+    public String getEditorText() {
+        // Your code here
+        // Switch to frame, get text, switch back
+        return null;
+    }
+
+    // TODO: Make text bold (toolbar outside, content inside)
+    public BlogEditorPage makeBold() {
+        // Your code here
+        // 1. Select text in editor frame
+        // 2. Switch to default
+        // 3. Click bold button
+        return this;
+    }
+
+    // TODO: Make text italic
+    public BlogEditorPage makeItalic() {
+        // Your code here
+        return this;
+    }
+
+    // TODO: Create bullet list
+    public BlogEditorPage createBulletList(String... items) {
+        // Your code here
+        // 1. Click bullet list button (outside frame)
+        // 2. Switch to frame
+        // 3. Type items separated by Enter
+        // 4. Switch back
+        return this;
+    }
+
+    // TODO: Format text with bold and italic
+    public BlogEditorPage formatText(String text, boolean bold, boolean italic) {
+        // Your code here
+        // Type text, apply formatting if flags are true
+        return this;
+    }
+
+    // TODO: Get preview text (from preview iframe)
+    public String getPreviewText() {
+        // Your code here
+        // Switch to preview frame, get text, switch back
+        return null;
+    }
+
+    // TODO: Clear editor content
+    public BlogEditorPage clearEditor() {
+        // Your code here
+        // Switch to frame, select all, delete, switch back
+        return this;
+    }
+
+    // TODO: Save content (outside iframe)
+    public BlogEditorPage save() {
+        // Your code here
+        // Make sure we're in default content, then click save
+        return this;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(editorFrame);
+    }
+}
+```
+
+**Test Template:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.BlogEditorPage;
+
+public class IFrameEditorTest extends BaseTest {
+
+    @Test
+    public void testBasicEditing() {
+        BlogEditorPage editor = new BlogEditorPage(driver);
+        driver.get("https://example.com/blog/editor");
+
+        // TODO: Type text in editor
+        editor.typeInEditor("Hello World");
+
+        // Verify text appears in editor
+        Assert.assertEquals(editor.getEditorText(), "Hello World");
+    }
+
+    @Test
+    public void testTextFormatting() {
+        BlogEditorPage editor = new BlogEditorPage(driver);
+        driver.get("https://example.com/blog/editor");
+
+        // TODO: Type and apply formatting
+        editor.typeInEditor("Bold Text")
+              .makeBold()
+              .typeInEditor(" and ")
+              .typeInEditor("Italic Text")
+              .makeItalic();
+
+        // Verify formatted text
+        String editorText = editor.getEditorText();
+        Assert.assertTrue(editorText.contains("Bold Text"));
+        Assert.assertTrue(editorText.contains("Italic Text"));
+    }
+
+    @Test
+    public void testBulletList() {
+        BlogEditorPage editor = new BlogEditorPage(driver);
+        driver.get("https://example.com/blog/editor");
+
+        // TODO: Create bullet list
+        editor.createBulletList("Item 1", "Item 2", "Item 3");
+
+        // Verify list created
+        String editorText = editor.getEditorText();
+        Assert.assertTrue(editorText.contains("Item 1"));
+        Assert.assertTrue(editorText.contains("Item 2"));
+        Assert.assertTrue(editorText.contains("Item 3"));
+    }
+
+    @Test
+    public void testPreview() {
+        BlogEditorPage editor = new BlogEditorPage(driver);
+        driver.get("https://example.com/blog/editor");
+
+        // TODO: Type content and check preview
+        String content = "Preview this content";
+        editor.typeInEditor(content);
+
+        // Get preview text (different iframe)
+        String previewText = editor.getPreviewText();
+        Assert.assertEquals(previewText, content);
+    }
+
+    @Test
+    public void testSaveContent() {
+        BlogEditorPage editor = new BlogEditorPage(driver);
+        driver.get("https://example.com/blog/editor");
+
+        // TODO: Create formatted content and save
+        editor.formatText("Important Message", true, true)
+              .save();
+
+        // Verify save succeeded
+        // Add appropriate verification
+    }
+}
+```
+
+**Expected Output:**
+- Text typed in editor iframe correctly
+- Formatting applied properly
+- Preview shows current content
+- No frame-related exceptions
+- Always returns to default content
+
+**Common Mistakes to Avoid:**
+1. ❌ Forgetting to switch back to default content
+2. ❌ Not waiting for frame to be available
+3. ❌ Trying to interact with frame element before switching
+4. ❌ Mixing up editor frame and preview frame
+5. ❌ Not using WebDriverWait for frame switching
+
+**Solution Hints:**
+- Always use wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt())
+- Switch to default content after every frame operation
+- Use executeInFrame() for one-off frame operations
+- Keys.chord(Keys.CONTROL, "a") selects all text
+- driver.switchTo().defaultContent() returns to main page
+
+---
+
+### Exercise 6: Complete Mini E2E Framework (45 minutes)
+
+**Objective:** Build a complete mini-framework demonstrating all advanced POM patterns.
+
+**Scenario:** Create an end-to-end shopping flow framework with:
+- BasePage with all common methods
+- Multiple interconnected pages
+- Reusable components (header, footer)
+- Custom waits and utilities
+- Complete test demonstrating the flow
+
+**Instructions:**
+
+1. Create project structure with proper packages
+2. Implement BasePage with common methods
+3. Create at least 4 interconnected pages
+4. Add 2 reusable components
+5. Write complete E2E test using all patterns
+6. Demonstrate fluent interface throughout
+
+**Project Structure:**
+
+```
+mini-framework/
+├── src/main/java/
+│   ├── pages/
+│   │   ├── BasePage.java
+│   │   ├── HomePage.java
+│   │   ├── ProductPage.java
+│   │   ├── CartPage.java
+│   │   └── CheckoutPage.java
+│   ├── components/
+│   │   ├── NavigationHeader.java
+│   │   └── ProductCard.java
+│   └── utils/
+│       ├── WindowHandler.java
+│       ├── FrameHandler.java
+│       └── CustomWaits.java
+└── src/test/java/
+    ├── tests/
+    │   ├── BaseTest.java
+    │   └── E2EShoppingTest.java
+    └── testdata/
+        └── TestData.java
+```
+
+**BasePage Template (Simplified):**
+
+```java
+package pages;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+
+public abstract class BasePage {
+
+    protected WebDriver driver;
+    protected WebDriverWait wait;
+    protected JavascriptExecutor js;
+
+    public BasePage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        this.js = (JavascriptExecutor) driver;
+        PageFactory.initElements(driver, this);
+    }
+
+    // TODO: Add protected methods for common actions
+    // - click(WebElement)
+    // - type(WebElement, String)
+    // - getText(WebElement)
+    // - selectByVisibleText(WebElement, String)
+    // - isElementDisplayed(WebElement)
+    // - scrollToElement(WebElement)
+    // - waitForElementToBeClickable(WebElement)
+
+    // TODO: Add abstract method for page validation
+    public abstract boolean isPageLoaded();
+}
+```
+
+**Component Template:**
+
+```java
+package components;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import pages.BasePage;
+import pages.SearchResultsPage;
+import pages.CartPage;
+
+public class NavigationHeader extends BasePage {
+
+    @FindBy(id = "search-box")
+    private WebElement searchBox;
+
+    @FindBy(id = "search-button")
+    private WebElement searchButton;
+
+    @FindBy(id = "cart-icon")
+    private WebElement cartIcon;
+
+    @FindBy(id = "cart-count")
+    private WebElement cartCount;
+
+    public NavigationHeader(WebDriver driver) {
+        super(driver);
+    }
+
+    // TODO: Implement search method returning SearchResultsPage
+    public SearchResultsPage search(String query) {
+        // Your code here
+        return new SearchResultsPage(driver);
+    }
+
+    // TODO: Implement openCart returning CartPage
+    public CartPage openCart() {
+        // Your code here
+        return new CartPage(driver);
+    }
+
+    // TODO: Implement getCartCount
+    public int getCartCount() {
+        // Your code here
+        return 0;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(searchBox);
+    }
+}
+```
+
+**Page Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import components.NavigationHeader;
+
+public class HomePage extends BasePage {
+
+    private NavigationHeader header;
+
+    @FindBy(id = "featured-products")
+    private WebElement featuredProducts;
+
+    @FindBy(css = ".product-card")
+    private List<WebElement> productCards;
+
+    public HomePage(WebDriver driver) {
+        super(driver);
+        this.header = new NavigationHeader(driver);
+    }
+
+    // TODO: Provide header access
+    public NavigationHeader getHeader() {
+        return header;
+    }
+
+    // TODO: Select product by index
+    public ProductPage selectProduct(int index) {
+        // Your code here
+        return new ProductPage(driver);
+    }
+
+    // TODO: Get featured product count
+    public int getFeaturedProductCount() {
+        // Your code here
+        return 0;
+    }
+
+    @Override
+    public boolean isPageLoaded() {
+        return isElementDisplayed(featuredProducts);
+    }
+}
+```
+
+**Complete E2E Test Template:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.*;
+
+public class E2EShoppingTest extends BaseTest {
+
+    @Test(description = "Complete shopping flow from search to checkout")
+    public void testCompleteShoppingFlow() {
+        // TODO: Implement complete E2E flow
+
+        // 1. Start on home page
+        HomePage homePage = new HomePage(driver);
+        driver.get("https://example.com");
+        Assert.assertTrue(homePage.isPageLoaded());
+
+        // 2. Search for product using header component
+        SearchResultsPage searchResults = homePage.getHeader()
+                .search("laptop");
+        Assert.assertTrue(searchResults.hasResults());
+
+        // 3. Select first product
+        ProductPage productPage = searchResults.selectFirstProduct();
+        Assert.assertTrue(productPage.isPageLoaded());
+
+        // 4. Add to cart with fluent interface
+        CartPage cartPage = productPage
+                .selectQuantity(2)
+                .selectColor("Black")
+                .addToCart();
+        Assert.assertTrue(cartPage.isPageLoaded());
+
+        // 5. Verify cart using header component
+        int cartCount = homePage.getHeader().getCartCount();
+        Assert.assertEquals(cartCount, 2);
+
+        // 6. Proceed to checkout
+        CheckoutPage checkoutPage = cartPage
+                .applyCoupon("SAVE20")
+                .proceedToCheckout();
+        Assert.assertTrue(checkoutPage.isPageLoaded());
+
+        // 7. Verify final total
+        String total = checkoutPage.getTotalAmount();
+        Assert.assertTrue(total.contains("$"));
+    }
+}
+```
+
+**Tasks to Complete:**
+
+1. Fill in all TODO sections in BasePage
+2. Complete NavigationHeader component methods
+3. Implement all page object methods
+4. Create ProductPage, CartPage, CheckoutPage
+5. Write BaseTest with setup/teardown
+6. Complete E2E test with all interactions
+7. Add assertions at each step
+
+**Expected Output:**
+- Complete working E2E test flow
+- All pages interconnected properly
+- Components reused across pages
+- Fluent interface throughout
+- Clean, maintainable code structure
+
+**Common Mistakes to Avoid:**
+1. ❌ Not initializing components in page constructors
+2. ❌ Forgetting to call super(driver) in page constructors
+3. ❌ Missing PageFactory.initElements
+4. ❌ Not implementing isPageLoaded() in all pages
+5. ❌ Creating separate driver instances instead of sharing
+
+**Solution Hints:**
+- Each page should extend BasePage
+- Components are initialized in page constructor with new Component(driver)
+- Return page objects from navigation methods
+- Use fluent interface (return this) for actions on same page
+- BaseTest should initialize driver once and pass to pages
+
+---
+
+## Navigation
 
 ## Navigation
 

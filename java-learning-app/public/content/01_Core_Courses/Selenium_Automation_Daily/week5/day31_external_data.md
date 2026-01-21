@@ -2202,6 +2202,1462 @@ Example:
 
 ---
 
+## 17. Hands-On Exercises
+
+These progressive exercises will help you master external data sources and data-driven testing. Start with Exercise 1 and work your way through each one.
+
+---
+
+### Exercise 1: Build Excel Utility and Read Test Data (30 minutes)
+
+**Objective:** Create a complete Excel utility class and use it to read test data for a login test.
+
+**Scenario:** You need to create an ExcelUtils class that can read login credentials from an Excel file and use them in data-driven tests.
+
+**Instructions:**
+
+1. Create `ExcelUtils.java` utility class
+2. Implement methods to read data from Excel
+3. Create an Excel file with login test data
+4. Create test class using TestNG DataProvider
+5. Run data-driven tests with Excel data
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class ExcelUtils {
+
+    private String filePath;
+    private Workbook workbook;
+    private Sheet sheet;
+
+    // TODO: Implement constructor
+    public ExcelUtils(String filePath, String sheetName) {
+        // Your code here
+        // 1. Store filePath
+        // 2. Open FileInputStream
+        // 3. Create XSSFWorkbook
+        // 4. Get sheet by name
+        // 5. Close FileInputStream
+    }
+
+    // TODO: Implement getRowCount method
+    public int getRowCount() {
+        // Your code here
+        // Return sheet.getLastRowNum() + 1
+        return 0;
+    }
+
+    // TODO: Implement getColumnCount method
+    public int getColumnCount() {
+        // Your code here
+        // Get first row and return column count
+        return 0;
+    }
+
+    // TODO: Implement getCellData method
+    public String getCellData(int rowNum, int colNum) {
+        // Your code here
+        // 1. Use DataFormatter for consistent string output
+        // 2. Get cell from row
+        // 3. Format and return cell value
+        return "";
+    }
+
+    // TODO: Implement getCellData by column name
+    public String getCellData(int rowNum, String columnName) {
+        // Your code here
+        // 1. Find column number by name
+        // 2. Call getCellData(rowNum, colNum)
+        return "";
+    }
+
+    // TODO: Implement helper method to find column number
+    private int getColumnNumber(String columnName) {
+        // Your code here
+        // 1. Get header row (row 0)
+        // 2. Iterate through cells
+        // 3. Compare cell value with columnName
+        // 4. Return column index if found
+        return -1;
+    }
+
+    // TODO: Implement getAllData method for DataProvider
+    public Object[][] getAllData() {
+        // Your code here
+        // 1. Get row and column counts
+        // 2. Create 2D Object array (exclude header row)
+        // 3. Loop through all data rows
+        // 4. Fill array with cell values
+        // 5. Return data array
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getDataByColumns method
+    public Object[][] getDataByColumns(String... columnNames) {
+        // Your code here
+        // 1. Get row count
+        // 2. Create 2D array with size [rows-1][columnNames.length]
+        // 3. For each row, get values for specified columns
+        // 4. Return data array
+        return new Object[0][0];
+    }
+
+    // TODO: Implement close method
+    public void close() {
+        // Your code here
+        // Close workbook properly
+    }
+}
+```
+
+**Test Class Template:**
+
+```java
+package tests;
+
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import utils.ExcelUtils;
+
+public class ExcelDataDrivenTest {
+
+    @Test(dataProvider = "loginData")
+    public void testLogin(String username, String password, String expected) {
+        // TODO: Implement test logic
+        System.out.println("Testing with:");
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+        System.out.println("Expected: " + expected);
+        System.out.println("------------------------");
+
+        // Add actual login test logic here
+    }
+
+    @DataProvider(name = "loginData")
+    public Object[][] getLoginData() {
+        // TODO: Implement DataProvider
+        String filePath = "src/test/resources/testdata/LoginData.xlsx";
+        // 1. Create ExcelUtils instance
+        // 2. Get data using getDataByColumns
+        // 3. Close ExcelUtils
+        // 4. Return data
+        return null;
+    }
+}
+```
+
+**Excel File Format (LoginData.xlsx):**
+
+Create an Excel file with this structure:
+
+| Username | Password | Expected |
+|----------|----------|----------|
+| validuser1 | pass123 | Success |
+| validuser2 | pass456 | Success |
+| invaliduser | wrong | Fail |
+| emptyuser | | Fail |
+
+**Expected Output:**
+- ExcelUtils successfully reads all rows from Excel
+- DataProvider supplies data to test method
+- Test runs 4 times with different data sets
+- All data printed correctly
+
+**Common Mistakes to Avoid:**
+1. ❌ Forgetting to close FileInputStream in constructor
+2. ❌ Not handling null cells in getCellData
+3. ❌ Including header row in data array
+4. ❌ Not using DataFormatter for consistent string output
+5. ❌ Forgetting to close workbook in close() method
+
+**Solution Hints:**
+- Use try-with-resources for FileInputStream
+- DataFormatter handles all cell types consistently
+- getLastRowNum() returns 0-based index, add 1 for count
+- Header row is at index 0, data starts at index 1
+- Close workbook in finally block or close() method
+
+---
+
+### Exercise 2: CSV Data Provider with Filtering (35 minutes)
+
+**Objective:** Create a CSV utility class that can read and filter test data based on conditions.
+
+**Scenario:** Build a CSVUtils class that reads test data from CSV files and provides filtering capabilities for running specific test scenarios.
+
+**Instructions:**
+
+1. Create `CSVUtils.java` utility class using OpenCSV
+2. Implement methods to read all data and filtered data
+3. Create CSV file with test data
+4. Create test class with multiple DataProviders
+5. Test with filtered and unfiltered data
+
+**Code Template:**
+
+```java
+package utils;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CSVUtils {
+
+    // TODO: Implement readCSV method
+    public static Object[][] readCSV(String filePath) {
+        List<String[]> records = new ArrayList<>();
+
+        // Your code here
+        // 1. Create CSVReader with FileReader
+        // 2. Read all records using reader.readAll()
+        // 3. Remove header row if present
+        // 4. Convert List to 2D Object array
+        // 5. Return array
+
+        return new Object[0][0];
+    }
+
+    // TODO: Implement readCSVWithFilter method
+    public static Object[][] readCSVWithFilter(String filePath, int columnIndex, String filterValue) {
+        List<String[]> allRecords = new ArrayList<>();
+        List<String[]> filteredRecords = new ArrayList<>();
+
+        // Your code here
+        // 1. Read all records using CSVReader
+        // 2. Remove header row
+        // 3. Filter records based on column value
+        // 4. Convert filtered list to 2D array
+        // 5. Return filtered array
+
+        return new Object[0][0];
+    }
+
+    // TODO: Implement readSpecificColumns method
+    public static Object[][] readSpecificColumns(String filePath, int... columnIndexes) {
+        List<String[]> allRecords = new ArrayList<>();
+
+        // Your code here
+        // 1. Read all records
+        // 2. Remove header
+        // 3. Extract only specified columns
+        // 4. Create new array with selected columns
+        // 5. Return array
+
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getRowCount method
+    public static int getRowCount(String filePath) {
+        // Your code here
+        // 1. Read all records
+        // 2. Return count minus header row
+        return 0;
+    }
+
+    // TODO: Implement getColumnCount method
+    public static int getColumnCount(String filePath) {
+        // Your code here
+        // 1. Read first record
+        // 2. Return length of array
+        return 0;
+    }
+}
+```
+
+**Test Class Template:**
+
+```java
+package tests;
+
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import utils.CSVUtils;
+
+public class CSVDataDrivenTest {
+
+    @Test(dataProvider = "allData")
+    public void testWithAllData(String testCase, String username, String password, String expected) {
+        // TODO: Print all data
+        System.out.println("Test: " + testCase);
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+        System.out.println("Expected: " + expected);
+        System.out.println("------------------------");
+    }
+
+    @Test(dataProvider = "positiveData")
+    public void testWithPositiveData(String testCase, String username, String password, String expected) {
+        // TODO: Test only positive scenarios
+        System.out.println("Positive Test: " + testCase);
+        System.out.println("Username: " + username);
+        System.out.println("Expected: " + expected);
+    }
+
+    @Test(dataProvider = "negativeData")
+    public void testWithNegativeData(String testCase, String username, String password, String expected) {
+        // TODO: Test only negative scenarios
+        System.out.println("Negative Test: " + testCase);
+        System.out.println("Username: " + username);
+        System.out.println("Expected: " + expected);
+    }
+
+    @DataProvider(name = "allData")
+    public Object[][] getAllData() {
+        // TODO: Return all data from CSV
+        String filePath = "src/test/resources/testdata/TestData.csv";
+        return CSVUtils.readCSV(filePath);
+    }
+
+    @DataProvider(name = "positiveData")
+    public Object[][] getPositiveData() {
+        // TODO: Filter and return only positive test data
+        String filePath = "src/test/resources/testdata/TestData.csv";
+        // Use readCSVWithFilter to get only "Success" expected results
+        return null;
+    }
+
+    @DataProvider(name = "negativeData")
+    public Object[][] getNegativeData() {
+        // TODO: Filter and return only negative test data
+        String filePath = "src/test/resources/testdata/TestData.csv";
+        // Use readCSVWithFilter to get only "Fail" expected results
+        return null;
+    }
+}
+```
+
+**CSV File Format (TestData.csv):**
+
+```csv
+TestCase,Username,Password,Expected
+Valid Login,validuser,pass123,Success
+Another Valid Login,testuser,test456,Success
+Invalid Password,validuser,wrongpass,Fail
+Empty Username,,pass123,Fail
+Invalid Username,baduser,pass123,Fail
+```
+
+**Expected Output:**
+- All data test runs 5 times
+- Positive data test runs 2 times (Success cases)
+- Negative data test runs 3 times (Fail cases)
+- Filtering works correctly
+- All data printed properly
+
+**Common Mistakes to Avoid:**
+1. ❌ Not closing CSVReader properly
+2. ❌ Forgetting to remove header row
+3. ❌ Wrong column index in filter method
+4. ❌ Not handling CsvException
+5. ❌ Returning empty array when no matches found in filter
+
+**Solution Hints:**
+- Use try-with-resources for CSVReader
+- reader.readAll() returns List<String[]>
+- First element (index 0) is usually header
+- Filter by comparing record[columnIndex] with filterValue
+- Check if list is empty before converting to array
+
+---
+
+### Exercise 3: JSON Test Data with Nested Objects (40 minutes)
+
+**Objective:** Create a JSON utility that handles complex JSON structures with nested objects and arrays for test data.
+
+**Scenario:** Build JSONUtils to parse complex JSON test data structures including nested objects and arrays for API and UI testing.
+
+**Instructions:**
+
+1. Create `JSONUtils.java` using Jackson library
+2. Implement methods for nested JSON navigation
+3. Create JSON file with complex test data
+4. Create test class with DataProvider
+5. Test with nested JSON data
+
+**Code Template:**
+
+```java
+package utils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class JSONUtils {
+
+    private static ObjectMapper mapper = new ObjectMapper();
+
+    // TODO: Implement readJSON method
+    public static JsonNode readJSON(String filePath) {
+        // Your code here
+        // 1. Use ObjectMapper to read tree from file
+        // 2. Return root JsonNode
+        // 3. Handle IOException
+        return null;
+    }
+
+    // TODO: Implement getValue method
+    public static String getValue(String filePath, String key) {
+        // Your code here
+        // 1. Read JSON root node
+        // 2. Check if key exists
+        // 3. Return value as string
+        return null;
+    }
+
+    // TODO: Implement getNestedValue method
+    public static String getNestedValue(String filePath, String... keys) {
+        // Your code here
+        // 1. Read JSON root
+        // 2. Navigate through keys sequentially
+        // 3. Return final value as string
+        return null;
+    }
+
+    // TODO: Implement getArrayValues method
+    public static List<String> getArrayValues(String filePath, String arrayKey) {
+        List<String> values = new ArrayList<>();
+
+        // Your code here
+        // 1. Read JSON root
+        // 2. Get array node by key
+        // 3. Check if it's an array
+        // 4. Iterate and collect values
+        // 5. Return list
+
+        return values;
+    }
+
+    // TODO: Implement getTestDataFromArray method
+    public static Object[][] getTestDataFromArray(String filePath, String arrayKey) {
+        List<Object[]> dataList = new ArrayList<>();
+
+        // Your code here
+        // 1. Read JSON root
+        // 2. Get array node
+        // 3. For each object in array:
+        //    - Create Object array for row
+        //    - Add all field values to array
+        // 4. Convert List to 2D Object array
+        // 5. Return array
+
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getTestDataByName method
+    public static Object[][] getTestDataByName(String filePath, String testName) {
+        List<Object[]> testDataList = new ArrayList<>();
+
+        // Your code here
+        // 1. Read JSON root
+        // 2. Get "tests" array
+        // 3. Find test object by name
+        // 4. Get "data" array from test object
+        // 5. Convert to 2D Object array
+        // 6. Return array
+
+        return new Object[0][0];
+    }
+}
+```
+
+**Test Class Template:**
+
+```java
+package tests;
+
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import utils.JSONUtils;
+
+import java.util.List;
+
+public class JSONDataDrivenTest {
+
+    @Test(dataProvider = "loginData")
+    public void testLoginWithJSON(String username, String password, String expected) {
+        // TODO: Implement login test
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+        System.out.println("Expected: " + expected);
+        System.out.println("------------------------");
+    }
+
+    @Test
+    public void testReadNestedConfig() {
+        // TODO: Read nested configuration values
+        String filePath = "src/test/resources/testdata/config.json";
+
+        // Read simple value
+        String browser = JSONUtils.getValue(filePath, "browser");
+        System.out.println("Browser: " + browser);
+
+        // Read nested value
+        String dbHost = JSONUtils.getNestedValue(filePath, "database", "host");
+        System.out.println("DB Host: " + dbHost);
+
+        // Read array values
+        List<String> testSuites = JSONUtils.getArrayValues(filePath, "testSuites");
+        System.out.println("Test Suites: " + testSuites);
+    }
+
+    @DataProvider(name = "loginData")
+    public Object[][] getLoginData() {
+        // TODO: Read login data from JSON
+        String filePath = "src/test/resources/testdata/testData.json";
+        return JSONUtils.getTestDataByName(filePath, "loginTests");
+    }
+}
+```
+
+**JSON File Format (testData.json):**
+
+```json
+{
+  "tests": [
+    {
+      "name": "loginTests",
+      "description": "Login test scenarios",
+      "data": [
+        ["validuser1", "pass123", "Success"],
+        ["validuser2", "pass456", "Success"],
+        ["invaliduser", "wrongpass", "Fail"],
+        ["", "pass123", "Fail"]
+      ]
+    },
+    {
+      "name": "searchTests",
+      "description": "Search test scenarios",
+      "data": [
+        ["laptop", "10"],
+        ["phone", "5"],
+        ["tablet", "3"]
+      ]
+    }
+  ]
+}
+```
+
+**JSON Config File (config.json):**
+
+```json
+{
+  "browser": "chrome",
+  "timeout": 30,
+  "database": {
+    "host": "localhost",
+    "port": 3306,
+    "name": "testdb"
+  },
+  "testSuites": ["smoke", "regression", "sanity"]
+}
+```
+
+**Expected Output:**
+- Login test runs 4 times with JSON data
+- Nested config values read correctly
+- Array values extracted properly
+- All data types handled correctly
+
+**Common Mistakes to Avoid:**
+1. ❌ Not checking if JsonNode exists before accessing
+2. ❌ Forgetting to handle IOException
+3. ❌ Not checking if node is actually an array
+4. ❌ Wrong order of nested keys
+5. ❌ Not using asText() to convert JsonNode to String
+
+**Solution Hints:**
+- Use mapper.readTree() to read JSON file
+- Check node.has(key) before accessing
+- Use node.isArray() to verify array type
+- Navigate nested objects with sequential get() calls
+- Iterator<JsonNode> for looping through arrays
+
+---
+
+### Exercise 4: Database Data Provider with Connection Pooling (40 minutes)
+
+**Objective:** Create a robust Database utility class with connection management and integration with TestNG DataProvider.
+
+**Scenario:** Build DatabaseUtils to fetch test data from MySQL database, manage connections efficiently, and provide data to TestNG tests.
+
+**Instructions:**
+
+1. Create `DatabaseUtils.java` with JDBC
+2. Implement connection management
+3. Create methods to query and fetch data
+4. Set up test database and table
+5. Create test class using database data
+
+**Code Template:**
+
+```java
+package utils;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class DatabaseUtils {
+
+    private String url;
+    private String username;
+    private String password;
+    private Connection connection;
+
+    // TODO: Implement constructor
+    public DatabaseUtils(String url, String username, String password) {
+        // Your code here
+        // Store connection details
+    }
+
+    // TODO: Implement getConnection method
+    public Connection getConnection() {
+        // Your code here
+        // 1. Check if connection is null or closed
+        // 2. Create new connection using DriverManager
+        // 3. Return connection
+        // 4. Handle SQLException
+        return null;
+    }
+
+    // TODO: Implement closeConnection method
+    public void closeConnection() {
+        // Your code here
+        // 1. Check if connection is not null and not closed
+        // 2. Close connection
+        // 3. Print confirmation message
+    }
+
+    // TODO: Implement executeQuery method
+    public List<Map<String, String>> executeQuery(String query) {
+        List<Map<String, String>> results = new ArrayList<>();
+
+        // Your code here
+        // 1. Get connection
+        // 2. Create Statement
+        // 3. Execute query and get ResultSet
+        // 4. Get ResultSetMetaData for column info
+        // 5. Iterate through ResultSet:
+        //    - Create Map for each row
+        //    - Put column name and value in map
+        //    - Add map to results list
+        // 6. Close ResultSet and Statement
+        // 7. Return results
+
+        return results;
+    }
+
+    // TODO: Implement executeQueryWithParams method
+    public List<Map<String, String>> executeQueryWithParams(String query, Object... params) {
+        List<Map<String, String>> results = new ArrayList<>();
+
+        // Your code here
+        // 1. Get connection
+        // 2. Create PreparedStatement
+        // 3. Set parameters using loop
+        // 4. Execute query
+        // 5. Process ResultSet same as above
+        // 6. Return results
+
+        return results;
+    }
+
+    // TODO: Implement getDataAsArray method
+    public Object[][] getDataAsArray(String query) {
+        // Your code here
+        // 1. Execute query and get List<Map>
+        // 2. Check if results are empty
+        // 3. Create 2D Object array
+        // 4. Fill array with values from maps
+        // 5. Return array
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getColumnsAsArray method
+    public Object[][] getColumnsAsArray(String query, String... columnNames) {
+        // Your code here
+        // 1. Execute query
+        // 2. Create array with specific columns only
+        // 3. For each row, extract specified columns
+        // 4. Return array
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getSingleValue method
+    public String getSingleValue(String query, Object... params) {
+        // Your code here
+        // 1. Execute query with params
+        // 2. Get first value from first row
+        // 3. Return as string
+        return null;
+    }
+
+    // TODO: Implement getRowCount method
+    public int getRowCount(String tableName) {
+        // Your code here
+        // 1. Create COUNT query
+        // 2. Execute and get single value
+        // 3. Parse to int and return
+        return 0;
+    }
+}
+```
+
+**SQL Setup Script:**
+
+```sql
+-- Create test database
+CREATE DATABASE IF NOT EXISTS testdb;
+USE testdb;
+
+-- Create test_users table
+CREATE TABLE IF NOT EXISTS test_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    email VARCHAR(100),
+    role VARCHAR(20),
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert test data
+INSERT INTO test_users (username, password, email, role, active) VALUES
+('validuser1', 'pass123', 'valid1@test.com', 'user', TRUE),
+('validuser2', 'pass456', 'valid2@test.com', 'user', TRUE),
+('adminuser', 'admin123', 'admin@test.com', 'admin', TRUE),
+('testuser', 'test789', 'test@test.com', 'user', TRUE),
+('inactiveuser', 'pass000', 'inactive@test.com', 'user', FALSE);
+
+-- Verify data
+SELECT * FROM test_users;
+```
+
+**Test Class Template:**
+
+```java
+package tests;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import utils.DatabaseUtils;
+
+public class DatabaseDataDrivenTest {
+
+    DatabaseUtils dbUtils;
+
+    @BeforeClass
+    public void setupDatabase() {
+        // TODO: Initialize DatabaseUtils
+        String url = "jdbc:mysql://localhost:3306/testdb";
+        String username = "root";
+        String password = "password";
+
+        dbUtils = new DatabaseUtils(url, username, password);
+
+        // Verify connection
+        System.out.println("Database connected successfully!");
+    }
+
+    @Test(dataProvider = "activeUsers")
+    public void testWithActiveUsers(String username, String password, String email) {
+        // TODO: Test with active users only
+        System.out.println("Testing with active user:");
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+        System.out.println("Email: " + email);
+        System.out.println("------------------------");
+    }
+
+    @Test(dataProvider = "adminUsers")
+    public void testWithAdminUsers(String username, String role) {
+        // TODO: Test with admin users
+        System.out.println("Testing with admin:");
+        System.out.println("Username: " + username);
+        System.out.println("Role: " + role);
+    }
+
+    @Test
+    public void testDatabaseOperations() {
+        // TODO: Test various database operations
+
+        // Get row count
+        int count = dbUtils.getRowCount("test_users");
+        System.out.println("Total users: " + count);
+
+        // Get single value
+        String email = dbUtils.getSingleValue(
+            "SELECT email FROM test_users WHERE username = ?",
+            "validuser1"
+        );
+        System.out.println("Email: " + email);
+    }
+
+    @DataProvider(name = "activeUsers")
+    public Object[][] getActiveUsers() {
+        // TODO: Get only active users
+        String query = "SELECT username, password, email FROM test_users WHERE active = TRUE";
+        return dbUtils.getColumnsAsArray(query, "username", "password", "email");
+    }
+
+    @DataProvider(name = "adminUsers")
+    public Object[][] getAdminUsers() {
+        // TODO: Get only admin users
+        String query = "SELECT username, role FROM test_users WHERE role = 'admin'";
+        return dbUtils.getColumnsAsArray(query, "username", "role");
+    }
+
+    @AfterClass
+    public void cleanupDatabase() {
+        // TODO: Close database connection
+        if (dbUtils != null) {
+            dbUtils.closeConnection();
+        }
+    }
+}
+```
+
+**Expected Output:**
+- Database connection established successfully
+- Active users test runs 4 times (active users only)
+- Admin users test runs 1 time (admin only)
+- Row count retrieved correctly
+- Single value query works
+- Connection closed properly
+
+**Common Mistakes to Avoid:**
+1. ❌ Not closing database connections
+2. ❌ SQL injection vulnerability (not using PreparedStatement)
+3. ❌ Forgetting to close ResultSet and Statement
+4. ❌ Not handling SQLException properly
+5. ❌ Wrong JDBC URL format for MySQL
+
+**Solution Hints:**
+- Use DriverManager.getConnection(url, username, password)
+- Always use PreparedStatement for queries with parameters
+- Close resources in reverse order: ResultSet → Statement → Connection
+- ResultSetMetaData provides column information
+- Use getColumnCount() and getColumnName(i) for metadata
+
+---
+
+### Exercise 5: Multi-Source Data Provider Factory (45 minutes)
+
+**Objective:** Create a unified test data factory that can switch between multiple data sources (Excel, CSV, JSON, Database).
+
+**Scenario:** Build TestDataFactory that provides a single interface to fetch test data from any source, making tests flexible and maintainable.
+
+**Instructions:**
+
+1. Create `TestDataFactory.java` with strategy pattern
+2. Implement methods for each data source
+3. Create configuration to switch data sources
+4. Create unified test class
+5. Test with different data sources
+
+**Code Template:**
+
+```java
+package utils;
+
+public class TestDataFactory {
+
+    public enum DataSource {
+        EXCEL, CSV, JSON, DATABASE
+    }
+
+    // TODO: Implement getLoginData method
+    public static Object[][] getLoginData(DataSource source) {
+        // Your code here
+        // Use switch statement to return data from appropriate source
+        switch (source) {
+            case EXCEL:
+                return getLoginDataFromExcel();
+            case CSV:
+                return getLoginDataFromCSV();
+            case JSON:
+                return getLoginDataFromJSON();
+            case DATABASE:
+                return getLoginDataFromDatabase();
+            default:
+                throw new IllegalArgumentException("Invalid data source: " + source);
+        }
+    }
+
+    // TODO: Implement getLoginDataFromExcel
+    private static Object[][] getLoginDataFromExcel() {
+        // Your code here
+        // 1. Define file path
+        // 2. Create ExcelUtils
+        // 3. Get data
+        // 4. Close Excel
+        // 5. Return data
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getLoginDataFromCSV
+    private static Object[][] getLoginDataFromCSV() {
+        // Your code here
+        // Use CSVUtils to read data
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getLoginDataFromJSON
+    private static Object[][] getLoginDataFromJSON() {
+        // Your code here
+        // Use JSONUtils to read data
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getLoginDataFromDatabase
+    private static Object[][] getLoginDataFromDatabase() {
+        // Your code here
+        // 1. Create DatabaseUtils
+        // 2. Execute query
+        // 3. Get data array
+        // 4. Close connection
+        // 5. Return data
+        return new Object[0][0];
+    }
+
+    // TODO: Implement getConfiguredDataSource method
+    public static DataSource getConfiguredDataSource() {
+        // Your code here
+        // 1. Read from config.properties or environment variable
+        // 2. Parse string to DataSource enum
+        // 3. Return enum value
+        return DataSource.EXCEL; // Default
+    }
+
+    // TODO: Implement getSearchData method
+    public static Object[][] getSearchData(DataSource source) {
+        // Your code here
+        // Similar to getLoginData but for search test data
+        return new Object[0][0];
+    }
+}
+```
+
+**Config Properties Template (config.properties):**
+
+```properties
+# Data source configuration
+data.source=EXCEL
+# Supported values: EXCEL, CSV, JSON, DATABASE
+
+# File paths
+excel.file.path=src/test/resources/testdata/LoginData.xlsx
+csv.file.path=src/test/resources/testdata/LoginData.csv
+json.file.path=src/test/resources/testdata/testData.json
+
+# Database configuration
+db.url=jdbc:mysql://localhost:3306/testdb
+db.username=root
+db.password=password
+db.query=SELECT username, password, expected FROM test_login_data
+```
+
+**Enhanced ConfigReader Template:**
+
+```java
+package utils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+public class ConfigReader {
+
+    private static Properties properties;
+    private static final String CONFIG_FILE = "src/test/resources/config.properties";
+
+    static {
+        // TODO: Load properties in static block
+        // Your code here
+    }
+
+    public static String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
+    public static String getDataSource() {
+        return getProperty("data.source", "EXCEL");
+    }
+
+    public static String getExcelFilePath() {
+        return getProperty("excel.file.path");
+    }
+
+    public static String getCSVFilePath() {
+        return getProperty("csv.file.path");
+    }
+
+    public static String getJSONFilePath() {
+        return getProperty("json.file.path");
+    }
+
+    public static String getDatabaseURL() {
+        return getProperty("db.url");
+    }
+
+    public static String getDatabaseUsername() {
+        return getProperty("db.username");
+    }
+
+    public static String getDatabasePassword() {
+        return getProperty("db.password");
+    }
+
+    public static String getDatabaseQuery() {
+        return getProperty("db.query");
+    }
+}
+```
+
+**Test Class Template:**
+
+```java
+package tests;
+
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import utils.ConfigReader;
+import utils.TestDataFactory;
+import utils.TestDataFactory.DataSource;
+
+public class MultiSourceDataTest {
+
+    @Test(dataProvider = "loginData")
+    public void testLogin(String username, String password, String expected) {
+        // TODO: Implement test
+        System.out.println("Testing login with:");
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+        System.out.println("Expected: " + expected);
+        System.out.println("Data Source: " + ConfigReader.getDataSource());
+        System.out.println("------------------------");
+
+        // Add actual test logic here
+    }
+
+    @Test
+    public void testWithExcelData() {
+        // TODO: Explicitly test with Excel data
+        Object[][] data = TestDataFactory.getLoginData(DataSource.EXCEL);
+        System.out.println("Excel data count: " + data.length);
+    }
+
+    @Test
+    public void testWithCSVData() {
+        // TODO: Explicitly test with CSV data
+        Object[][] data = TestDataFactory.getLoginData(DataSource.CSV);
+        System.out.println("CSV data count: " + data.length);
+    }
+
+    @Test
+    public void testWithJSONData() {
+        // TODO: Explicitly test with JSON data
+        Object[][] data = TestDataFactory.getLoginData(DataSource.JSON);
+        System.out.println("JSON data count: " + data.length);
+    }
+
+    @Test
+    public void testWithDatabaseData() {
+        // TODO: Explicitly test with Database data
+        Object[][] data = TestDataFactory.getLoginData(DataSource.DATABASE);
+        System.out.println("Database data count: " + data.length);
+    }
+
+    @DataProvider(name = "loginData")
+    public Object[][] getLoginData() {
+        // TODO: Get data source from configuration
+        String sourceStr = ConfigReader.getDataSource();
+        DataSource source = DataSource.valueOf(sourceStr);
+
+        // Return data from configured source
+        return TestDataFactory.getLoginData(source);
+    }
+}
+```
+
+**Expected Output:**
+- Test runs with configured data source
+- Can switch between sources by changing config
+- All sources provide same data format
+- Factory pattern works correctly
+- Configuration properly loaded
+
+**Common Mistakes to Avoid:**
+1. ❌ Not handling invalid data source enum values
+2. ❌ Hardcoding file paths instead of using configuration
+3. ❌ Not closing resources in factory methods
+4. ❌ Inconsistent data format across sources
+5. ❌ Not validating configuration values
+
+**Solution Hints:**
+- Use enum for type-safe data source selection
+- Always read paths and settings from config file
+- Ensure all methods return same Object[][] format
+- Close database connection in finally block
+- Use valueOf() to convert String to enum
+
+---
+
+### Exercise 6: Complete Data-Driven Framework Integration (45 minutes)
+
+**Objective:** Build a complete end-to-end data-driven test framework integrating all data sources with Page Object Model.
+
+**Scenario:** Create a production-ready data-driven framework with Excel, CSV, JSON, and Database support, integrated with POM and configuration management.
+
+**Instructions:**
+
+1. Create complete project structure
+2. Build all utility classes
+3. Create Page Objects
+4. Implement comprehensive test class
+5. Run complete test suite with multiple data sources
+
+**Project Structure:**
+
+```
+src/test/
+├── java/
+│   ├── pages/
+│   │   ├── BasePage.java
+│   │   └── LoginPage.java
+│   ├── tests/
+│   │   └── CompleteDataDrivenTest.java
+│   └── utils/
+│       ├── ExcelUtils.java
+│       ├── CSVUtils.java
+│       ├── JSONUtils.java
+│       ├── DatabaseUtils.java
+│       ├── TestDataFactory.java
+│       └── ConfigReader.java
+└── resources/
+    ├── config.properties
+    └── testdata/
+        ├── LoginData.xlsx
+        ├── LoginData.csv
+        └── testData.json
+```
+
+**BasePage Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+
+public abstract class BasePage {
+
+    protected WebDriver driver;
+    protected WebDriverWait wait;
+
+    public BasePage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        PageFactory.initElements(driver, this);
+    }
+
+    // TODO: Add common methods
+    protected void click(WebElement element) {
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+        element.click();
+    }
+
+    protected void type(WebElement element, String text) {
+        wait.until(ExpectedConditions.visibilityOf(element));
+        element.clear();
+        element.sendKeys(text);
+    }
+
+    protected boolean isDisplayed(WebElement element) {
+        try {
+            return element.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+```
+
+**LoginPage Template:**
+
+```java
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class LoginPage extends BasePage {
+
+    @FindBy(id = "username")
+    private WebElement usernameField;
+
+    @FindBy(id = "password")
+    private WebElement passwordField;
+
+    @FindBy(id = "loginBtn")
+    private WebElement loginButton;
+
+    @FindBy(className = "error-message")
+    private WebElement errorMessage;
+
+    @FindBy(className = "success-message")
+    private WebElement successMessage;
+
+    public LoginPage(WebDriver driver) {
+        super(driver);
+    }
+
+    // TODO: Implement login method
+    public void login(String username, String password) {
+        // Your code here
+    }
+
+    // TODO: Implement verification methods
+    public boolean isLoginSuccessful() {
+        // Your code here
+        return false;
+    }
+
+    public String getErrorMessage() {
+        // Your code here
+        return "";
+    }
+}
+```
+
+**Complete Test Class Template:**
+
+```java
+package tests;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import pages.LoginPage;
+import utils.ConfigReader;
+import utils.TestDataFactory;
+import utils.TestDataFactory.DataSource;
+
+import java.time.Duration;
+
+public class CompleteDataDrivenTest {
+
+    WebDriver driver;
+    LoginPage loginPage;
+
+    @BeforeMethod
+    public void setup() {
+        // TODO: Setup WebDriver
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.get(ConfigReader.getProperty("app.url", "https://example.com/login"));
+
+        loginPage = new LoginPage(driver);
+    }
+
+    @Test(dataProvider = "excelLoginData", groups = {"excel", "smoke"})
+    public void testLoginWithExcelData(String username, String password, String expected) {
+        // TODO: Implement test logic
+        System.out.println("Testing with Excel data:");
+        loginPage.login(username, password);
+
+        if (expected.equalsIgnoreCase("Success")) {
+            Assert.assertTrue(loginPage.isLoginSuccessful(),
+                "Login should succeed for: " + username);
+        } else {
+            Assert.assertFalse(loginPage.getErrorMessage().isEmpty(),
+                "Error message should be displayed for: " + username);
+        }
+    }
+
+    @Test(dataProvider = "csvLoginData", groups = {"csv", "smoke"})
+    public void testLoginWithCSVData(String username, String password, String expected) {
+        // TODO: Same test logic as Excel test
+        System.out.println("Testing with CSV data:");
+        loginPage.login(username, password);
+
+        if (expected.equalsIgnoreCase("Success")) {
+            Assert.assertTrue(loginPage.isLoginSuccessful());
+        }
+    }
+
+    @Test(dataProvider = "jsonLoginData", groups = {"json", "regression"})
+    public void testLoginWithJSONData(String username, String password, String expected) {
+        // TODO: Same test logic
+        System.out.println("Testing with JSON data:");
+        loginPage.login(username, password);
+    }
+
+    @Test(dataProvider = "dbLoginData", groups = {"database", "regression"})
+    public void testLoginWithDatabaseData(String username, String password, String expected) {
+        // TODO: Same test logic
+        System.out.println("Testing with Database data:");
+        loginPage.login(username, password);
+    }
+
+    @Test(dataProvider = "configuredLoginData", groups = {"smoke", "regression"})
+    public void testLoginWithConfiguredSource(String username, String password, String expected) {
+        // TODO: Test with source from config
+        System.out.println("Testing with configured data source:");
+        System.out.println("Source: " + ConfigReader.getDataSource());
+        loginPage.login(username, password);
+    }
+
+    // Data Providers
+    @DataProvider(name = "excelLoginData")
+    public Object[][] getExcelLoginData() {
+        return TestDataFactory.getLoginData(DataSource.EXCEL);
+    }
+
+    @DataProvider(name = "csvLoginData")
+    public Object[][] getCSVLoginData() {
+        return TestDataFactory.getLoginData(DataSource.CSV);
+    }
+
+    @DataProvider(name = "jsonLoginData")
+    public Object[][] getJSONLoginData() {
+        return TestDataFactory.getLoginData(DataSource.JSON);
+    }
+
+    @DataProvider(name = "dbLoginData")
+    public Object[][] getDatabaseLoginData() {
+        return TestDataFactory.getLoginData(DataSource.DATABASE);
+    }
+
+    @DataProvider(name = "configuredLoginData")
+    public Object[][] getConfiguredLoginData() {
+        String source = ConfigReader.getDataSource();
+        return TestDataFactory.getLoginData(DataSource.valueOf(source));
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**TestNG XML Configuration:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Data-Driven Test Suite">
+
+    <test name="Excel Data Tests">
+        <groups>
+            <run>
+                <include name="excel"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CompleteDataDrivenTest"/>
+        </classes>
+    </test>
+
+    <test name="CSV Data Tests">
+        <groups>
+            <run>
+                <include name="csv"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CompleteDataDrivenTest"/>
+        </classes>
+    </test>
+
+    <test name="All Smoke Tests">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CompleteDataDrivenTest"/>
+        </classes>
+    </test>
+
+</suite>
+```
+
+**Tasks to Complete:**
+
+1. Implement all utility classes (ExcelUtils, CSVUtils, JSONUtils, DatabaseUtils)
+2. Complete TestDataFactory with all data source methods
+3. Implement BasePage common methods
+4. Complete LoginPage methods
+5. Implement all test methods
+6. Create all test data files
+7. Configure config.properties
+8. Run tests with different groups
+
+**Expected Output:**
+- All utility classes work correctly
+- Data factory switches sources seamlessly
+- Tests run with all data sources
+- Page Object Model integration works
+- Configuration management effective
+- TestNG groups execute properly
+
+**Common Mistakes to Avoid:**
+1. ❌ Not consistent data format across all sources
+2. ❌ Missing proper exception handling in utilities
+3. ❌ Not closing resources (Excel, Database connections)
+4. ❌ Hardcoding file paths and configurations
+5. ❌ Not using Page Object Model correctly
+6. ❌ Missing proper wait strategies
+7. ❌ Not implementing reusable base methods
+
+**Solution Hints:**
+- All data sources must return Object[][] with same structure
+- Use try-with-resources for all file and database operations
+- ConfigReader should be static and load once
+- BasePage should have all common WebDriver operations
+- TestDataFactory is the single point for data access
+- Use TestNG groups for flexible test execution
+- Ensure proper cleanup in @AfterMethod
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 36: Page Object Model Part 2](./day36_pom_part2.md)
@@ -2209,5 +3665,9 @@ Example:
 - **Week 6 Home:** [Week 6 Overview](./README.md)
 
 ---
+
+**Congratulations!** You have mastered working with external data sources for data-driven testing. These skills are essential for building scalable and maintainable test automation frameworks that can handle complex real-world testing scenarios.
+
+**Next:** In Day 38, we'll explore logging and reporting frameworks to track test execution and generate comprehensive test reports.
 
 **Happy Learning!** Mastering external data sources is essential for building robust and maintainable data-driven test automation frameworks.

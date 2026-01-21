@@ -2352,3 +2352,491 @@ This allows flexibility to override any configuration at runtime while maintaini
 ---
 
 **Happy Learning!** Configuration management is essential for building maintainable and scalable test automation frameworks that work across multiple environments.
+## Hands-On Exercises for Configuration Management
+
+### Exercise 1: Creating Basic ConfigReader Utility (40 minutes)
+
+**Objective**: Build a ConfigReader utility class to read properties from application.properties file with type-safe methods.
+
+**Scenario**: Your automation framework needs centralized configuration management. Create a ConfigReader that loads properties and provides type-safe getter methods.
+
+**Tasks**:
+1. Create config.properties file with various configuration parameters
+2. Implement ConfigReader class with static initialization
+3. Add type-safe methods (getString, getInt, getBoolean)
+4. Implement default value support
+5. Add error handling for missing properties
+6. Test ConfigReader in a sample test class
+
+**Code Template**:
+
+```java
+// TODO 1: Create config.properties file in src/main/resources/
+# Application Configuration
+app.name=Selenium Framework
+base.url=https://qa.example.com
+browser=chrome
+headless.mode=false
+implicit.wait=10
+explicit.wait=20
+default.username=testuser
+default.password=Test@123
+
+// TODO 2: Complete ConfigReader class
+package utils;
+
+import java.io.FileInputStream;
+import java.util.Properties;
+
+public class ConfigReader {
+
+    private static Properties properties;
+    private static final String CONFIG_FILE = "src/main/resources/config.properties";
+
+    static {
+        // TODO: Load properties in static block
+    }
+
+    private static void loadProperties() {
+        // TODO: Initialize Properties object
+        // TODO: Load file using FileInputStream
+        // TODO: Handle IOException
+    }
+
+    // TODO: Implement getProperty method
+    public static String getProperty(String key) {
+        // TODO: Get property value
+        // TODO: Throw exception if key not found
+        return null;
+    }
+
+    // TODO: Implement getProperty with default value
+    public static String getProperty(String key, String defaultValue) {
+        // TODO: Return property or default value
+        return null;
+    }
+
+    // TODO: Implement getIntProperty
+    public static int getIntProperty(String key) {
+        // TODO: Parse string to int
+        return 0;
+    }
+
+    // TODO: Implement getBooleanProperty
+    public static boolean getBooleanProperty(String key) {
+        // TODO: Parse string to boolean
+        return false;
+    }
+}
+
+// TODO 3: Test ConfigReader
+public class ConfigReaderTest {
+    public static void main(String[] args) {
+        // TODO: Read and print all configuration values
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ Properties file loaded successfully
+✓ All property values retrieved correctly
+✓ Type conversions working (int, boolean)
+✓ Default values applied when key missing
+✓ Exception thrown for non-existent required keys
+```
+
+**Common Mistakes**:
+1. Not using static block for initialization
+2. File path issues (absolute vs relative)
+3. Not closing FileInputStream properly
+4. Not handling NumberFormatException
+5. Returning null instead of throwing exception
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+```java
+static {
+    loadProperties();
+}
+
+private static void loadProperties() {
+    properties = new Properties();
+    try (FileInputStream fis = new FileInputStream(CONFIG_FILE)) {
+        properties.load(fis);
+    } catch (IOException e) {
+        throw new RuntimeException("Config file not found", e);
+    }
+}
+
+public static String getProperty(String key) {
+    String value = properties.getProperty(key);
+    if (value == null) {
+        throw new RuntimeException("Property not found: " + key);
+    }
+    return value.trim();
+}
+```
+</details>
+
+---
+
+### Exercise 2: Implementing Environment-Specific Configurations (45 minutes)
+
+**Objective**: Create multiple environment configuration files (QA, UAT, PROD) and implement environment selector utility.
+
+**Tasks**:
+1. Create separate properties files for each environment
+2. Implement EnvironmentConfig class with environment enum
+3. Load configuration based on system property
+4. Handle environment variable placeholders
+5. Test switching between environments
+6. Run tests with different environments using -Denv parameter
+
+**Code Template**:
+
+```java
+// TODO 1: Create qa.properties
+environment=QA
+base.url=https://qa.example.com
+db.host=qa-db.example.com
+default.username=qa_user
+
+// TODO 2: Create uat.properties
+environment=UAT
+base.url=https://uat.example.com
+db.host=uat-db.example.com
+default.username=uat_user
+
+// TODO 3: Create prod.properties
+environment=PRODUCTION
+base.url=https://example.com
+db.host=prod-db.example.com
+default.username=${PROD_USERNAME}
+default.password=${PROD_PASSWORD}
+
+// TODO 4: Implement EnvironmentConfig
+package utils;
+
+public class EnvironmentConfig {
+
+    private static Properties properties;
+    private static String currentEnvironment;
+
+    public enum Environment {
+        QA("qa"), UAT("uat"), PROD("prod");
+        private final String value;
+        Environment(String value) { this.value = value; }
+        public String getValue() { return value; }
+    }
+
+    static {
+        // TODO: Load environment configuration
+    }
+
+    private static void loadEnvironmentConfiguration() {
+        // TODO: Get environment from system property (default to QA)
+        // TODO: Build config file path
+        // TODO: Load properties
+        // TODO: Print loaded environment
+    }
+
+    public static String getProperty(String key) {
+        // TODO: Get property value
+        // TODO: Resolve placeholders like ${ENV_VAR}
+        return null;
+    }
+}
+
+// TODO 5: Test with different environments
+// Run: mvn test -Denv=qa
+// Run: mvn test -Denv=uat
+```
+
+**Expected Output**:
+```
+✓ QA configuration loaded when no parameter specified
+✓ UAT configuration loaded with -Denv=uat
+✓ PROD configuration loaded with -Denv=prod
+✓ Environment variables resolved in PROD config
+✓ Correct base URL for each environment
+```
+
+<details>
+<summary><b>Solution Hints</b></summary>
+
+```java
+currentEnvironment = System.getProperty("env", Environment.QA.getValue());
+String configPath = "src/main/resources/config/" + currentEnvironment + ".properties";
+
+// Placeholder resolution
+if (value != null && value.startsWith("${") && value.endsWith("}")) {
+    String envVar = value.substring(2, value.length() - 1);
+    value = System.getenv(envVar);
+}
+```
+</details>
+
+---
+
+### Exercise 3: Building Enhanced ConfigReader with All Features (50 minutes)
+
+**Objective**: Create a production-ready ConfigReader with type-safe methods, default values, and environment-specific loading.
+
+**Tasks**:
+1. Combine basic and environment-specific features
+2. Add convenience methods for common configurations
+3. Implement configuration validation
+4. Add thread-safety for parallel execution
+5. Create comprehensive test coverage
+
+**Code Template**:
+
+```java
+package utils;
+
+public class EnhancedConfigReader {
+
+    private static Properties properties;
+    private static final Object lock = new Object();
+
+    static {
+        loadConfiguration();
+    }
+
+    private static void loadConfiguration() {
+        synchronized (lock) {
+            // TODO: Load environment-specific config
+        }
+    }
+
+    // Convenience methods
+    public static String getBaseUrl() {
+        // TODO: Return base.url
+        return null;
+    }
+
+    public static String getBrowser() {
+        // TODO: Return browser with default "chrome"
+        return null;
+    }
+
+    public static int getImplicitWait() {
+        // TODO: Return implicit.wait with default 10
+        return 0;
+    }
+
+    public static boolean isHeadlessMode() {
+        // TODO: Return headless.mode with default false
+        return false;
+    }
+
+    // TODO: Add more convenience methods
+}
+```
+
+**Expected Output**:
+```
+✓ All configuration methods working correctly
+✓ Thread-safe for parallel test execution
+✓ Default values applied correctly
+✓ Environment switching seamless
+✓ Type conversions accurate
+```
+
+---
+
+### Exercise 4: Working with YAML Configuration Files (40 minutes)
+
+**Objective**: Implement YAML-based configuration as an alternative to properties files.
+
+**Tasks**:
+1. Add SnakeYAML Maven dependency
+2. Create config.yaml with hierarchical structure
+3. Implement YAMLConfigReader class
+4. Support nested property access (urls.base, timeouts.implicit)
+5. Test reading complex YAML structures
+
+**Code Template**:
+
+```yaml
+# TODO 1: Create config.yaml
+application:
+  name: Selenium Framework
+  version: 1.0.0
+
+urls:
+  base: https://qa.example.com
+  api: https://api.qa.example.com
+
+browser:
+  type: chrome
+  headless: false
+  options:
+    - --disable-notifications
+    - --start-maximized
+
+timeouts:
+  implicit: 10
+  explicit: 20
+  page_load: 30
+
+users:
+  admin:
+    username: admin@example.com
+    password: Admin@123
+  standard:
+    username: user@example.com
+    password: User@123
+```
+
+```java
+// TODO 2: Implement YAMLConfigReader
+package utils;
+
+import org.yaml.snakeyaml.Yaml;
+import java.util.Map;
+
+public class YAMLConfigReader {
+
+    private static Map<String, Object> config;
+
+    static {
+        // TODO: Load YAML config
+    }
+
+    public static String getProperty(String path) {
+        // TODO: Support dot notation (urls.base)
+        return null;
+    }
+
+    public static Map<String, Object> getMapProperty(String path) {
+        // TODO: Return map for nested objects
+        return null;
+    }
+}
+```
+
+**Expected Output**:
+```
+✓ YAML file loaded successfully
+✓ Nested properties accessible via dot notation
+✓ Map objects retrieved correctly
+✓ Lists and arrays supported
+✓ Type preservation maintained
+```
+
+---
+
+### Exercise 5: Implementing Configuration Precedence (45 minutes)
+
+**Objective**: Build a configuration manager that supports multiple configuration sources with proper precedence order.
+
+**Tasks**:
+1. Implement precedence: System Properties > Environment Variables > Config Files
+2. Create ConfigurationManager with layered loading
+3. Test precedence by overriding values
+4. Print final configuration with source indication
+
+**Code Template**:
+
+```java
+package utils;
+
+public class ConfigurationManager {
+
+    private static Properties properties;
+
+    static {
+        loadConfiguration();
+    }
+
+    private static void loadConfiguration() {
+        properties = new Properties();
+
+        // TODO: 1. Load default properties
+        loadDefaultProperties();
+
+        // TODO: 2. Load environment-specific (overrides defaults)
+        loadEnvironmentProperties();
+
+        // TODO: 3. Override with system properties
+        overrideWithSystemProperties();
+
+        // TODO: 4. Override with environment variables
+        overrideWithEnvironmentVariables();
+    }
+
+    // TODO: Implement each loading method
+}
+```
+
+**Expected Output**:
+```
+✓ Default configuration loaded
+✓ Environment-specific overrides applied
+✓ System properties take precedence
+✓ Environment variables highest priority
+✓ Final configuration printed with sources
+```
+
+---
+
+### Exercise 6: Creating Complete Configuration Framework (60 minutes)
+
+**Objective**: Build an enterprise-grade unified configuration framework combining all features.
+
+**Tasks**:
+1. Combine properties and YAML support
+2. Add environment variable resolution
+3. Implement configuration validation
+4. Create singleton pattern implementation
+5. Add configuration reload capability
+6. Build comprehensive test suite
+
+**Code Template**:
+
+```java
+package framework.config;
+
+public class UnifiedConfigManager {
+
+    private static UnifiedConfigManager instance;
+    private Properties properties;
+    private String environment;
+
+    private UnifiedConfigManager() {
+        loadConfiguration();
+    }
+
+    public static synchronized UnifiedConfigManager getInstance() {
+        // TODO: Implement singleton
+        return null;
+    }
+
+    private void loadConfiguration() {
+        // TODO: Determine environment
+        // TODO: Load base config
+        // TODO: Load environment-specific config
+        // TODO: Apply overrides
+    }
+
+    // TODO: Add all getter methods
+    // TODO: Add validation
+    // TODO: Add reload capability
+}
+```
+
+**Expected Output**:
+```
+✓ Singleton pattern working correctly
+✓ All configuration sources integrated
+✓ Validation catching invalid configurations
+✓ Reload functionality working
+✓ Thread-safe for parallel execution
+✓ Comprehensive configuration printed
+```
+
+---
+

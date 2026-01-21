@@ -27281,3 +27281,8193 @@ try (Resource r = new Resource()) {
 - Day 22: File I/O (Reading and Writing Files)
 
 ---
+- Day 21: Collections Advanced (HashMap, TreeMap, Iterators)
+- Day 22: File I/O (Reading and Writing Files)
+
+---
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CORRECTED WEEK 2 EXERCISES (DAYS 10-14) - ALIGNED WITH ACTUAL LESSONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+## ⚠️ IMPORTANT NOTE
+
+**These exercises (Days 10-14 below) are the CORRECT exercises aligned with the actual lesson files.**
+
+The exercises labeled "Day 10-12" earlier in this file (around lines 8779-12000) were created 
+before the lesson structure was finalized and do NOT match the actual Day 10-14 lessons.
+
+See `COURSE_CONTENT_MISMATCH.md` for details on the misalignment.
+
+**Correct Alignment:**
+- Day 10 Lesson: Methods & Method Overloading → Exercises below ✅
+- Day 11 Lesson: Encapsulation → Exercises below ✅
+- Day 12 Lesson: Inheritance → Exercises below ✅
+- Day 13 Lesson: Polymorphism → Exercises below ✅
+- Day 14 Lesson: Abstraction → Exercises below ✅
+
+---
+
+## Week 2: Object-Oriented Programming Fundamentals (CORRECTED)
+
+### Day 10: Methods & Method Overloading
+
+---
+
+#### Exercise 1: Creating Your First Method (15 minutes)
+
+**What you'll learn:** Understanding methods, creating and calling them
+
+**Create new class: `MethodBasics`**
+
+**Concept:** A **method** is a reusable block of code that performs a specific task. Think of it as a mini-program inside your program that you can call whenever needed.
+
+**Why Methods?**
+- **Avoid repetition**: Write code once, use many times
+- **Organization**: Break big problems into smaller pieces
+- **Readability**: Makes code easier to understand
+
+**Step-by-Step:**
+
+```java
+public class MethodBasics {
+    public static void main(String[] args) {
+        System.out.println("===== METHOD BASICS =====\n");
+        
+        // Calling methods
+        System.out.println("1. Calling greet():");
+        greet();
+        
+        System.out.println("\n2. Calling greet() three times:");
+        greet();
+        greet();
+        greet();
+        
+        System.out.println("\n3. Calling printLine() to create dividers:");
+        printLine();
+        System.out.println("Important Message Here\!");
+        printLine();
+        
+        System.out.println("\n4. Calling welcome():");
+        welcome();
+        
+        System.out.println("\n===========================");
+    }
+    
+    // METHOD 1: Simple method with no parameters, no return value
+    public static void greet() {
+        System.out.println("  Hello from the greet() method\!");
+    }
+    
+    // METHOD 2: Print a line of equals signs
+    public static void printLine() {
+        System.out.println("  ================================");
+    }
+    
+    // METHOD 3: More complex welcome message
+    public static void welcome() {
+        System.out.println("  ╔════════════════════════════╗");
+        System.out.println("  ║  Welcome to Java Methods\!  ║");
+        System.out.println("  ╚════════════════════════════╝");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== METHOD BASICS =====
+
+1. Calling greet():
+  Hello from the greet() method\!
+
+2. Calling greet() three times:
+  Hello from the greet() method\!
+  Hello from the greet() method\!
+  Hello from the greet() method\!
+
+3. Calling printLine() to create dividers:
+  ================================
+Important Message Here\!
+  ================================
+
+4. Calling welcome():
+  ╔════════════════════════════════╗
+  ║  Welcome to Java Methods\!  ║
+  ╚════════════════════════════════╝
+
+===========================
+```
+
+**💡 Method Structure Explained:**
+
+```java
+public static void methodName() {
+    // Code to execute
+}
+
+// Breaking it down:
+// public  - Can be called from anywhere
+// static  - Belongs to class (not object) - needed to call from main
+// void    - Returns nothing
+// methodName - Name of the method (use camelCase)
+// ()      - Parameters go here (empty for now)
+// { }     - Method body - the code that runs
+```
+
+**How Method Calls Work:**
+```
+1. Program starts at main()
+2. Encounters greet(); 
+3. Jumps to greet() method
+4. Executes all code in greet()
+5. Returns back to main()
+6. Continues with next line
+```
+
+**✅ Success Criteria:**
+- Understand method definition vs method call
+- Can create simple methods
+- Know methods execute when called, then return to caller
+- Recognize methods help avoid code repetition
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| `greet;` | Missing parentheses | `greet();` |
+| Method inside main | Methods must be at class level | Define after main method's closing } |
+| Forgetting `static` | Can't call non-static from static main | Always use `public static` for now |
+| Typo in method name | `greet()` defined, `great()` called | Method name must match exactly |
+
+**🎯 Challenge:**
+1. Create a method `printStars()` that prints "*****"
+2. Create a method `sayGoodbye()` that prints "Goodbye\!"
+3. Call both methods from main
+
+---
+
+#### Exercise 2: Methods with Parameters (20 minutes)
+
+**What you'll learn:** Passing data to methods using parameters
+
+**Create new class: `MethodParameters`**
+
+**Concept:** **Parameters** are variables that let you pass information into a method. This makes methods flexible and reusable with different data.
+
+```
+Think of parameters like:
+- Method = Coffee machine
+- Parameters = Your customization (size, sugar, milk)
+- Result = Customized coffee
+
+Same machine, different inputs, different results\!
+```
+
+**Step-by-Step:**
+
+```java
+public class MethodParameters {
+    public static void main(String[] args) {
+        System.out.println("===== METHODS WITH PARAMETERS =====\n");
+        
+        // Example 1: Single parameter
+        System.out.println("--- Example 1: Greeting with name ---");
+        greetPerson("Alice");
+        greetPerson("Bob");
+        greetPerson("Charlie");
+        
+        // Example 2: Multiple parameters
+        System.out.println("\n--- Example 2: Personal info ---");
+        displayInfo("Alice", 25);
+        displayInfo("Bob", 30);
+        
+        // Example 3: Different data types
+        System.out.println("\n--- Example 3: Product details ---");
+        showProduct("Laptop", 999.99, 5);
+        showProduct("Mouse", 25.50, 50);
+        
+        // Example 4: Calculation with parameters
+        System.out.println("\n--- Example 4: Calculations ---");
+        printSquare(5);
+        printSquare(10);
+        printSquare(7);
+        
+        System.out.println("\n=====================================");
+    }
+    
+    // METHOD 1: Single String parameter
+    public static void greetPerson(String name) {
+        System.out.println("  Hello, " + name + "\! Welcome\!");
+    }
+    
+    // METHOD 2: Two parameters (String and int)
+    public static void displayInfo(String name, int age) {
+        System.out.println("  Name: " + name);
+        System.out.println("  Age: " + age);
+        System.out.println();
+    }
+    
+    // METHOD 3: Multiple parameters, different types
+    public static void showProduct(String productName, double price, int stock) {
+        System.out.println("  Product: " + productName);
+        System.out.println("  Price: $" + price);
+        System.out.println("  In Stock: " + stock + " units");
+        System.out.println();
+    }
+    
+    // METHOD 4: Parameter used in calculation
+    public static void printSquare(int number) {
+        int square = number * number;
+        System.out.println("  Square of " + number + " is " + square);
+    }
+}
+```
+
+**Expected Output:**
+```
+===== METHODS WITH PARAMETERS =====
+
+--- Example 1: Greeting with name ---
+  Hello, Alice\! Welcome\!
+  Hello, Bob\! Welcome\!
+  Hello, Charlie\! Welcome\!
+
+--- Example 2: Personal info ---
+  Name: Alice
+  Age: 25
+
+  Name: Bob
+  Age: 30
+
+--- Example 3: Product details ---
+  Product: Laptop
+  Price: $999.99
+  In Stock: 5 units
+
+  Product: Mouse
+  Price: $25.5
+  In Stock: 50 units
+
+--- Example 4: Calculations ---
+  Square of 5 is 25
+  Square of 10 is 100
+  Square of 7 is 49
+
+=====================================
+```
+
+**💡 Parameter Terminology:**
+
+```java
+// Definition (parameters are declared here)
+public static void greetPerson(String name) {
+    //                           ^^^^^^^^^ Parameter
+    System.out.println("Hello, " + name);
+}
+
+// Call (arguments are passed here)
+greetPerson("Alice");
+//          ^^^^^^^ Argument
+
+// Parameters = Variables in method definition
+// Arguments = Actual values passed when calling
+```
+
+**How Parameters Work:**
+```
+1. Method is called: greetPerson("Alice")
+2. Value "Alice" is copied to parameter 'name'
+3. Inside method, name = "Alice"
+4. Method executes using that value
+5. Method ends, parameter is destroyed
+```
+
+**✅ Success Criteria:**
+- Understand parameters vs arguments
+- Can create methods with multiple parameters
+- Know how to pass different data types
+- Recognize parameters make methods flexible
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| Wrong number of arguments | Method expects 2, you pass 1 | Match parameter count exactly |
+| Wrong order | `displayInfo(25, "Alice")` | Match parameter order: (String, int) |
+| Wrong type | Passing String where int expected | Match parameter types |
+| Using parameter name as argument | `greetPerson(name)` when name undefined | Pass actual value: `greetPerson("Alice")` |
+
+**🎯 Challenge:**
+1. Create method `calculateRectangleArea(int length, int width)` that prints the area
+2. Create method `introduce(String name, int age, String city)` that prints all three
+3. Call both methods with different values
+
+---
+
+#### Exercise 3: Methods with Return Values (20 minutes)
+
+**What you'll learn:** Getting results back from methods using return statements
+
+**Create new class: `MethodReturns`**
+
+**Concept:** **Return values** let methods send data back to the caller. Instead of just printing, the method gives you a result you can use, store, or pass to other methods.
+
+```
+void method = Worker that does job, doesn't report back
+return method = Worker that does job AND reports the result
+```
+
+**Step-by-Step:**
+
+```java
+public class MethodReturns {
+    public static void main(String[] args) {
+        System.out.println("===== METHODS WITH RETURN VALUES =====\n");
+        
+        // Example 1: Basic return
+        System.out.println("--- Example 1: Getting values ---");
+        int lucky = getLuckyNumber();
+        System.out.println("Lucky number: " + lucky);
+        
+        String greeting = getGreeting();
+        System.out.println("Greeting: " + greeting);
+        
+        // Example 2: Return with parameters
+        System.out.println("\n--- Example 2: Calculations ---");
+        int sum = add(10, 20);
+        System.out.println("10 + 20 = " + sum);
+        
+        int product = multiply(5, 6);
+        System.out.println("5 × 6 = " + product);
+        
+        double average = calculateAverage(10, 20, 30);
+        System.out.println("Average of 10, 20, 30 = " + average);
+        
+        // Example 3: Using return value directly
+        System.out.println("\n--- Example 3: Direct usage ---");
+        System.out.println("Is 10 even? " + isEven(10));
+        System.out.println("Is 7 even? " + isEven(7));
+        
+        // Example 4: Using return in decisions
+        System.out.println("\n--- Example 4: Return in if statements ---");
+        if (isPositive(5)) {
+            System.out.println("5 is positive\!");
+        }
+        
+        if (\!isPositive(-3)) {
+            System.out.println("-3 is not positive\!");
+        }
+        
+        // Example 5: Chaining returns
+        System.out.println("\n--- Example 5: Using return as input ---");
+        int num1 = add(5, 10);     // Returns 15
+        int num2 = multiply(2, 3); // Returns 6
+        int result = add(num1, num2); // add(15, 6) = 21
+        System.out.println("(5+10) + (2×3) = " + result);
+        
+        System.out.println("\n========================================");
+    }
+    
+    // METHOD 1: Return int, no parameters
+    public static int getLuckyNumber() {
+        return 7;
+    }
+    
+    // METHOD 2: Return String, no parameters
+    public static String getGreeting() {
+        return "Hello, World\!";
+    }
+    
+    // METHOD 3: Return int, with parameters
+    public static int add(int a, int b) {
+        int sum = a + b;
+        return sum;
+        // OR simply: return a + b;
+    }
+    
+    // METHOD 4: Return int
+    public static int multiply(int a, int b) {
+        return a * b;
+    }
+    
+    // METHOD 5: Return double
+    public static double calculateAverage(int num1, int num2, int num3) {
+        double avg = (num1 + num2 + num3) / 3.0;
+        return avg;
+    }
+    
+    // METHOD 6: Return boolean
+    public static boolean isEven(int number) {
+        if (number % 2 == 0) {
+            return true;
+        } else {
+            return false;
+        }
+        // OR simply: return number % 2 == 0;
+    }
+    
+    // METHOD 7: Return boolean
+    public static boolean isPositive(int number) {
+        return number > 0;
+    }
+}
+```
+
+**Expected Output:**
+```
+===== METHODS WITH RETURN VALUES =====
+
+--- Example 1: Getting values ---
+Lucky number: 7
+Greeting: Hello, World\!
+
+--- Example 2: Calculations ---
+10 + 20 = 30
+5 × 6 = 30
+Average of 10, 20, 30 = 20.0
+
+--- Example 3: Direct usage ---
+Is 10 even? true
+Is 7 even? false
+
+--- Example 4: Return in if statements ---
+5 is positive\!
+-3 is not positive\!
+
+--- Example 5: Using return as input ---
+(5+10) + (2×3) = 21
+
+========================================
+```
+
+**💡 Return Type Rules:**
+
+```java
+// Return type must match the declared type
+public static int add(int a, int b) {
+    return a + b;  // ✅ Returning int - matches
+}
+
+public static String getName() {
+    return "Alice";  // ✅ Returning String - matches
+}
+
+public static void printMessage() {
+    // No return needed for void
+    System.out.println("Message");
+    // Can use: return;  (to exit early)
+}
+```
+
+**Return Value Flow:**
+```
+1. Method is called: int result = add(5, 10);
+2. Method executes: calculates 5 + 10 = 15
+3. Return statement: return 15;
+4. Value 15 is sent back to caller
+5. Value is stored in 'result' variable
+```
+
+**✅ Success Criteria:**
+- Understand return vs void methods
+- Can match return type with actual return value
+- Know how to store and use return values
+- Recognize return exits the method immediately
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| `void` but has return value | void means no return | Change to: `public static int method()` |
+| `int` but no return | Declared int, must return int | Add: `return someInt;` |
+| Return wrong type | Returning String when int expected | Match declared type |
+| Code after return | Never executes | Put code before return |
+| Forgetting to use return value | Value is lost | Store it: `int x = method();` |
+
+**🎯 Challenge:**
+1. Create `getMax(int a, int b)` that returns the larger number
+2. Create `getFullName(String first, String last)` that returns combined name
+3. Create `calculateCircleArea(double radius)` that returns area (π × r²)
+
+---
+
+#### Exercise 4: Method Overloading Basics (25 minutes)
+
+**What you'll learn:** Creating multiple methods with the same name but different parameters
+
+**Create new class: `MethodOverloading`**
+
+**Concept:** **Method overloading** means having multiple methods with the **same name** but **different parameters**. Java knows which one to call based on the arguments you pass.
+
+```
+Why overload?
+- Same operation, different input types
+- Example: print(int), print(String), print(double)
+- One name, multiple versions - easier to remember\!
+```
+
+**Overloading Rules:**
+1. ✅ Same method name
+2. ✅ Different parameters (number, type, or order)
+3. ❌ Return type alone is NOT enough
+
+**Step-by-Step:**
+
+```java
+public class MethodOverloading {
+    public static void main(String[] args) {
+        System.out.println("===== METHOD OVERLOADING =====\n");
+        
+        // Example 1: Overloading by NUMBER of parameters
+        System.out.println("--- Example 1: Adding numbers ---");
+        System.out.println("add(5, 10) = " + add(5, 10));
+        System.out.println("add(5, 10, 15) = " + add(5, 10, 15));
+        System.out.println("add(5, 10, 15, 20) = " + add(5, 10, 15, 20));
+        
+        // Example 2: Overloading by TYPE of parameters
+        System.out.println("\n--- Example 2: Printing different types ---");
+        print(42);              // Calls print(int)
+        print(3.14);            // Calls print(double)
+        print("Hello");         // Calls print(String)
+        print(true);            // Calls print(boolean)
+        
+        // Example 3: Overloading by ORDER of parameters
+        System.out.println("\n--- Example 3: Display person info ---");
+        displayPerson("Alice", 25);      // (String, int)
+        displayPerson(30, "Bob");        // (int, String)
+        
+        // Example 4: Real-world example - Area calculations
+        System.out.println("\n--- Example 4: Calculate areas ---");
+        System.out.println("Square (side=5): " + calculateArea(5.0));
+        System.out.println("Rectangle (4×6): " + calculateArea(4.0, 6.0));
+        System.out.println("Circle (radius=3): " + calculateArea(3.0, true));
+        
+        System.out.println("\n================================");
+    }
+    
+    // OVERLOAD GROUP 1: Add methods
+    // Different NUMBER of parameters
+    
+    public static int add(int a, int b) {
+        System.out.println("  Calling add(int, int)");
+        return a + b;
+    }
+    
+    public static int add(int a, int b, int c) {
+        System.out.println("  Calling add(int, int, int)");
+        return a + b + c;
+    }
+    
+    public static int add(int a, int b, int c, int d) {
+        System.out.println("  Calling add(int, int, int, int)");
+        return a + b + c + d;
+    }
+    
+    // OVERLOAD GROUP 2: Print methods
+    // Different TYPES of parameters
+    
+    public static void print(int value) {
+        System.out.println("  Integer: " + value);
+    }
+    
+    public static void print(double value) {
+        System.out.println("  Double: " + value);
+    }
+    
+    public static void print(String value) {
+        System.out.println("  String: " + value);
+    }
+    
+    public static void print(boolean value) {
+        System.out.println("  Boolean: " + value);
+    }
+    
+    // OVERLOAD GROUP 3: Display person
+    // Different ORDER of parameters
+    
+    public static void displayPerson(String name, int age) {
+        System.out.println("  (String, int) → Name: " + name + ", Age: " + age);
+    }
+    
+    public static void displayPerson(int age, String name) {
+        System.out.println("  (int, String) → Age: " + age + ", Name: " + name);
+    }
+    
+    // OVERLOAD GROUP 4: Calculate area
+    // Different combinations for different shapes
+    
+    // Square: one parameter (side)
+    public static double calculateArea(double side) {
+        return side * side;
+    }
+    
+    // Rectangle: two parameters (length, width)
+    public static double calculateArea(double length, double width) {
+        return length * width;
+    }
+    
+    // Circle: two parameters (radius, boolean flag)
+    public static double calculateArea(double radius, boolean isCircle) {
+        if (isCircle) {
+            return 3.14159 * radius * radius;
+        }
+        return 0;
+    }
+}
+```
+
+**Expected Output:**
+```
+===== METHOD OVERLOADING =====
+
+--- Example 1: Adding numbers ---
+  Calling add(int, int)
+add(5, 10) = 15
+  Calling add(int, int, int)
+add(5, 10, 15) = 40
+  Calling add(int, int, int, int)
+add(5, 10, 15, 20) = 50
+
+--- Example 2: Printing different types ---
+  Integer: 42
+  Double: 3.14
+  String: Hello
+  Boolean: true
+
+--- Example 3: Display person info ---
+  (String, int) → Name: Alice, Age: 25
+  (int, String) → Age: 30, Name: Bob
+
+--- Example 4: Calculate areas ---
+Square (side=5): 25.0
+Rectangle (4×6): 24.0
+Circle (radius=3): 28.27431
+
+================================
+```
+
+**💡 How Java Chooses Which Method:**
+
+```java
+print(42);
+// 1. Checks method name: "print" ✅
+// 2. Checks argument count: 1 ✅
+// 3. Checks argument type: int ✅
+// 4. Calls: print(int value)
+
+add(5, 10, 15);
+// 1. Checks method name: "add" ✅
+// 2. Checks argument count: 3 ✅
+// 3. Calls: add(int a, int b, int c)
+```
+
+**Overloading Decision Chart:**
+```
+Is method name same?
+├─ NO → Not overloading (different methods)
+└─ YES → Is parameter list different?
+   ├─ NO → ❌ Compile error (duplicate method)
+   └─ YES → ✅ Valid overloading
+      └─ Different by:
+         ├─ Number of parameters ✅
+         ├─ Type of parameters ✅
+         └─ Order of parameters ✅
+```
+
+**✅ Success Criteria:**
+- Understand overloading lets same name = different versions
+- Can overload by number, type, order of parameters
+- Know Java chooses method based on arguments
+- Recognize overloading makes APIs easier to use
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | How to Fix |
+|---------|----------------|------------|
+| Overloading by return type only | Not enough to distinguish | Change parameters too |
+| Exact duplicate parameters | Can't have two identical signatures | Make parameters different |
+| Ambiguous calls | Java can't decide which to call | Make parameter lists more distinct |
+| Confusing parameter order | Hard to remember which is which | Use meaningful parameter names |
+
+**🎯 Challenge:**
+1. Create overloaded `greet()` methods:
+   - `greet()` → prints "Hello\!"
+   - `greet(String name)` → prints "Hello, [name]\!"
+   - `greet(String name, String time)` → prints "Good [time], [name]\!"
+2. Create overloaded `multiply()` methods for 2, 3, and 4 numbers
+3. Test all versions in main
+
+---
+
+#### Exercise 5: Variable Arguments (Varargs) (20 minutes)
+
+**What you'll learn:** Creating methods that accept any number of arguments
+
+**Create new class: `VarargsDemo`**
+
+**Concept:** **Varargs (variable arguments)** let a method accept zero or more arguments of the same type. Instead of creating multiple overloaded methods, you create one flexible method.
+
+```
+Without varargs:
+add(int a, int b)
+add(int a, int b, int c)
+add(int a, int b, int c, int d)
+... tedious\!
+
+With varargs:
+add(int... numbers)  // Accepts any number of ints\!
+```
+
+**Syntax:** `dataType... variableName`
+
+**Step-by-Step:**
+
+```java
+public class VarargsDemo {
+    public static void main(String[] args) {
+        System.out.println("===== VARARGS DEMO =====\n");
+        
+        // Example 1: Sum with different number of arguments
+        System.out.println("--- Example 1: Flexible sum ---");
+        System.out.println("sum() = " + sum());
+        System.out.println("sum(5) = " + sum(5));
+        System.out.println("sum(1, 2) = " + sum(1, 2));
+        System.out.println("sum(1, 2, 3, 4, 5) = " + sum(1, 2, 3, 4, 5));
+        System.out.println("sum(10, 20, 30, 40, 50, 60) = " + sum(10, 20, 30, 40, 50, 60));
+        
+        // Example 2: Print all values
+        System.out.println("\n--- Example 2: Print any number of values ---");
+        printAll("Apple");
+        printAll("Apple", "Banana");
+        printAll("Apple", "Banana", "Cherry", "Date", "Elderberry");
+        
+        // Example 3: Varargs with regular parameter
+        System.out.println("\n--- Example 3: Join with separator ---");
+        System.out.println(join(", ", "Java", "Python", "C++"));
+        System.out.println(join(" - ", "Monday", "Tuesday", "Wednesday"));
+        System.out.println(join(" | ", "One"));
+        
+        // Example 4: Find maximum
+        System.out.println("\n--- Example 4: Find maximum ---");
+        System.out.println("max(5, 2, 9, 1, 7) = " + max(5, 2, 9, 1, 7));
+        System.out.println("max(100, 50) = " + max(100, 50));
+        System.out.println("max(42) = " + max(42));
+        
+        // Example 5: Calculate average
+        System.out.println("\n--- Example 5: Calculate average ---");
+        System.out.println("average(10, 20, 30) = " + average(10, 20, 30));
+        System.out.println("average(5, 10) = " + average(5, 10));
+        
+        System.out.println("\n==========================");
+    }
+    
+    // METHOD 1: Sum any number of integers
+    public static int sum(int... numbers) {
+        System.out.print("  Received " + numbers.length + " number(s): ");
+        
+        int total = 0;
+        for (int num : numbers) {
+            System.out.print(num + " ");
+            total += num;
+        }
+        System.out.println();
+        
+        return total;
+    }
+    
+    // METHOD 2: Print any number of strings
+    public static void printAll(String... items) {
+        System.out.print("  Items (" + items.length + "): ");
+        for (String item : items) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+    }
+    
+    // METHOD 3: Varargs with regular parameter
+    // NOTE: Varargs MUST be the LAST parameter
+    public static String join(String separator, String... words) {
+        if (words.length == 0) {
+            return "";
+        }
+        
+        String result = words[0];
+        for (int i = 1; i < words.length; i++) {
+            result += separator + words[i];
+        }
+        
+        return result;
+    }
+    
+    // METHOD 4: Find maximum from any number of integers
+    public static int max(int... numbers) {
+        if (numbers.length == 0) {
+            return 0;
+        }
+        
+        int maximum = numbers[0];
+        for (int num : numbers) {
+            if (num > maximum) {
+                maximum = num;
+            }
+        }
+        
+        return maximum;
+    }
+    
+    // METHOD 5: Calculate average
+    public static double average(int... numbers) {
+        if (numbers.length == 0) {
+            return 0;
+        }
+        
+        int total = 0;
+        for (int num : numbers) {
+            total += num;
+        }
+        
+        return (double) total / numbers.length;
+    }
+}
+```
+
+**Expected Output:**
+```
+===== VARARGS DEMO =====
+
+--- Example 1: Flexible sum ---
+  Received 0 number(s): 
+sum() = 0
+  Received 1 number(s): 5 
+sum(5) = 5
+  Received 2 number(s): 1 2 
+sum(1, 2) = 3
+  Received 5 number(s): 1 2 3 4 5 
+sum(1, 2, 3, 4, 5) = 15
+  Received 6 number(s): 10 20 30 40 50 60 
+sum(10, 20, 30, 40, 50, 60) = 210
+
+--- Example 2: Print any number of values ---
+  Items (1): Apple 
+  Items (2): Apple Banana 
+  Items (5): Apple Banana Cherry Date Elderberry 
+
+--- Example 3: Join with separator ---
+Java, Python, C++
+Monday - Tuesday - Wednesday
+One
+
+--- Example 4: Find maximum ---
+max(5, 2, 9, 1, 7) = 9
+max(100, 50) = 100
+max(42) = 42
+
+--- Example 5: Calculate average ---
+average(10, 20, 30) = 20.0
+average(5, 10) = 7.5
+
+==========================
+```
+
+**💡 Varargs Behind the Scenes:**
+
+```java
+// When you write:
+public static int sum(int... numbers)
+
+// Java treats it like:
+public static int sum(int[] numbers)
+
+// So you can use it like an array:
+for (int num : numbers) {
+    // Process each number
+}
+
+// Access with index:
+int first = numbers[0];
+int count = numbers.length;
+```
+
+**Varargs Rules:**
+
+| Rule | Example | Valid? |
+|------|---------|--------|
+| Only ONE varargs per method | `method(int... a, int... b)` | ❌ NO |
+| Varargs must be LAST parameter | `method(int... nums, String s)` | ❌ NO |
+| Varargs must be LAST parameter | `method(String s, int... nums)` | ✅ YES |
+| Can have other params before | `method(int x, String... words)` | ✅ YES |
+| Can pass zero arguments | `sum()` | ✅ YES |
+| Can pass array directly | `sum(new int[]{1,2,3})` | ✅ YES |
+
+**✅ Success Criteria:**
+- Understand varargs = variable number of arguments
+- Know varargs must be last parameter
+- Can use varargs like an array inside method
+- Recognize when varargs is better than overloading
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| Multiple varargs | Only one allowed per method | Use one varargs or arrays |
+| Varargs not last | Must be final parameter | Move to end of parameter list |
+| Forgetting length check | Might access empty array | Check `numbers.length` first |
+| Wrong syntax | `int... nums` not `int ...nums` | `type... name` (dots after type) |
+
+**🎯 Challenge:**
+1. Create `concatenate(String... words)` that joins all strings with spaces
+2. Create `min(int... numbers)` that finds the smallest number
+3. Create `multiply(int... factors)` that multiplies all numbers together
+4. Test each with different numbers of arguments
+
+---
+
+#### Exercise 6: Pass by Value Concept (20 minutes)
+
+**What you'll learn:** Understanding how Java passes data to methods
+
+**Create new class: `PassByValueDemo`**
+
+**Concept:** Java is **strictly pass-by-value**. This means when you pass a variable to a method, Java passes a **copy** of the value, not the original variable itself.
+
+```
+For primitive types (int, double, boolean, etc.):
+- A copy of the value is passed
+- Changes inside method don't affect original
+
+For objects (String, arrays, custom classes):
+- A copy of the reference is passed
+- You can modify object's contents
+- But can't change what the reference points to
+```
+
+**Step-by-Step:**
+
+```java
+public class PassByValueDemo {
+    public static void main(String[] args) {
+        System.out.println("===== PASS BY VALUE DEMO =====\n");
+        
+        // Example 1: Primitive types - value doesn't change
+        System.out.println("--- Example 1: Primitive types ---");
+        int number = 10;
+        System.out.println("Before method: number = " + number);
+        modifyPrimitive(number);
+        System.out.println("After method: number = " + number);
+        System.out.println("  → Original NOT changed\!\n");
+        
+        // Example 2: Trying to swap two numbers
+        System.out.println("--- Example 2: Swap attempt ---");
+        int a = 5;
+        int b = 10;
+        System.out.println("Before swap: a = " + a + ", b = " + b);
+        swap(a, b);
+        System.out.println("After swap: a = " + a + ", b = " + b);
+        System.out.println("  → Swap didn't work\! Values copied, not originals\n");
+        
+        // Example 3: Arrays - CAN modify contents
+        System.out.println("--- Example 3: Arrays ---");
+        int[] numbers = {1, 2, 3, 4, 5};
+        System.out.println("Before: " + arrayToString(numbers));
+        modifyArray(numbers);
+        System.out.println("After: " + arrayToString(numbers));
+        System.out.println("  → Array contents CHANGED\!\n");
+        
+        // Example 4: Strings - immutable
+        System.out.println("--- Example 4: Strings (immutable) ---");
+        String text = "Hello";
+        System.out.println("Before: " + text);
+        modifyString(text);
+        System.out.println("After: " + text);
+        System.out.println("  → String NOT changed (Strings are immutable)\n");
+        
+        // Example 5: Multiple primitives
+        System.out.println("--- Example 5: Multiple values ---");
+        int x = 100;
+        int y = 200;
+        int z = 300;
+        System.out.println("Before: x=" + x + ", y=" + y + ", z=" + z);
+        changeValues(x, y, z);
+        System.out.println("After: x=" + x + ", y=" + y + ", z=" + z);
+        System.out.println("  → All original values unchanged\!\n");
+        
+        System.out.println("================================");
+    }
+    
+    // METHOD 1: Try to modify primitive
+    public static void modifyPrimitive(int num) {
+        System.out.println("  Inside method before: num = " + num);
+        num = num * 2;  // Modifying the COPY
+        System.out.println("  Inside method after: num = " + num);
+    }
+    
+    // METHOD 2: Try to swap two numbers
+    public static void swap(int x, int y) {
+        System.out.println("  Inside swap before: x = " + x + ", y = " + y);
+        int temp = x;
+        x = y;
+        y = temp;
+        System.out.println("  Inside swap after: x = " + x + ", y = " + y);
+        // x and y are LOCAL copies, originals unchanged
+    }
+    
+    // METHOD 3: Modify array contents (this WORKS)
+    public static void modifyArray(int[] arr) {
+        System.out.println("  Inside method: Doubling all values...");
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = arr[i] * 2;  // Modifying contents through reference
+        }
+        // We have a copy of the reference, but it points to same array
+    }
+    
+    // METHOD 4: Try to modify String (doesn't work)
+    public static void modifyString(String str) {
+        System.out.println("  Inside method before: " + str);
+        str = str + " World";  // Creates NEW string, doesn't change original
+        System.out.println("  Inside method after: " + str);
+        // str is local copy of reference, and Strings are immutable anyway
+    }
+    
+    // METHOD 5: Try to change multiple values
+    public static void changeValues(int a, int b, int c) {
+        System.out.println("  Inside method: Changing values...");
+        a = 0;
+        b = 0;
+        c = 0;
+        System.out.println("  Inside method: a=" + a + ", b=" + b + ", c=" + c);
+        // Only local copies changed
+    }
+    
+    // HELPER METHOD: Convert array to string
+    public static String arrayToString(int[] arr) {
+        String result = "[";
+        for (int i = 0; i < arr.length; i++) {
+            result += arr[i];
+            if (i < arr.length - 1) {
+                result += ", ";
+            }
+        }
+        result += "]";
+        return result;
+    }
+}
+```
+
+**Expected Output:**
+```
+===== PASS BY VALUE DEMO =====
+
+--- Example 1: Primitive types ---
+Before method: number = 10
+  Inside method before: num = 10
+  Inside method after: num = 20
+After method: number = 10
+  → Original NOT changed\!
+
+--- Example 2: Swap attempt ---
+Before swap: a = 5, b = 10
+  Inside swap before: x = 5, y = 10
+  Inside swap after: x = 10, y = 5
+After swap: a = 5, b = 10
+  → Swap didn't work\! Values copied, not originals
+
+--- Example 3: Arrays ---
+Before: [1, 2, 3, 4, 5]
+  Inside method: Doubling all values...
+After: [2, 4, 6, 8, 10]
+  → Array contents CHANGED\!
+
+--- Example 4: Strings (immutable) ---
+Before: Hello
+  Inside method before: Hello
+  Inside method after: Hello World
+After: Hello
+  → String NOT changed (Strings are immutable)
+
+--- Example 5: Multiple values ---
+Before: x=100, y=200, z=300
+  Inside method: Changing values...
+  Inside method: a=0, b=0, c=0
+After: x=100, y=200, z=300
+  → All original values unchanged\!
+
+================================
+```
+
+**💡 How Pass-by-Value Works:**
+
+**Primitives:**
+```java
+int x = 10;
+modifyPrimitive(x);
+
+// What happens:
+// 1. Value 10 is COPIED
+// 2. Copy is passed to method
+// 3. Method modifies the COPY
+// 4. Original 'x' unchanged
+```
+
+**Arrays/Objects:**
+```java
+int[] arr = {1, 2, 3};
+modifyArray(arr);
+
+// What happens:
+// 1. Reference to array is COPIED
+// 2. Copy of reference is passed
+// 3. Both references point to SAME array
+// 4. Can modify array contents
+// 5. But can't change what original reference points to
+```
+
+**Visual Diagram:**
+```
+Primitive:
+┌──────────────┐
+│ main()       │
+│ int x = 10;  │
+└──────────────┘
+       │ Pass x
+       ├─ Copy: 10
+       ▼
+┌──────────────────┐
+│ method(int num)  │
+│ num = 10 (copy)  │
+│ num = 20         │ ← Changes copy only
+└──────────────────┘
+  x still = 10 ✓
+
+Array:
+┌──────────────────────┐
+│ main()               │
+│ int[] arr ──────┐    │
+└─────────────────│────┘
+       │ Pass arr│
+       ├─ Copy   │
+       ▼         ▼
+┌────────────────┴─────┐
+│ method(int[] a)      │
+│ a[0] = 99 ──────┐    │
+└─────────────────│────┘
+                  ▼
+          [99, 2, 3] ← Same array modified
+```
+
+**✅ Success Criteria:**
+- Understand Java passes copies, not originals
+- Know primitives can't be modified by methods
+- Know array/object contents CAN be modified
+- Recognize why swap doesn't work in Java
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Reality |
+|---------|----------------|---------|
+| Expecting primitive to change | Java passes copy of value | Original unchanged |
+| Thinking Java is pass-by-reference | It's always pass-by-value | Even objects are "value of reference" |
+| Trying to swap without return | Changes only affect copies | Must return new values or use array |
+| Confusion about arrays | Array contents vs array reference | Can change contents, not reference |
+
+**Key Distinctions:**
+```java
+// WRONG expectation:
+int x = 5;
+increment(x);
+// Expect x = 6? NO\! Still 5
+
+// RIGHT approach:
+int x = 5;
+x = increment(x);  // Get return value
+// Now x = 6 ✓
+
+// OR use array:
+int[] x = {5};
+increment(x);  // Pass array
+// x[0] is now 6 ✓
+```
+
+**🎯 Challenge:**
+1. Create `tryToDouble(int n)` that tries to double a number - observe it doesn't work
+2. Create `doubleCorrectly(int n)` that returns doubled value - this works\!
+3. Create `resetArray(int[] arr)` that sets all elements to 0 - observe this works
+4. Experiment and explain why each behaves differently
+
+---
+
+### 🎓 Day 10 Summary: Methods & Method Overloading
+
+**What You Learned:**
+1. ✅ Creating and calling basic methods
+2. ✅ Using parameters to pass data to methods
+3. ✅ Returning values from methods
+4. ✅ Method overloading (same name, different parameters)
+5. ✅ Varargs for flexible parameter counts
+6. ✅ Pass-by-value concept in Java
+
+**Key Takeaways:**
+- Methods organize code into reusable blocks
+- Parameters make methods flexible with different inputs
+- Return values let methods send results back
+- Overloading provides multiple versions of same method
+- Varargs accept any number of arguments
+- Java passes copies of values, not original variables
+
+**Method Design Checklist:**
+```
+✅ Use descriptive method names (verbs: calculate, get, set, display)
+✅ Keep methods focused on ONE task
+✅ Use parameters instead of global variables
+✅ Return values instead of printing (when possible)
+✅ Overload when same operation needs different inputs
+✅ Use varargs for unlimited same-type parameters
+✅ Remember: Java passes by value always
+```
+
+**Before vs After:**
+```java
+// Before (without methods):
+int sum = num1 + num2 + num3;
+System.out.println(sum);
+int product = num1 * num2 * num3;
+System.out.println(product);
+// Repetitive, hard to reuse
+
+// After (with methods):
+int sum = add(num1, num2, num3);
+int product = multiply(num1, num2, num3);
+// Clean, reusable, organized
+```
+
+**Next Steps:**
+- Day 11: Encapsulation (Getters, Setters, Access Modifiers)
+- Day 12: Inheritance (Extending classes, super keyword)
+- Day 13: Polymorphism (Method overriding, dynamic dispatch)
+
+---
+
+
+### Day 11: Encapsulation & Access Modifiers
+
+---
+
+#### Exercise 1: Understanding Encapsulation Basics (15 minutes)
+
+**What you'll learn:** The concept of encapsulation and why it's important
+
+**Create new class: `BankAccountBad` and `BankAccountGood`**
+
+**Concept:** **Encapsulation** means bundling data (variables) and methods together in a class, and controlling access to that data. It's like putting something valuable in a safe - you control who can access it and how.
+
+```
+Without Encapsulation:
+- Anyone can directly change data
+- No validation
+- Data can become invalid
+- Hard to maintain
+
+With Encapsulation:
+- Data is private
+- Access through methods only
+- Validation before changes
+- Easy to maintain
+```
+
+**Step-by-Step:**
+
+```java
+// ❌ WITHOUT Encapsulation - BAD Practice
+class BankAccountBad {
+    public double balance;  // Anyone can access\!
+    public String accountNumber;
+}
+
+// ✅ WITH Encapsulation - GOOD Practice
+class BankAccountGood {
+    private double balance;  // Hidden from outside
+    private String accountNumber;
+    
+    // Controlled access through methods
+    public double getBalance() {
+        return balance;
+    }
+    
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: $" + amount);
+        } else {
+            System.out.println("Invalid amount\!");
+        }
+    }
+    
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+        } else {
+            System.out.println("Invalid withdrawal\!");
+        }
+    }
+}
+
+public class EncapsulationBasics {
+    public static void main(String[] args) {
+        System.out.println("===== ENCAPSULATION DEMO =====\n");
+        
+        // Example 1: Without encapsulation (BAD)
+        System.out.println("--- WITHOUT Encapsulation ---");
+        BankAccountBad badAccount = new BankAccountBad();
+        badAccount.balance = 1000.0;
+        System.out.println("Initial balance: $" + badAccount.balance);
+        
+        // PROBLEM: Anyone can do this\!
+        badAccount.balance = -5000.0;  // Invalid\! But nothing stops it
+        System.out.println("After invalid change: $" + badAccount.balance);
+        System.out.println("  ❌ Data is corrupted\!\n");
+        
+        // Example 2: With encapsulation (GOOD)
+        System.out.println("--- WITH Encapsulation ---");
+        BankAccountGood goodAccount = new BankAccountGood();
+        goodAccount.deposit(1000.0);
+        System.out.println("Balance: $" + goodAccount.getBalance());
+        
+        // Try invalid operations
+        goodAccount.deposit(-500.0);  // Rejected\!
+        goodAccount.withdraw(2000.0);  // Rejected\!
+        
+        // Valid operations
+        goodAccount.withdraw(300.0);
+        System.out.println("Final balance: $" + goodAccount.getBalance());
+        System.out.println("  ✅ Data protected\!\n");
+        
+        System.out.println("================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== ENCAPSULATION DEMO =====
+
+--- WITHOUT Encapsulation ---
+Initial balance: $1000.0
+After invalid change: $-5000.0
+  ❌ Data is corrupted\!
+
+--- WITH Encapsulation ---
+Deposited: $1000.0
+Balance: $1000.0
+Invalid amount\!
+Invalid withdrawal\!
+Withdrawn: $300.0
+Final balance: $700.0
+  ✅ Data protected\!
+
+================================
+```
+
+**💡 Key Concepts:**
+
+| Concept | Explanation |
+|---------|-------------|
+| **Data Hiding** | Make variables private to hide them |
+| **Controlled Access** | Use public methods to access private data |
+| **Validation** | Check data before changing it |
+| **Protection** | Prevent invalid states |
+
+**Benefits of Encapsulation:**
+1. **Data Protection**: Can't accidentally corrupt data
+2. **Validation**: Ensure data is always valid
+3. **Flexibility**: Change internal implementation without affecting users
+4. **Maintenance**: Easier to find and fix bugs
+
+**✅ Success Criteria:**
+- Understand encapsulation = data hiding + controlled access
+- Know why private variables are better than public
+- Can validate data in setter methods
+- Recognize encapsulation protects data integrity
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| Making all variables public | No protection, anyone can change | Make variables private |
+| No validation in setters | Bad data can be set | Add if statements to validate |
+| Not using getters/setters | Direct access defeats encapsulation | Always use methods |
+
+**🎯 Challenge:**
+Create a `Student` class with:
+- Private variables: name, age, gpa
+- Validate: age (0-150), gpa (0.0-4.0)
+- Public getters and setters with validation
+- Test with valid and invalid data
+
+---
+
+#### Exercise 2: Getters and Setters (20 minutes)
+
+**What you'll learn:** Creating getter and setter methods for controlled access
+
+**Create new class: `Person`**
+
+**Concept:** **Getters** and **Setters** are methods that provide controlled access to private variables.
+
+```
+Getter = Get the value (read)
+  - public returnType getVariableName()
+  - Returns the private variable
+
+Setter = Set the value (write)
+  - public void setVariableName(type value)
+  - Sets the private variable (with validation)
+  
+Boolean Getter:
+  - public boolean isVariableName()
+```
+
+**Step-by-Step:**
+
+```java
+public class Person {
+    // Private variables - hidden from outside
+    private String name;
+    private int age;
+    private double height;
+    private boolean employed;
+    
+    // GETTER for name (read access)
+    public String getName() {
+        return name;
+    }
+    
+    // SETTER for name (write access with validation)
+    public void setName(String name) {
+        if (name \!= null && \!name.trim().isEmpty()) {
+            this.name = name;
+        } else {
+            System.out.println("Invalid name\!");
+        }
+    }
+    
+    // GETTER for age
+    public int getAge() {
+        return age;
+    }
+    
+    // SETTER for age with validation
+    public void setAge(int age) {
+        if (age >= 0 && age <= 150) {
+            this.age = age;
+        } else {
+            System.out.println("Invalid age\! Must be 0-150");
+        }
+    }
+    
+    // GETTER for height
+    public double getHeight() {
+        return height;
+    }
+    
+    // SETTER for height with validation
+    public void setHeight(double height) {
+        if (height > 0 && height < 300) {  // cm
+            this.height = height;
+        } else {
+            System.out.println("Invalid height\!");
+        }
+    }
+    
+    // BOOLEAN GETTER (notice "is" instead of "get")
+    public boolean isEmployed() {
+        return employed;
+    }
+    
+    // SETTER for boolean
+    public void setEmployed(boolean employed) {
+        this.employed = employed;
+    }
+    
+    // Display all info
+    public void displayInfo() {
+        System.out.println("--- Person Information ---");
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Height: " + height + " cm");
+        System.out.println("Employed: " + (employed ? "Yes" : "No"));
+    }
+}
+
+public class GettersSettersDemo {
+    public static void main(String[] args) {
+        System.out.println("===== GETTERS & SETTERS =====\n");
+        
+        Person person = new Person();
+        
+        // Set values using setters
+        System.out.println("--- Setting valid values ---");
+        person.setName("Alice");
+        person.setAge(25);
+        person.setHeight(165.5);
+        person.setEmployed(true);
+        
+        // Get values using getters
+        System.out.println("Name: " + person.getName());
+        System.out.println("Age: " + person.getAge());
+        System.out.println("Height: " + person.getHeight());
+        System.out.println("Employed: " + person.isEmployed());
+        System.out.println();
+        
+        // Display all info
+        person.displayInfo();
+        
+        // Try invalid values
+        System.out.println("\n--- Testing validation ---");
+        person.setName("");  // Empty name - invalid
+        person.setAge(200);  // Too old - invalid
+        person.setHeight(-10);  // Negative - invalid
+        
+        System.out.println("\n--- After invalid attempts ---");
+        person.displayInfo();
+        System.out.println("  (Values unchanged due to validation)\n");
+        
+        System.out.println("===============================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== GETTERS & SETTERS =====
+
+--- Setting valid values ---
+Name: Alice
+Age: 25
+Height: 165.5
+Employed: true
+
+--- Person Information ---
+Name: Alice
+Age: 25
+Height: 165.5 cm
+Employed: Yes
+
+--- Testing validation ---
+Invalid name\!
+Invalid age\! Must be 0-150
+Invalid height\!
+
+--- After invalid attempts ---
+--- Person Information ---
+Name: Alice
+Age: 25
+Height: 165.5 cm
+Employed: Yes
+  (Values unchanged due to validation)
+
+===============================
+```
+
+**💡 Getter/Setter Naming Rules:**
+
+```java
+private int age;
+public int getAge()           // ✅ Correct
+public void setAge(int age)   // ✅ Correct
+
+private boolean active;
+public boolean isActive()     // ✅ Correct for boolean
+public void setActive(boolean active)  // ✅ Correct
+
+// Common mistakes:
+public int age()              // ❌ Missing "get"
+public void age(int a)        // ❌ Missing "set"
+public boolean getActive()    // ⚠️  Should be "is" for boolean
+```
+
+**Why Use Getters/Setters?**
+
+| Reason | Explanation | Example |
+|--------|-------------|---------|
+| **Validation** | Check values before setting | Age must be 0-150 |
+| **Read-Only** | Getter without setter | ID number (can't change) |
+| **Write-Only** | Setter without getter | Password (can set, can't read) |
+| **Calculated** | Getter computes value | Full name = first + last |
+| **Logging** | Track access to data | Log when balance is checked |
+
+**✅ Success Criteria:**
+- Can write getters and setters for any variable
+- Know naming convention (get/set/is)
+- Add validation in setters
+- Understand when to omit getter or setter
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| `public int age()` | Missing "get" prefix | `public int getAge()` |
+| `public boolean getActive()` | Should use "is" for boolean | `public boolean isActive()` |
+| No validation in setter | Allows invalid data | Add if statement |
+| Setter returns value | Should be void | `public void setAge(...)` |
+
+**🎯 Challenge:**
+Create a `Product` class with:
+1. Private variables: productId (read-only), name, price, quantity
+2. Getters for all
+3. Setters for name (not empty), price (>0), quantity (>=0)
+4. No setter for productId (set in constructor only)
+5. Add method `getTotalValue()` that returns price × quantity
+
+---
+
+#### Exercise 3: Access Modifiers in Action (25 minutes)
+
+**What you'll learn:** Understanding and using different access modifiers
+
+**Create classes: `Employee`, `TestAccess`**
+
+**Concept:** Java has 4 **access modifiers** that control who can access your class members:
+
+| Modifier | Same Class | Same Package | Subclass | Everywhere |
+|----------|------------|--------------|----------|------------|
+| **private** | ✅ | ❌ | ❌ | ❌ |
+| **default** | ✅ | ✅ | ❌ | ❌ |
+| **protected** | ✅ | ✅ | ✅ | ❌ |
+| **public** | ✅ | ✅ | ✅ | ✅ |
+
+**Step-by-Step:**
+
+```java
+public class Employee {
+    // PRIVATE - only accessible within this class
+    private String socialSecurityNumber;
+    private double salary;
+    
+    // DEFAULT (no modifier) - accessible within same package
+    String department;
+    int employeeId;
+    
+    // PROTECTED - accessible in subclasses and same package
+    protected String name;
+    protected int age;
+    
+    // PUBLIC - accessible everywhere
+    public String email;
+    public String phoneNumber;
+    
+    // Constructor
+    public Employee(String name, int age, String email) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+    }
+    
+    // PRIVATE method - only used internally
+    private double calculateBonus() {
+        return salary * 0.10;  // 10% bonus
+    }
+    
+    // PUBLIC method - can be called from anywhere
+    public void displayPublicInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Email: " + email);
+        System.out.println("Phone: " + phoneNumber);
+    }
+    
+    // PUBLIC method to access private data
+    public void setSalary(double salary) {
+        if (salary > 0) {
+            this.salary = salary;
+        }
+    }
+    
+    public double getSalary() {
+        return salary;
+    }
+    
+    // PROTECTED method - for use in subclasses
+    protected void displayProtectedInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+    }
+    
+    // Method that uses private method internally
+    public void displaySalaryInfo() {
+        System.out.println("Salary: $" + salary);
+        System.out.println("Bonus: $" + calculateBonus());  // Calling private method
+        System.out.println("Total: $" + (salary + calculateBonus()));
+    }
+}
+
+public class TestAccess {
+    public static void main(String[] args) {
+        System.out.println("===== ACCESS MODIFIERS DEMO =====\n");
+        
+        Employee emp = new Employee("John Doe", 30, "john@company.com");
+        
+        // PUBLIC access - works everywhere
+        System.out.println("--- PUBLIC members (accessible) ---");
+        emp.email = "john@company.com";
+        emp.phoneNumber = "555-1234";
+        System.out.println("Email: " + emp.email);
+        System.out.println("Phone: " + emp.phoneNumber);
+        emp.displayPublicInfo();
+        
+        // PROTECTED access - works in same package
+        System.out.println("\n--- PROTECTED members (accessible in same package) ---");
+        emp.name = "John Doe";
+        emp.age = 30;
+        System.out.println("Name: " + emp.name);
+        System.out.println("Age: " + emp.age);
+        
+        // DEFAULT access - works in same package
+        System.out.println("\n--- DEFAULT members (accessible in same package) ---");
+        emp.department = "Engineering";
+        emp.employeeId = 1001;
+        System.out.println("Department: " + emp.department);
+        System.out.println("Employee ID: " + emp.employeeId);
+        
+        // PRIVATE access - must use public methods
+        System.out.println("\n--- PRIVATE members (must use public methods) ---");
+        // emp.salary = 50000;  // ❌ ERROR\! Cannot access private
+        // double bonus = emp.calculateBonus();  // ❌ ERROR\! Private method
+        
+        // Must use public methods instead
+        emp.setSalary(75000.0);
+        System.out.println("Salary: $" + emp.getSalary());
+        emp.displaySalaryInfo();
+        
+        System.out.println("\n====================================");
+        
+        // Summary
+        System.out.println("\n📚 ACCESS MODIFIER SUMMARY:");
+        System.out.println("✅ PUBLIC: email, phoneNumber - accessed directly");
+        System.out.println("✅ PROTECTED: name, age - accessed directly (same package)");
+        System.out.println("✅ DEFAULT: department, employeeId - accessed directly (same package)");
+        System.out.println("❌ PRIVATE: salary, calculateBonus() - accessed via public methods only");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== ACCESS MODIFIERS DEMO =====
+
+--- PUBLIC members (accessible) ---
+Email: john@company.com
+Phone: 555-1234
+Name: John Doe
+Email: john@company.com
+Phone: 555-1234
+
+--- PROTECTED members (accessible in same package) ---
+Name: John Doe
+Age: 30
+
+--- DEFAULT members (accessible in same package) ---
+Department: Engineering
+Employee ID: 1001
+
+--- PRIVATE members (must use public methods) ---
+Salary: $75000.0
+Bonus: $7500.0
+Total: $82500.0
+
+====================================
+
+📚 ACCESS MODIFIER SUMMARY:
+✅ PUBLIC: email, phoneNumber - accessed directly
+✅ PROTECTED: name, age - accessed directly (same package)
+✅ DEFAULT: department, employeeId - accessed directly (same package)
+❌ PRIVATE: salary, calculateBonus() - accessed via public methods only
+```
+
+**💡 When to Use Each Modifier:**
+
+```java
+class BankAccount {
+    // PRIVATE - sensitive data, internal implementation
+    private double balance;
+    private String accountNumber;
+    private String password;
+    
+    // PROTECTED - for use in subclasses
+    protected String accountType;
+    protected Date createdDate;
+    
+    // DEFAULT - package-level sharing
+    String bankBranch;
+    int customerId;
+    
+    // PUBLIC - interface to outside world
+    public void deposit(double amount) { }
+    public void withdraw(double amount) { }
+    public double getBalance() { }
+}
+```
+
+**Access Modifier Decision Tree:**
+```
+Should everyone access this?
+├─ YES → public
+└─ NO → Is it for subclasses?
+   ├─ YES → protected
+   └─ NO → Is it for same package only?
+      ├─ YES → default (no modifier)
+      └─ NO → private
+```
+
+**✅ Success Criteria:**
+- Understand all 4 access modifiers
+- Know which modifier to use when
+- Can explain visibility of each modifier
+- Recognize private is most restrictive, public is least
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Better Choice |
+|---------|----------------|---------------|
+| Everything public | No encapsulation | Make variables private |
+| Forgetting modifier | Defaults to package-private | Be explicit with private/public |
+| Using protected unnecessarily | Too permissive | Use private unless subclasses need it |
+| Private methods too early | Over-engineering | Start with private, change if needed |
+
+**🎯 Challenge:**
+1. Create a `BankAccount` class with appropriate access modifiers:
+   - Private: balance, pin
+   - Protected: accountType
+   - Default: branchCode
+   - Public: deposit(), withdraw(), getBalance()
+2. Try accessing each member from a test class
+3. Observe what works and what doesn't
+
+---
+
+#### Exercise 4: Building a Complete Encapsulated Class (30 minutes)
+
+**What you'll learn:** Putting it all together - building a real-world encapsulated class
+
+**Create new class: `BankAccount`**
+
+**Concept:** A well-encapsulated class has:
+1. Private data members
+2. Public getters/setters with validation
+3. Business logic methods
+4. Proper constructors
+5. Data integrity guaranteed
+
+**Step-by-Step:**
+
+```java
+public class BankAccount {
+    // PRIVATE data members - fully encapsulated
+    private String accountNumber;
+    private String accountHolderName;
+    private double balance;
+    private String accountType;  // "Savings" or "Checking"
+    private boolean active;
+    
+    // Constants
+    private static final double MIN_BALANCE = 100.0;
+    private static final double MAX_WITHDRAWAL = 5000.0;
+    
+    // CONSTRUCTOR with validation
+    public BankAccount(String accountNumber, String accountHolderName, String accountType) {
+        this.accountNumber = accountNumber;
+        setAccountHolderName(accountHolderName);  // Use setter for validation
+        setAccountType(accountType);
+        this.balance = 0.0;
+        this.active = true;
+    }
+    
+    // GETTER for accountNumber (read-only, no setter)
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+    
+    // GETTER and SETTER for accountHolderName
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+    
+    public void setAccountHolderName(String name) {
+        if (name \!= null && name.trim().length() >= 2) {
+            this.accountHolderName = name;
+        } else {
+            System.out.println("Invalid name\! Must be at least 2 characters");
+        }
+    }
+    
+    // GETTER for balance (read-only from outside)
+    public double getBalance() {
+        return balance;
+    }
+    
+    // No public setBalance() - balance can only change through deposit/withdraw
+    
+    // GETTER and SETTER for accountType
+    public String getAccountType() {
+        return accountType;
+    }
+    
+    public void setAccountType(String type) {
+        if ("Savings".equalsIgnoreCase(type) || "Checking".equalsIgnoreCase(type)) {
+            this.accountType = type;
+        } else {
+            System.out.println("Invalid account type\! Must be Savings or Checking");
+        }
+    }
+    
+    // BOOLEAN GETTER for active
+    public boolean isActive() {
+        return active;
+    }
+    
+    // BUSINESS LOGIC METHODS
+    
+    public void deposit(double amount) {
+        if (\!active) {
+            System.out.println("Account is inactive\!");
+            return;
+        }
+        
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("✅ Deposited: $" + amount);
+            System.out.println("   New balance: $" + balance);
+        } else {
+            System.out.println("❌ Invalid deposit amount\!");
+        }
+    }
+    
+    public void withdraw(double amount) {
+        if (\!active) {
+            System.out.println("Account is inactive\!");
+            return;
+        }
+        
+        if (amount <= 0) {
+            System.out.println("❌ Invalid withdrawal amount\!");
+            return;
+        }
+        
+        if (amount > MAX_WITHDRAWAL) {
+            System.out.println("❌ Exceeds maximum withdrawal of $" + MAX_WITHDRAWAL);
+            return;
+        }
+        
+        if (balance - amount < MIN_BALANCE) {
+            System.out.println("❌ Cannot withdraw\! Minimum balance of $" + MIN_BALANCE + " required");
+            System.out.println("   Current: $" + balance + ", After withdrawal: $" + (balance - amount));
+            return;
+        }
+        
+        balance -= amount;
+        System.out.println("✅ Withdrawn: $" + amount);
+        System.out.println("   New balance: $" + balance);
+    }
+    
+    public void transfer(BankAccount recipient, double amount) {
+        if (\!active) {
+            System.out.println("Your account is inactive\!");
+            return;
+        }
+        
+        if (\!recipient.isActive()) {
+            System.out.println("Recipient account is inactive\!");
+            return;
+        }
+        
+        System.out.println("\n--- Transfer Process ---");
+        System.out.println("From: " + this.accountNumber + " (Balance: $" + this.balance + ")");
+        System.out.println("To: " + recipient.getAccountNumber() + " (Balance: $" + recipient.getBalance() + ")");
+        System.out.println("Amount: $" + amount);
+        
+        // Check if we can withdraw
+        if (balance - amount >= MIN_BALANCE && amount <= MAX_WITHDRAWAL) {
+            this.balance -= amount;
+            recipient.balance += amount;
+            System.out.println("✅ Transfer successful\!");
+            System.out.println("   Your new balance: $" + this.balance);
+            System.out.println("   Recipient balance: $" + recipient.getBalance());
+        } else {
+            System.out.println("❌ Transfer failed\! Check balance and limits");
+        }
+    }
+    
+    public void closeAccount() {
+        this.active = false;
+        System.out.println("Account " + accountNumber + " has been closed");
+    }
+    
+    public void displayInfo() {
+        System.out.println("\n╔════════════════════════════════════╗");
+        System.out.println("║      BANK ACCOUNT INFORMATION      ║");
+        System.out.println("╠════════════════════════════════════╣");
+        System.out.println("║ Account #: " + accountNumber);
+        System.out.println("║ Holder: " + accountHolderName);
+        System.out.println("║ Type: " + accountType);
+        System.out.println("║ Balance: $" + String.format("%.2f", balance));
+        System.out.println("║ Status: " + (active ? "Active" : "Inactive"));
+        System.out.println("╚════════════════════════════════════╝");
+    }
+}
+
+public class BankAccountDemo {
+    public static void main(String[] args) {
+        System.out.println("===== COMPLETE ENCAPSULATION DEMO =====\n");
+        
+        // Create accounts
+        BankAccount alice = new BankAccount("ACC001", "Alice Smith", "Savings");
+        BankAccount bob = new BankAccount("ACC002", "Bob Johnson", "Checking");
+        
+        // Display initial state
+        alice.displayInfo();
+        bob.displayInfo();
+        
+        // Deposit money
+        System.out.println("\n--- Deposits ---");
+        alice.deposit(5000.0);
+        bob.deposit(3000.0);
+        
+        // Try withdrawals
+        System.out.println("\n--- Withdrawals ---");
+        alice.withdraw(500.0);  // Valid
+        alice.withdraw(10000.0);  // Too much
+        alice.withdraw(4500.0);  // Would violate minimum balance
+        
+        // Transfer
+        System.out.println("\n--- Transfer ---");
+        alice.transfer(bob, 1000.0);
+        
+        // Display final state
+        alice.displayInfo();
+        bob.displayInfo();
+        
+        // Try to access private members
+        System.out.println("\n--- Encapsulation Protection ---");
+        // alice.balance = 1000000;  // ❌ ERROR\! balance is private
+        // alice.accountNumber = "HACK";  // ❌ ERROR\! no setter
+        System.out.println("✅ Cannot directly modify balance or account number\!");
+        System.out.println("✅ Can only use public methods with validation\!");
+        
+        // Close account and try operations
+        System.out.println("\n--- Closing Account ---");
+        alice.closeAccount();
+        alice.deposit(100.0);  // Should fail - account inactive
+        
+        System.out.println("\n=======================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== COMPLETE ENCAPSULATION DEMO =====
+
+╔════════════════════════════════════╗
+║      BANK ACCOUNT INFORMATION      ║
+╠════════════════════════════════════╣
+║ Account #: ACC001
+║ Holder: Alice Smith
+║ Type: Savings
+║ Balance: $0.00
+║ Status: Active
+╚════════════════════════════════════╝
+
+╔════════════════════════════════════╗
+║      BANK ACCOUNT INFORMATION      ║
+╠════════════════════════════════════╣
+║ Account #: ACC002
+║ Holder: Bob Johnson
+║ Type: Checking
+║ Balance: $0.00
+║ Status: Active
+╚════════════════════════════════════╝
+
+--- Deposits ---
+✅ Deposited: $5000.0
+   New balance: $5000.0
+✅ Deposited: $3000.0
+   New balance: $3000.0
+
+--- Withdrawals ---
+✅ Withdrawn: $500.0
+   New balance: $4500.0
+❌ Exceeds maximum withdrawal of $5000.0
+❌ Cannot withdraw\! Minimum balance of $100.0 required
+   Current: $4500.0, After withdrawal: $0.0
+
+--- Transfer ---
+
+--- Transfer Process ---
+From: ACC001 (Balance: $4500.0)
+To: ACC002 (Balance: $3000.0)
+Amount: $1000.0
+✅ Transfer successful\!
+   Your new balance: $3500.0
+   Recipient balance: $4000.0
+
+╔════════════════════════════════════╗
+║      BANK ACCOUNT INFORMATION      ║
+╠════════════════════════════════════╣
+║ Account #: ACC001
+║ Holder: Alice Smith
+║ Type: Savings
+║ Balance: $3500.00
+║ Status: Active
+╚════════════════════════════════════╝
+
+╔════════════════════════════════════╗
+║      BANK ACCOUNT INFORMATION      ║
+╠════════════════════════════════════╣
+║ Account #: ACC002
+║ Holder: Bob Johnson
+║ Type: Checking
+║ Balance: $4000.00
+║ Status: Active
+╚════════════════════════════════════╝
+
+--- Encapsulation Protection ---
+✅ Cannot directly modify balance or account number\!
+✅ Can only use public methods with validation\!
+
+--- Closing Account ---
+Account ACC001 has been closed
+Account is inactive\!
+
+=======================================
+```
+
+**💡 Encapsulation Best Practices Used:**
+
+| Practice | Implementation | Benefit |
+|----------|----------------|---------|
+| Private data | All variables private | Data hiding |
+| Read-only fields | Getter without setter | Immutability |
+| Validation | Checks in all setters | Data integrity |
+| Business rules | Min balance, max withdrawal | Domain logic |
+| State management | Active/inactive status | Consistency |
+| Controlled modification | deposit/withdraw only | Protection |
+
+**Design Decisions Explained:**
+```
+1. accountNumber:
+   - Getter: YES (need to read it)
+   - Setter: NO (never changes after creation)
+
+2. balance:
+   - Getter: YES (need to check balance)
+   - Setter: NO (only deposit/withdraw can change it)
+
+3. accountHolderName:
+   - Getter: YES (need to display)
+   - Setter: YES (can update name, with validation)
+
+4. active:
+   - Getter: YES (isActive())
+   - Setter: NO (closeAccount() manages this)
+```
+
+**✅ Success Criteria:**
+- Understand complete encapsulation pattern
+- Can design class with private data + public interface
+- Know when to provide getter, setter, both, or neither
+- Can implement business logic with validation
+
+**🎯 Challenge:**
+Create a `ShoppingCart` class with:
+1. Private: items (array/list), totalAmount
+2. Public methods: addItem(), removeItem(), getTotal(), checkout()
+3. Validation: can't add negative prices, can't checkout if empty
+4. Read-only: itemCount (calculated, no setter)
+
+---
+
+### 🎓 Day 11 Summary: Encapsulation & Access Modifiers
+
+**What You Learned:**
+1. ✅ Encapsulation concept - bundling data + methods
+2. ✅ Access modifiers - private, public, protected, default
+3. ✅ Getters and setters for controlled access
+4. ✅ Data validation and protection
+5. ✅ Building complete encapsulated classes
+
+**Key Takeaways:**
+- Encapsulation = data hiding + controlled access
+- Make variables private, provide public methods
+- Validate data in setters
+- Use appropriate access modifier for each member
+- Encapsulation protects data integrity
+
+**Encapsulation Checklist:**
+```
+✅ All data members are private
+✅ Public getters for readable fields
+✅ Public setters with validation for writable fields
+✅ Read-only fields have getter but no setter
+✅ Business logic methods are public
+✅ Helper methods are private
+✅ Validation prevents invalid states
+✅ Class maintains its own consistency
+```
+
+**Before vs After:**
+```java
+// Before (no encapsulation):
+public class Student {
+    public int age;
+    public double gpa;
+}
+Student s = new Student();
+s.age = -5;  // Invalid\! But nothing stops it
+
+// After (with encapsulation):
+public class Student {
+    private int age;
+    private double gpa;
+    
+    public void setAge(int age) {
+        if (age > 0 && age < 150) {
+            this.age = age;
+        }
+    }
+}
+Student s = new Student();
+s.setAge(-5);  // Rejected by validation ✓
+```
+
+**Next Steps:**
+- Day 12: Inheritance (extends, super, IS-A relationship)
+- Day 13: Polymorphism (method overriding, dynamic dispatch)
+- Day 14: Abstraction (abstract classes, interfaces)
+
+---
+
+
+### Day 12: Inheritance
+
+---
+
+#### Exercise 1: Understanding Inheritance Basics (15 minutes)
+
+**What you'll learn:** The concept of inheritance and the IS-A relationship
+
+**Create classes: `Animal`, `Dog`, `Cat`**
+
+**Concept:** **Inheritance** is when a class (child) inherits properties and methods from another class (parent). It's like how children inherit traits from parents in real life.
+
+```
+Parent Class (Superclass) = General
+  ↓
+Child Class (Subclass) = Specific
+
+Dog IS-A Animal
+Cat IS-A Animal
+```
+
+**Why Inheritance?**
+- **Code Reuse**: Don't repeat common code
+- **Organization**: Group related classes
+- **Extensibility**: Add specific features to general concepts
+
+**Step-by-Step:**
+
+```java
+// PARENT CLASS (Superclass, Base Class)
+class Animal {
+    // Common properties for ALL animals
+    String name;
+    int age;
+    
+    // Common behaviors for ALL animals
+    void eat() {
+        System.out.println(name + " is eating");
+    }
+    
+    void sleep() {
+        System.out.println(name + " is sleeping");
+    }
+    
+    void displayInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age + " years");
+    }
+}
+
+// CHILD CLASS 1 - Dog extends Animal
+class Dog extends Animal {
+    // Dog-specific property
+    String breed;
+    
+    // Dog-specific behavior
+    void bark() {
+        System.out.println(name + " says: Woof\! Woof\!");
+    }
+    
+    void fetch() {
+        System.out.println(name + " is fetching the ball");
+    }
+}
+
+// CHILD CLASS 2 - Cat extends Animal
+class Cat extends Animal {
+    // Cat-specific property
+    String color;
+    
+    // Cat-specific behavior
+    void meow() {
+        System.out.println(name + " says: Meow\! Meow\!");
+    }
+    
+    void scratch() {
+        System.out.println(name + " is scratching");
+    }
+}
+
+public class InheritanceBasics {
+    public static void main(String[] args) {
+        System.out.println("===== INHERITANCE BASICS =====\n");
+        
+        // Create a Dog
+        System.out.println("--- Creating a Dog ---");
+        Dog dog = new Dog();
+        dog.name = "Buddy";  // Inherited from Animal
+        dog.age = 3;         // Inherited from Animal
+        dog.breed = "Golden Retriever";  // Dog's own property
+        
+        dog.displayInfo();   // Inherited method
+        dog.eat();          // Inherited method
+        dog.sleep();        // Inherited method
+        dog.bark();         // Dog's own method
+        dog.fetch();        // Dog's own method
+        
+        // Create a Cat
+        System.out.println("\n--- Creating a Cat ---");
+        Cat cat = new Cat();
+        cat.name = "Whiskers";  // Inherited from Animal
+        cat.age = 2;            // Inherited from Animal
+        cat.color = "Orange";   // Cat's own property
+        
+        cat.displayInfo();  // Inherited method
+        cat.eat();         // Inherited method
+        cat.sleep();       // Inherited method
+        cat.meow();        // Cat's own method
+        cat.scratch();     // Cat's own method
+        
+        System.out.println("\n--- IS-A Relationship ---");
+        System.out.println("Buddy IS-A Dog: true");
+        System.out.println("Buddy IS-A Animal: true");
+        System.out.println("Whiskers IS-A Cat: true");
+        System.out.println("Whiskers IS-A Animal: true");
+        
+        System.out.println("\n================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== INHERITANCE BASICS =====
+
+--- Creating a Dog ---
+Name: Buddy
+Age: 3 years
+Buddy is eating
+Buddy is sleeping
+Buddy says: Woof\! Woof\!
+Buddy is fetching the ball
+
+--- Creating a Cat ---
+Name: Whiskers
+Age: 2 years
+Whiskers is eating
+Whiskers is sleeping
+Whiskers says: Meow\! Meow\!
+Whiskers is scratching
+
+--- IS-A Relationship ---
+Buddy IS-A Dog: true
+Buddy IS-A Animal: true
+Whiskers IS-A Cat: true
+Whiskers IS-A Animal: true
+
+================================
+```
+
+**💡 What Dog Inherits:**
+
+```
+Animal (Parent)
+├── Properties: name, age
+├── Methods: eat(), sleep(), displayInfo()
+    
+Dog (Child) gets:
+├── INHERITED: name, age, eat(), sleep(), displayInfo()
+└── OWN: breed, bark(), fetch()
+
+Total for Dog = Inherited + Own
+```
+
+**Inheritance Syntax:**
+```java
+class ChildClass extends ParentClass {
+    // Child class members
+}
+
+// "extends" keyword creates inheritance
+```
+
+**✅ Success Criteria:**
+- Understand child class inherits from parent
+- Know the IS-A relationship
+- Can use inherited members in child class
+- Recognize child can add own members
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| Trying to inherit from multiple classes | Java allows single inheritance only | Extend one class only |
+| Forgetting `extends` keyword | No inheritance without it | `class Dog extends Animal` |
+| Accessing private parent members | Private is not inherited | Use protected or public |
+
+**🎯 Challenge:**
+Create:
+1. `Vehicle` parent class (brand, year, start(), stop())
+2. `Car` child class (numberOfDoors, honk())
+3. `Motorcycle` child class (hasSidecar, wheelie())
+4. Test both children, use inherited and own methods
+
+---
+
+#### Exercise 2: The super Keyword (20 minutes)
+
+**What you'll learn:** Using super to access parent class members
+
+**Create classes: `Person`, `Student`**
+
+**Concept:** The **super** keyword refers to the parent class. Use it to:
+1. Call parent constructor
+2. Access parent methods
+3. Access parent variables (if needed)
+
+```
+super() = Call parent constructor
+super.method() = Call parent method
+super.variable = Access parent variable
+```
+
+**Step-by-Step:**
+
+```java
+// PARENT CLASS
+class Person {
+    String name;
+    int age;
+    
+    // Parent constructor
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+        System.out.println("Person constructor called");
+    }
+    
+    void displayInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+    }
+    
+    void introduce() {
+        System.out.println("Hi, I'm " + name);
+    }
+}
+
+// CHILD CLASS
+class Student extends Person {
+    String studentId;
+    double gpa;
+    
+    // Child constructor
+    Student(String name, int age, String studentId, double gpa) {
+        // MUST call parent constructor first
+        super(name, age);  // Calls Person(name, age)
+        
+        System.out.println("Student constructor called");
+        this.studentId = studentId;
+        this.gpa = gpa;
+    }
+    
+    // Override parent method
+    @Override
+    void displayInfo() {
+        // Call parent's displayInfo first
+        super.displayInfo();  // Displays name and age
+        
+        // Then add student-specific info
+        System.out.println("Student ID: " + studentId);
+        System.out.println("GPA: " + gpa);
+    }
+    
+    @Override
+    void introduce() {
+        // Call parent's introduce
+        super.introduce();
+        
+        // Add more info
+        System.out.println("I'm a student with ID: " + studentId);
+    }
+}
+
+public class SuperKeywordDemo {
+    public static void main(String[] args) {
+        System.out.println("===== SUPER KEYWORD DEMO =====\n");
+        
+        // Create Student (watch constructors)
+        System.out.println("--- Creating Student ---");
+        Student student = new Student("Alice", 20, "STU001", 3.8);
+        
+        System.out.println("\n--- Display Info (using super) ---");
+        student.displayInfo();
+        
+        System.out.println("\n--- Introduce (using super) ---");
+        student.introduce();
+        
+        System.out.println("\n================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== SUPER KEYWORD DEMO =====
+
+--- Creating Student ---
+Person constructor called
+Student constructor called
+
+--- Display Info (using super) ---
+Name: Alice
+Age: 20
+Student ID: STU001
+GPA: 3.8
+
+--- Introduce (using super) ---
+Hi, I'm Alice
+I'm a student with ID: STU001
+
+================================
+```
+
+**💡 Super in Constructors:**
+
+```java
+class Child extends Parent {
+    Child() {
+        super();  // Calls Parent()
+        // Must be FIRST statement
+    }
+    
+    Child(String name) {
+        super(name);  // Calls Parent(String name)
+        // Must be FIRST statement
+    }
+}
+
+// If you don't call super(), Java automatically adds:
+// super();  // Calls no-arg parent constructor
+```
+
+**Super Rules:**
+
+| Rule | Explanation | Example |
+|------|-------------|---------|
+| **Must be first** | super() must be first line in constructor | `super(name, age);` |
+| **Call only once** | Can't call super() multiple times | One super() call per constructor |
+| **Can call methods** | Can use super.method() anywhere | `super.displayInfo();` |
+| **Access variables** | Can use super.variable if needed | `super.name` |
+
+**Constructor Chaining:**
+```
+1. Student constructor called
+2. super(name, age) calls Person constructor
+3. Person constructor executes
+4. Returns to Student constructor
+5. Student constructor continues
+```
+
+**✅ Success Criteria:**
+- Understand super accesses parent class
+- Know super() must be first in constructor
+- Can call parent methods with super.method()
+- Recognize constructor chaining
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| super() not first | Must be first statement | Put super() at top of constructor |
+| Multiple super() calls | Can only call once | One super() call per constructor |
+| Forgetting super() with params | Parent needs args | `super(name, age);` |
+| Using super in static context | super refers to instance | Only use in instance methods |
+
+**🎯 Challenge:**
+Create:
+1. `Employee` class (name, salary, constructor, displayInfo())
+2. `Manager` class extends Employee (department, bonus)
+3. Manager constructor calls super(name, salary)
+4. Manager.displayInfo() calls super.displayInfo() then adds department/bonus
+
+---
+
+#### Exercise 3: Method Overriding (25 minutes)
+
+**What you'll learn:** Overriding parent methods in child classes
+
+**Create classes: `Shape`, `Circle`, `Rectangle`**
+
+**Concept:** **Method Overriding** is when a child class provides its own implementation of a parent method.
+
+```
+Parent method = General implementation
+Child overrides = Specific implementation
+
+Same method signature
+Different behavior
+Decided at runtime
+```
+
+**Rules for Overriding:**
+1. Same method name
+2. Same parameters
+3. Same or compatible return type
+4. Cannot have stricter access modifier
+5. Use @Override annotation (recommended)
+
+**Step-by-Step:**
+
+```java
+// PARENT CLASS
+class Shape {
+    String color;
+    
+    Shape(String color) {
+        this.color = color;
+    }
+    
+    // Method to be overridden
+    double getArea() {
+        System.out.println("Shape: getArea() called");
+        return 0.0;
+    }
+    
+    // Method to be overridden
+    void draw() {
+        System.out.println("Drawing a shape");
+    }
+    
+    // Method NOT overridden
+    void displayColor() {
+        System.out.println("Color: " + color);
+    }
+}
+
+// CHILD CLASS 1
+class Circle extends Shape {
+    double radius;
+    
+    Circle(String color, double radius) {
+        super(color);
+        this.radius = radius;
+    }
+    
+    // OVERRIDE getArea()
+    @Override
+    double getArea() {
+        System.out.println("Circle: getArea() called");
+        return Math.PI * radius * radius;
+    }
+    
+    // OVERRIDE draw()
+    @Override
+    void draw() {
+        System.out.println("Drawing a circle with radius: " + radius);
+    }
+}
+
+// CHILD CLASS 2
+class Rectangle extends Shape {
+    double length;
+    double width;
+    
+    Rectangle(String color, double length, double width) {
+        super(color);
+        this.length = length;
+        this.width = width;
+    }
+    
+    // OVERRIDE getArea()
+    @Override
+    double getArea() {
+        System.out.println("Rectangle: getArea() called");
+        return length * width;
+    }
+    
+    // OVERRIDE draw()
+    @Override
+    void draw() {
+        System.out.println("Drawing a rectangle: " + length + "x" + width);
+    }
+}
+
+public class MethodOverridingDemo {
+    public static void main(String[] args) {
+        System.out.println("===== METHOD OVERRIDING =====\n");
+        
+        // Create shapes
+        Shape shape = new Shape("Gray");
+        Circle circle = new Circle("Red", 5.0);
+        Rectangle rectangle = new Rectangle("Blue", 4.0, 6.0);
+        
+        // Call overridden methods
+        System.out.println("--- Shape (parent) ---");
+        shape.draw();
+        System.out.println("Area: " + shape.getArea());
+        shape.displayColor();
+        
+        System.out.println("\n--- Circle (child) ---");
+        circle.draw();  // Circle's version
+        System.out.println("Area: " + circle.getArea());  // Circle's version
+        circle.displayColor();  // Inherited, not overridden
+        
+        System.out.println("\n--- Rectangle (child) ---");
+        rectangle.draw();  // Rectangle's version
+        System.out.println("Area: " + rectangle.getArea());  // Rectangle's version
+        rectangle.displayColor();  // Inherited, not overridden
+        
+        // Polymorphism demo
+        System.out.println("\n--- Polymorphism (Parent Reference) ---");
+        Shape s1 = new Circle("Green", 3.0);
+        Shape s2 = new Rectangle("Yellow", 5.0, 7.0);
+        
+        s1.draw();  // Calls Circle's draw() - runtime decision
+        System.out.println("Area: " + s1.getArea());  // Calls Circle's getArea()
+        
+        s2.draw();  // Calls Rectangle's draw() - runtime decision
+        System.out.println("Area: " + s2.getArea());  // Calls Rectangle's getArea()
+        
+        System.out.println("\n================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== METHOD OVERRIDING =====
+
+--- Shape (parent) ---
+Drawing a shape
+Shape: getArea() called
+Area: 0.0
+Color: Gray
+
+--- Circle (child) ---
+Drawing a circle with radius: 5.0
+Circle: getArea() called
+Area: 78.53981633974483
+Color: Red
+
+--- Rectangle (child) ---
+Drawing a rectangle: 4.0x6.0
+Rectangle: getArea() called
+Area: 24.0
+Color: Blue
+
+--- Polymorphism (Parent Reference) ---
+Drawing a circle with radius: 3.0
+Circle: getArea() called
+Area: 28.274333882308138
+Drawing a rectangle: 5.0x7.0
+Rectangle: getArea() called
+Area: 35.0
+
+================================
+```
+
+**💡 Overriding vs Overloading:**
+
+| Aspect | Overriding | Overloading |
+|--------|-----------|-------------|
+| **Where** | Parent vs Child class | Same class |
+| **Method name** | Same | Same |
+| **Parameters** | Same | Different |
+| **Return type** | Same/compatible | Can be different |
+| **Binding** | Runtime (dynamic) | Compile-time (static) |
+| **Purpose** | Change behavior | Multiple versions |
+
+**Method Signature Must Match:**
+```java
+// Parent
+void draw() { }
+
+// Child - CORRECT override
+@Override
+void draw() { }  // ✅ Same signature
+
+// Child - NOT override (different params)
+void draw(int x) { }  // This is OVERLOADING, not overriding
+```
+
+**@Override Annotation:**
+```java
+class Child extends Parent {
+    @Override  // Recommended\! Compiler checks it's valid override
+    void method() {
+        // Implementation
+    }
+    
+    // Without @Override, typos can cause bugs:
+    void methd() {  // Oops\! Typo - creates NEW method, doesn't override
+        // This won't override parent's method()
+    }
+}
+```
+
+**✅ Success Criteria:**
+- Understand overriding = same signature, different implementation
+- Can override parent methods in child
+- Know @Override annotation helps catch errors
+- Recognize overriding enables polymorphism
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| Different parameters | That's overloading, not overriding | Keep parameters identical |
+| Stricter access modifier | Can't reduce visibility | Keep same or wider access |
+| Static overriding instance | Can't override static methods | Both must be instance methods |
+| No @Override annotation | Miss typos and mistakes | Always use @Override |
+
+**🎯 Challenge:**
+Create:
+1. `Animal` class with makeSound() method
+2. `Dog`, `Cat`, `Cow` classes that override makeSound()
+3. Each animal makes different sound
+4. Create array of Animals, call makeSound() on each
+
+---
+
+#### Exercise 4: Multilevel Inheritance (20 minutes)
+
+**What you'll learn:** Creating inheritance chains
+
+**Create classes: `LivingBeing`, `Animal`, `Dog`**
+
+**Concept:** **Multilevel Inheritance** is when a class extends a class that already extends another class. It creates an inheritance chain.
+
+```
+LivingBeing (Grandparent)
+    ↓
+Animal (Parent)
+    ↓
+Dog (Child)
+
+Dog inherits from Animal AND LivingBeing
+```
+
+**Step-by-Step:**
+
+```java
+// LEVEL 1 - Grandparent
+class LivingBeing {
+    void breathe() {
+        System.out.println("  Breathing... (from LivingBeing)");
+    }
+    
+    void grow() {
+        System.out.println("  Growing... (from LivingBeing)");
+    }
+}
+
+// LEVEL 2 - Parent (extends LivingBeing)
+class Animal extends LivingBeing {
+    String name;
+    
+    Animal(String name) {
+        this.name = name;
+    }
+    
+    void eat() {
+        System.out.println("  " + name + " is eating (from Animal)");
+    }
+    
+    void sleep() {
+        System.out.println("  " + name + " is sleeping (from Animal)");
+    }
+}
+
+// LEVEL 3 - Child (extends Animal, which extends LivingBeing)
+class Dog extends Animal {
+    String breed;
+    
+    Dog(String name, String breed) {
+        super(name);  // Call Animal constructor
+        this.breed = breed;
+    }
+    
+    void bark() {
+        System.out.println("  " + name + " barks: Woof\! (from Dog)");
+    }
+    
+    void play() {
+        System.out.println("  " + name + " is playing (from Dog)");
+    }
+    
+    void showAllAbilities() {
+        System.out.println("\n" + name + " (" + breed + ") can:");
+        breathe();  // From LivingBeing (grandparent)
+        grow();     // From LivingBeing (grandparent)
+        eat();      // From Animal (parent)
+        sleep();    // From Animal (parent)
+        bark();     // From Dog (own)
+        play();     // From Dog (own)
+    }
+}
+
+public class MultilevelInheritanceDemo {
+    public static void main(String[] args) {
+        System.out.println("===== MULTILEVEL INHERITANCE =====\n");
+        
+        Dog dog = new Dog("Buddy", "Golden Retriever");
+        
+        System.out.println("--- Inheritance Chain ---");
+        System.out.println("LivingBeing → Animal → Dog");
+        System.out.println("Buddy IS-A Dog: ✓");
+        System.out.println("Buddy IS-A Animal: ✓");
+        System.out.println("Buddy IS-A LivingBeing: ✓");
+        
+        dog.showAllAbilities();
+        
+        System.out.println("\n--- What Dog Inherited ---");
+        System.out.println("From LivingBeing (grandparent): breathe(), grow()");
+        System.out.println("From Animal (parent): name, eat(), sleep()");
+        System.out.println("Own (Dog): breed, bark(), play()");
+        
+        System.out.println("\n====================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== MULTILEVEL INHERITANCE =====
+
+--- Inheritance Chain ---
+LivingBeing → Animal → Dog
+Buddy IS-A Dog: ✓
+Buddy IS-A Animal: ✓
+Buddy IS-A LivingBeing: ✓
+
+Buddy (Golden Retriever) can:
+  Breathing... (from LivingBeing)
+  Growing... (from LivingBeing)
+  Buddy is eating (from Animal)
+  Buddy is sleeping (from Animal)
+  Buddy barks: Woof\! (from Dog)
+  Buddy is playing (from Dog)
+
+--- What Dog Inherited ---
+From LivingBeing (grandparent): breathe(), grow()
+From Animal (parent): name, eat(), sleep()
+Own (Dog): breed, bark(), play()
+
+====================================
+```
+
+**💡 Multilevel Inheritance Chain:**
+
+```
+┌─────────────────┐
+│  LivingBeing    │ ← breathe(), grow()
+└────────┬────────┘
+         │ extends
+         ↓
+┌─────────────────┐
+│     Animal      │ ← eat(), sleep() + INHERITED: breathe(), grow()
+└────────┬────────┘
+         │ extends
+         ↓
+┌─────────────────┐
+│      Dog        │ ← bark(), play() + INHERITED: all above
+└─────────────────┘
+```
+
+**Constructor Chaining in Multilevel:**
+```
+1. Dog constructor called
+2. super(name) calls Animal constructor
+3. Animal constructor (implicitly) calls LivingBeing constructor
+4. LivingBeing constructor executes
+5. Returns to Animal constructor
+6. Animal constructor executes
+7. Returns to Dog constructor
+8. Dog constructor executes
+
+Order: LivingBeing → Animal → Dog
+```
+
+**✅ Success Criteria:**
+- Understand multilevel inheritance creates chains
+- Know child inherits from all ancestors
+- Can trace inheritance hierarchy
+- Recognize constructor chaining goes up then down
+
+**🎯 Challenge:**
+Create a 3-level hierarchy:
+1. `Device` (power(), shutDown())
+2. `Computer extends Device` (boot(), runProgram())
+3. `Laptop extends Computer` (closeLid(), openLid())
+4. Test that Laptop has all methods from all 3 levels
+
+---
+
+### 🎓 Day 12 Summary: Inheritance
+
+**What You Learned:**
+1. ✅ Inheritance concept and IS-A relationship
+2. ✅ Using extends keyword
+3. ✅ The super keyword for parent access
+4. ✅ Method overriding
+5. ✅ Multilevel inheritance
+
+**Key Takeaways:**
+- Inheritance enables code reuse
+- Child class IS-A type of parent class
+- super accesses parent members
+- Overriding changes parent method behavior
+- Multilevel inheritance creates chains
+
+**Inheritance Checklist:**
+```
+✅ Use extends for inheritance
+✅ Child IS-A parent relationship makes sense
+✅ Call super() in child constructor
+✅ Override methods with @Override annotation
+✅ Understand what child inherits
+✅ Recognize inheritance chain in multilevel
+✅ Don't inherit just for code reuse - must be IS-A
+```
+
+**Before vs After:**
+```java
+// Before (code duplication):
+class Dog {
+    void eat() { }
+    void sleep() { }
+    void bark() { }
+}
+class Cat {
+    void eat() { }    // Duplicate\!
+    void sleep() { }  // Duplicate\!
+    void meow() { }
+}
+
+// After (with inheritance):
+class Animal {
+    void eat() { }
+    void sleep() { }
+}
+class Dog extends Animal {
+    void bark() { }   // Only unique code
+}
+class Cat extends Animal {
+    void meow() { }   // Only unique code
+}
+```
+
+**Next Steps:**
+- Day 13: Polymorphism (Runtime polymorphism, dynamic dispatch)
+- Day 14: Abstraction (Abstract classes, interfaces)
+
+---
+
+
+### Day 13: Polymorphism
+
+---
+
+#### Exercise 1: Runtime Polymorphism Basics (15 minutes)
+
+**What you'll learn:** Understanding polymorphism and dynamic method dispatch
+
+**Create classes: `Animal`, `Dog`, `Cat`, `Cow`**
+
+**Concept:** **Polymorphism** means "many forms". One interface (parent type) can refer to different implementations (child objects). Java decides which method to call at runtime based on the actual object type.
+
+```
+Polymorphism = Parent reference → Child object
+
+Animal animal = new Dog();  // Parent type, child object
+animal.makeSound();         // Calls Dog's method (not Animal's)
+                           // Decision made at RUNTIME
+```
+
+**Why Polymorphism?**
+- **Flexibility**: Write code that works with parent type
+- **Extensibility**: Add new child classes without changing existing code
+- **Simplicity**: One interface for many implementations
+
+**Step-by-Step:**
+
+```java
+// PARENT CLASS
+class Animal {
+    String name;
+    
+    Animal(String name) {
+        this.name = name;
+    }
+    
+    void makeSound() {
+        System.out.println(name + " makes a sound");
+    }
+}
+
+// CHILD CLASSES
+class Dog extends Animal {
+    Dog(String name) {
+        super(name);
+    }
+    
+    @Override
+    void makeSound() {
+        System.out.println(name + " says: Woof\! Woof\!");
+    }
+}
+
+class Cat extends Animal {
+    Cat(String name) {
+        super(name);
+    }
+    
+    @Override
+    void makeSound() {
+        System.out.println(name + " says: Meow\! Meow\!");
+    }
+}
+
+class Cow extends Animal {
+    Cow(String name) {
+        super(name);
+    }
+    
+    @Override
+    void makeSound() {
+        System.out.println(name + " says: Moo\! Moo\!");
+    }
+}
+
+public class PolymorphismBasics {
+    public static void main(String[] args) {
+        System.out.println("===== RUNTIME POLYMORPHISM =====\n");
+        
+        // Without polymorphism - specific types
+        System.out.println("--- Without Polymorphism ---");
+        Dog dog = new Dog("Buddy");
+        Cat cat = new Cat("Whiskers");
+        Cow cow = new Cow("Bessie");
+        
+        dog.makeSound();
+        cat.makeSound();
+        cow.makeSound();
+        
+        // With polymorphism - parent type reference
+        System.out.println("\n--- With Polymorphism ---");
+        Animal animal1 = new Dog("Max");      // Parent type\!
+        Animal animal2 = new Cat("Fluffy");   // Parent type\!
+        Animal animal3 = new Cow("Daisy");    // Parent type\!
+        
+        // Same method call, different behaviors
+        animal1.makeSound();  // Calls Dog's makeSound()
+        animal2.makeSound();  // Calls Cat's makeSound()
+        animal3.makeSound();  // Calls Cow's makeSound()
+        
+        // The magic: Java decides which method at RUNTIME
+        System.out.println("\n--- Dynamic Method Dispatch ---");
+        Animal animal;  // Parent reference
+        
+        animal = new Dog("Rocky");
+        System.out.print("Animal is Dog: ");
+        animal.makeSound();  // Dog's version
+        
+        animal = new Cat("Tom");
+        System.out.print("Animal is Cat: ");
+        animal.makeSound();  // Cat's version
+        
+        animal = new Cow("Molly");
+        System.out.print("Animal is Cow: ");
+        animal.makeSound();  // Cow's version
+        
+        System.out.println("\n==================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== RUNTIME POLYMORPHISM =====
+
+--- Without Polymorphism ---
+Buddy says: Woof\! Woof\!
+Whiskers says: Meow\! Meow\!
+Bessie says: Moo\! Moo\!
+
+--- With Polymorphism ---
+Max says: Woof\! Woof\!
+Fluffy says: Meow\! Meow\!
+Daisy says: Moo\! Moo\!
+
+--- Dynamic Method Dispatch ---
+Animal is Dog: Rocky says: Woof\! Woof\!
+Animal is Cat: Tom says: Meow\! Meow\!
+Animal is Cow: Molly says: Moo\! Moo\!
+
+==================================
+```
+
+**💡 How It Works:**
+
+```java
+Animal animal = new Dog("Buddy");
+animal.makeSound();
+
+// Compile time:
+// - Compiler checks: Does Animal have makeSound()? YES ✓
+// - Allows the call
+
+// Runtime:
+// - JVM checks: What's the actual object? Dog\!
+// - Calls: Dog's makeSound() ✓
+
+Reference Type = Animal (compile time)
+Object Type = Dog (runtime)
+Method Called = Dog's version (runtime decision)
+```
+
+**Polymorphism Requirements:**
+1. ✅ Inheritance (IS-A relationship)
+2. ✅ Method overriding
+3. ✅ Parent reference to child object
+
+**✅ Success Criteria:**
+- Understand polymorphism = one interface, many forms
+- Know parent reference can hold child object
+- Recognize method called is based on actual object (runtime)
+- Can create polymorphic references
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Reality |
+|---------|----------------|---------|
+| Thinking it's compile-time | Decision is at runtime | JVM decides based on object |
+| Using child-only methods | Parent reference can't see them | Only parent methods accessible |
+| Confusing with overloading | Overloading is compile-time | Polymorphism is runtime |
+
+**🎯 Challenge:**
+1. Create `Shape` with `draw()` and `getArea()`
+2. Create `Circle`, `Rectangle`, `Triangle` children
+3. Override both methods in each
+4. Create Shape array, fill with different shapes, call methods
+
+---
+
+#### Exercise 2: Polymorphic Arrays (20 minutes)
+
+**What you'll learn:** Using polymorphism with arrays and collections
+
+**Create classes: `Employee`, `Manager`, `Developer`, `Intern`**
+
+**Concept:** **Polymorphic Arrays** let you store different child objects in one parent array. This is powerful for processing different types uniformly.
+
+```
+Employee[] team = new Employee[5];
+team[0] = new Manager(...);    // ✓
+team[1] = new Developer(...);  // ✓
+team[2] = new Intern(...);     // ✓
+
+// All are Employees, can call common methods
+```
+
+**Step-by-Step:**
+
+```java
+// PARENT CLASS
+class Employee {
+    String name;
+    double salary;
+    
+    Employee(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+    
+    void work() {
+        System.out.println(name + " is working");
+    }
+    
+    double calculateBonus() {
+        return salary * 0.05;  // 5% default
+    }
+    
+    void displayInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Salary: $" + salary);
+        System.out.println("Bonus: $" + calculateBonus());
+    }
+}
+
+// CHILD CLASS 1
+class Manager extends Employee {
+    int teamSize;
+    
+    Manager(String name, double salary, int teamSize) {
+        super(name, salary);
+        this.teamSize = teamSize;
+    }
+    
+    @Override
+    void work() {
+        System.out.println(name + " is managing " + teamSize + " people");
+    }
+    
+    @Override
+    double calculateBonus() {
+        return salary * 0.15;  // 15% for managers
+    }
+}
+
+// CHILD CLASS 2
+class Developer extends Employee {
+    String programmingLanguage;
+    
+    Developer(String name, double salary, String language) {
+        super(name, salary);
+        this.programmingLanguage = language;
+    }
+    
+    @Override
+    void work() {
+        System.out.println(name + " is coding in " + programmingLanguage);
+    }
+    
+    @Override
+    double calculateBonus() {
+        return salary * 0.10;  // 10% for developers
+    }
+}
+
+// CHILD CLASS 3
+class Intern extends Employee {
+    int duration;  // months
+    
+    Intern(String name, double salary, int duration) {
+        super(name, salary);
+        this.duration = duration;
+    }
+    
+    @Override
+    void work() {
+        System.out.println(name + " is learning (intern for " + duration + " months)");
+    }
+    
+    @Override
+    double calculateBonus() {
+        return salary * 0.02;  // 2% for interns
+    }
+}
+
+public class PolymorphicArrayDemo {
+    public static void main(String[] args) {
+        System.out.println("===== POLYMORPHIC ARRAYS =====\n");
+        
+        // Polymorphic array - parent type, child objects
+        Employee[] team = new Employee[5];
+        team[0] = new Manager("Alice", 100000, 10);
+        team[1] = new Developer("Bob", 80000, "Java");
+        team[2] = new Developer("Charlie", 75000, "Python");
+        team[3] = new Intern("David", 30000, 6);
+        team[4] = new Manager("Eve", 120000, 15);
+        
+        // Process all employees uniformly
+        System.out.println("--- All Employees Working ---");
+        for (Employee emp : team) {
+            emp.work();  // Calls appropriate version for each
+        }
+        
+        // Calculate total payroll
+        System.out.println("\n--- Payroll Calculation ---");
+        double totalSalary = 0;
+        double totalBonus = 0;
+        
+        for (Employee emp : team) {
+            totalSalary += emp.salary;
+            totalBonus += emp.calculateBonus();  // Different for each type\!
+        }
+        
+        System.out.println("Total Salary: $" + totalSalary);
+        System.out.println("Total Bonus: $" + totalBonus);
+        System.out.println("Total Cost: $" + (totalSalary + totalBonus));
+        
+        // Display each employee's info
+        System.out.println("\n--- Employee Details ---");
+        for (int i = 0; i < team.length; i++) {
+            System.out.println("\nEmployee " + (i + 1) + ":");
+            team[i].displayInfo();
+        }
+        
+        System.out.println("\n================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== POLYMORPHIC ARRAYS =====
+
+--- All Employees Working ---
+Alice is managing 10 people
+Bob is coding in Java
+Charlie is coding in Python
+David is learning (intern for 6 months)
+Eve is managing 15 people
+
+--- Payroll Calculation ---
+Total Salary: $405000.0
+Total Bonus: $45100.0
+Total Cost: $450100.0
+
+--- Employee Details ---
+
+Employee 1:
+Name: Alice
+Salary: $100000.0
+Bonus: $15000.0
+
+Employee 2:
+Name: Bob
+Salary: $80000.0
+Bonus: $8000.0
+
+Employee 3:
+Name: Charlie
+Salary: $75000.0
+Bonus: $7500.0
+
+Employee 4:
+Name: David
+Salary: $30000.0
+Bonus: $600.0
+
+Employee 5:
+Name: Eve
+Salary: $120000.0
+Bonus: $18000.0
+
+================================
+```
+
+**💡 Power of Polymorphic Arrays:**
+
+```java
+// ONE loop handles ALL employee types
+for (Employee emp : team) {
+    emp.work();  // Different behavior for each\!
+}
+
+// Without polymorphism, need separate loops:
+for (Manager m : managers) { m.work(); }
+for (Developer d : devs) { d.work(); }
+for (Intern i : interns) { i.work(); }
+// Tedious and not extensible\!
+```
+
+**Benefits:**
+
+| Benefit | Explanation |
+|---------|-------------|
+| **Uniform Processing** | One loop for all types |
+| **Extensibility** | Add new Employee type, no code change |
+| **Simplicity** | Treat different objects uniformly |
+| **Flexibility** | Mix different types in one collection |
+
+**✅ Success Criteria:**
+- Can create arrays of parent type
+- Can store different child objects in array
+- Understand each object behaves according to its type
+- Recognize polymorphism enables uniform processing
+
+**🎯 Challenge:**
+Create:
+1. `Vehicle` parent with `start()`, `getFuelEfficiency()`
+2. `Car`, `Truck`, `Motorcycle` children with different implementations
+3. Array of Vehicles with mixed types
+4. Loop through, start all, calculate average fuel efficiency
+
+---
+
+#### Exercise 3: The instanceof Operator (20 minutes)
+
+**What you'll learn:** Checking object types at runtime
+
+**Create classes: `Animal`, `Dog`, `Cat`, `Bird`**
+
+**Concept:** The **instanceof** operator checks if an object is an instance of a particular class. Useful when you need type-specific behavior with polymorphic references.
+
+```
+object instanceof ClassName
+Returns: true if object is instance of ClassName
+        false otherwise
+```
+
+**Step-by-Step:**
+
+```java
+// PARENT CLASS
+class Animal {
+    String name;
+    
+    Animal(String name) {
+        this.name = name;
+    }
+    
+    void makeSound() {
+        System.out.println(name + " makes a sound");
+    }
+}
+
+// CHILD CLASSES
+class Dog extends Animal {
+    Dog(String name) {
+        super(name);
+    }
+    
+    @Override
+    void makeSound() {
+        System.out.println(name + ": Woof\!");
+    }
+    
+    void fetch() {
+        System.out.println(name + " is fetching");
+    }
+}
+
+class Cat extends Animal {
+    Cat(String name) {
+        super(name);
+    }
+    
+    @Override
+    void makeSound() {
+        System.out.println(name + ": Meow\!");
+    }
+    
+    void scratch() {
+        System.out.println(name + " is scratching");
+    }
+}
+
+class Bird extends Animal {
+    Bird(String name) {
+        super(name);
+    }
+    
+    @Override
+    void makeSound() {
+        System.out.println(name + ": Chirp\!");
+    }
+    
+    void fly() {
+        System.out.println(name + " is flying");
+    }
+}
+
+public class InstanceofDemo {
+    public static void main(String[] args) {
+        System.out.println("===== INSTANCEOF OPERATOR =====\n");
+        
+        // Create polymorphic array
+        Animal[] animals = new Animal[4];
+        animals[0] = new Dog("Buddy");
+        animals[1] = new Cat("Whiskers");
+        animals[2] = new Bird("Tweety");
+        animals[3] = new Dog("Max");
+        
+        // Process each animal
+        System.out.println("--- Processing Animals ---");
+        for (Animal animal : animals) {
+            // Common method - all have it
+            animal.makeSound();
+            
+            // Type-specific behavior using instanceof
+            if (animal instanceof Dog) {
+                System.out.println("  → This is a Dog\!");
+                Dog dog = (Dog) animal;  // Downcast
+                dog.fetch();
+                
+            } else if (animal instanceof Cat) {
+                System.out.println("  → This is a Cat\!");
+                Cat cat = (Cat) animal;  // Downcast
+                cat.scratch();
+                
+            } else if (animal instanceof Bird) {
+                System.out.println("  → This is a Bird\!");
+                Bird bird = (Bird) animal;  // Downcast
+                bird.fly();
+            }
+            
+            System.out.println();
+        }
+        
+        // Counting types
+        System.out.println("--- Counting Animals ---");
+        int dogCount = 0, catCount = 0, birdCount = 0;
+        
+        for (Animal animal : animals) {
+            if (animal instanceof Dog) {
+                dogCount++;
+            } else if (animal instanceof Cat) {
+                catCount++;
+            } else if (animal instanceof Bird) {
+                birdCount++;
+            }
+        }
+        
+        System.out.println("Dogs: " + dogCount);
+        System.out.println("Cats: " + catCount);
+        System.out.println("Birds: " + birdCount);
+        
+        // Testing instanceof
+        System.out.println("\n--- Testing instanceof ---");
+        Animal animal = new Dog("Rocky");
+        
+        System.out.println("animal instanceof Dog: " + (animal instanceof Dog));
+        System.out.println("animal instanceof Cat: " + (animal instanceof Cat));
+        System.out.println("animal instanceof Animal: " + (animal instanceof Animal));
+        System.out.println("animal instanceof Object: " + (animal instanceof Object));
+        
+        System.out.println("\n=================================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== INSTANCEOF OPERATOR =====
+
+--- Processing Animals ---
+Buddy: Woof\!
+  → This is a Dog\!
+Buddy is fetching
+
+Whiskers: Meow\!
+  → This is a Cat\!
+Whiskers is scratching
+
+Tweety: Chirp\!
+  → This is a Bird\!
+Tweety is flying
+
+Max: Woof\!
+  → This is a Dog\!
+Max is fetching
+
+--- Counting Animals ---
+Dogs: 2
+Cats: 1
+Birds: 1
+
+--- Testing instanceof ---
+animal instanceof Dog: true
+animal instanceof Cat: false
+animal instanceof Animal: true
+animal instanceof Object: true
+
+=================================
+```
+
+**💡 instanceof Checks:**
+
+```java
+Animal animal = new Dog("Buddy");
+
+// Checks go from specific to general
+animal instanceof Dog     // true  - exact type
+animal instanceof Animal  // true  - is parent
+animal instanceof Object  // true  // everything is Object
+animal instanceof Cat     // false - not this type
+```
+
+**Downcasting with instanceof:**
+```java
+Animal animal = new Dog("Buddy");
+
+// UNSAFE - might crash
+Dog dog = (Dog) animal;  // Works if animal is Dog
+                         // Runtime error if not\!
+
+// SAFE - check first
+if (animal instanceof Dog) {
+    Dog dog = (Dog) animal;  // Safe now\!
+    dog.fetch();
+}
+```
+
+**Common Pattern:**
+```java
+// Process polymorphic collection with type-specific behavior
+for (Animal animal : animals) {
+    // Common behavior for all
+    animal.makeSound();
+    
+    // Specific behavior for each type
+    if (animal instanceof Dog) {
+        ((Dog) animal).fetch();
+    } else if (animal instanceof Cat) {
+        ((Cat) animal).scratch();
+    }
+}
+```
+
+**✅ Success Criteria:**
+- Understand instanceof checks object type
+- Can use instanceof before downcasting
+- Know instanceof returns boolean
+- Recognize instanceof checks inheritance hierarchy
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| Downcasting without checking | Can cause ClassCastException | Check with instanceof first |
+| Checking after downcasting | Too late if wrong type | Check BEFORE casting |
+| Using == for type check | Doesn't work | Use instanceof |
+| Overusing instanceof | Defeats polymorphism | Use sparingly, prefer overriding |
+
+**🎯 Challenge:**
+Create payment system:
+1. `Payment` parent with `processPayment()`
+2. `CreditCard`, `PayPal`, `Cash` children
+3. Array of mixed Payment objects
+4. Use instanceof to apply different fees for each type
+
+---
+
+### 🎓 Day 13 Summary: Polymorphism
+
+**What You Learned:**
+1. ✅ Runtime polymorphism and dynamic method dispatch
+2. ✅ Polymorphic arrays and collections
+3. ✅ The instanceof operator for type checking
+4. ✅ Upcasting and downcasting
+
+**Key Takeaways:**
+- Polymorphism = one interface, multiple implementations
+- Parent reference can hold child object
+- Method called depends on actual object (runtime)
+- instanceof checks object type safely
+- Polymorphism enables flexible, extensible code
+
+**Polymorphism Checklist:**
+```
+✅ Parent reference → Child object
+✅ Method overriding in child classes
+✅ Runtime decision on which method to call
+✅ Use instanceof before downcasting
+✅ Polymorphic arrays for uniform processing
+✅ Prefer polymorphism over type checking
+✅ Enables flexible, extensible designs
+```
+
+**Next Steps:**
+- Day 14: Abstraction (Abstract classes and interfaces)
+
+---
+
+### Day 14: Abstraction
+
+---
+
+#### Exercise 1: Abstract Classes Basics (20 minutes)
+
+**What you'll learn:** Creating and using abstract classes
+
+**Create classes: `Animal` (abstract), `Dog`, `Cat`**
+
+**Concept:** An **abstract class** is a class that cannot be instantiated. It serves as a template for child classes. It can have:
+- Abstract methods (no implementation - must be overridden)
+- Concrete methods (with implementation - can be inherited)
+
+```
+Abstract Class = Incomplete class
+Cannot create objects directly
+Must be extended by child class
+Child must implement abstract methods
+```
+
+**Why Abstract Classes?**
+- Define common structure for children
+- Force children to implement certain methods
+- Provide some common implementation
+- Represent concepts that are too general to instantiate
+
+**Step-by-Step:**
+
+```java
+// ABSTRACT CLASS - cannot be instantiated
+abstract class Animal {
+    String name;
+    int age;
+    
+    // Constructor (yes, abstract classes can have constructors\!)
+    Animal(String name, int age) {
+        this.name = name;
+        this.age = age;
+        System.out.println("Animal constructor called for: " + name);
+    }
+    
+    // ABSTRACT method - no implementation
+    // Child classes MUST implement this
+    abstract void makeSound();
+    
+    // ABSTRACT method
+    abstract void move();
+    
+    // CONCRETE method - has implementation
+    // Children inherit this as-is
+    void eat() {
+        System.out.println(name + " is eating");
+    }
+    
+    void sleep() {
+        System.out.println(name + " is sleeping");
+    }
+    
+    void displayInfo() {
+        System.out.println("Name: " + name + ", Age: " + age);
+    }
+}
+
+// CONCRETE CLASS - must implement all abstract methods
+class Dog extends Animal {
+    String breed;
+    
+    Dog(String name, int age, String breed) {
+        super(name, age);  // Call abstract class constructor
+        this.breed = breed;
+    }
+    
+    // MUST implement abstract method
+    @Override
+    void makeSound() {
+        System.out.println(name + " barks: Woof\! Woof\!");
+    }
+    
+    // MUST implement abstract method
+    @Override
+    void move() {
+        System.out.println(name + " runs on four legs");
+    }
+}
+
+class Cat extends Animal {
+    String color;
+    
+    Cat(String name, int age, String color) {
+        super(name, age);
+        this.color = color;
+    }
+    
+    // MUST implement abstract method
+    @Override
+    void makeSound() {
+        System.out.println(name + " meows: Meow\! Meow\!");
+    }
+    
+    // MUST implement abstract method
+    @Override
+    void move() {
+        System.out.println(name + " walks gracefully");
+    }
+}
+
+public class AbstractClassDemo {
+    public static void main(String[] args) {
+        System.out.println("===== ABSTRACT CLASSES =====\n");
+        
+        // Animal animal = new Animal("Generic", 1);  // ❌ ERROR\! Cannot instantiate
+        
+        // Create concrete objects
+        System.out.println("--- Creating Dog ---");
+        Dog dog = new Dog("Buddy", 3, "Golden Retriever");
+        
+        System.out.println("\n--- Creating Cat ---");
+        Cat cat = new Cat("Whiskers", 2, "Orange");
+        
+        // Call methods
+        System.out.println("\n--- Dog Behaviors ---");
+        dog.displayInfo();  // Inherited concrete method
+        dog.makeSound();    // Implemented abstract method
+        dog.move();         // Implemented abstract method
+        dog.eat();          // Inherited concrete method
+        dog.sleep();        // Inherited concrete method
+        
+        System.out.println("\n--- Cat Behaviors ---");
+        cat.displayInfo();
+        cat.makeSound();
+        cat.move();
+        cat.eat();
+        cat.sleep();
+        
+        // Polymorphism with abstract class
+        System.out.println("\n--- Polymorphism with Abstract Class ---");
+        Animal animal1 = new Dog("Max", 5, "Labrador");
+        Animal animal2 = new Cat("Fluffy", 1, "White");
+        
+        animal1.makeSound();  // Dog's implementation
+        animal2.makeSound();  // Cat's implementation
+        
+        System.out.println("\n==============================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== ABSTRACT CLASSES =====
+
+--- Creating Dog ---
+Animal constructor called for: Buddy
+
+--- Creating Cat ---
+Animal constructor called for: Whiskers
+
+--- Dog Behaviors ---
+Name: Buddy, Age: 3
+Buddy barks: Woof\! Woof\!
+Buddy runs on four legs
+Buddy is eating
+Buddy is sleeping
+
+--- Cat Behaviors ---
+Name: Whiskers, Age: 2
+Whiskers meows: Meow\! Meow\!
+Whiskers walks gracefully
+Whiskers is eating
+Whiskers is sleeping
+
+--- Polymorphism with Abstract Class ---
+Animal constructor called for: Max
+Animal constructor called for: Fluffy
+Max barks: Woof\! Woof\!
+Fluffy meows: Meow\! Meow\!
+
+==============================
+```
+
+**💡 Abstract Class Rules:**
+
+| Rule | Explanation |
+|------|-------------|
+| Cannot instantiate | `new Animal()` ❌ - error |
+| Can have constructor | Called when child is created |
+| Can have abstract methods | No body, must be overridden |
+| Can have concrete methods | Full implementation, inherited |
+| Can have variables | Inherited by children |
+| Child must implement | All abstract methods (or be abstract itself) |
+
+**Abstract vs Concrete Methods:**
+```java
+abstract class Example {
+    // Abstract - no implementation
+    abstract void mustImplement();
+    
+    // Concrete - has implementation
+    void canInherit() {
+        System.out.println("This is inherited");
+    }
+}
+```
+
+**✅ Success Criteria:**
+- Understand abstract classes cannot be instantiated
+- Know abstract methods have no body
+- Can implement all abstract methods in child
+- Recognize abstract classes force common structure
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|----------------|-------------|
+| `new AbstractClass()` | Cannot instantiate | Create child instance |
+| Forgetting to implement | Child must implement ALL | Implement all abstract methods |
+| Abstract method with body | Abstract = no implementation | Remove body |
+| Making everything abstract | Defeats purpose | Mix abstract and concrete |
+
+**🎯 Challenge:**
+Create abstract `Shape` class:
+1. Abstract methods: getArea(), getPerimeter()
+2. Concrete method: displayInfo()
+3. Create `Circle`, `Rectangle` that implement abstract methods
+4. Test both shapes
+
+---
+
+#### Exercise 2: Interfaces (25 minutes)
+
+**What you'll learn:** Creating and implementing interfaces
+
+**Create interface: `Drawable`, `Movable`; Classes: `Circle`, `Rectangle`**
+
+**Concept:** An **interface** is a contract that defines what a class can do (methods) without saying how (implementation). It's 100% abstraction.
+
+```
+Interface = Pure contract
+All methods are abstract (by default)
+Class "implements" interface
+Can implement multiple interfaces
+```
+
+**Interface vs Abstract Class:**
+
+| Feature | Interface | Abstract Class |
+|---------|-----------|----------------|
+| Methods | Abstract (default) | Abstract + Concrete |
+| Variables | Constants only | Any |
+| Inheritance | Multiple | Single |
+| Constructor | No | Yes |
+| Purpose | Contract/capability | Common code + contract |
+
+**Step-by-Step:**
+
+```java
+// INTERFACE 1
+interface Drawable {
+    // All methods are public abstract by default
+    void draw();
+    void erase();
+}
+
+// INTERFACE 2
+interface Movable {
+    void moveUp();
+    void moveDown();
+    void moveLeft();
+    void moveRight();
+}
+
+// CLASS implementing interfaces
+class Circle implements Drawable, Movable {
+    int x, y;
+    int radius;
+    
+    Circle(int x, int y, int radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+    
+    // Implement Drawable interface
+    @Override
+    public void draw() {
+        System.out.println("Drawing circle at (" + x + "," + y + ") with radius " + radius);
+    }
+    
+    @Override
+    public void erase() {
+        System.out.println("Erasing circle at (" + x + "," + y + ")");
+    }
+    
+    // Implement Movable interface
+    @Override
+    public void moveUp() {
+        y--;
+        System.out.println("Circle moved up to (" + x + "," + y + ")");
+    }
+    
+    @Override
+    public void moveDown() {
+        y++;
+        System.out.println("Circle moved down to (" + x + "," + y + ")");
+    }
+    
+    @Override
+    public void moveLeft() {
+        x--;
+        System.out.println("Circle moved left to (" + x + "," + y + ")");
+    }
+    
+    @Override
+    public void moveRight() {
+        x++;
+        System.out.println("Circle moved right to (" + x + "," + y + ")");
+    }
+}
+
+class Rectangle implements Drawable, Movable {
+    int x, y;
+    int width, height;
+    
+    Rectangle(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+    
+    // Implement Drawable
+    @Override
+    public void draw() {
+        System.out.println("Drawing rectangle at (" + x + "," + y + ") " + width + "x" + height);
+    }
+    
+    @Override
+    public void erase() {
+        System.out.println("Erasing rectangle at (" + x + "," + y + ")");
+    }
+    
+    // Implement Movable
+    @Override
+    public void moveUp() {
+        y--;
+        System.out.println("Rectangle moved up to (" + x + "," + y + ")");
+    }
+    
+    @Override
+    public void moveDown() {
+        y++;
+        System.out.println("Rectangle moved down to (" + x + "," + y + ")");
+    }
+    
+    @Override
+    public void moveLeft() {
+        x--;
+        System.out.println("Rectangle moved left to (" + x + "," + y + ")");
+    }
+    
+    @Override
+    public void moveRight() {
+        x++;
+        System.out.println("Rectangle moved right to (" + x + "," + y + ")");
+    }
+}
+
+public class InterfaceDemo {
+    public static void main(String[] args) {
+        System.out.println("===== INTERFACES =====\n");
+        
+        Circle circle = new Circle(5, 5, 10);
+        Rectangle rectangle = new Rectangle(10, 10, 20, 15);
+        
+        // Use Drawable interface
+        System.out.println("--- Drawable Interface ---");
+        circle.draw();
+        rectangle.draw();
+        
+        // Use Movable interface
+        System.out.println("\n--- Movable Interface ---");
+        circle.moveRight();
+        circle.moveDown();
+        rectangle.moveLeft();
+        rectangle.moveUp();
+        
+        // Polymorphism with interfaces
+        System.out.println("\n--- Polymorphism with Interfaces ---");
+        Drawable drawable1 = new Circle(0, 0, 5);
+        Drawable drawable2 = new Rectangle(0, 0, 10, 10);
+        
+        drawable1.draw();
+        drawable2.draw();
+        
+        // Array of interface type
+        System.out.println("\n--- Array of Movable Objects ---");
+        Movable[] movables = new Movable[2];
+        movables[0] = new Circle(1, 1, 3);
+        movables[1] = new Rectangle(2, 2, 5, 5);
+        
+        for (Movable m : movables) {
+            m.moveRight();
+        }
+        
+        System.out.println("\n========================");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== INTERFACES =====
+
+--- Drawable Interface ---
+Drawing circle at (5,5) with radius 10
+Drawing rectangle at (10,10) 20x15
+
+--- Movable Interface ---
+Circle moved right to (6,5)
+Circle moved down to (6,6)
+Rectangle moved left to (9,10)
+Rectangle moved up to (9,9)
+
+--- Polymorphism with Interfaces ---
+Drawing circle at (0,0) with radius 5
+Drawing rectangle at (0,0) 10x10
+
+--- Array of Movable Objects ---
+Circle moved right to (2,1)
+Rectangle moved right to (3,2)
+
+========================
+```
+
+**💡 Multiple Interfaces:**
+
+```java
+// Can implement multiple interfaces
+class Circle implements Drawable, Movable {
+    // Must implement ALL methods from BOTH interfaces
+}
+
+// Cannot extend multiple classes (Java = single inheritance)
+class Circle extends Shape1, Shape2 { }  // ❌ ERROR\!
+
+// But CAN extend one class AND implement multiple interfaces
+class Circle extends Shape implements Drawable, Movable { }  // ✅ OK\!
+```
+
+**Interface Benefits:**
+
+| Benefit | Explanation |
+|---------|-------------|
+| **Multiple Inheritance** | Class can implement many interfaces |
+| **Contract** | Defines what class must do |
+| **Flexibility** | Same interface, different implementations |
+| **Polymorphism** | Interface reference to implementing objects |
+
+**✅ Success Criteria:**
+- Understand interfaces are contracts
+- Can implement multiple interfaces
+- Know all interface methods must be implemented
+- Recognize interfaces enable polymorphism
+
+**🎯 Challenge:**
+Create:
+1. `Playable` interface (play(), pause(), stop())
+2. `Recordable` interface (record(), save())
+3. `MusicPlayer` class implements Playable
+4. `VoiceRecorder` class implements Recordable
+5. `SmartPhone` class implements BOTH
+
+---
+
+### 🎓 Day 14 Summary: Abstraction
+
+**What You Learned:**
+1. ✅ Abstract classes and abstract methods
+2. ✅ Interfaces and implementing them
+3. ✅ Multiple interface implementation
+4. ✅ Abstract class vs interface differences
+
+**Key Takeaways:**
+- Abstraction hides implementation details
+- Abstract classes = partial abstraction
+- Interfaces = complete abstraction
+- Cannot instantiate abstract classes or interfaces
+- Child/implementing class provides concrete implementation
+
+**Abstraction Checklist:**
+```
+✅ Use abstract class for common code + contract
+✅ Use interface for pure contract
+✅ Implement all abstract methods
+✅ Interface methods are public by default
+✅ Can implement multiple interfaces
+✅ Cannot instantiate abstract class/interface
+✅ Use for polymorphism and flexibility
+```
+
+**Week 2 Complete\! 🎉**
+
+You've mastered OOP fundamentals:
+- Day 8-9: Classes, Objects, Constructors
+- Day 10: Methods & Method Overloading
+- Day 11: Encapsulation & Access Modifiers
+- Day 12: Inheritance
+- Day 13: Polymorphism
+- Day 14: Abstraction
+
+**Next: Week 3 - Advanced Java Concepts\!**
+
+---
+
+# ═══════════════════════════════════════════════════════════════════════
+# 📚 WEEK 3: ADVANCED JAVA CONCEPTS (DAYS 15-21)
+# ═══════════════════════════════════════════════════════════════════════
+
+---
+
+## 📅 DAY 15: STRINGS
+
+### 🎯 Exercise 1: String Basics and Immutability (15 minutes)
+
+**What you'll learn:**
+- Understanding String immutability
+- String creation methods (literal vs new)
+- String pool concept
+- Why strings can't be modified
+
+**📖 Concept: String Immutability**
+
+In Java, Strings are **immutable** - once created, they cannot be changed. Any modification creates a new String object.
+
+**Real-world Analogy:**
+Think of a String like a printed book - you can't change the text on the pages. If you want different text, you need a new book!
+
+**Why Immutability?**
+1. ✅ **Security**: Strings can't be modified after creation
+2. ✅ **Thread-safe**: Multiple threads can safely use strings
+3. ✅ **Memory efficient**: String pool can reuse identical strings
+4. ✅ **Hashcode caching**: Strings can cache their hash values
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class StringImmutability {
+    public static void main(String[] args) {
+        System.out.println("===== STRING IMMUTABILITY DEMO =====\n");
+
+        // 1. Creating strings - two ways
+        System.out.println("--- String Creation ---");
+        String s1 = "Hello";           // String literal (recommended)
+        String s2 = "Hello";           // Points to same object in pool
+        String s3 = new String("Hello"); // New object in heap
+
+        System.out.println("s1: " + s1);
+        System.out.println("s2: " + s2);
+        System.out.println("s3: " + s3);
+
+        // 2. Testing object equality
+        System.out.println("\n--- Object Equality (==) ---");
+        System.out.println("s1 == s2: " + (s1 == s2));     // true (same object)
+        System.out.println("s1 == s3: " + (s1 == s3));     // false (different objects)
+
+        // 3. Testing content equality
+        System.out.println("\n--- Content Equality (equals) ---");
+        System.out.println("s1.equals(s2): " + s1.equals(s2));  // true
+        System.out.println("s1.equals(s3): " + s1.equals(s3));  // true
+
+        // 4. Demonstrating immutability
+        System.out.println("\n--- Immutability Test ---");
+        String original = "Java";
+        System.out.println("Original string: " + original);
+
+        String modified = original.concat(" Programming");
+        System.out.println("After concat:");
+        System.out.println("  original: " + original);     // Still "Java"
+        System.out.println("  modified: " + modified);     // "Java Programming"
+
+        // 5. String pool demonstration
+        System.out.println("\n--- String Pool ---");
+        String pool1 = "Programming";
+        String pool2 = "Programming";
+        String heap1 = new String("Programming");
+
+        System.out.println("pool1 == pool2: " + (pool1 == pool2));  // true
+        System.out.println("pool1 == heap1: " + (pool1 == heap1));  // false
+
+        // But intern() can move to pool
+        String heap2 = new String("Programming").intern();
+        System.out.println("pool1 == heap2: " + (pool1 == heap2));  // true
+    }
+}
+```
+
+**Expected Output:**
+```
+===== STRING IMMUTABILITY DEMO =====
+
+--- String Creation ---
+s1: Hello
+s2: Hello
+s3: Hello
+
+--- Object Equality (==) ---
+s1 == s2: true
+s1 == s3: false
+
+--- Content Equality (equals) ---
+s1.equals(s2): true
+s1.equals(s3): true
+
+--- Immutability Test ---
+Original string: Java
+After concat:
+  original: Java
+  modified: Java Programming
+
+--- String Pool ---
+pool1 == pool2: true
+pool1 == heap1: false
+pool1 == heap2: true
+```
+
+**✅ Success Criteria:**
+- [ ] Program compiles without errors
+- [ ] Understand difference between == and equals()
+- [ ] Can explain why original string doesn't change
+- [ ] Understand string pool concept
+- [ ] Know when to use literal vs new
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| `if (str1 == str2)` for content | Compares references, not content | `if (str1.equals(str2))` |
+| `String s = new String("text")` | Creates unnecessary object | `String s = "text"` |
+| Expecting `original.concat()` to modify original | Strings are immutable | `original = original.concat()` |
+| Using `==` after string operations | Operations create new objects | Always use `equals()` |
+
+**🎯 Challenge:**
+1. Create 5 String variables with value "Java"
+2. Use both literal and new keyword
+3. Use == to find which ones point to same object
+4. Use equals() to verify all have same content
+5. Print a table showing the results
+
+---
+
+### 🎯 Exercise 2: String Methods - charAt, indexOf, substring (20 minutes)
+
+**What you'll learn:**
+- Accessing individual characters with charAt()
+- Finding character/substring positions with indexOf()
+- Extracting parts of strings with substring()
+- Getting string length
+
+**📖 Concept: String Inspection Methods**
+
+Java provides powerful methods to inspect and extract parts of strings.
+
+**Essential Methods:**
+1. **length()** - Returns number of characters
+2. **charAt(index)** - Returns character at position
+3. **indexOf(char/string)** - Returns first occurrence position
+4. **lastIndexOf(char/string)** - Returns last occurrence position
+5. **substring(start, end)** - Extracts part of string
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class StringMethods1 {
+    public static void main(String[] args) {
+        System.out.println("===== STRING INSPECTION METHODS =====\n");
+
+        String text = "Java Programming Language";
+        System.out.println("Text: " + text);
+        System.out.println();
+
+        // 1. length() - Get string length
+        System.out.println("--- length() Method ---");
+        System.out.println("Length: " + text.length());
+        System.out.println("Last index: " + (text.length() - 1));
+        System.out.println();
+
+        // 2. charAt() - Get character at index
+        System.out.println("--- charAt() Method ---");
+        System.out.println("First character: " + text.charAt(0));
+        System.out.println("5th character: " + text.charAt(4));
+        System.out.println("Last character: " + text.charAt(text.length() - 1));
+
+        // Print all characters
+        System.out.print("All characters: ");
+        for (int i = 0; i < text.length(); i++) {
+            System.out.print(text.charAt(i) + " ");
+        }
+        System.out.println("\n");
+
+        // 3. indexOf() - Find position
+        System.out.println("--- indexOf() Method ---");
+        System.out.println("Index of 'a': " + text.indexOf('a'));
+        System.out.println("Index of 'P': " + text.indexOf('P'));
+        System.out.println("Index of 'Programming': " + text.indexOf("Programming"));
+        System.out.println("Index of 'Python': " + text.indexOf("Python"));  // -1 (not found)
+
+        // Find all occurrences of 'a'
+        System.out.print("All positions of 'a': ");
+        int index = text.indexOf('a');
+        while (index >= 0) {
+            System.out.print(index + " ");
+            index = text.indexOf('a', index + 1);
+        }
+        System.out.println("\n");
+
+        // 4. lastIndexOf() - Find last occurrence
+        System.out.println("--- lastIndexOf() Method ---");
+        System.out.println("First 'a': " + text.indexOf('a'));
+        System.out.println("Last 'a': " + text.lastIndexOf('a'));
+        System.out.println("Last 'g': " + text.lastIndexOf('g'));
+        System.out.println();
+
+        // 5. substring() - Extract parts
+        System.out.println("--- substring() Method ---");
+        System.out.println("substring(0, 4): " + text.substring(0, 4));     // "Java"
+        System.out.println("substring(5, 16): " + text.substring(5, 16));   // "Programming"
+        System.out.println("substring(17): " + text.substring(17));         // "Language"
+        System.out.println("substring(5): " + text.substring(5));           // "Programming Language"
+
+        // 6. Practical example: Extract email parts
+        System.out.println("\n--- Practical Example ---");
+        String email = "user@example.com";
+        int atIndex = email.indexOf('@');
+        int dotIndex = email.lastIndexOf('.');
+
+        String username = email.substring(0, atIndex);
+        String domain = email.substring(atIndex + 1, dotIndex);
+        String extension = email.substring(dotIndex + 1);
+
+        System.out.println("Email: " + email);
+        System.out.println("  Username: " + username);
+        System.out.println("  Domain: " + domain);
+        System.out.println("  Extension: " + extension);
+    }
+}
+```
+
+**Expected Output:**
+```
+===== STRING INSPECTION METHODS =====
+
+Text: Java Programming Language
+
+--- length() Method ---
+Length: 25
+Last index: 24
+
+--- charAt() Method ---
+First character: J
+5th character:
+Last character: e
+All characters: J a v a   P r o g r a m m i n g   L a n g u a g e
+
+--- indexOf() Method ---
+Index of 'a': 1
+Index of 'P': 5
+Index of 'Programming': 5
+Index of 'Python': -1
+All positions of 'a': 1 3 9 19 23
+
+--- lastIndexOf() Method ---
+First 'a': 1
+Last 'a': 23
+Last 'g': 24
+
+--- substring() Method ---
+substring(0, 4): Java
+substring(5, 16): Programming
+substring(17): Language
+substring(5): Programming Language
+
+--- Practical Example ---
+Email: user@example.com
+  Username: user
+  Domain: example
+  Extension: com
+```
+
+**✅ Success Criteria:**
+- [ ] Can find any character in a string
+- [ ] Can extract substrings correctly
+- [ ] Understand indexOf returns -1 when not found
+- [ ] Can find all occurrences of a character
+- [ ] Can parse structured strings (like emails)
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| `charAt(text.length())` | Index out of bounds | `charAt(text.length() - 1)` |
+| `substring(5, 5)` expecting 1 char | Returns empty string | `substring(5, 6)` or `charAt(5)` |
+| Not checking indexOf() result | May get -1 (not found) | `if (index >= 0) { ... }` |
+| `substring(end, start)` | Start must be ≤ end | `substring(start, end)` |
+
+**🎯 Challenge:**
+Create a program that:
+1. Takes a string: "The quick brown fox jumps over the lazy dog"
+2. Finds all positions of the word "the" (case-insensitive)
+3. Extracts and prints each word that starts with 'b' or 'q'
+4. Counts how many times each vowel appears
+
+---
+
+### 🎯 Exercise 3: String Methods - split, trim, replace (20 minutes)
+
+**What you'll learn:**
+- Splitting strings into arrays with split()
+- Removing whitespace with trim()
+- Replacing characters/strings with replace()
+- Converting case with toUpperCase/toLowerCase
+
+**📖 Concept: String Manipulation Methods**
+
+These methods help you transform and clean string data.
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class StringMethods2 {
+    public static void main(String[] args) {
+        System.out.println("===== STRING MANIPULATION METHODS =====\n");
+
+        // 1. split() - Split string into array
+        System.out.println("--- split() Method ---");
+        String sentence = "Java is awesome and powerful";
+        String[] words = sentence.split(" ");
+
+        System.out.println("Sentence: " + sentence);
+        System.out.println("Word count: " + words.length);
+        System.out.print("Words: ");
+        for (String word : words) {
+            System.out.print("[" + word + "] ");
+        }
+        System.out.println("\n");
+
+        // Split CSV data
+        String csvData = "John,25,Engineer,New York";
+        String[] data = csvData.split(",");
+        System.out.println("CSV: " + csvData);
+        System.out.println("Name: " + data[0]);
+        System.out.println("Age: " + data[1]);
+        System.out.println("Job: " + data[2]);
+        System.out.println("City: " + data[3]);
+        System.out.println();
+
+        // 2. trim() - Remove leading/trailing spaces
+        System.out.println("--- trim() Method ---");
+        String messy = "   Hello World   ";
+        System.out.println("Original: [" + messy + "]");
+        System.out.println("Trimmed: [" + messy.trim() + "]");
+        System.out.println("Length before: " + messy.length());
+        System.out.println("Length after: " + messy.trim().length());
+        System.out.println();
+
+        // 3. replace() - Replace characters/strings
+        System.out.println("--- replace() Method ---");
+        String text = "I love Java. Java is great!";
+        System.out.println("Original: " + text);
+        System.out.println("Replace 'Java' with 'Python': " + text.replace("Java", "Python"));
+        System.out.println("Replace 'a' with 'X': " + text.replace('a', 'X'));
+        System.out.println("Original (unchanged): " + text);  // Immutability!
+        System.out.println();
+
+        // 4. replaceAll() - Replace with regex
+        System.out.println("--- replaceAll() Method ---");
+        String phoneNumber = "123-456-7890";
+        System.out.println("Phone: " + phoneNumber);
+        System.out.println("Remove dashes: " + phoneNumber.replaceAll("-", ""));
+
+        String textWithNumbers = "abc123def456ghi";
+        System.out.println("Text: " + textWithNumbers);
+        System.out.println("Remove digits: " + textWithNumbers.replaceAll("\\d", ""));
+        System.out.println();
+
+        // 5. toUpperCase() and toLowerCase()
+        System.out.println("--- Case Conversion ---");
+        String mixed = "Hello World";
+        System.out.println("Original: " + mixed);
+        System.out.println("Uppercase: " + mixed.toUpperCase());
+        System.out.println("Lowercase: " + mixed.toLowerCase());
+        System.out.println();
+
+        // 6. Practical example: Clean and format user input
+        System.out.println("--- Practical Example: Data Cleaning ---");
+        String userInput = "  john.doe@EXAMPLE.com   ";
+        String cleaned = userInput.trim().toLowerCase();
+        System.out.println("Raw input: [" + userInput + "]");
+        System.out.println("Cleaned: [" + cleaned + "]");
+
+        // Format name
+        String name = "  JOHN   DOE  ";
+        String formatted = formatName(name);
+        System.out.println("Raw name: [" + name + "]");
+        System.out.println("Formatted: [" + formatted + "]");
+    }
+
+    // Helper method to format names
+    public static String formatName(String name) {
+        // Trim and split by spaces
+        String trimmed = name.trim();
+        String[] parts = trimmed.split("\\s+");  // Split by any whitespace
+
+        // Capitalize each part
+        String result = "";
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i].toLowerCase();
+            String capitalized = part.substring(0, 1).toUpperCase() + part.substring(1);
+            result += capitalized;
+            if (i < parts.length - 1) {
+                result += " ";
+            }
+        }
+        return result;
+    }
+}
+```
+
+**Expected Output:**
+```
+===== STRING MANIPULATION METHODS =====
+
+--- split() Method ---
+Sentence: Java is awesome and powerful
+Word count: 5
+Words: [Java] [is] [awesome] [and] [powerful]
+
+CSV: John,25,Engineer,New York
+Name: John
+Age: 25
+Job: Engineer
+City: New York
+
+--- trim() Method ---
+Original: [   Hello World   ]
+Trimmed: [Hello World]
+Length before: 17
+Length after: 11
+
+--- replace() Method ---
+Original: I love Java. Java is great!
+Replace 'Java' with 'Python': I love Python. Python is great!
+Replace 'a' with 'X': I love JXvX. JXvX is greXt!
+Original (unchanged): I love Java. Java is great!
+
+--- replaceAll() Method ---
+Phone: 123-456-7890
+Remove dashes: 1234567890
+Text: abc123def456ghi
+Remove digits: abcdefghi
+
+--- Case Conversion ---
+Original: Hello World
+Uppercase: HELLO WORLD
+Lowercase: hello world
+
+--- Practical Example: Data Cleaning ---
+Raw input: [  john.doe@EXAMPLE.com   ]
+Cleaned: [john.doe@example.com]
+Raw name: [  JOHN   DOE  ]
+Formatted: [John Doe]
+```
+
+**✅ Success Criteria:**
+- [ ] Can split strings into arrays
+- [ ] Can clean messy input with trim()
+- [ ] Understand replace() creates new string
+- [ ] Can convert case for comparison
+- [ ] Can parse and format structured data
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| `split(".")` for splitting by dot | `.` is regex special char | `split("\\.")` |
+| Forgetting trim() on user input | May have hidden spaces | Always `input.trim()` |
+| `str = str.replace()` without assignment | Doesn't modify original | `str = str.replace()` |
+| Case-sensitive comparison | "Java" ≠ "java" | Convert to same case first |
+
+**🎯 Challenge:**
+Create a program that:
+1. Takes input: "  apple, BANANA ,  Orange  , grape  "
+2. Splits by comma
+3. Trims each item
+4. Capitalizes first letter of each
+5. Joins back with " | " separator
+6. Expected output: "Apple | Banana | Orange | Grape"
+
+---
+
+
+### 🎯 Exercise 4: String Comparison (equals vs ==) (15 minutes)
+
+**What you'll learn:**
+- Difference between == and equals()
+- When to use each comparison method
+- Case-insensitive comparison with equalsIgnoreCase()
+- Understanding compareTo() for sorting
+
+**📖 Concept: String Comparison**
+
+**Critical Rule:** ALWAYS use `equals()` to compare string content, NOT `==`
+
+- **==** compares object references (memory addresses)
+- **equals()** compares actual content
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class StringComparison {
+    public static void main(String[] args) {
+        System.out.println("===== STRING COMPARISON =====\n");
+
+        // 1. == vs equals() demonstration
+        System.out.println("--- == vs equals() ---");
+        String s1 = "Java";
+        String s2 = "Java";
+        String s3 = new String("Java");
+        String s4 = "JAVA";
+
+        System.out.println("s1 = \"Java\" (literal)");
+        System.out.println("s2 = \"Java\" (literal)");
+        System.out.println("s3 = new String(\"Java\")");
+        System.out.println("s4 = \"JAVA\"\n");
+
+        System.out.println("s1 == s2: " + (s1 == s2));           // true (same object)
+        System.out.println("s1 == s3: " + (s1 == s3));           // false (different objects)
+        System.out.println("s1.equals(s2): " + s1.equals(s2));   // true (same content)
+        System.out.println("s1.equals(s3): " + s1.equals(s3));   // true (same content)
+        System.out.println("s1.equals(s4): " + s1.equals(s4));   // false (different case)
+        System.out.println();
+
+        // 2. Case-insensitive comparison
+        System.out.println("--- equalsIgnoreCase() ---");
+        System.out.println("s1.equalsIgnoreCase(s4): " + s1.equalsIgnoreCase(s4));  // true
+
+        String email1 = "user@example.com";
+        String email2 = "USER@EXAMPLE.COM";
+        System.out.println("Email comparison:");
+        System.out.println("  equals(): " + email1.equals(email2));                    // false
+        System.out.println("  equalsIgnoreCase(): " + email1.equalsIgnoreCase(email2)); // true
+        System.out.println();
+
+        // 3. compareTo() - Lexicographic comparison
+        System.out.println("--- compareTo() Method ---");
+        String str1 = "Apple";
+        String str2 = "Banana";
+        String str3 = "Apple";
+
+        System.out.println("str1 = \"Apple\"");
+        System.out.println("str2 = \"Banana\"");
+        System.out.println("str3 = \"Apple\"\n");
+
+        int result1 = str1.compareTo(str2);
+        int result2 = str2.compareTo(str1);
+        int result3 = str1.compareTo(str3);
+
+        System.out.println("str1.compareTo(str2): " + result1 + " (negative = str1 comes first)");
+        System.out.println("str2.compareTo(str1): " + result2 + " (positive = str2 comes after)");
+        System.out.println("str1.compareTo(str3): " + result3 + " (zero = equal)");
+        System.out.println();
+
+        // 4. Practical example: User authentication
+        System.out.println("--- Practical Example: Login System ---");
+        String correctPassword = "SecurePass123";
+
+        String attempt1 = "SecurePass123";
+        String attempt2 = "securepass123";
+        String attempt3 = new String("SecurePass123");
+
+        System.out.println("Correct password: " + correctPassword);
+        System.out.println();
+
+        System.out.println("Attempt 1: \"SecurePass123\"");
+        if (correctPassword.equals(attempt1)) {
+            System.out.println("  ✅ Login successful\!");
+        } else {
+            System.out.println("  ❌ Login failed\!");
+        }
+
+        System.out.println("\nAttempt 2: \"securepass123\"");
+        if (correctPassword.equals(attempt2)) {
+            System.out.println("  ✅ Login successful\!");
+        } else {
+            System.out.println("  ❌ Login failed\! (Case sensitive)");
+        }
+
+        System.out.println("\nAttempt 3: new String(\"SecurePass123\")");
+        if (correctPassword == attempt3) {
+            System.out.println("  ✅ Login successful\! (using ==)");
+        } else {
+            System.out.println("  ❌ Failed with == (different objects\!)");
+        }
+
+        if (correctPassword.equals(attempt3)) {
+            System.out.println("  ✅ Login successful\! (using equals)");
+        }
+
+        // 5. Sorting example
+        System.out.println("\n--- Sorting with compareTo() ---");
+        String[] fruits = {"Banana", "Apple", "Orange", "Grape"};
+        System.out.print("Before sorting: ");
+        for (String fruit : fruits) {
+            System.out.print(fruit + " ");
+        }
+
+        // Bubble sort using compareTo()
+        for (int i = 0; i < fruits.length - 1; i++) {
+            for (int j = 0; j < fruits.length - i - 1; j++) {
+                if (fruits[j].compareTo(fruits[j + 1]) > 0) {
+                    String temp = fruits[j];
+                    fruits[j] = fruits[j + 1];
+                    fruits[j + 1] = temp;
+                }
+            }
+        }
+
+        System.out.print("\nAfter sorting: ");
+        for (String fruit : fruits) {
+            System.out.print(fruit + " ");
+        }
+        System.out.println();
+    }
+}
+```
+
+**Expected Output:**
+```
+===== STRING COMPARISON =====
+
+--- == vs equals() ---
+s1 = "Java" (literal)
+s2 = "Java" (literal)
+s3 = new String("Java")
+s4 = "JAVA"
+
+s1 == s2: true
+s1 == s3: false
+s1.equals(s2): true
+s1.equals(s3): true
+s1.equals(s4): false
+
+--- equalsIgnoreCase() ---
+s1.equalsIgnoreCase(s4): true
+Email comparison:
+  equals(): false
+  equalsIgnoreCase(): true
+
+--- compareTo() Method ---
+str1 = "Apple"
+str2 = "Banana"
+str3 = "Apple"
+
+str1.compareTo(str2): -1 (negative = str1 comes first)
+str2.compareTo(str1): 1 (positive = str2 comes after)
+str1.compareTo(str3): 0 (zero = equal)
+
+--- Practical Example: Login System ---
+Correct password: SecurePass123
+
+Attempt 1: "SecurePass123"
+  ✅ Login successful\!
+
+Attempt 2: "securepass123"
+  ❌ Login failed\! (Case sensitive)
+
+Attempt 3: new String("SecurePass123")
+  ❌ Failed with == (different objects\!)
+  ✅ Login successful\! (using equals)
+
+--- Sorting with compareTo() ---
+Before sorting: Banana Apple Orange Grape
+After sorting: Apple Banana Grape Orange
+```
+
+**✅ Success Criteria:**
+- [ ] Never use == for string content comparison
+- [ ] Always use equals() for content comparison
+- [ ] Use equalsIgnoreCase() when case doesn't matter
+- [ ] Understand compareTo() returns negative/zero/positive
+- [ ] Can implement string sorting
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| `if (str1 == str2)` for content | Compares references | `if (str1.equals(str2))` |
+| `if (str.equals(""))` for empty check | Verbose | `if (str.isEmpty())` or `if (str.length() == 0)` |
+| `if (str == null || str.equals(""))` | NullPointerException if null | `if (str == null || str.isEmpty())` |
+| Not handling null before equals() | May crash | Check null first |
+
+**🎯 Challenge:**
+Create a program that:
+1. Stores array of usernames: ["Admin", "admin", "ADMIN", "user1"]
+2. Takes login attempt: "admin"
+3. Checks if username exists (case-insensitive)
+4. Sorts all usernames alphabetically
+5. Prints results
+
+---
+
+### 🎯 Exercise 5: StringBuilder for Efficient String Building (25 minutes)
+
+**What you'll learn:**
+- Why StringBuilder is faster than String concatenation
+- Creating and using StringBuilder
+- Common StringBuilder methods
+- When to use StringBuilder vs String
+
+**📖 Concept: StringBuilder**
+
+**Problem with String concatenation:**
+```java
+String result = "";
+for (int i = 0; i < 1000; i++) {
+    result += i;  // Creates 1000 new String objects\!
+}
+```
+
+**Solution: StringBuilder**
+```java
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++) {
+    sb.append(i);  // Modifies same object\!
+}
+String result = sb.toString();
+```
+
+**When to use StringBuilder:**
+- ✅ Loops with string concatenation
+- ✅ Building strings from multiple parts
+- ✅ Dynamic string construction
+- ❌ Simple concatenation (use + operator)
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class StringBuilderDemo {
+    public static void main(String[] args) {
+        System.out.println("===== STRINGBUILDER DEMO =====\n");
+
+        // 1. Creating StringBuilder
+        System.out.println("--- Creating StringBuilder ---");
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder("Hello");
+        StringBuilder sb3 = new StringBuilder(50);  // Initial capacity
+
+        System.out.println("Empty StringBuilder: [" + sb1 + "]");
+        System.out.println("With initial text: [" + sb2 + "]");
+        System.out.println("With capacity 50: [" + sb3 + "] (length: " + sb3.length() + ")");
+        System.out.println();
+
+        // 2. append() - Add to end
+        System.out.println("--- append() Method ---");
+        StringBuilder sb = new StringBuilder("Hello");
+        System.out.println("Initial: " + sb);
+
+        sb.append(" World");
+        System.out.println("After append(\" World\"): " + sb);
+
+        sb.append('\!');
+        System.out.println("After append('\!'): " + sb);
+
+        sb.append(123);
+        System.out.println("After append(123): " + sb);
+
+        sb.append(true);
+        System.out.println("After append(true): " + sb);
+        System.out.println();
+
+        // 3. insert() - Add at position
+        System.out.println("--- insert() Method ---");
+        StringBuilder sb4 = new StringBuilder("Hello World");
+        System.out.println("Original: " + sb4);
+
+        sb4.insert(6, "Beautiful ");
+        System.out.println("After insert(6, \"Beautiful \"): " + sb4);
+
+        sb4.insert(0, "** ");
+        System.out.println("After insert(0, \"** \"): " + sb4);
+        System.out.println();
+
+        // 4. delete() and deleteCharAt()
+        System.out.println("--- delete() Methods ---");
+        StringBuilder sb5 = new StringBuilder("Hello Beautiful World");
+        System.out.println("Original: " + sb5);
+
+        sb5.delete(6, 16);  // Delete "Beautiful "
+        System.out.println("After delete(6, 16): " + sb5);
+
+        sb5.deleteCharAt(5);  // Delete space
+        System.out.println("After deleteCharAt(5): " + sb5);
+        System.out.println();
+
+        // 5. reverse()
+        System.out.println("--- reverse() Method ---");
+        StringBuilder sb6 = new StringBuilder("Java Programming");
+        System.out.println("Original: " + sb6);
+        sb6.reverse();
+        System.out.println("Reversed: " + sb6);
+        sb6.reverse();  // Reverse back
+        System.out.println("Reversed again: " + sb6);
+        System.out.println();
+
+        // 6. replace() and setCharAt()
+        System.out.println("--- replace() and setCharAt() ---");
+        StringBuilder sb7 = new StringBuilder("I love Python");
+        System.out.println("Original: " + sb7);
+
+        sb7.replace(7, 13, "Java");
+        System.out.println("After replace(7, 13, \"Java\"): " + sb7);
+
+        sb7.setCharAt(0, 'W');
+        System.out.println("After setCharAt(0, 'W'): " + sb7);
+        System.out.println();
+
+        // 7. Performance comparison
+        System.out.println("--- Performance Comparison ---");
+        int iterations = 10000;
+
+        // String concatenation
+        long start1 = System.currentTimeMillis();
+        String str = "";
+        for (int i = 0; i < iterations; i++) {
+            str += i;
+        }
+        long end1 = System.currentTimeMillis();
+        System.out.println("String concatenation: " + (end1 - start1) + " ms");
+
+        // StringBuilder
+        long start2 = System.currentTimeMillis();
+        StringBuilder sbPerf = new StringBuilder();
+        for (int i = 0; i < iterations; i++) {
+            sbPerf.append(i);
+        }
+        String result = sbPerf.toString();
+        long end2 = System.currentTimeMillis();
+        System.out.println("StringBuilder: " + (end2 - start2) + " ms");
+        System.out.println();
+
+        // 8. Practical example: Build HTML
+        System.out.println("--- Practical Example: HTML Builder ---");
+        String[] items = {"Apple", "Banana", "Orange", "Grape"};
+
+        StringBuilder html = new StringBuilder();
+        html.append("<ul>\n");
+        for (String item : items) {
+            html.append("  <li>").append(item).append("</li>\n");
+        }
+        html.append("</ul>");
+
+        System.out.println(html);
+        System.out.println();
+
+        // 9. Practical example: Format table
+        System.out.println("--- Practical Example: Table Formatter ---");
+        String[][] data = {
+            {"John", "25", "Engineer"},
+            {"Alice", "30", "Doctor"},
+            {"Bob", "28", "Teacher"}
+        };
+
+        String table = formatTable(data);
+        System.out.println(table);
+    }
+
+    // Helper method to format table
+    public static String formatTable(String[][] data) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("╔════════════╦═════╦═══════════╗\n");
+        sb.append("║ Name       ║ Age ║ Job       ║\n");
+        sb.append("╠════════════╬═════╬═══════════╣\n");
+
+        for (String[] row : data) {
+            sb.append("║ ");
+            sb.append(String.format("%-10s", row[0]));
+            sb.append(" ║ ");
+            sb.append(String.format("%-3s", row[1]));
+            sb.append(" ║ ");
+            sb.append(String.format("%-9s", row[2]));
+            sb.append(" ║\n");
+        }
+
+        sb.append("╚════════════╩═════╩═══════════╝");
+        return sb.toString();
+    }
+}
+```
+
+**Expected Output:**
+```
+===== STRINGBUILDER DEMO =====
+
+--- Creating StringBuilder ---
+Empty StringBuilder: []
+With initial text: [Hello]
+With capacity 50: [] (length: 0)
+
+--- append() Method ---
+Initial: Hello
+After append(" World"): Hello World
+After append('\!'): Hello World\!
+After append(123): Hello World\!123
+After append(true): Hello World\!123true
+
+--- insert() Method ---
+Original: Hello World
+After insert(6, "Beautiful "): Hello Beautiful World
+After insert(0, "** "): ** Hello Beautiful World
+
+--- delete() Methods ---
+Original: Hello Beautiful World
+After delete(6, 16): Hello World
+After deleteCharAt(5): HelloWorld
+
+--- reverse() Method ---
+Original: Java Programming
+Reversed: gnimmargorP avaJ
+Reversed again: Java Programming
+
+--- replace() and setCharAt() ---
+Original: I love Python
+After replace(7, 13, "Java"): I love Java
+After setCharAt(0, 'W'): W love Java
+
+--- Performance Comparison ---
+String concatenation: 145 ms
+StringBuilder: 2 ms
+
+--- Practical Example: HTML Builder ---
+<ul>
+  <li>Apple</li>
+  <li>Banana</li>
+  <li>Orange</li>
+  <li>Grape</li>
+</ul>
+
+--- Practical Example: Table Formatter ---
+╔════════════╦═════╦═══════════╗
+║ Name       ║ Age ║ Job       ║
+╠════════════╬═════╬═══════════╣
+║ John       ║ 25  ║ Engineer  ║
+║ Alice      ║ 30  ║ Doctor    ║
+║ Bob        ║ 28  ║ Teacher   ║
+╚════════════╩═════╩═══════════╝
+```
+
+**✅ Success Criteria:**
+- [ ] Can create and use StringBuilder
+- [ ] Understand append(), insert(), delete()
+- [ ] Know when StringBuilder is better than String
+- [ ] Can convert StringBuilder to String with toString()
+- [ ] Understand performance benefits
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| `String s = sb` | Type mismatch | `String s = sb.toString()` |
+| Using + with StringBuilder | Less readable | Use `.append()` |
+| `StringBuilder` for simple concat | Overkill | Use `String s = a + b` |
+| Forgetting `toString()` | Can't assign to String | Always call `toString()` |
+
+**🎯 Challenge:**
+Create a program that:
+1. Takes array of numbers: [1, 2, 3, 4, 5]
+2. Uses StringBuilder to create: "[1, 2, 3, 4, 5]"
+3. Creates: "1 + 2 + 3 + 4 + 5 = 15"
+4. Reverses the number string
+5. Measures performance vs String concatenation
+
+---
+
+### 🎯 Exercise 6: Common String Problems (25 minutes)
+
+**What you'll learn:**
+- Checking if a string is palindrome
+- Reversing a string
+- Counting vowels and consonants
+- Removing duplicates from a string
+
+**📖 Concept: String Algorithms**
+
+Common string problems help you master string manipulation and logical thinking.
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class StringAlgorithms {
+    public static void main(String[] args) {
+        System.out.println("===== COMMON STRING PROBLEMS =====\n");
+
+        // Problem 1: Palindrome Checker
+        System.out.println("--- Problem 1: Palindrome Checker ---");
+        String[] words = {"radar", "hello", "level", "world", "madam"};
+
+        for (String word : words) {
+            boolean isPalindrome = checkPalindrome(word);
+            System.out.println(word + " -> " + (isPalindrome ? "✅ Palindrome" : "❌ Not palindrome"));
+        }
+        System.out.println();
+
+        // Problem 2: Reverse String
+        System.out.println("--- Problem 2: Reverse String ---");
+        String original = "Hello World";
+        String reversed1 = reverseUsingStringBuilder(original);
+        String reversed2 = reverseManually(original);
+
+        System.out.println("Original: " + original);
+        System.out.println("Reversed (StringBuilder): " + reversed1);
+        System.out.println("Reversed (Manual): " + reversed2);
+        System.out.println();
+
+        // Problem 3: Count Vowels and Consonants
+        System.out.println("--- Problem 3: Count Vowels & Consonants ---");
+        String text = "Hello World Programming";
+        countVowelsConsonants(text);
+        System.out.println();
+
+        // Problem 4: Count Word Occurrences
+        System.out.println("--- Problem 4: Count Word Occurrences ---");
+        String sentence = "Java is great and Java is powerful and Java is fun";
+        String searchWord = "Java";
+        int count = countWordOccurrences(sentence, searchWord);
+        System.out.println("Sentence: " + sentence);
+        System.out.println("Word '" + searchWord + "' appears " + count + " times");
+        System.out.println();
+
+        // Problem 5: Remove Duplicates
+        System.out.println("--- Problem 5: Remove Duplicate Characters ---");
+        String withDuplicates = "programming";
+        String withoutDuplicates = removeDuplicates(withDuplicates);
+        System.out.println("Original: " + withDuplicates);
+        System.out.println("After removing duplicates: " + withoutDuplicates);
+        System.out.println();
+
+        // Problem 6: First Non-Repeating Character
+        System.out.println("--- Problem 6: First Non-Repeating Character ---");
+        String str = "programming";
+        char firstNonRepeating = findFirstNonRepeating(str);
+        System.out.println("String: " + str);
+        if (firstNonRepeating \!= '\0') {
+            System.out.println("First non-repeating character: " + firstNonRepeating);
+        } else {
+            System.out.println("No non-repeating character found");
+        }
+    }
+
+    // Method 1: Check if string is palindrome
+    public static boolean checkPalindrome(String str) {
+        str = str.toLowerCase();  // Case-insensitive
+        int left = 0;
+        int right = str.length() - 1;
+
+        while (left < right) {
+            if (str.charAt(left) \!= str.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    // Method 2a: Reverse using StringBuilder
+    public static String reverseUsingStringBuilder(String str) {
+        return new StringBuilder(str).reverse().toString();
+    }
+
+    // Method 2b: Reverse manually
+    public static String reverseManually(String str) {
+        char[] chars = str.toCharArray();
+        int left = 0;
+        int right = chars.length - 1;
+
+        while (left < right) {
+            char temp = chars[left];
+            chars[left] = chars[right];
+            chars[right] = temp;
+            left++;
+            right--;
+        }
+        return new String(chars);
+    }
+
+    // Method 3: Count vowels and consonants
+    public static void countVowelsConsonants(String str) {
+        str = str.toLowerCase();
+        int vowels = 0;
+        int consonants = 0;
+        int spaces = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+
+            if (ch == ' ') {
+                spaces++;
+            } else if (Character.isLetter(ch)) {
+                if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                    vowels++;
+                } else {
+                    consonants++;
+                }
+            }
+        }
+
+        System.out.println("Text: " + str);
+        System.out.println("Vowels: " + vowels);
+        System.out.println("Consonants: " + consonants);
+        System.out.println("Spaces: " + spaces);
+    }
+
+    // Method 4: Count word occurrences
+    public static int countWordOccurrences(String sentence, String word) {
+        int count = 0;
+        int index = 0;
+
+        while ((index = sentence.indexOf(word, index)) \!= -1) {
+            count++;
+            index += word.length();
+        }
+        return count;
+    }
+
+    // Method 5: Remove duplicate characters
+    public static String removeDuplicates(String str) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            // Add character only if it's not already in result
+            if (result.indexOf(String.valueOf(ch)) == -1) {
+                result.append(ch);
+            }
+        }
+        return result.toString();
+    }
+
+    // Method 6: Find first non-repeating character
+    public static char findFirstNonRepeating(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            boolean isUnique = true;
+
+            // Check if character appears again in string
+            for (int j = 0; j < str.length(); j++) {
+                if (i \!= j && str.charAt(j) == ch) {
+                    isUnique = false;
+                    break;
+                }
+            }
+
+            if (isUnique) {
+                return ch;
+            }
+        }
+        return '\0';  // Return null character if none found
+    }
+}
+```
+
+**Expected Output:**
+```
+===== COMMON STRING PROBLEMS =====
+
+--- Problem 1: Palindrome Checker ---
+radar -> ✅ Palindrome
+hello -> ❌ Not palindrome
+level -> ✅ Palindrome
+world -> ❌ Not palindrome
+madam -> ✅ Palindrome
+
+--- Problem 2: Reverse String ---
+Original: Hello World
+Reversed (StringBuilder): dlroW olleH
+Reversed (Manual): dlroW olleH
+
+--- Problem 3: Count Vowels & Consonants ---
+Text: hello world programming
+Vowels: 6
+Consonants: 15
+Spaces: 2
+
+--- Problem 4: Count Word Occurrences ---
+Sentence: Java is great and Java is powerful and Java is fun
+Word 'Java' appears 3 times
+
+--- Problem 5: Remove Duplicate Characters ---
+Original: programming
+After removing duplicates: progamin
+
+--- Problem 6: First Non-Repeating Character ---
+String: programming
+First non-repeating character: p
+```
+
+**✅ Success Criteria:**
+- [ ] Can check if string is palindrome
+- [ ] Can reverse string two different ways
+- [ ] Can count specific characters
+- [ ] Can find and count substrings
+- [ ] Can remove duplicates
+- [ ] Understand character-by-character processing
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Case-sensitive palindrome check | "Radar" fails | Convert to lowercase first |
+| Not handling spaces in palindrome | "race car" fails | Remove spaces or skip them |
+| Using `==` for character comparison | May fail | Use `charAt()` or `equals()` |
+| Infinite loop in indexOf() | Forget to increment index | `index += word.length()` |
+
+**🎯 Challenge:**
+Create a comprehensive String utility class with methods:
+1. `isAnagram(String s1, String s2)` - Check if two strings are anagrams
+2. `capitalizeWords(String s)` - Capitalize first letter of each word
+3. `countWords(String s)` - Count number of words
+4. `isPalindrome(String s)` - Ignore spaces and case
+5. `longestWord(String s)` - Find the longest word
+Test all methods with sample data\!
+
+---
+
+### 🎓 Day 15 Summary: Strings
+
+**What You Learned:**
+1. ✅ String immutability and string pool
+2. ✅ Essential string methods (charAt, indexOf, substring, split, trim, replace)
+3. ✅ String comparison (equals, equalsIgnoreCase, compareTo)
+4. ✅ StringBuilder for efficient string building
+5. ✅ Common string algorithms (palindrome, reverse, counting)
+
+**Key Takeaways:**
+- Strings are immutable - operations create new strings
+- Always use `equals()` for content comparison, not `==`
+- Use StringBuilder for loops with concatenation
+- Master basic string methods before complex algorithms
+- Practice makes perfect with string manipulation
+
+**String Methods Checklist:**
+```
+✅ length() - Get string length
+✅ charAt(index) - Get character at position
+✅ indexOf() / lastIndexOf() - Find position
+✅ substring(start, end) - Extract part
+✅ split(delimiter) - Split into array
+✅ trim() - Remove leading/trailing spaces
+✅ replace() - Replace characters/strings
+✅ toUpperCase() / toLowerCase() - Convert case
+✅ equals() / equalsIgnoreCase() - Compare content
+✅ compareTo() - Lexicographic comparison
+```
+
+**Next: Day 16 - Packages & Static Keyword\!**
+
+---
+
+## 📅 DAY 16: PACKAGES & STATIC KEYWORD
+
+### 🎯 Exercise 1: Understanding Packages Basics (15 minutes)
+
+**What you'll learn:**
+- Creating packages in Java
+- Package naming conventions
+- How packages organize code
+- Package declaration syntax
+
+**📖 Concept: Packages**
+
+Packages are like folders for your Java classes. They help organize code and prevent naming conflicts.
+
+**Real-world Analogy:**
+Think of packages like organizing files in your computer:
+- `com/company/project/models/` = Models folder
+- `com/company/project/utils/` = Utilities folder
+- `com/company/project/main/` = Main application folder
+
+**Package Naming Convention:**
+- All lowercase letters
+- Reverse domain name: `com.company.project`
+- Use dots to separate levels
+
+---
+
+**📝 Step-by-Step Code:**
+
+**Step 1: Create a simple class WITHOUT package**
+
+```java
+// File: SimpleClass.java (no package)
+public class SimpleClass {
+    public void display() {
+        System.out.println("No package - default package");
+    }
+    
+    public static void main(String[] args) {
+        SimpleClass obj = new SimpleClass();
+        obj.display();
+    }
+}
+```
+
+**Step 2: Create a class WITH package**
+
+```java
+// File: com/mycompany/demo/PackageDemo.java
+package com.mycompany.demo;
+
+public class PackageDemo {
+    public void display() {
+        System.out.println("Package: com.mycompany.demo");
+    }
+    
+    public static void main(String[] args) {
+        PackageDemo obj = new PackageDemo();
+        obj.display();
+        System.out.println("Class name: " + obj.getClass().getName());
+    }
+}
+```
+
+**Step 3: Create multiple classes in same package**
+
+```java
+// File: com/mycompany/models/Student.java
+package com.mycompany.models;
+
+public class Student {
+    private String name;
+    private int age;
+    
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    public void display() {
+        System.out.println("Student: " + name + ", Age: " + age);
+    }
+    
+    public String getName() { return name; }
+    public int getAge() { return age; }
+}
+```
+
+```java
+// File: com/mycompany/models/Teacher.java
+package com.mycompany.models;
+
+public class Teacher {
+    private String name;
+    private String subject;
+    
+    public Teacher(String name, String subject) {
+        this.name = name;
+        this.subject = subject;
+    }
+    
+    public void display() {
+        System.out.println("Teacher: " + name + ", Subject: " + subject);
+    }
+}
+```
+
+**Step 4: Use classes from same package**
+
+```java
+// File: com/mycompany/models/School.java
+package com.mycompany.models;
+
+// No import needed - same package
+public class School {
+    public static void main(String[] args) {
+        System.out.println("===== SCHOOL MANAGEMENT =====\n");
+        
+        // Create students (same package - no import)
+        Student s1 = new Student("Alice", 20);
+        Student s2 = new Student("Bob", 21);
+        
+        // Create teacher (same package - no import)
+        Teacher t1 = new Teacher("Dr. Smith", "Mathematics");
+        
+        System.out.println("--- Students ---");
+        s1.display();
+        s2.display();
+        
+        System.out.println("\n--- Teacher ---");
+        t1.display();
+    }
+}
+```
+
+**Expected Output:**
+```
+===== SCHOOL MANAGEMENT =====
+
+--- Students ---
+Student: Alice, Age: 20
+Student: Bob, Age: 21
+
+--- Teacher ---
+Teacher: Dr. Smith, Subject: Mathematics
+```
+
+**✅ Success Criteria:**
+- [ ] Understand package declaration comes first
+- [ ] Can create folder structure matching package name
+- [ ] Know package naming conventions
+- [ ] Can use classes within same package
+- [ ] Understand packages organize code
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Package statement not first | Must be before imports/class | Put `package` statement first |
+| Uppercase in package name | Convention is lowercase | `com.mycompany` not `Com.MyCompany` |
+| Wrong folder structure | Must match package name | `com/mycompany` for `com.mycompany` |
+| Missing semicolon | Syntax error | `package com.example;` |
+
+**🎯 Challenge:**
+Create a package structure:
+1. `com.library.models` - Book, Author classes
+2. `com.library.services` - LibraryService class
+3. `com.library.main` - Main class
+4. Book has: title, author, ISBN
+5. Test creating and displaying books
+
+---
+
+### 🎯 Exercise 2: Import Statements (15 minutes)
+
+**What you'll learn:**
+- Importing classes from other packages
+- Single import vs wildcard import
+- Using fully qualified names
+- When to use which import style
+
+**📖 Concept: Import Statements**
+
+Import statements let you use classes from other packages without typing the full package name every time.
+
+**Three Ways to Use Classes:**
+1. **Import specific class**: `import java.util.Scanner;`
+2. **Import all classes**: `import java.util.*;`
+3. **Fully qualified name**: `java.util.Scanner sc = new java.util.Scanner(System.in);`
+
+---
+
+**📝 Step-by-Step Code:**
+
+**Step 1: Using imports for Java built-in classes**
+
+```java
+// File: ImportDemo1.java
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class ImportDemo1 {
+    public static void main(String[] args) {
+        System.out.println("===== IMPORT DEMO =====\n");
+        
+        // Scanner - imported
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Scanner created: " + sc.getClass().getName());
+        
+        // ArrayList - imported
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Apple");
+        list.add("Banana");
+        System.out.println("ArrayList: " + list);
+        
+        // Random - imported
+        Random rand = new Random();
+        System.out.println("Random number: " + rand.nextInt(100));
+        
+        sc.close();
+    }
+}
+```
+
+**Step 2: Using wildcard import**
+
+```java
+// File: ImportDemo2.java
+import java.util.*;  // Import ALL classes from java.util
+
+public class ImportDemo2 {
+    public static void main(String[] args) {
+        System.out.println("===== WILDCARD IMPORT =====\n");
+        
+        // All from java.util
+        ArrayList<Integer> numbers = new ArrayList<>();
+        LinkedList<String> names = new LinkedList<>();
+        HashMap<String, Integer> ages = new HashMap<>();
+        Date today = new Date();
+        
+        numbers.add(10);
+        numbers.add(20);
+        
+        names.add("Alice");
+        names.add("Bob");
+        
+        ages.put("Alice", 25);
+        ages.put("Bob", 30);
+        
+        System.out.println("ArrayList: " + numbers);
+        System.out.println("LinkedList: " + names);
+        System.out.println("HashMap: " + ages);
+        System.out.println("Date: " + today);
+    }
+}
+```
+
+**Step 3: Fully qualified names (no import)**
+
+```java
+// File: ImportDemo3.java
+// No imports - using fully qualified names
+
+public class ImportDemo3 {
+    public static void main(String[] args) {
+        System.out.println("===== FULLY QUALIFIED NAMES =====\n");
+        
+        // Use full package path
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        java.util.ArrayList<String> list = new java.util.ArrayList<>();
+        java.util.Random random = new java.util.Random();
+        
+        list.add("Java");
+        list.add("Python");
+        
+        System.out.println("List: " + list);
+        System.out.println("Random: " + random.nextInt(50));
+        
+        scanner.close();
+    }
+}
+```
+
+**Step 4: Handling name conflicts**
+
+```java
+// File: DateConflictDemo.java
+// Two Date classes: java.util.Date and java.sql.Date
+
+public class DateConflictDemo {
+    public static void main(String[] args) {
+        System.out.println("===== HANDLING NAME CONFLICTS =====\n");
+        
+        // Both classes named "Date" - use fully qualified names
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+        
+        System.out.println("java.util.Date: " + utilDate);
+        System.out.println("java.sql.Date: " + sqlDate);
+        
+        System.out.println("\nClass names:");
+        System.out.println("Util: " + utilDate.getClass().getName());
+        System.out.println("SQL: " + sqlDate.getClass().getName());
+    }
+}
+```
+
+**Step 5: Importing custom packages**
+
+```java
+// File: com/myapp/models/Product.java
+package com.myapp.models;
+
+public class Product {
+    private String name;
+    private double price;
+    
+    public Product(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+    
+    public void display() {
+        System.out.println(name + ": $" + price);
+    }
+}
+```
+
+```java
+// File: com/myapp/main/ShopApp.java
+package com.myapp.main;
+
+import com.myapp.models.Product;  // Import from different package
+import java.util.ArrayList;
+
+public class ShopApp {
+    public static void main(String[] args) {
+        System.out.println("===== SHOP APPLICATION =====\n");
+        
+        // Use imported Product class
+        ArrayList<Product> products = new ArrayList<>();
+        
+        products.add(new Product("Laptop", 999.99));
+        products.add(new Product("Mouse", 25.50));
+        products.add(new Product("Keyboard", 75.00));
+        
+        System.out.println("--- Products ---");
+        for (Product p : products) {
+            p.display();
+        }
+    }
+}
+```
+
+**Expected Output:**
+```
+===== SHOP APPLICATION =====
+
+--- Products ---
+Laptop: $999.99
+Mouse: $25.5
+Keyboard: $75.0
+```
+
+**✅ Success Criteria:**
+- [ ] Can import single classes
+- [ ] Can use wildcard imports
+- [ ] Understand when to use fully qualified names
+- [ ] Can handle name conflicts
+- [ ] Can import from custom packages
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Import after class declaration | Must be before class | Imports go after package, before class |
+| `import java.util.Scanner()` | No parentheses | `import java.util.Scanner;` |
+| Importing same package classes | Not needed | Only import from different packages |
+| Forgetting semicolon | Syntax error | `import java.util.*;` |
+
+**🎯 Challenge:**
+Create a program that:
+1. Uses Scanner, ArrayList, HashMap from java.util
+2. Uses both java.util.Date and java.sql.Date (handle conflict)
+3. Imports a custom class from different package
+4. Shows all three import styles (single, wildcard, fully qualified)
+
+---
+
+### 🎯 Exercise 3: Static Variables (20 minutes)
+
+**What you'll learn:**
+- Difference between static and instance variables
+- Static variables are shared by all instances
+- Using static for counting objects
+- Accessing static variables
+
+**📖 Concept: Static Variables**
+
+**Instance Variable** (without static):
+- Each object has its own copy
+- Separate for every instance
+
+**Static Variable** (with static):
+- ONE copy shared by ALL objects
+- Belongs to class, not instances
+
+---
+
+**📝 Step-by-Step Code:**
+
+**Step 1: Instance vs Static Variables**
+
+```java
+public class VariableDemo {
+    static int staticCounter = 0;    // SHARED by all objects
+    int instanceCounter = 0;         // SEPARATE for each object
+    
+    public VariableDemo() {
+        staticCounter++;
+        instanceCounter++;
+        System.out.println("Object created:");
+        System.out.println("  Static counter: " + staticCounter);
+        System.out.println("  Instance counter: " + instanceCounter);
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== STATIC VS INSTANCE VARIABLES =====\n");
+        
+        System.out.println("Creating object 1:");
+        VariableDemo obj1 = new VariableDemo();
+        
+        System.out.println("\nCreating object 2:");
+        VariableDemo obj2 = new VariableDemo();
+        
+        System.out.println("\nCreating object 3:");
+        VariableDemo obj3 = new VariableDemo();
+        
+        System.out.println("\n--- Final Values ---");
+        System.out.println("Static counter: " + VariableDemo.staticCounter);  // 3
+        System.out.println("obj1 instance counter: " + obj1.instanceCounter);  // 1
+        System.out.println("obj2 instance counter: " + obj2.instanceCounter);  // 1
+        System.out.println("obj3 instance counter: " + obj3.instanceCounter);  // 1
+    }
+}
+```
+
+**Expected Output:**
+```
+===== STATIC VS INSTANCE VARIABLES =====
+
+Creating object 1:
+Object created:
+  Static counter: 1
+  Instance counter: 1
+
+Creating object 2:
+Object created:
+  Static counter: 2
+  Instance counter: 1
+
+Creating object 3:
+Object created:
+  Static counter: 3
+  Instance counter: 1
+
+--- Final Values ---
+Static counter: 3
+obj1 instance counter: 1
+obj2 instance counter: 1
+obj3 instance counter: 1
+```
+
+**Step 2: Static variables for shared data**
+
+```java
+public class Student {
+    // Static variables - shared by ALL students
+    static String schoolName = "ABC High School";
+    static int totalStudents = 0;
+    
+    // Instance variables - unique to each student
+    String name;
+    int rollNumber;
+    int age;
+    
+    public Student(String name, int rollNumber, int age) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.age = age;
+        totalStudents++;
+    }
+    
+    public void display() {
+        System.out.println("╔═══════════════════════════════╗");
+        System.out.println("║  STUDENT INFORMATION         ║");
+        System.out.println("╠═══════════════════════════════╣");
+        System.out.println("║ School: " + schoolName);
+        System.out.println("║ Name: " + name);
+        System.out.println("║ Roll: " + rollNumber);
+        System.out.println("║ Age: " + age);
+        System.out.println("╚═══════════════════════════════╝");
+    }
+    
+    public static void showStatistics() {
+        System.out.println("\n╔═══════════════════════════════╗");
+        System.out.println("║  SCHOOL STATISTICS           ║");
+        System.out.println("╠═══════════════════════════════╣");
+        System.out.println("║ School: " + schoolName);
+        System.out.println("║ Total Students: " + totalStudents);
+        System.out.println("╚═══════════════════════════════╝");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== STUDENT MANAGEMENT SYSTEM =====\n");
+        
+        Student s1 = new Student("Alice", 101, 16);
+        Student s2 = new Student("Bob", 102, 17);
+        Student s3 = new Student("Charlie", 103, 16);
+        
+        s1.display();
+        System.out.println();
+        s2.display();
+        System.out.println();
+        s3.display();
+        
+        Student.showStatistics();
+        
+        // Change school name for ALL students
+        System.out.println("\n--- Changing School Name ---");
+        Student.schoolName = "XYZ International School";
+        
+        s1.display();
+        Student.showStatistics();
+    }
+}
+```
+
+**Step 3: Practical example - Bank Account Counter**
+
+```java
+public class BankAccount {
+    // Static variables - track ALL accounts
+    private static int totalAccounts = 0;
+    private static double totalBankBalance = 0.0;
+    
+    // Instance variables - specific to each account
+    private String accountNumber;
+    private String customerName;
+    private double balance;
+    
+    public BankAccount(String accountNumber, String customerName, double initialBalance) {
+        this.accountNumber = accountNumber;
+        this.customerName = customerName;
+        this.balance = initialBalance;
+        
+        // Update static counters
+        totalAccounts++;
+        totalBankBalance += initialBalance;
+    }
+    
+    public void deposit(double amount) {
+        balance += amount;
+        totalBankBalance += amount;
+        System.out.println("✅ Deposited $" + amount + " to " + accountNumber);
+    }
+    
+    public void withdraw(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+            totalBankBalance -= amount;
+            System.out.println("✅ Withdrawn $" + amount + " from " + accountNumber);
+        } else {
+            System.out.println("❌ Insufficient balance in " + accountNumber);
+        }
+    }
+    
+    public void display() {
+        System.out.println("\n--- Account Details ---");
+        System.out.println("Account: " + accountNumber);
+        System.out.println("Customer: " + customerName);
+        System.out.println("Balance: $" + balance);
+    }
+    
+    public static void displayBankStatistics() {
+        System.out.println("\n╔═══════════════════════════════════════╗");
+        System.out.println("║     BANK-WIDE STATISTICS             ║");
+        System.out.println("╠═══════════════════════════════════════╣");
+        System.out.println("║ Total Accounts: " + totalAccounts);
+        System.out.println("║ Total Bank Balance: $" + totalBankBalance);
+        System.out.println("║ Average Balance: $" + (totalBankBalance / totalAccounts));
+        System.out.println("╚═══════════════════════════════════════╝");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== BANK MANAGEMENT SYSTEM =====\n");
+        
+        BankAccount acc1 = new BankAccount("ACC001", "Alice Johnson", 5000);
+        BankAccount acc2 = new BankAccount("ACC002", "Bob Smith", 3000);
+        BankAccount acc3 = new BankAccount("ACC003", "Charlie Brown", 7000);
+        
+        acc1.display();
+        acc2.display();
+        acc3.display();
+        
+        BankAccount.displayBankStatistics();
+        
+        System.out.println("\n--- Transactions ---");
+        acc1.deposit(1000);
+        acc2.withdraw(500);
+        acc3.deposit(2000);
+        
+        BankAccount.displayBankStatistics();
+    }
+}
+```
+
+**✅ Success Criteria:**
+- [ ] Understand difference between static and instance
+- [ ] Can use static for counting objects
+- [ ] Know static variables are shared
+- [ ] Access static with ClassName.variableName
+- [ ] Can update static variables correctly
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| `static int count;` in method | Can't have static local vars | Declare at class level |
+| Using `this` with static | Static has no instance | Use `ClassName.staticVar` |
+| Each object has own static copy | Only ONE copy exists | All objects share same value |
+| Not incrementing counter properly | Won't track correctly | Increment in constructor |
+
+**🎯 Challenge:**
+Create a Car dealership system:
+1. Static: totalCarsSold, totalRevenue, dealershipName
+2. Instance: model, price, color
+3. Method: sellCar() - updates both static and instance data
+4. Static method: showDealershipStats()
+5. Create 5 cars, sell 3, show statistics
+
+---
+
+### 🎯 Exercise 4: Static Methods (20 minutes)
+
+**What you'll learn:**
+- Creating and using static methods
+- Calling static methods without objects
+- Restrictions of static methods
+- Utility classes with static methods
+
+**📖 Concept: Static Methods**
+
+**Static methods** belong to the class, not to any specific object.
+
+**Key Rules:**
+- ✅ Can call static methods without creating an object
+- ✅ Can access static variables
+- ❌ CANNOT access instance variables
+- ❌ CANNOT use `this` keyword
+
+---
+
+**📝 Step-by-Step Code:**
+
+**Step 1: Basic static method**
+
+```java
+public class MathOperations {
+    // Static methods - no object needed
+    public static int add(int a, int b) {
+        return a + b;
+    }
+    
+    public static int subtract(int a, int b) {
+        return a - b;
+    }
+    
+    public static int multiply(int a, int b) {
+        return a * b;
+    }
+    
+    public static double divide(double a, double b) {
+        if (b \!= 0) {
+            return a / b;
+        }
+        System.out.println("Error: Division by zero");
+        return 0;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== STATIC METHODS DEMO =====\n");
+        
+        // Call static methods using ClassName.methodName()
+        System.out.println("--- Math Operations ---");
+        System.out.println("10 + 5 = " + MathOperations.add(10, 5));
+        System.out.println("10 - 5 = " + MathOperations.subtract(10, 5));
+        System.out.println("10 * 5 = " + MathOperations.multiply(10, 5));
+        System.out.println("10 / 5 = " + MathOperations.divide(10, 5));
+        
+        // Or call directly (within same class)
+        System.out.println("\n--- Direct Calls ---");
+        System.out.println("20 + 15 = " + add(20, 15));
+        System.out.println("20 - 15 = " + subtract(20, 15));
+    }
+}
+```
+
+**Expected Output:**
+```
+===== STATIC METHODS DEMO =====
+
+--- Math Operations ---
+10 + 5 = 15
+10 - 5 = 5
+10 * 5 = 50
+10 / 5 = 2.0
+
+--- Direct Calls ---
+20 + 15 = 35
+20 - 15 = 5
+```
+
+**Step 2: Static vs Instance methods**
+
+```java
+public class MethodTypes {
+    static int staticVar = 100;
+    int instanceVar = 200;
+    
+    // Static method
+    public static void staticMethod() {
+        System.out.println("--- Static Method ---");
+        System.out.println("Can access static var: " + staticVar);
+        // System.out.println(instanceVar);  // ERROR\!
+        // System.out.println(this.staticVar); // ERROR - no 'this'\!
+        
+        staticHelper();  // OK - call other static method
+        // instanceMethod(); // ERROR - can't call instance method\!
+    }
+    
+    public static void staticHelper() {
+        System.out.println("Static helper method called");
+    }
+    
+    // Instance method
+    public void instanceMethod() {
+        System.out.println("\n--- Instance Method ---");
+        System.out.println("Can access static var: " + staticVar);
+        System.out.println("Can access instance var: " + instanceVar);
+        System.out.println("Can use 'this': " + this.instanceVar);
+        
+        staticMethod();   // OK - can call static
+        instanceHelper(); // OK - call other instance method
+    }
+    
+    public void instanceHelper() {
+        System.out.println("Instance helper method called");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== METHOD TYPES COMPARISON =====\n");
+        
+        // Call static method - no object needed
+        MethodTypes.staticMethod();
+        
+        // Call instance method - need object
+        MethodTypes obj = new MethodTypes();
+        obj.instanceMethod();
+    }
+}
+```
+
+**Step 3: Utility class with static methods**
+
+```java
+public class StringUtility {
+    // Private constructor - prevent instantiation
+    private StringUtility() {
+        throw new AssertionError("Utility class - do not instantiate\!");
+    }
+    
+    // All methods are static
+    public static boolean isPalindrome(String str) {
+        str = str.toLowerCase().replaceAll("\\s+", "");
+        int left = 0, right = str.length() - 1;
+        while (left < right) {
+            if (str.charAt(left++) \!= str.charAt(right--)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static String reverse(String str) {
+        return new StringBuilder(str).reverse().toString();
+    }
+    
+    public static int countVowels(String str) {
+        int count = 0;
+        str = str.toLowerCase();
+        for (char c : str.toCharArray()) {
+            if ("aeiou".indexOf(c) \!= -1) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    public static String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== STRING UTILITY CLASS =====\n");
+        
+        // Use all static methods
+        System.out.println("--- Palindrome Check ---");
+        System.out.println("'racecar' is palindrome: " + StringUtility.isPalindrome("racecar"));
+        System.out.println("'hello' is palindrome: " + StringUtility.isPalindrome("hello"));
+        
+        System.out.println("\n--- Reverse String ---");
+        System.out.println("Reverse of 'Java': " + StringUtility.reverse("Java"));
+        
+        System.out.println("\n--- Count Vowels ---");
+        System.out.println("Vowels in 'Education': " + StringUtility.countVowels("Education"));
+        
+        System.out.println("\n--- Capitalize ---");
+        System.out.println("Capitalize 'hello world': " + StringUtility.capitalize("hello world"));
+    }
+}
+```
+
+**Step 4: Temperature Converter Utility**
+
+```java
+public class TemperatureConverter {
+    // Constants (static final)
+    private static final double CELSIUS_TO_FAHRENHEIT_RATIO = 1.8;
+    private static final int FAHRENHEIT_OFFSET = 32;
+    
+    // Private constructor
+    private TemperatureConverter() {
+        throw new AssertionError("Utility class");
+    }
+    
+    // Static utility methods
+    public static double celsiusToFahrenheit(double celsius) {
+        return (celsius * CELSIUS_TO_FAHRENHEIT_RATIO) + FAHRENHEIT_OFFSET;
+    }
+    
+    public static double fahrenheitToCelsius(double fahrenheit) {
+        return (fahrenheit - FAHRENHEIT_OFFSET) / CELSIUS_TO_FAHRENHEIT_RATIO;
+    }
+    
+    public static double celsiusToKelvin(double celsius) {
+        return celsius + 273.15;
+    }
+    
+    public static double kelvinToCelsius(double kelvin) {
+        return kelvin - 273.15;
+    }
+    
+    public static void displayConversions(double celsius) {
+        System.out.println("╔═══════════════════════════════════════╗");
+        System.out.println("║   TEMPERATURE CONVERSIONS            ║");
+        System.out.println("╠═══════════════════════════════════════╣");
+        System.out.println("║ Celsius:    " + celsius + "°C");
+        System.out.println("║ Fahrenheit: " + celsiusToFahrenheit(celsius) + "°F");
+        System.out.println("║ Kelvin:     " + celsiusToKelvin(celsius) + "K");
+        System.out.println("╚═══════════════════════════════════════╝");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== TEMPERATURE CONVERTER =====\n");
+        
+        displayConversions(0);
+        System.out.println();
+        displayConversions(25);
+        System.out.println();
+        displayConversions(100);
+    }
+}
+```
+
+**✅ Success Criteria:**
+- [ ] Can create static methods
+- [ ] Call static methods without objects
+- [ ] Understand static method restrictions
+- [ ] Can create utility classes
+- [ ] Know when to use static methods
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Accessing instance vars in static | Static has no instance | Only access static vars |
+| Using `this` in static method | No instance context | Remove `this` keyword |
+| Creating object for utility class | Wastes memory | Private constructor + all static |
+| Non-static main method | Won't run | `public static void main()` |
+
+**🎯 Challenge:**
+Create a Calculator utility class with:
+1. Private constructor
+2. Static methods: power(base, exp), factorial(n), isPrime(n)
+3. Static method: gcd(a, b) - greatest common divisor
+4. Test all methods without creating objects
+
+---
+
+### 🎯 Exercise 5: Static Blocks (20 minutes)
+
+**What you'll learn:**
+- What static blocks are
+- When static blocks execute
+- Using static blocks for initialization
+- Execution order of static blocks
+
+**📖 Concept: Static Blocks**
+
+**Static blocks** execute when the class is loaded, BEFORE any object is created.
+
+**Execution Order:**
+1. Static blocks (when class loads)
+2. Constructors (when object created)
+
+**Use cases:**
+- Initialize static variables
+- Load configuration
+- One-time setup code
+
+---
+
+**📝 Step-by-Step Code:**
+
+**Step 1: Basic static block**
+
+```java
+public class StaticBlockDemo {
+    static int value;
+    static String message;
+    
+    // Static block - runs when class is loaded
+    static {
+        System.out.println("🔵 Static block 1 executed");
+        value = 100;
+        message = "Hello from static block";
+    }
+    
+    // Constructor
+    public StaticBlockDemo() {
+        System.out.println("🟢 Constructor executed");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== STATIC BLOCK DEMO =====\n");
+        
+        System.out.println("🟡 Main method started");
+        System.out.println("Value: " + value);
+        System.out.println("Message: " + message);
+        
+        System.out.println("\nCreating first object:");
+        StaticBlockDemo obj1 = new StaticBlockDemo();
+        
+        System.out.println("\nCreating second object:");
+        StaticBlockDemo obj2 = new StaticBlockDemo();
+    }
+}
+```
+
+**Expected Output:**
+```
+🔵 Static block 1 executed
+===== STATIC BLOCK DEMO =====
+
+🟡 Main method started
+Value: 100
+Message: Hello from static block
+
+Creating first object:
+🟢 Constructor executed
+
+Creating second object:
+🟢 Constructor executed
+```
+
+**Step 2: Multiple static blocks**
+
+```java
+public class MultipleStaticBlocks {
+    static int a;
+    static int b;
+    static int c;
+    
+    // First static block
+    static {
+        System.out.println("🔵 Static block 1: Initializing 'a'");
+        a = 10;
+    }
+    
+    // Second static block
+    static {
+        System.out.println("🔵 Static block 2: Initializing 'b'");
+        b = 20;
+    }
+    
+    // Third static block
+    static {
+        System.out.println("🔵 Static block 3: Computing 'c'");
+        c = a + b;
+        System.out.println("   a + b = " + c);
+    }
+    
+    public MultipleStaticBlocks() {
+        System.out.println("🟢 Constructor: a=" + a + ", b=" + b + ", c=" + c);
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("\n===== MULTIPLE STATIC BLOCKS =====\n");
+        System.out.println("🟡 Main method started\n");
+        
+        System.out.println("Creating objects:");
+        new MultipleStaticBlocks();
+        new MultipleStaticBlocks();
+    }
+}
+```
+
+**Expected Output:**
+```
+🔵 Static block 1: Initializing 'a'
+🔵 Static block 2: Initializing 'b'
+🔵 Static block 3: Computing 'c'
+   a + b = 30
+
+===== MULTIPLE STATIC BLOCKS =====
+
+🟡 Main method started
+
+Creating objects:
+🟢 Constructor: a=10, b=20, c=30
+🟢 Constructor: a=10, b=20, c=30
+```
+
+**Step 3: Static block for configuration**
+
+```java
+public class DatabaseConfig {
+    static String dbUrl;
+    static String dbUser;
+    static String dbPassword;
+    static boolean isConfigured;
+    
+    // Static block for configuration
+    static {
+        System.out.println("⚙️  Loading database configuration...");
+        
+        // Simulate loading from config file
+        dbUrl = "jdbc:mysql://localhost:3306/mydb";
+        dbUser = "admin";
+        dbPassword = "secret123";
+        isConfigured = true;
+        
+        System.out.println("✅ Configuration loaded successfully");
+        System.out.println("   DB URL: " + dbUrl);
+        System.out.println("   DB User: " + dbUser);
+    }
+    
+    public static void connect() {
+        if (isConfigured) {
+            System.out.println("\n🔌 Connecting to database...");
+            System.out.println("   URL: " + dbUrl);
+            System.out.println("   User: " + dbUser);
+            System.out.println("✅ Connected\!");
+        } else {
+            System.out.println("❌ Configuration not loaded");
+        }
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== DATABASE CONFIG =====\n");
+        System.out.println("🟡 Application started\n");
+        
+        connect();
+    }
+}
+```
+
+**Step 4: Execution order demo**
+
+```java
+public class ExecutionOrderDemo {
+    static int staticVar = initStatic();
+    int instanceVar = initInstance();
+    
+    // Static initializer
+    static {
+        System.out.println("2️⃣ Static block executed");
+    }
+    
+    // Instance initializer
+    {
+        System.out.println("4️⃣ Instance block executed");
+    }
+    
+    // Constructor
+    public ExecutionOrderDemo() {
+        System.out.println("5️⃣ Constructor executed");
+    }
+    
+    // Static method
+    static int initStatic() {
+        System.out.println("1️⃣ Static variable initializer");
+        return 100;
+    }
+    
+    // Instance method
+    int initInstance() {
+        System.out.println("3️⃣ Instance variable initializer");
+        return 200;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("\n===== EXECUTION ORDER =====\n");
+        System.out.println("Creating first object:");
+        new ExecutionOrderDemo();
+        
+        System.out.println("\nCreating second object:");
+        new ExecutionOrderDemo();
+    }
+}
+```
+
+**Expected Output:**
+```
+1️⃣ Static variable initializer
+2️⃣ Static block executed
+
+===== EXECUTION ORDER =====
+
+Creating first object:
+3️⃣ Instance variable initializer
+4️⃣ Instance block executed
+5️⃣ Constructor executed
+
+Creating second object:
+3️⃣ Instance variable initializer
+4️⃣ Instance block executed
+5️⃣ Constructor executed
+```
+
+**✅ Success Criteria:**
+- [ ] Understand static blocks execute once when class loads
+- [ ] Know execution order: static → instance → constructor
+- [ ] Can use static blocks for initialization
+- [ ] Understand multiple static blocks execute in order
+- [ ] Know static blocks run before main()
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Expecting static block per object | Runs only ONCE | Use constructor for per-object |
+| Accessing instance vars | No instance yet | Only static vars allowed |
+| Putting complex logic | Hard to debug | Keep it simple - initialization only |
+| Missing semicolon after block | Syntax error | `static { ... }` - no semicolon |
+
+**🎯 Challenge:**
+Create a class that demonstrates complete execution order:
+1. Static variable initialization
+2. Static block (print "Config loaded")
+3. Instance variable initialization
+4. Instance initialization block
+5. Constructor
+6. Create 3 objects and observe the order
+
+---
+
+### 🎯 Exercise 6: Complete Package & Static Example (25 minutes)
+
+**What you'll learn:**
+- Combining packages and static concepts
+- Creating a multi-file application
+- Organizing code professionally
+- Best practices for packages and static
+
+**📖 Concept: Real-World Application**
+
+Let's build a complete Employee Management System using:
+- Packages for organization
+- Static for company-wide data
+- Import statements
+- Utility classes
+
+---
+
+**📝 Step-by-Step Code:**
+
+**Step 1: Create Employee model**
+
+```java
+// File: com/company/models/Employee.java
+package com.company.models;
+
+public class Employee {
+    // Static - shared by all employees
+    private static String companyName = "Tech Corp";
+    private static int totalEmployees = 0;
+    private static double totalSalary = 0;
+    
+    // Instance - unique to each employee
+    private int empId;
+    private String name;
+    private String department;
+    private double salary;
+    
+    // Static block
+    static {
+        System.out.println("⚙️  Employee class loaded");
+        System.out.println("   Company: " + companyName);
+    }
+    
+    // Constructor
+    public Employee(int empId, String name, String department, double salary) {
+        this.empId = empId;
+        this.name = name;
+        this.department = department;
+        this.salary = salary;
+        
+        totalEmployees++;
+        totalSalary += salary;
+    }
+    
+    // Instance method
+    public void display() {
+        System.out.println("╔═══════════════════════════════════════╗");
+        System.out.println("║  EMPLOYEE DETAILS                    ║");
+        System.out.println("╠═══════════════════════════════════════╣");
+        System.out.println("║ Company: " + companyName);
+        System.out.println("║ ID: " + empId);
+        System.out.println("║ Name: " + name);
+        System.out.println("║ Department: " + department);
+        System.out.println("║ Salary: $" + salary);
+        System.out.println("╚═══════════════════════════════════════╝");
+    }
+    
+    // Static method
+    public static void displayCompanyStats() {
+        System.out.println("\n╔═══════════════════════════════════════╗");
+        System.out.println("║  COMPANY STATISTICS                  ║");
+        System.out.println("╠═══════════════════════════════════════╣");
+        System.out.println("║ Company: " + companyName);
+        System.out.println("║ Total Employees: " + totalEmployees);
+        System.out.println("║ Total Salary Budget: $" + totalSalary);
+        System.out.println("║ Average Salary: $" + (totalSalary / totalEmployees));
+        System.out.println("╚═══════════════════════════════════════╝");
+    }
+    
+    // Getters
+    public String getName() { return name; }
+    public String getDepartment() { return department; }
+    public double getSalary() { return salary; }
+}
+```
+
+**Step 2: Create utility class for calculations**
+
+```java
+// File: com/company/utils/SalaryCalculator.java
+package com.company.utils;
+
+import com.company.models.Employee;
+
+public class SalaryCalculator {
+    // Tax rates (static final constants)
+    private static final double TAX_RATE = 0.20;
+    private static final double BONUS_RATE = 0.10;
+    
+    // Private constructor - utility class
+    private SalaryCalculator() {
+        throw new AssertionError("Utility class");
+    }
+    
+    // Static utility methods
+    public static double calculateAnnualSalary(Employee emp) {
+        return emp.getSalary() * 12;
+    }
+    
+    public static double calculateTax(Employee emp) {
+        return emp.getSalary() * TAX_RATE;
+    }
+    
+    public static double calculateBonus(Employee emp) {
+        return emp.getSalary() * BONUS_RATE;
+    }
+    
+    public static double calculateNetSalary(Employee emp) {
+        return emp.getSalary() - calculateTax(emp);
+    }
+    
+    public static void displaySalaryBreakdown(Employee emp) {
+        System.out.println("\n╔═══════════════════════════════════════╗");
+        System.out.println("║  SALARY BREAKDOWN: " + emp.getName());
+        System.out.println("╠═══════════════════════════════════════╣");
+        System.out.println("║ Gross Salary: $" + emp.getSalary());
+        System.out.println("║ Tax (20%): $" + calculateTax(emp));
+        System.out.println("║ Net Salary: $" + calculateNetSalary(emp));
+        System.out.println("║ Bonus (10%): $" + calculateBonus(emp));
+        System.out.println("║ Annual Salary: $" + calculateAnnualSalary(emp));
+        System.out.println("╚═══════════════════════════════════════╝");
+    }
+}
+```
+
+**Step 3: Create main application**
+
+```java
+// File: com/company/main/HRApplication.java
+package com.company.main;
+
+import com.company.models.Employee;
+import com.company.utils.SalaryCalculator;
+import java.util.ArrayList;
+
+public class HRApplication {
+    public static void main(String[] args) {
+        System.out.println("╔═══════════════════════════════════════════════╗");
+        System.out.println("║   EMPLOYEE MANAGEMENT SYSTEM                 ║");
+        System.out.println("╚═══════════════════════════════════════════════╝\n");
+        
+        // Create employees
+        ArrayList<Employee> employees = new ArrayList<>();
+        
+        employees.add(new Employee(101, "Alice Johnson", "Engineering", 8000));
+        employees.add(new Employee(102, "Bob Smith", "Marketing", 6000));
+        employees.add(new Employee(103, "Charlie Brown", "Engineering", 7500));
+        employees.add(new Employee(104, "Diana Prince", "HR", 6500));
+        employees.add(new Employee(105, "Eve Adams", "Finance", 7000));
+        
+        // Display all employees
+        System.out.println("--- ALL EMPLOYEES ---");
+        for (Employee emp : employees) {
+            emp.display();
+            System.out.println();
+        }
+        
+        // Company statistics
+        Employee.displayCompanyStats();
+        
+        // Salary breakdown for first employee
+        SalaryCalculator.displaySalaryBreakdown(employees.get(0));
+        
+        // Find department with highest average salary
+        System.out.println("\n--- DEPARTMENT ANALYSIS ---");
+        analyzeDepartment(employees, "Engineering");
+        analyzeDepartment(employees, "Marketing");
+    }
+    
+    private static void analyzeDepartment(ArrayList<Employee> employees, String dept) {
+        double totalSalary = 0;
+        int count = 0;
+        
+        for (Employee emp : employees) {
+            if (emp.getDepartment().equals(dept)) {
+                totalSalary += emp.getSalary();
+                count++;
+            }
+        }
+        
+        if (count > 0) {
+            System.out.println(dept + " Department:");
+            System.out.println("  Employees: " + count);
+            System.out.println("  Average Salary: $" + (totalSalary / count));
+        }
+    }
+}
+```
+
+**Expected Output:**
+```
+⚙️  Employee class loaded
+   Company: Tech Corp
+╔═══════════════════════════════════════════════╗
+║   EMPLOYEE MANAGEMENT SYSTEM                 ║
+╚═══════════════════════════════════════════════╝
+
+--- ALL EMPLOYEES ---
+╔═══════════════════════════════════════╗
+║  EMPLOYEE DETAILS                    ║
+╠═══════════════════════════════════════╣
+║ Company: Tech Corp
+║ ID: 101
+║ Name: Alice Johnson
+║ Department: Engineering
+║ Salary: $8000.0
+╚═══════════════════════════════════════╝
+
+[... other employees ...]
+
+╔═══════════════════════════════════════╗
+║  COMPANY STATISTICS                  ║
+╠═══════════════════════════════════════╣
+║ Company: Tech Corp
+║ Total Employees: 5
+║ Total Salary Budget: $35000.0
+║ Average Salary: $7000.0
+╚═══════════════════════════════════════╝
+
+╔═══════════════════════════════════════╗
+║  SALARY BREAKDOWN: Alice Johnson
+╠═══════════════════════════════════════╣
+║ Gross Salary: $8000.0
+║ Tax (20%): $1600.0
+║ Net Salary: $6400.0
+║ Bonus (10%): $800.0
+║ Annual Salary: $96000.0
+╚═══════════════════════════════════════╝
+
+--- DEPARTMENT ANALYSIS ---
+Engineering Department:
+  Employees: 2
+  Average Salary: $7750.0
+Marketing Department:
+  Employees: 1
+  Average Salary: $6000.0
+```
+
+**✅ Success Criteria:**
+- [ ] Can organize code into packages
+- [ ] Use static for shared data correctly
+- [ ] Create utility classes with static methods
+- [ ] Import and use classes from different packages
+- [ ] Understand complete application structure
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Wrong package structure | Won't compile | Match folder to package name |
+| Missing imports | Can't find classes | Import from other packages |
+| Public fields in model | Breaks encapsulation | Private fields + getters |
+| Instantiating utility class | Not needed | Private constructor |
+
+**🎯 Challenge:**
+Extend the system:
+1. Add Department class (package: com.company.models)
+2. Add EmployeeValidator utility (package: com.company.utils)
+   - validateSalary(double) - must be > 0
+   - validateName(String) - not null/empty
+3. Add EmployeeReport utility (package: com.company.reports)
+   - generateReport(List<Employee>)
+   - exportToCSV(List<Employee>)
+4. Test everything from main application
+
+---
+
+### 🎓 Day 16 Summary: Packages & Static
+
+**What You Learned:**
+1. ✅ Creating and using packages
+2. ✅ Import statements (single, wildcard, fully qualified)
+3. ✅ Static variables (shared by all instances)
+4. ✅ Static methods (called without objects)
+5. ✅ Static blocks (initialization when class loads)
+6. ✅ Creating professional utility classes
+
+**Key Takeaways:**
+- Packages organize code and prevent naming conflicts
+- Use reverse domain naming: `com.company.project`
+- Static belongs to class, not instances
+- Static methods can't access instance members
+- Static blocks execute once when class loads
+- Utility classes should have private constructors
+
+**Static Checklist:**
+```
+✅ Static variables - shared by all objects
+✅ Static methods - no object needed
+✅ Static blocks - initialize once
+✅ Static import - use without class name
+✅ Utility classes - all static + private constructor
+✅ Constants - static final
+✅ main() method - must be static
+```
+
+**Packages Checklist:**
+```
+✅ Package declaration first line
+✅ Lowercase naming convention
+✅ Reverse domain: com.company.project
+✅ Folder structure matches package
+✅ Import from different packages
+✅ Use access modifiers correctly
+```
+
+**Next: Day 17 - Exception Handling Part 1\!**
+
+---
+
+## 📅 DAY 17: EXCEPTION HANDLING - PART 1
+
+### 🎯 Exercise 1: Understanding Exceptions & Try-Catch Basics (15 minutes)
+
+**What you'll learn:**
+- What exceptions are and why they occur
+- Basic try-catch syntax
+- Exception object methods
+- How to handle runtime errors gracefully
+
+**📖 Concept: Exceptions**
+
+**Exception** = An event that disrupts the normal flow of a program
+
+**Without Exception Handling:**
+```java
+int result = 10 / 0;  // Program crashes\!
+System.out.println("This line never executes");
+```
+
+**With Exception Handling:**
+```java
+try {
+    int result = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("Can't divide by zero");
+}
+System.out.println("Program continues normally");
+```
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class ExceptionBasics {
+    public static void main(String[] args) {
+        System.out.println("===== EXCEPTION HANDLING BASICS =====\n");
+        
+        // Example 1: Without exception handling (commented to prevent crash)
+        System.out.println("--- Without Exception Handling ---");
+        System.out.println("This would crash:");
+        System.out.println("int result = 10 / 0;  // ArithmeticException\!");
+        
+        // Example 2: With exception handling
+        System.out.println("\n--- With Exception Handling ---");
+        try {
+            System.out.println("Trying to divide 10 by 0...");
+            int result = 10 / 0;
+            System.out.println("Result: " + result);  // Never executes
+        } catch (ArithmeticException e) {
+            System.out.println("✅ Exception caught\!");
+            System.out.println("   Error: Cannot divide by zero");
+        }
+        System.out.println("Program continues after exception");
+        
+        // Example 3: Array index exception
+        System.out.println("\n--- Array Index Exception ---");
+        try {
+            int[] numbers = {1, 2, 3, 4, 5};
+            System.out.println("Accessing index 10...");
+            System.out.println(numbers[10]);  // ArrayIndexOutOfBoundsException
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("✅ Exception caught\!");
+            System.out.println("   Error: Array index out of bounds");
+        }
+        
+        // Example 4: Exception object methods
+        System.out.println("\n--- Exception Object Methods ---");
+        try {
+            String str = null;
+            System.out.println(str.length());  // NullPointerException
+        } catch (NullPointerException e) {
+            System.out.println("Exception caught\!");
+            System.out.println("getMessage(): " + e.getMessage());
+            System.out.println("toString(): " + e.toString());
+            System.out.print("\nprintStackTrace(): ");
+            e.printStackTrace();
+        }
+        
+        // Example 5: Number format exception
+        System.out.println("\n--- Number Format Exception ---");
+        try {
+            String text = "abc123";
+            int number = Integer.parseInt(text);
+            System.out.println("Number: " + number);
+        } catch (NumberFormatException e) {
+            System.out.println("✅ Exception caught\!");
+            System.out.println("   Cannot convert '" + "abc123" + "' to number");
+        }
+        
+        System.out.println("\n✅ Program completed successfully\!");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== EXCEPTION HANDLING BASICS =====
+
+--- Without Exception Handling ---
+This would crash:
+int result = 10 / 0;  // ArithmeticException\!
+
+--- With Exception Handling ---
+Trying to divide 10 by 0...
+✅ Exception caught\!
+   Error: Cannot divide by zero
+Program continues after exception
+
+--- Array Index Exception ---
+Accessing index 10...
+✅ Exception caught\!
+   Error: Array index out of bounds
+
+--- Exception Object Methods ---
+Exception caught\!
+getMessage(): null
+toString(): java.lang.NullPointerException
+printStackTrace(): java.lang.NullPointerException
+	at ExceptionBasics.main(ExceptionBasics.java:XX)
+
+--- Number Format Exception ---
+✅ Exception caught\!
+   Cannot convert 'abc123' to number
+
+✅ Program completed successfully\!
+```
+
+**✅ Success Criteria:**
+- [ ] Understand what exceptions are
+- [ ] Can write try-catch blocks
+- [ ] Know how to catch specific exceptions
+- [ ] Can use getMessage(), toString(), printStackTrace()
+- [ ] Program doesn't crash when exception occurs
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| No try-catch for risky code | Program crashes | Wrap in try-catch |
+| Empty catch block | Swallows errors | Handle or log exception |
+| Catching wrong exception type | Won't catch the error | Use correct exception class |
+| Code after risky line in try | May not execute | Put in finally or after catch |
+
+**🎯 Challenge:**
+Create a calculator that handles:
+1. Division by zero (ArithmeticException)
+2. Invalid input (NumberFormatException)
+3. Array access errors (ArrayIndexOutOfBoundsException)
+4. Null pointer errors (NullPointerException)
+
+---
+
+### 🎯 Exercise 2: Multiple Exception Handling (20 minutes)
+
+**What you'll learn:**
+- Handling multiple different exceptions
+- Proper order of catch blocks
+- Multi-catch syntax (Java 7+)
+- When to use Exception as catch-all
+
+**📖 Concept: Multiple Catch Blocks**
+
+**Important Rule:** Catch specific exceptions BEFORE general ones\!
+
+```java
+try {
+    // risky code
+} catch (ArrayIndexOutOfBoundsException e) {  // Specific first
+    // handle
+} catch (RuntimeException e) {  // More general
+    // handle
+} catch (Exception e) {  // Most general last
+    // handle
+}
+```
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+import java.util.Scanner;
+
+public class MultipleExceptions {
+    public static void main(String[] args) {
+        System.out.println("===== MULTIPLE EXCEPTION HANDLING =====\n");
+        
+        Scanner sc = new Scanner(System.in);
+        
+        // Example 1: Multiple different exceptions
+        System.out.println("--- Example 1: Different Exceptions ---");
+        try {
+            System.out.print("Enter array size: ");
+            int size = sc.nextInt();
+            
+            int[] array = new int[size];
+            
+            System.out.print("Enter index to access: ");
+            int index = sc.nextInt();
+            
+            System.out.print("Enter value to store: ");
+            int value = sc.nextInt();
+            
+            array[index] = value;
+            
+            System.out.println("Value stored: " + array[index]);
+            
+            // Division operation
+            System.out.print("Divide value by: ");
+            int divisor = sc.nextInt();
+            int result = array[index] / divisor;
+            System.out.println("Result: " + result);
+            
+        } catch (NegativeArraySizeException e) {
+            System.out.println("❌ Array size cannot be negative\!");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("❌ Array index out of bounds\!");
+        } catch (ArithmeticException e) {
+            System.out.println("❌ Cannot divide by zero\!");
+        } catch (Exception e) {
+            System.out.println("❌ Some error occurred: " + e.getMessage());
+        }
+        
+        // Example 2: Multi-catch (Java 7+)
+        System.out.println("\n--- Example 2: Multi-Catch Syntax ---");
+        try {
+            String str = "Hello";
+            System.out.println(str.charAt(100));
+        } catch (NullPointerException | StringIndexOutOfBoundsException e) {
+            System.out.println("❌ String error: " + e.getClass().getSimpleName());
+        }
+        
+        // Example 3: Catch block order matters
+        System.out.println("\n--- Example 3: Proper Catch Order ---");
+        demonstrateCatchOrder();
+        
+        sc.close();
+        System.out.println("\n✅ Program completed\!");
+    }
+    
+    public static void demonstrateCatchOrder() {
+        int[] numbers = {10, 20, 30};
+        
+        try {
+            System.out.println(numbers[5]);
+        }
+        // CORRECT ORDER: Specific before general
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("✅ Caught ArrayIndexOutOfBounds");
+        }
+        catch (RuntimeException e) {
+            System.out.println("   Caught RuntimeException");
+        }
+        catch (Exception e) {
+            System.out.println("   Caught Exception");
+        }
+        
+        /* WRONG ORDER - Won't compile:
+        catch (Exception e) {  // Too general first
+        }
+        catch (ArrayIndexOutOfBoundsException e) {  // Unreachable\!
+        }
+        */
+    }
+}
+```
+
+**Expected Output (sample):**
+```
+===== MULTIPLE EXCEPTION HANDLING =====
+
+--- Example 1: Different Exceptions ---
+Enter array size: 5
+Enter index to access: 2
+Enter value to store: 100
+Value stored: 100
+Divide value by: 0
+❌ Cannot divide by zero\!
+
+--- Example 2: Multi-Catch Syntax ---
+❌ String error: StringIndexOutOfBoundsException
+
+--- Example 3: Proper Catch Order ---
+✅ Caught ArrayIndexOutOfBounds
+
+✅ Program completed\!
+```
+
+**✅ Success Criteria:**
+- [ ] Can handle multiple different exceptions
+- [ ] Know specific exceptions go before general
+- [ ] Can use multi-catch syntax
+- [ ] Understand catch block execution order
+- [ ] Know when to use Exception as catch-all
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| General exception first | Specific blocks unreachable | Specific → General order |
+| Too many specific catches | Verbose | Use multi-catch for similar handling |
+| Catching Exception always | Hides specific errors | Catch specific when possible |
+| Wrong exception type | Won't catch the error | Match the actual exception |
+
+**🎯 Challenge:**
+Create a method that:
+1. Takes String input and converts to integer
+2. Uses that integer as array index
+3. Divides a value by that integer
+4. Handles: NumberFormatException, ArrayIndexOutOfBoundsException, ArithmeticException
+5. Use proper catch order
+
+---
+
+### 🎯 Exercise 3: Finally Block (20 minutes)
+
+**What you'll learn:**
+- Finally block always executes
+- Using finally for cleanup code
+- Finally with and without exceptions
+- Finally with return statements
+
+**📖 Concept: Finally Block**
+
+**Finally** = Code that ALWAYS executes, whether exception occurs or not
+
+**Use cases:**
+- Closing files
+- Releasing resources
+- Cleanup operations
+- Logging
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+import java.util.Scanner;
+
+public class FinallyBlockDemo {
+    public static void main(String[] args) {
+        System.out.println("===== FINALLY BLOCK DEMO =====\n");
+        
+        // Example 1: Finally always executes
+        System.out.println("--- Example 1: Basic Finally ---");
+        try {
+            System.out.println("1️⃣ Try block");
+            int result = 10 / 2;
+            System.out.println("   Result: " + result);
+        } catch (ArithmeticException e) {
+            System.out.println("2️⃣ Catch block");
+        } finally {
+            System.out.println("3️⃣ Finally block - ALWAYS executes");
+        }
+        System.out.println("4️⃣ After try-catch-finally\n");
+        
+        // Example 2: Finally with exception
+        System.out.println("--- Example 2: Finally With Exception ---");
+        try {
+            System.out.println("1️⃣ Try block");
+            int result = 10 / 0;  // Exception\!
+            System.out.println("   This won't print");
+        } catch (ArithmeticException e) {
+            System.out.println("2️⃣ Catch block - exception handled");
+        } finally {
+            System.out.println("3️⃣ Finally block - still executes\!");
+        }
+        System.out.println("4️⃣ After try-catch-finally\n");
+        
+        // Example 3: Finally without catch
+        System.out.println("--- Example 3: Try-Finally (No Catch) ---");
+        Scanner sc = null;
+        try {
+            sc = new Scanner(System.in);
+            System.out.println("Scanner created");
+        } finally {
+            if (sc \!= null) {
+                sc.close();
+                System.out.println("Scanner closed in finally");
+            }
+        }
+        
+        // Example 4: Finally with return
+        System.out.println("\n--- Example 4: Finally With Return ---");
+        int value = methodWithReturn();
+        System.out.println("Returned value: " + value);
+        
+        // Example 5: Resource cleanup
+        System.out.println("\n--- Example 5: Resource Cleanup ---");
+        demonstrateResourceCleanup();
+        
+        System.out.println("\n✅ All examples completed\!");
+    }
+    
+    public static int methodWithReturn() {
+        try {
+            System.out.println("1️⃣ Try block");
+            return 10;
+        } catch (Exception e) {
+            System.out.println("2️⃣ Catch block");
+            return 20;
+        } finally {
+            System.out.println("3️⃣ Finally block (executes before return\!)");
+            // If we return here, it overrides the try's return:
+            // return 30;
+        }
+    }
+    
+    public static void demonstrateResourceCleanup() {
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(System.in);
+            System.out.println("Resource acquired (Scanner created)");
+            
+            // Simulate some work
+            System.out.println("Using resource...");
+            
+            // Uncomment to test exception scenario:
+            // throw new RuntimeException("Simulated error\!");
+            
+        } catch (Exception e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+        } finally {
+            // Cleanup ALWAYS happens
+            if (scanner \!= null) {
+                scanner.close();
+                System.out.println("✅ Resource released (Scanner closed)");
+            }
+        }
+    }
+}
+```
+
+**Expected Output:**
+```
+===== FINALLY BLOCK DEMO =====
+
+--- Example 1: Basic Finally ---
+1️⃣ Try block
+   Result: 5
+3️⃣ Finally block - ALWAYS executes
+4️⃣ After try-catch-finally
+
+--- Example 2: Finally With Exception ---
+1️⃣ Try block
+2️⃣ Catch block - exception handled
+3️⃣ Finally block - still executes\!
+4️⃣ After try-catch-finally
+
+--- Example 3: Try-Finally (No Catch) ---
+Scanner created
+Scanner closed in finally
+
+--- Example 4: Finally With Return ---
+1️⃣ Try block
+3️⃣ Finally block (executes before return\!)
+Returned value: 10
+
+--- Example 5: Resource Cleanup ---
+Resource acquired (Scanner created)
+Using resource...
+✅ Resource released (Scanner closed)
+
+✅ All examples completed\!
+```
+
+**✅ Success Criteria:**
+- [ ] Understand finally always executes
+- [ ] Can use finally for cleanup
+- [ ] Know finally runs even with return
+- [ ] Can write try-finally without catch
+- [ ] Understand resource management
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Forgetting to close resources | Resource leak | Always close in finally |
+| Returning from finally | Overrides try/catch returns | Avoid return in finally |
+| Catching in finally | Not allowed | Only try-catch or try-finally |
+| Not null-checking in finally | May throw NullPointerException | Check if resource \!= null |
+
+**🎯 Challenge:**
+Create a file operation simulator:
+1. Open file (print "File opened")
+2. Read data (may throw exception)
+3. Process data (may throw exception)
+4. ALWAYS close file in finally
+5. Test with and without exceptions
+
+---
+
+Due to length constraints, I'll create a summary version of the remaining exercises (4-6) for Day 17. Would you like me to continue with the remaining exercises for Day 17, or shall we proceed with updating the progress trackers for Week 3 completion summary?
+
+
+### 🎯 Exercise 4: Try-With-Resources (20 minutes)
+
+**What you'll learn:**
+- Automatic resource management (Java 7+)
+- Resources that implement AutoCloseable
+- Multiple resources in try-with-resources
+- Benefits over manual cleanup
+
+**📖 Concept: Try-With-Resources**
+
+**Old Way (Manual Cleanup):**
+```java
+Scanner sc = null;
+try {
+    sc = new Scanner(System.in);
+    // use scanner
+} finally {
+    if (sc \!= null) sc.close();
+}
+```
+
+**New Way (Automatic):**
+```java
+try (Scanner sc = new Scanner(System.in)) {
+    // use scanner
+} // Scanner automatically closed\!
+```
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+import java.util.Scanner;
+import java.io.*;
+
+public class TryWithResourcesDemo {
+    public static void main(String[] args) {
+        System.out.println("===== TRY-WITH-RESOURCES DEMO =====\n");
+        
+        // Example 1: Single resource
+        System.out.println("--- Example 1: Scanner (Auto-Close) ---");
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Scanner created and will auto-close");
+            System.out.println("Scanner class: " + scanner.getClass().getName());
+        } // Scanner automatically closed here\!
+        System.out.println("✅ Scanner automatically closed\n");
+        
+        // Example 2: Custom AutoCloseable class
+        System.out.println("--- Example 2: Custom Resource ---");
+        try (MyResource resource = new MyResource("Database Connection")) {
+            resource.doWork();
+        } // Automatically calls close()
+        
+        // Example 3: Multiple resources
+        System.out.println("\n--- Example 3: Multiple Resources ---");
+        try (
+            MyResource r1 = new MyResource("File1");
+            MyResource r2 = new MyResource("File2");
+            MyResource r3 = new MyResource("Network")
+        ) {
+            r1.doWork();
+            r2.doWork();
+            r3.doWork();
+        } // All closed automatically in reverse order
+        
+        // Example 4: With exception handling
+        System.out.println("\n--- Example 4: With Exception Handling ---");
+        try (Scanner sc = new Scanner(System.in)) {
+            System.out.println("Enter a number:");
+            // Simulated input - in real code, use sc.nextInt()
+            String input = "abc";
+            int num = Integer.parseInt(input);  // NumberFormatException\!
+            System.out.println("Number: " + num);
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid number format");
+        } // Scanner still auto-closes even with exception\!
+        System.out.println("✅ Scanner auto-closed despite exception");
+        
+        System.out.println("\n✅ All examples completed\!");
+    }
+}
+
+// Custom resource class
+class MyResource implements AutoCloseable {
+    private String name;
+    
+    public MyResource(String name) {
+        this.name = name;
+        System.out.println("  ✅ " + name + " opened");
+    }
+    
+    public void doWork() {
+        System.out.println("  ⚙️  " + name + " working...");
+    }
+    
+    @Override
+    public void close() {
+        System.out.println("  ❌ " + name + " closed");
+    }
+}
+```
+
+**Expected Output:**
+```
+===== TRY-WITH-RESOURCES DEMO =====
+
+--- Example 1: Scanner (Auto-Close) ---
+Scanner created and will auto-close
+Scanner class: java.util.Scanner
+✅ Scanner automatically closed
+
+--- Example 2: Custom Resource ---
+  ✅ Database Connection opened
+  ⚙️  Database Connection working...
+  ❌ Database Connection closed
+
+--- Example 3: Multiple Resources ---
+  ✅ File1 opened
+  ✅ File2 opened
+  ✅ Network opened
+  ⚙️  File1 working...
+  ⚙️  File2 working...
+  ⚙️  Network working...
+  ❌ Network closed
+  ❌ File2 closed
+  ❌ File1 closed
+
+--- Example 4: With Exception Handling ---
+Enter a number:
+❌ Invalid number format
+✅ Scanner auto-closed despite exception
+
+✅ All examples completed\!
+```
+
+**✅ Success Criteria:**
+- [ ] Understand automatic resource management
+- [ ] Can use try-with-resources syntax
+- [ ] Know resources must implement AutoCloseable
+- [ ] Can use multiple resources
+- [ ] Understand resources close automatically
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| Not implementing AutoCloseable | Won't work with try-with-resources | Implement AutoCloseable interface |
+| Forgetting parentheses | Syntax error | `try (Resource r = new Resource())` |
+| Using non-AutoCloseable resource | Compilation error | Only use AutoCloseable resources |
+| Manual close() call | Not needed | Let try-with-resources handle it |
+
+**🎯 Challenge:**
+Create your own resource classes:
+1. DatabaseConnection (AutoCloseable)
+2. FileHandler (AutoCloseable)
+3. Use both in try-with-resources
+4. Test with exception to verify auto-close
+5. Print open/close messages
+
+---
+
+### 🎯 Exercise 5: Throwing Exceptions (20 minutes)
+
+**What you'll learn:**
+- Using throw keyword to throw exceptions
+- When to throw exceptions
+- Rethrowing caught exceptions
+- Creating exception throwing methods
+
+**📖 Concept: Throw Keyword**
+
+**throw** = Manually throw an exception
+
+```java
+if (age < 18) {
+    throw new IllegalArgumentException("Too young");
+}
+```
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+public class ThrowDemo {
+    public static void main(String[] args) {
+        System.out.println("===== THROW KEYWORD DEMO =====\n");
+        
+        // Example 1: Throw exception based on condition
+        System.out.println("--- Example 1: Age Validation ---");
+        try {
+            checkAge(25);
+            checkAge(15);  // Will throw exception
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Exception: " + e.getMessage());
+        }
+        
+        // Example 2: Throw in method
+        System.out.println("\n--- Example 2: Division Validation ---");
+        try {
+            int result = safeDivide(10, 2);
+            System.out.println("10 / 2 = " + result);
+            
+            result = safeDivide(10, 0);  // Will throw exception
+        } catch (ArithmeticException e) {
+            System.out.println("❌ " + e.getMessage());
+        }
+        
+        // Example 3: Withdraw validation
+        System.out.println("\n--- Example 3: Bank Withdrawal ---");
+        try {
+            withdraw(1000, 500);
+            withdraw(1000, 1500);  // Will throw exception
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ " + e.getMessage());
+        }
+        
+        // Example 4: Rethrowing exceptions
+        System.out.println("\n--- Example 4: Rethrowing Exceptions ---");
+        try {
+            methodThatRethrows();
+        } catch (RuntimeException e) {
+            System.out.println("❌ Caught rethrown exception in main");
+        }
+        
+        System.out.println("\n✅ All examples completed\!");
+    }
+    
+    // Validate age
+    public static void checkAge(int age) {
+        System.out.println("Checking age: " + age);
+        if (age < 18) {
+            throw new IllegalArgumentException("Age must be 18 or above");
+        }
+        System.out.println("✅ Age is valid");
+    }
+    
+    // Safe division
+    public static int safeDivide(int numerator, int denominator) {
+        if (denominator == 0) {
+            throw new ArithmeticException("Cannot divide by zero");
+        }
+        return numerator / denominator;
+    }
+    
+    // Bank withdrawal
+    public static void withdraw(double balance, double amount) {
+        System.out.println("Attempting to withdraw $" + amount + " from balance $" + balance);
+        
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        
+        if (amount > balance) {
+            throw new IllegalArgumentException("Insufficient balance");
+        }
+        
+        double newBalance = balance - amount;
+        System.out.println("✅ Withdrawal successful. New balance: $" + newBalance);
+    }
+    
+    // Rethrowing example
+    public static void methodThatRethrows() {
+        try {
+            System.out.println("Method: attempting risky operation");
+            throw new RuntimeException("Something went wrong\!");
+        } catch (RuntimeException e) {
+            System.out.println("Method: caught exception, logging and rethrowing");
+            throw e;  // Rethrow to caller
+        }
+    }
+}
+```
+
+**Expected Output:**
+```
+===== THROW KEYWORD DEMO =====
+
+--- Example 1: Age Validation ---
+Checking age: 25
+✅ Age is valid
+Checking age: 15
+❌ Exception: Age must be 18 or above
+
+--- Example 2: Division Validation ---
+10 / 2 = 5
+❌ Cannot divide by zero
+
+--- Example 3: Bank Withdrawal ---
+Attempting to withdraw $500.0 from balance $1000.0
+✅ Withdrawal successful. New balance: $500.0
+Attempting to withdraw $1500.0 from balance $1000.0
+❌ Insufficient balance
+
+--- Example 4: Rethrowing Exceptions ---
+Method: attempting risky operation
+Method: caught exception, logging and rethrowing
+❌ Caught rethrown exception in main
+
+✅ All examples completed\!
+```
+
+**✅ Success Criteria:**
+- [ ] Can throw exceptions manually
+- [ ] Understand when to throw exceptions
+- [ ] Can validate input and throw on invalid data
+- [ ] Know how to rethrow exceptions
+- [ ] Can create validation methods
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| `throw new Exception` | Too general | Use specific exception type |
+| Not providing message | Hard to debug | `throw new Exception("message")` |
+| Throwing checked exceptions without throws clause | Won't compile | Add throws or use unchecked |
+| Catching and ignoring before throw | Defeats purpose | Rethrow or handle properly |
+
+**🎯 Challenge:**
+Create a Student registration system:
+1. validateName(String) - throw if null/empty
+2. validateAge(int) - throw if < 16 or > 100
+3. validateEmail(String) - throw if doesn't contain @
+4. registerStudent(name, age, email) - calls all validators
+5. Handle all thrown exceptions in main
+
+---
+
+### 🎯 Exercise 6: Complete Exception Handling Example (25 minutes)
+
+**What you'll learn:**
+- Combining all exception handling concepts
+- Building robust applications
+- Proper exception handling strategy
+- Real-world exception scenarios
+
+**📖 Concept: Comprehensive Exception Handling**
+
+A complete application using:
+- try-catch for handling
+- multiple catch blocks
+- finally for cleanup
+- throw for validation
+- try-with-resources
+
+---
+
+**📝 Step-by-Step Code:**
+
+```java
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class BankAccountSystem {
+    
+    // Custom exception-safe bank account
+    static class BankAccount {
+        private String accountNumber;
+        private String ownerName;
+        private double balance;
+        
+        public BankAccount(String accountNumber, String ownerName, double initialBalance) {
+            // Validation with exceptions
+            if (accountNumber == null || accountNumber.trim().isEmpty()) {
+                throw new IllegalArgumentException("Account number cannot be empty");
+            }
+            if (ownerName == null || ownerName.trim().isEmpty()) {
+                throw new IllegalArgumentException("Owner name cannot be empty");
+            }
+            if (initialBalance < 0) {
+                throw new IllegalArgumentException("Initial balance cannot be negative");
+            }
+            
+            this.accountNumber = accountNumber;
+            this.ownerName = ownerName;
+            this.balance = initialBalance;
+        }
+        
+        public void deposit(double amount) {
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Deposit amount must be positive");
+            }
+            balance += amount;
+            System.out.println("✅ Deposited $" + amount);
+        }
+        
+        public void withdraw(double amount) {
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Withdrawal amount must be positive");
+            }
+            if (amount > balance) {
+                throw new IllegalArgumentException("Insufficient balance");
+            }
+            balance -= amount;
+            System.out.println("✅ Withdrawn $" + amount);
+        }
+        
+        public void displayInfo() {
+            System.out.println("╔════════════════════════════════╗");
+            System.out.println("║  ACCOUNT INFORMATION          ║");
+            System.out.println("╠════════════════════════════════╣");
+            System.out.println("║ Account: " + accountNumber);
+            System.out.println("║ Owner: " + ownerName);
+            System.out.println("║ Balance: $" + balance);
+            System.out.println("╚════════════════════════════════╝");
+        }
+        
+        public double getBalance() { return balance; }
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("╔════════════════════════════════════════╗");
+        System.out.println("║   BANK ACCOUNT MANAGEMENT SYSTEM      ║");
+        System.out.println("╚════════════════════════════════════════╝\n");
+        
+        ArrayList<BankAccount> accounts = new ArrayList<>();
+        
+        // Example 1: Create account with validation
+        System.out.println("--- Creating Accounts ---");
+        try {
+            BankAccount acc1 = new BankAccount("ACC001", "John Doe", 1000);
+            accounts.add(acc1);
+            System.out.println("✅ Account created successfully");
+            
+            // Try invalid account
+            BankAccount acc2 = new BankAccount("", "Invalid", 500);  // Throws exception
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Account creation failed: " + e.getMessage());
+        }
+        
+        // Example 2: Perform transactions with exception handling
+        System.out.println("\n--- Performing Transactions ---");
+        if (\!accounts.isEmpty()) {
+            BankAccount account = accounts.get(0);
+            
+            // Multiple operations with different exceptions
+            try {
+                account.deposit(500);
+                account.withdraw(200);
+                account.withdraw(2000);  // Will throw insufficient balance
+            } catch (IllegalArgumentException e) {
+                System.out.println("❌ Transaction failed: " + e.getMessage());
+            } finally {
+                System.out.println("\n--- Current Account Status ---");
+                account.displayInfo();
+            }
+        }
+        
+        // Example 3: Try-with-resources for user input
+        System.out.println("\n--- Interactive Banking ---");
+        performInteractiveBanking();
+        
+        System.out.println("\n✅ Banking system demonstration complete\!");
+    }
+    
+    public static void performInteractiveBanking() {
+        // Try-with-resources ensures Scanner is closed
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Enter account number:");
+            String accNum = "ACC123";  // Simulated input
+            
+            System.out.println("Enter owner name:");
+            String owner = "Alice Smith";  // Simulated input
+            
+            System.out.println("Enter initial balance:");
+            String balanceStr = "1000";  // Simulated input
+            
+            try {
+                double balance = Double.parseDouble(balanceStr);
+                BankAccount acc = new BankAccount(accNum, owner, balance);
+                
+                System.out.println("\n✅ Account created successfully:");
+                acc.displayInfo();
+                
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid balance format");
+            } catch (IllegalArgumentException e) {
+                System.out.println("❌ Invalid account data: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("❌ Unexpected error: " + e.getMessage());
+            }
+            
+        } // Scanner automatically closed here
+        System.out.println("✅ Resources cleaned up automatically");
+    }
+}
+```
+
+**Expected Output:**
+```
+╔════════════════════════════════════════╗
+║   BANK ACCOUNT MANAGEMENT SYSTEM      ║
+╚════════════════════════════════════════╝
+
+--- Creating Accounts ---
+✅ Account created successfully
+❌ Account creation failed: Account number cannot be empty
+
+--- Performing Transactions ---
+✅ Deposited $500.0
+✅ Withdrawn $200.0
+❌ Transaction failed: Insufficient balance
+
+--- Current Account Status ---
+╔════════════════════════════════╗
+║  ACCOUNT INFORMATION          ║
+╠════════════════════════════════╣
+║ Account: ACC001
+║ Owner: John Doe
+║ Balance: $1300.0
+╚════════════════════════════════╝
+
+--- Interactive Banking ---
+Enter account number:
+Enter owner name:
+Enter initial balance:
+
+✅ Account created successfully:
+╔════════════════════════════════╗
+║  ACCOUNT INFORMATION          ║
+╠════════════════════════════════╣
+║ Account: ACC123
+║ Owner: Alice Smith
+║ Balance: $1000.0
+╚════════════════════════════════╝
+✅ Resources cleaned up automatically
+
+✅ Banking system demonstration complete\!
+```
+
+**✅ Success Criteria:**
+- [ ] Can combine all exception concepts
+- [ ] Use throw for validation
+- [ ] Multiple catch blocks for different errors
+- [ ] Finally for guaranteed cleanup
+- [ ] Try-with-resources for auto-close
+- [ ] Build robust, crash-proof applications
+
+**❌ Common Mistakes:**
+
+| Mistake | Why It's Wrong | Correct Way |
+|---------|---------------|-------------|
+| No validation before operations | Silent failures | Validate and throw |
+| Not closing resources | Resource leak | Use try-with-resources |
+| Generic error messages | Hard to debug | Specific, descriptive messages |
+| Empty catch blocks | Hides errors | Log or handle properly |
+
+**🎯 Challenge:**
+Extend the banking system:
+1. Add transfer(from, to, amount) method
+2. Add transaction history (ArrayList)
+3. Handle: account not found, insufficient balance, invalid amount
+4. Use try-with-resources for file logging (simulate)
+5. Create comprehensive exception handling throughout
+
+---
+
+### 🎓 Day 17 Summary: Exception Handling - Part 1
+
+**What You Learned:**
+1. ✅ What exceptions are and when they occur
+2. ✅ Try-catch blocks for exception handling
+3. ✅ Multiple catch blocks and proper ordering
+4. ✅ Finally block for cleanup code
+5. ✅ Try-with-resources for automatic resource management
+6. ✅ Throw keyword for manual exception throwing
+
+**Key Takeaways:**
+- Exceptions prevent program crashes
+- Always handle exceptions in risky code
+- Specific exceptions before general in catch blocks
+- Finally always executes (even with return)
+- Try-with-resources automatically closes resources
+- Throw exceptions for validation and error conditions
+
+**Exception Handling Checklist:**
+```
+✅ Use try-catch for risky operations
+✅ Catch specific exceptions first
+✅ Use finally for cleanup
+✅ Try-with-resources for AutoCloseable
+✅ Throw for validation
+✅ Provide meaningful error messages
+✅ Never leave catch blocks empty
+✅ Log or handle all exceptions
+```
+
+**Common Exceptions:**
+- **ArithmeticException** - Division by zero
+- **NullPointerException** - Null reference access
+- **ArrayIndexOutOfBoundsException** - Invalid array index
+- **NumberFormatException** - Invalid number format
+- **IllegalArgumentException** - Invalid method argument
+- **RuntimeException** - General runtime error
+
+**Next: Day 18 - Exception Handling Part 2\!**
+(throws keyword, checked vs unchecked, custom exceptions, exception hierarchy)
+
+---

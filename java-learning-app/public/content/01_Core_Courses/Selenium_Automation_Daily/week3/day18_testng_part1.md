@@ -814,7 +814,434 @@ public class LoginTest {
 
 ---
 
-## 17. Key Takeaways
+## 17. Beginner-Friendly Exercises
+
+### Exercise 1: First TestNG Test Creation
+
+**Objective:** Create your first TestNG test from scratch and understand the basic structure.
+
+**Scenario:** Convert a simple main method Selenium test into a TestNG test with proper annotations.
+
+**Requirements:**
+1. Create a test class with @Test annotation
+2. Open Google homepage
+3. Verify the title using Assert.assertEquals()
+4. Print test execution message
+5. Run the test and view results
+
+**Code Template:**
+```java
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+public class FirstTestNGTest {
+
+    @Test
+    public void verifyGoogleTitle() {
+        // TODO: Open browser
+        // TODO: Navigate to Google
+        // TODO: Get page title
+        // TODO: Assert title equals "Google"
+        // TODO: Close browser
+    }
+}
+```
+
+**Expected Outcome:**
+- Test executes successfully
+- Assertion passes
+- TestNG report generated in test-output folder
+- Console shows test execution details
+
+**Solution Approach:**
+1. Set up ChromeDriver
+2. Use driver.get() to navigate
+3. Use driver.getTitle() to get title
+4. Use Assert.assertEquals() for verification
+5. Use driver.quit() in finally block
+
+**Common Mistakes to Avoid:**
+- Forgetting to import TestNG annotations
+- Not closing browser after test
+- Using System.out.println() instead of assertions
+- Missing @Test annotation
+- Not handling browser cleanup
+
+---
+
+### Exercise 2: Annotation Hierarchy Understanding
+
+**Objective:** Understand the execution order of TestNG annotations through practical implementation.
+
+**Scenario:** Create a test class that demonstrates all annotation levels and their execution order.
+
+**Requirements:**
+1. Implement all annotations: @BeforeSuite, @BeforeTest, @BeforeClass, @BeforeMethod, @Test, @AfterMethod, @AfterClass, @AfterTest, @AfterSuite
+2. Add print statements in each method showing annotation name
+3. Create at least 2 @Test methods
+4. Run and observe the execution order
+5. Document the order in comments
+
+**Code Template:**
+```java
+import org.testng.annotations.*;
+
+public class AnnotationHierarchyTest {
+
+    @BeforeSuite
+    public void beforeSuite() {
+        System.out.println("1. @BeforeSuite");
+    }
+
+    // TODO: Add @BeforeTest
+    // TODO: Add @BeforeClass
+    // TODO: Add @BeforeMethod
+    // TODO: Add @Test method 1
+    // TODO: Add @Test method 2
+    // TODO: Add @AfterMethod
+    // TODO: Add @AfterClass
+    // TODO: Add @AfterTest
+    // TODO: Add @AfterSuite
+}
+```
+
+**Expected Outcome:**
+```
+1. @BeforeSuite
+2. @BeforeTest
+3. @BeforeClass
+4. @BeforeMethod
+5. Test Method 1
+6. @AfterMethod
+7. @BeforeMethod
+8. Test Method 2
+9. @AfterMethod
+10. @AfterClass
+11. @AfterTest
+12. @AfterSuite
+```
+
+**Solution Approach:**
+1. Create method for each annotation
+2. Add descriptive print statements
+3. Run test and observe console output
+4. Verify order matches expected hierarchy
+5. Document findings
+
+**Common Mistakes to Avoid:**
+- Mixing up Before and After annotations
+- Not running enough tests to see BeforeMethod repetition
+- Missing annotation imports
+- Incorrect execution order assumptions
+
+---
+
+### Exercise 3: WebDriver Test with Setup and Teardown
+
+**Objective:** Implement proper browser setup and cleanup using TestNG annotations.
+
+**Scenario:** Create a complete test with @BeforeMethod for browser setup and @AfterMethod for cleanup.
+
+**Requirements:**
+1. Use @BeforeMethod to initialize ChromeDriver
+2. Maximize window and set implicit wait
+3. Create 3 @Test methods testing different websites
+4. Use appropriate assertions in each test
+5. Use @AfterMethod to close browser after each test
+
+**Code Template:**
+```java
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import java.time.Duration;
+
+public class SetupTeardownTest {
+
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        // TODO: Initialize ChromeDriver
+        // TODO: Maximize window
+        // TODO: Set implicit wait
+    }
+
+    @Test(priority = 1)
+    public void testGoogle() {
+        // TODO: Navigate to Google
+        // TODO: Verify title
+    }
+
+    @Test(priority = 2)
+    public void testExample() {
+        // TODO: Navigate to example.com
+        // TODO: Verify URL
+    }
+
+    @Test(priority = 3)
+    public void testWikipedia() {
+        // TODO: Navigate to Wikipedia
+        // TODO: Verify title contains "Wikipedia"
+    }
+
+    @AfterMethod
+    public void teardown() {
+        // TODO: Quit browser
+    }
+}
+```
+
+**Expected Outcome:**
+- Browser opens before each test
+- All 3 tests execute with fresh browser
+- Browser closes after each test
+- All assertions pass
+- Tests run in priority order
+
+**Solution Approach:**
+1. Initialize driver in @BeforeMethod
+2. Use driver.manage() for configurations
+3. Navigate and assert in each test
+4. Always quit driver in @AfterMethod
+5. Use proper null checks
+
+**Common Mistakes to Avoid:**
+- Not closing browser after each test
+- Sharing driver instance across tests
+- Missing implicit wait setup
+- Not maximizing window
+- Forgetting null check before quit()
+
+---
+
+### Exercise 4: TestNG Assertions Practice
+
+**Objective:** Master different types of TestNG assertions through practical examples.
+
+**Scenario:** Create tests that use various assertion types to validate different conditions.
+
+**Requirements:**
+1. Create test for assertEquals()
+2. Create test for assertTrue() and assertFalse()
+3. Create test for assertNull() and assertNotNull()
+4. Demonstrate assertion failure with custom message
+5. Use at least 6 different assertion types
+
+**Code Template:**
+```java
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+public class AssertionsExerciseTest {
+
+    @Test
+    public void testEquals() {
+        // TODO: Test string equality
+        String actual = "TestNG";
+        String expected = "TestNG";
+        // Assert they are equal
+    }
+
+    @Test
+    public void testTrue() {
+        // TODO: Test boolean condition
+        boolean condition = 10 > 5;
+        // Assert condition is true
+    }
+
+    @Test
+    public void testNull() {
+        // TODO: Test null value
+        String value = null;
+        // Assert value is null
+    }
+
+    @Test
+    public void testNotNull() {
+        // TODO: Test non-null value
+        String value = "Not Null";
+        // Assert value is not null
+    }
+
+    @Test
+    public void testNotEquals() {
+        // TODO: Test inequality
+    }
+
+    @Test
+    public void testFalse() {
+        // TODO: Test false condition
+    }
+}
+```
+
+**Expected Outcome:**
+- All assertions work correctly
+- Custom error messages display on failure
+- Understanding of when to use each assertion type
+- Clean test execution
+
+**Solution Approach:**
+1. Use appropriate assertion for each scenario
+2. Add meaningful assertion messages
+3. Test both positive and negative cases
+4. Verify assertion behavior
+5. Document when to use each type
+
+**Common Mistakes to Avoid:**
+- Using assertEquals for boolean checks
+- Not providing assertion messages
+- Wrong assertion method for data type
+- Asserting incorrect expected values
+- Not understanding assertion purpose
+
+---
+
+### Exercise 5: testng.xml Configuration
+
+**Objective:** Create and configure testng.xml for organized test execution.
+
+**Scenario:** Set up a testng.xml file to run multiple test classes in a structured manner.
+
+**Requirements:**
+1. Create testng.xml with suite and test tags
+2. Include at least 2 test classes
+3. Use meaningful suite and test names
+4. Configure to run specific test methods
+5. Run tests using testng.xml
+
+**Code Template:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="My Test Suite">
+    <test name="Smoke Tests">
+        <classes>
+            <!-- TODO: Add test classes -->
+        </classes>
+    </test>
+
+    <test name="Regression Tests">
+        <classes>
+            <!-- TODO: Add more test classes -->
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Complete Test Suite">
+    <test name="Smoke Tests">
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.HomePageTest"/>
+        </classes>
+    </test>
+
+    <test name="Regression Tests">
+        <classes>
+            <class name="tests.CheckoutTest"/>
+            <class name="tests.SearchTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Solution Approach:**
+1. Create testng.xml in project root
+2. Define suite with meaningful name
+3. Add multiple test tags
+4. Include test classes with full package path
+5. Run using Right-click → Run as TestNG Suite
+
+**Common Mistakes to Avoid:**
+- Missing DOCTYPE declaration
+- Incorrect package paths
+- Wrong XML structure
+- Not saving file before running
+- Forgetting .xml extension
+
+---
+
+### Exercise 6: Test Priority and Execution Control
+
+**Objective:** Control test execution order using priority attribute.
+
+**Scenario:** Create tests with different priorities and verify execution order.
+
+**Requirements:**
+1. Create 5 test methods with different priorities
+2. Use negative, zero, and positive priorities
+3. Add print statements showing execution order
+4. Create one test without priority
+5. Document the execution order
+
+**Code Template:**
+```java
+import org.testng.annotations.Test;
+
+public class PriorityExerciseTest {
+
+    @Test(priority = 3)
+    public void testC() {
+        System.out.println("Test C - Priority 3");
+    }
+
+    @Test(priority = 1)
+    public void testA() {
+        System.out.println("Test A - Priority 1");
+    }
+
+    @Test  // No priority
+    public void testD() {
+        System.out.println("Test D - No Priority");
+    }
+
+    @Test(priority = -1)
+    public void testE() {
+        System.out.println("Test E - Priority -1");
+    }
+
+    @Test(priority = 2)
+    public void testB() {
+        System.out.println("Test B - Priority 2");
+    }
+}
+```
+
+**Expected Outcome:**
+```
+Test E - Priority -1
+Test D - No Priority (0)
+Test A - Priority 1
+Test B - Priority 2
+Test C - Priority 3
+```
+
+**Solution Approach:**
+1. Assign priorities strategically
+2. Use priority = 0 as default
+3. Run and observe console output
+4. Verify order follows priority
+5. Document findings
+
+**Common Mistakes to Avoid:**
+- Assuming alphabetical order
+- Not understanding default priority is 0
+- Expecting tests to run out of order
+- Not using appropriate priority values
+- Forgetting priority attribute syntax
+
+---
+
+## 18. Key Takeaways
 
 1. **TestNG** is a powerful testing framework for Java
 2. **Annotations** control test execution lifecycle

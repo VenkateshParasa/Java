@@ -745,6 +745,386 @@ public class DataDrivenLoginTest {
 
 ---
 
+---
+
+## 15. Practice Exercises
+
+### Exercise 1: Multi-Browser Login Test with @Parameters (20 minutes)
+
+**Objective:** Use @Parameters to test login functionality across different browsers.
+
+**Scenario:** You need to verify that the login feature works consistently across Chrome, Firefox, and Edge browsers.
+
+**Requirements:**
+1. Create a test method that accepts browser and URL as parameters
+2. Create a testng.xml file with three separate tests for Chrome, Firefox, and Edge
+3. Each test should navigate to a login page and verify the page title
+4. Use @Optional to provide default values for browser and URL
+
+**Code Template:**
+```java
+public class BrowserLoginTest {
+
+    @Test
+    @Parameters({"browser", "url"})
+    public void testLoginPageOnBrowser(String browser, String url) {
+        // Your implementation here
+    }
+}
+```
+
+**Expected Outcome:**
+- Test runs three times, once for each browser
+- Each test creates the appropriate browser instance
+- Page title is verified in each browser
+- Console output shows which browser is being tested
+
+**Solution Approach:**
+1. Create a switch statement to handle different browser types
+2. Initialize WebDriver based on the browser parameter
+3. Navigate to the URL and capture the page title
+4. Use assertions to verify the title
+5. Remember to quit the driver after the test
+6. In testng.xml, create three `<test>` tags with different browser parameters
+
+**Common Mistakes to Avoid:**
+- Forgetting to quit the driver (causes resource leaks)
+- Not handling unsupported browser types
+- Missing @Optional annotation (causes errors when parameters not provided)
+- Not maximizing the browser window (affects element visibility)
+
+---
+
+### Exercise 2: Search Functionality with Basic DataProvider (25 minutes)
+
+**Objective:** Implement data-driven testing for a search feature using @DataProvider.
+
+**Scenario:** You need to test the search functionality with multiple search terms to ensure it returns results for various inputs.
+
+**Requirements:**
+1. Create a DataProvider that returns 5 different search keywords
+2. Create a test method that accepts a search keyword parameter
+3. The test should search for each keyword on a search page
+4. Verify that search results are displayed for each keyword
+5. Print the number of results found for each search
+
+**Code Template:**
+```java
+public class SearchDataProviderTest {
+
+    @DataProvider(name = "searchKeywords")
+    public Object[][] getSearchKeywords() {
+        // Return 2D array with search keywords
+    }
+
+    @Test(dataProvider = "searchKeywords")
+    public void testSearch(String keyword) {
+        // Your implementation here
+    }
+}
+```
+
+**Expected Outcome:**
+- Test executes 5 times with different keywords
+- Each execution searches for a different keyword
+- Results count is displayed for each search
+- All searches complete successfully
+
+**Solution Approach:**
+1. Create a 2D Object array in the DataProvider with keywords
+2. Initialize WebDriver in @BeforeMethod
+3. Navigate to the search page
+4. Enter the keyword in search box and click search
+5. Count the number of result elements displayed
+6. Use assertions to verify results are present
+7. Quit driver in @AfterMethod
+
+**Common Mistakes to Avoid:**
+- Incorrect DataProvider return type (must be Object[][])
+- Forgetting to name the DataProvider
+- Not matching DataProvider name in @Test annotation
+- Not handling cases where search returns no results
+- Hardcoding wait times instead of using WebDriverWait
+
+---
+
+### Exercise 3: User Registration with Multiple Data Types (30 minutes)
+
+**Objective:** Create a data-driven test that handles different data types using DataProvider.
+
+**Scenario:** You need to test user registration with various combinations of user data including name, age, email, and active status.
+
+**Requirements:**
+1. Create a DataProvider that returns mixed data types (String, int, boolean)
+2. Create at least 4 test data sets with different user profiles
+3. Implement a registration test that accepts all parameters
+4. Validate that appropriate users are registered successfully
+5. Use assertions to verify registration based on data provided
+
+**Code Template:**
+```java
+public class UserRegistrationTest {
+
+    @DataProvider(name = "userData")
+    public Object[][] getUserData() {
+        return new Object[][] {
+            // name, age, email, isActive
+            {"John Doe", 25, "john@example.com", true},
+            // Add 3 more data sets
+        };
+    }
+
+    @Test(dataProvider = "userData")
+    public void testUserRegistration(String name, int age, String email, boolean isActive) {
+        // Your implementation here
+    }
+}
+```
+
+**Expected Outcome:**
+- Test runs 4 times with different user data
+- Each user profile is tested for registration
+- Active users should register successfully
+- Test output shows which user is being processed
+- All data types are handled correctly
+
+**Solution Approach:**
+1. Create the DataProvider with 4 different user profiles
+2. Mix valid and edge case data (e.g., minimum age, special characters in name)
+3. In the test method, fill out registration form fields
+4. Handle the isActive flag to determine expected behavior
+5. Verify registration success or failure based on the data
+6. Use soft assertions if you want to continue testing even after failures
+7. Log meaningful messages for each test iteration
+
+**Common Mistakes to Avoid:**
+- Mismatching parameter types between DataProvider and test method
+- Not considering edge cases (empty strings, null values)
+- Forgetting to clear form fields between test iterations
+- Not validating the data before using it
+- Hardcoding expected results instead of deriving them from input data
+
+---
+
+### Exercise 4: External DataProvider for Login Credentials (35 minutes)
+
+**Objective:** Organize test data by creating a separate DataProvider class and using it across multiple test classes.
+
+**Scenario:** Your team needs to reuse login credentials across multiple test classes. Create a centralized DataProvider that can be shared.
+
+**Requirements:**
+1. Create a separate class called `TestDataProviders` with login data
+2. Make the DataProvider method static
+3. Create two test classes that use the external DataProvider
+4. First test class: LoginTest (test valid and invalid logins)
+5. Second test class: LoginSecurityTest (test security aspects of login)
+6. Both tests should use the same DataProvider using `dataProviderClass` attribute
+
+**Code Template:**
+```java
+// TestDataProviders.java
+public class TestDataProviders {
+
+    @DataProvider(name = "loginCredentials")
+    public static Object[][] getLoginCredentials() {
+        // Return login data with username, password, shouldSucceed
+    }
+}
+
+// LoginTest.java
+public class LoginTest {
+
+    @Test(dataProvider = "loginCredentials", dataProviderClass = TestDataProviders.class)
+    public void testLogin(String username, String password, boolean shouldSucceed) {
+        // Your implementation here
+    }
+}
+```
+
+**Expected Outcome:**
+- DataProvider class is in a separate package/folder
+- Multiple test classes successfully use the external DataProvider
+- No code duplication for test data
+- Each test class can focus on its specific testing concerns
+- Easy to update test data in one central location
+
+**Solution Approach:**
+1. Create a new package `dataproviders`
+2. Create `TestDataProviders` class with static DataProvider method
+3. Include data for valid users, invalid users, empty credentials, SQL injection attempts
+4. In test classes, use `dataProviderClass = TestDataProviders.class`
+5. Implement login logic in each test class
+6. Use assertions appropriate to each test's purpose
+7. Add proper logging to track which credentials are being tested
+
+**Common Mistakes to Avoid:**
+- Forgetting to make DataProvider method static (causes runtime error)
+- Not specifying the correct dataProviderClass in @Test annotation
+- Incorrect package imports for the DataProvider class
+- Creating instance methods instead of static methods
+- Not maintaining consistent data structure across different uses
+
+---
+
+### Exercise 5: Form Validation with DataProvider and Selenium (40 minutes)
+
+**Objective:** Create a comprehensive form validation test using DataProvider with real Selenium interactions.
+
+**Scenario:** You need to test a contact form that has Name, Email, Phone, and Message fields with various valid and invalid inputs.
+
+**Requirements:**
+1. Create a DataProvider with 6-7 test cases covering:
+   - Valid complete form submission
+   - Invalid email formats
+   - Missing required fields
+   - Phone number with invalid format
+   - Message exceeding character limit
+2. Implement form interaction with Selenium
+3. Verify appropriate error messages for invalid inputs
+4. Verify successful submission for valid inputs
+5. Use WebDriverWait for dynamic elements
+
+**Code Template:**
+```java
+public class FormValidationTest {
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+    }
+
+    @DataProvider(name = "formData")
+    public Object[][] getFormData() {
+        return new Object[][] {
+            // name, email, phone, message, shouldSucceed, expectedError
+            {"John Doe", "john@example.com", "1234567890", "Hello", true, ""},
+            // Add 5-6 more test cases
+        };
+    }
+
+    @Test(dataProvider = "formData")
+    public void testContactForm(String name, String email, String phone,
+                                 String message, boolean shouldSucceed, String expectedError) {
+        // Your implementation here
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome:**
+- All 6-7 test cases execute successfully
+- Form is filled correctly for each test case
+- Error messages are validated for invalid inputs
+- Success message is verified for valid submission
+- Clean browser session for each test iteration
+
+**Solution Approach:**
+1. Create comprehensive test data covering positive and negative scenarios
+2. Navigate to the form page in the test method
+3. Clear and fill each form field with the provided data
+4. Click the submit button
+5. Use WebDriverWait to wait for either error messages or success message
+6. Verify the outcome matches the expected result (shouldSucceed flag)
+7. If shouldSucceed is false, verify the specific error message appears
+8. Take screenshots on failure (bonus)
+
+**Common Mistakes to Avoid:**
+- Not clearing form fields before entering new data (causes data accumulation)
+- Using Thread.sleep instead of WebDriverWait (makes tests flaky)
+- Not handling stale element exceptions
+- Forgetting to reset the page between test iterations
+- Not verifying all error messages, only success cases
+- Hardcoding wait times that may not work in all environments
+- Not checking if elements are visible before interacting with them
+
+---
+
+### Exercise 6: Excel DataProvider Integration (Advanced - 45 minutes)
+
+**Objective:** Integrate Excel files for test data management and create a reusable Excel utility.
+
+**Scenario:** Your team wants to maintain test data in Excel files that non-technical team members can update. Create an Excel reader and use it with DataProvider.
+
+**Requirements:**
+1. Add Apache POI dependencies to your project
+2. Create an ExcelUtils class with methods to read Excel data
+3. Create an Excel file with login test data (Username, Password, Expected Result)
+4. Create a DataProvider that reads from the Excel file
+5. Implement a test that uses the Excel-based DataProvider
+6. Handle different cell types (String, Numeric, Boolean)
+
+**Code Template:**
+```java
+// ExcelUtils.java
+public class ExcelUtils {
+
+    public static Object[][] getExcelData(String filePath, String sheetName) {
+        // Your implementation here
+        // Read Excel file and return as Object[][]
+    }
+
+    private static String getCellValue(Cell cell) {
+        // Handle different cell types
+    }
+}
+
+// ExcelDataTest.java
+public class ExcelDataTest {
+
+    @DataProvider(name = "excelData")
+    public Object[][] getExcelData() {
+        String filePath = "src/test/resources/testdata.xlsx";
+        return ExcelUtils.getExcelData(filePath, "LoginData");
+    }
+
+    @Test(dataProvider = "excelData")
+    public void testWithExcelData(String username, String password, String expectedResult) {
+        // Your implementation here
+    }
+}
+```
+
+**Expected Outcome:**
+- Excel file is successfully read
+- All rows from Excel are converted to test data
+- Test executes for each row in the Excel sheet
+- Different cell types (text, numbers) are handled correctly
+- Easy to add new test cases by just adding rows to Excel
+
+**Solution Approach:**
+1. Add Apache POI dependencies to pom.xml or build.gradle
+2. Create testdata.xlsx in src/test/resources with appropriate columns
+3. Implement ExcelUtils.getExcelData() method:
+   - Open the file using FileInputStream
+   - Create Workbook and get Sheet by name
+   - Calculate number of rows and columns
+   - Iterate through rows and cells
+   - Convert each row to an Object array
+   - Return as 2D Object array
+4. Implement getCellValue() to handle STRING, NUMERIC, BOOLEAN, FORMULA types
+5. Create the test method to use the data
+6. Add error handling for file not found or sheet not found
+
+**Common Mistakes to Avoid:**
+- Forgetting to add Apache POI dependencies (causes ClassNotFoundException)
+- Not handling the header row in Excel (skipping first row)
+- Incorrect file path (use relative paths from project root)
+- Not closing FileInputStream and Workbook (resource leak)
+- Not handling empty cells (causes NullPointerException)
+- Forgetting to convert numeric values to appropriate types
+- Not handling date cells correctly
+- Hardcoding row/column numbers instead of dynamically calculating them
+
+---
+
 ## 15. Key Takeaways
 
 1. **@Parameters** passes data from testng.xml

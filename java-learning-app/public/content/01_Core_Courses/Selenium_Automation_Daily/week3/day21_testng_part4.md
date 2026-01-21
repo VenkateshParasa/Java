@@ -1297,6 +1297,495 @@ private static final int MAX_RETRY_COUNT = 2;  // Not too many
 
 ---
 
+## 17. Practice Exercises
+
+### Exercise 1: Create a Basic Test Execution Logger (20 minutes)
+
+**Objective:** Implement a custom ITestListener to log all test execution events to the console.
+
+**Scenario:** Your team wants detailed logging of test execution for debugging purposes. Create a listener that logs when tests start, pass, fail, or get skipped.
+
+**Requirements:**
+1. Implement ITestListener interface
+2. Log test start with test name
+3. Log test success with duration
+4. Log test failure with error message
+5. Log test skip with reason
+6. Apply listener using @Listeners annotation
+
+**Code Template:**
+```java
+public class ExecutionLogger implements ITestListener {
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        // Your implementation here
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        // Calculate and log duration
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        // Log failure details
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result) {
+        // Log skip reason
+    }
+}
+
+@Listeners(ExecutionLogger.class)
+public class LoginTest {
+    @Test
+    public void testValidLogin() {
+        Assert.assertTrue(true);
+    }
+
+    @Test
+    public void testInvalidLogin() {
+        Assert.fail("Simulating failure");
+    }
+}
+```
+
+**Expected Outcome:**
+- Console shows detailed logs for each test event
+- Test execution duration is displayed
+- Failure reasons are clearly logged
+- Skip reasons are displayed
+
+**Solution Approach:**
+1. Create ExecutionLogger class implementing ITestListener
+2. Use System.out.println for logging (or use a logging framework)
+3. Get test name using result.getName()
+4. Calculate duration: result.getEndMillis() - result.getStartMillis()
+5. Get exception details using result.getThrowable()
+6. Apply listener to test class with @Listeners annotation
+
+**Common Mistakes to Avoid:**
+- Not implementing all required interface methods
+- Forgetting to handle null values (e.g., no throwable for successful tests)
+- Not checking if test actually failed before accessing error details
+- Misspelling the listener class name in @Listeners annotation
+
+---
+
+### Exercise 2: Screenshot Capture on Failure (30 minutes)
+
+**Objective:** Create a listener that automatically captures screenshots when tests fail.
+
+**Scenario:** You need to capture screenshots of failed tests to help debug issues. Implement a listener that saves screenshots to a designated folder with meaningful names.
+
+**Requirements:**
+1. Implement ITestListener with focus on onTestFailure
+2. Access WebDriver from the test class
+3. Capture screenshot using TakesScreenshot
+4. Save screenshot with test name and timestamp
+5. Create screenshots folder if it doesn't exist
+6. Log the screenshot path
+
+**Code Template:**
+```java
+public class ScreenshotOnFailureListener implements ITestListener {
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        Object testClass = result.getInstance();
+        WebDriver driver = ((BaseTest) testClass).getDriver();
+
+        if (driver != null) {
+            captureScreenshot(driver, result.getName());
+        }
+    }
+
+    private void captureScreenshot(WebDriver driver, String testName) {
+        try {
+            // Implement screenshot capture logic
+            TakesScreenshot ts = (TakesScreenshot) driver;
+            File source = ts.getScreenshotAs(OutputType.FILE);
+
+            // Create filename with timestamp
+            // Copy file to screenshots folder
+            // Log the path
+        } catch (Exception e) {
+            System.out.println("Failed to capture screenshot: " + e.getMessage());
+        }
+    }
+}
+
+public class BaseTest {
+    protected WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    public WebDriver getDriver() {
+        return driver;
+    }
+}
+```
+
+**Expected Outcome:**
+- Screenshot is captured only when test fails
+- Screenshot file has meaningful name (testName_timestamp.png)
+- Screenshots folder is created automatically
+- File path is logged to console
+
+**Solution Approach:**
+1. Implement onTestFailure in listener
+2. Cast result.getInstance() to BaseTest to access driver
+3. Use TakesScreenshot interface to capture screenshot
+4. Generate filename: testName + "_" + timestamp + ".png"
+5. Create screenshots directory using File.mkdirs()
+6. Use FileUtils.copyFile() to save screenshot
+7. Add Apache Commons IO dependency for FileUtils
+
+**Common Mistakes to Avoid:**
+- Not checking if driver is null before capturing screenshot
+- Not casting driver to TakesScreenshot interface
+- Hardcoding file paths (use relative paths)
+- Not handling IOException
+- Forgetting to create the screenshots directory
+- Not adding unique identifiers (timestamps) to filenames
+
+---
+
+### Exercise 3: Suite-Level Execution Summary (25 minutes)
+
+**Objective:** Implement ISuiteListener to display execution summary at suite level.
+
+**Scenario:** Create a listener that shows a detailed summary when the entire test suite completes, including total tests, pass/fail/skip counts, and execution time.
+
+**Requirements:**
+1. Implement ISuiteListener interface
+2. Display suite start information (name, start time)
+3. Calculate total tests, passed, failed, skipped
+4. Display suite end information (end time, total duration)
+5. Show summary in formatted output
+
+**Code Template:**
+```java
+public class SuiteExecutionSummary implements ISuiteListener {
+
+    private long suiteStartTime;
+
+    @Override
+    public void onStart(ISuite suite) {
+        suiteStartTime = System.currentTimeMillis();
+        System.out.println("=== Suite Started: " + suite.getName() + " ===");
+        System.out.println("Start Time: " + new Date());
+    }
+
+    @Override
+    public void onFinish(ISuite suite) {
+        long suiteEndTime = System.currentTimeMillis();
+        long duration = suiteEndTime - suiteStartTime;
+
+        System.out.println("\n=== Suite Finished: " + suite.getName() + " ===");
+        System.out.println("End Time: " + new Date());
+        System.out.println("Duration: " + duration + "ms");
+
+        // Calculate and display test counts from suite.getResults()
+        // Your implementation here
+    }
+}
+```
+
+**Expected Outcome:**
+- Suite start logged with name and timestamp
+- Suite finish logged with end timestamp
+- Total duration displayed in milliseconds
+- Test counts (passed/failed/skipped) displayed per test
+- Clean, formatted output
+
+**Solution Approach:**
+1. Store suite start time in class variable
+2. In onStart, log suite name and start time
+3. In onFinish, calculate duration
+4. Use suite.getResults() to get all test results
+5. Iterate through results to count passed/failed/skipped
+6. Format output using borders or separators for readability
+
+**Common Mistakes to Avoid:**
+- Not storing start time (can't calculate duration)
+- Forgetting to iterate through all tests in the suite
+- Not handling empty test results
+- Poor output formatting (hard to read)
+- Not distinguishing between different tests in the suite
+
+---
+
+### Exercise 4: Method Invocation Tracking (30 minutes)
+
+**Objective:** Use IInvokedMethodListener to track all method invocations including configuration methods.
+
+**Scenario:** You want detailed visibility into not just test methods but also @BeforeMethod, @AfterMethod, and other configuration methods. Implement a listener that logs all method invocations.
+
+**Requirements:**
+1. Implement IInvokedMethodListener interface
+2. Log before method invocation (test and configuration methods)
+3. Log after method invocation with execution time
+4. Differentiate between test methods and configuration methods
+5. Display method status (PASSED/FAILED)
+
+**Code Template:**
+```java
+public class MethodInvocationTracker implements IInvokedMethodListener {
+
+    private ThreadLocal<Long> startTime = new ThreadLocal<>();
+
+    @Override
+    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        startTime.set(System.currentTimeMillis());
+
+        if (method.isTestMethod()) {
+            // Log test method about to execute
+        } else if (method.isConfigurationMethod()) {
+            // Log configuration method about to execute
+        }
+    }
+
+    @Override
+    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        long duration = System.currentTimeMillis() - startTime.get();
+
+        if (method.isTestMethod()) {
+            // Log test method completed with status and duration
+        } else if (method.isConfigurationMethod()) {
+            // Log configuration method completed
+        }
+
+        startTime.remove();
+    }
+
+    private String getStatus(int status) {
+        // Convert status code to string
+    }
+}
+```
+
+**Expected Outcome:**
+- All methods (test and configuration) are logged
+- Clear distinction between test and configuration methods
+- Execution time displayed for each method
+- Method status (PASSED/FAILED) shown
+- ThreadLocal used for parallel execution safety
+
+**Solution Approach:**
+1. Use ThreadLocal to store start time (thread-safe)
+2. In beforeInvocation, record start time and log method name
+3. Check method.isTestMethod() vs method.isConfigurationMethod()
+4. In afterInvocation, calculate duration and log results
+5. Convert ITestResult status codes to readable strings
+6. Clean up ThreadLocal after use
+
+**Common Mistakes to Avoid:**
+- Not using ThreadLocal (causes issues in parallel execution)
+- Forgetting to remove ThreadLocal value (memory leak)
+- Not checking method type before logging
+- Not handling null or missing test results
+- Confusing test methods with configuration methods
+
+---
+
+### Exercise 5: Custom HTML Report Generator (40 minutes)
+
+**Objective:** Implement IReporter to generate a custom HTML report with test results.
+
+**Scenario:** Create a custom HTML report that provides a clean, styled view of test results with pass/fail counts, test details, and execution times.
+
+**Requirements:**
+1. Implement IReporter interface
+2. Generate HTML file with CSS styling
+3. Display suite summary (total, passed, failed, skipped)
+4. Create table with test details (name, status, duration)
+5. Use color coding (green for pass, red for fail, orange for skip)
+6. Save report to test-output folder
+
+**Code Template:**
+```java
+public class CustomHTMLReporter implements IReporter {
+
+    @Override
+    public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
+        try {
+            String reportPath = outputDirectory + "/custom-test-report.html";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(reportPath));
+
+            writer.write(generateHTMLHeader());
+
+            for (ISuite suite : suites) {
+                writer.write(generateSuiteReport(suite));
+            }
+
+            writer.write(generateHTMLFooter());
+            writer.close();
+
+            System.out.println("Custom report generated: " + reportPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String generateHTMLHeader() {
+        // Return HTML header with CSS
+    }
+
+    private String generateSuiteReport(ISuite suite) {
+        // Generate report content for the suite
+    }
+
+    private String generateHTMLFooter() {
+        return "</body></html>";
+    }
+}
+```
+
+**Expected Outcome:**
+- Professional-looking HTML report generated
+- Summary section shows test counts
+- Detailed table lists all tests with status
+- Color-coded results (easy to identify failures)
+- Report saved to test-output folder
+
+**Solution Approach:**
+1. Create HTML structure with proper DOCTYPE and tags
+2. Add CSS for styling (table, colors, fonts)
+3. Iterate through suites and get all test results
+4. Calculate totals (passed, failed, skipped)
+5. Generate summary section with counts
+6. Generate table rows for each test result
+7. Use inline CSS or style tag for formatting
+8. Close all HTML tags properly
+
+**Common Mistakes to Avoid:**
+- Not closing HTML tags properly
+- Forgetting to close BufferedWriter (resource leak)
+- Not handling IOException
+- Poor CSS causing unreadable report
+- Not including all test details in the report
+- Hardcoding file paths
+- Not iterating through all tests in all suites
+
+---
+
+### Exercise 6: Extent Reports Integration (45 minutes)
+
+**Objective:** Integrate Extent Reports library for advanced reporting with screenshots and detailed logs.
+
+**Scenario:** Implement a complete Extent Reports solution with test logging, pass/fail status, screenshots on failure, and system information.
+
+**Requirements:**
+1. Add Extent Reports Maven dependency
+2. Create ExtentManager class for report instance
+3. Implement ExtentReportListener using ITestListener
+4. Log test start, success, failure, and skip
+5. Attach screenshots to failed tests
+6. Add system information (OS, Browser, Java version)
+7. Generate report with test categories/groups
+
+**Code Template:**
+```java
+// ExtentManager.java
+public class ExtentManager {
+    private static ExtentReports extent;
+
+    public static ExtentReports createInstance() {
+        if (extent == null) {
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String reportPath = "test-output/ExtentReport_" + timestamp + ".html";
+
+            ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
+
+            // Configure reporter
+            sparkReporter.config().setDocumentTitle("Test Automation Report");
+            sparkReporter.config().setReportName("Execution Report");
+            sparkReporter.config().setTheme(Theme.STANDARD);
+
+            extent = new ExtentReports();
+            extent.attachReporter(sparkReporter);
+
+            // Add system info
+            extent.setSystemInfo("OS", System.getProperty("os.name"));
+            // Add more system info
+        }
+
+        return extent;
+    }
+}
+
+// ExtentReportListener.java
+public class ExtentReportListener implements ITestListener {
+    private static ExtentReports extent = ExtentManager.createInstance();
+    private static ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        ExtentTest test = extent.createTest(result.getName());
+        extentTest.set(test);
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        // Log success with details
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        // Log failure, attach screenshot
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+        extent.flush();
+    }
+}
+```
+
+**Expected Outcome:**
+- Beautiful, interactive HTML report generated
+- Tests categorized by groups
+- Screenshots attached to failed tests
+- System information displayed
+- Test execution timeline shown
+- Easy to navigate and filter results
+
+**Solution Approach:**
+1. Add Extent Reports dependency to pom.xml
+2. Create ExtentManager as singleton
+3. Configure ExtentSparkReporter with theme and settings
+4. Use ThreadLocal for ExtentTest (parallel execution safety)
+5. Create test node in onTestStart
+6. Log results in onTestSuccess/onTestFailure/onTestSkipped
+7. Attach screenshots using addScreenCaptureFromPath
+8. Flush the report in onFinish
+9. Add test groups as categories
+
+**Common Mistakes to Avoid:**
+- Not using ThreadLocal for ExtentTest (parallel execution issues)
+- Forgetting to call extent.flush() (report not generated)
+- Wrong Extent Reports version (API changes between versions)
+- Not handling screenshot attachment errors
+- Not configuring report output path
+- Missing Maven dependency
+- Not setting system information
+- Forgetting to add groups/categories to tests
+
+---
+
 ## 17. Key Takeaways
 
 1. **Listeners customize TestNG behavior** by listening to test events

@@ -2632,40 +2632,400 @@ public class RegistrationSteps {
 
 ---
 
-## 20. Practical Exercises
+## 20. Beginner-Friendly Exercises
 
-### Exercise 1: Login Feature
+### Exercise 1: Create Your First BDD Login Feature (45 minutes)
 
-Create a complete login feature with:
-- Valid login scenario
-- Invalid credentials scenario
-- Locked account scenario
-- Password reset scenario
+**Objective:** Write a complete BDD feature file with step definitions for login functionality.
 
-### Exercise 2: Shopping Cart
+**Real-World Scenario:**
+You're testing an e-commerce application's login feature. Users need to login with email and password to access their account.
 
-Implement shopping cart functionality:
-- Add single product
-- Add multiple products
-- Update quantity
-- Remove product
-- Calculate total
+**Requirements:**
+1. Create login.feature file with 3 scenarios (valid login, invalid password, empty fields)
+2. Write step definitions for all Gherkin steps
+3. Create LoginPage using Page Object Model
+4. Implement proper waits and assertions
+5. Generate Cucumber HTML report
 
-### Exercise 3: Search Functionality
+**Code Template:**
+```gherkin
+@login
+Feature: User Login
+  As a registered user
+  I want to login to my account
+  So that I can access personalized features
 
-Create search feature with:
-- Valid search
-- No results search
-- Search filters
-- Search suggestions
+  Background:
+    # TODO: Add background step to navigate to login page
 
-### Exercise 4: User Profile
+  @smoke @positive
+  Scenario: Successful login with valid credentials
+    # TODO: Add Given, When, Then steps
 
-Implement user profile management:
-- View profile
-- Update profile
-- Change password
-- Upload profile picture
+  @negative
+  Scenario: Login fails with invalid password
+    # TODO: Add steps for invalid login
+
+  @validation
+  Scenario: Login validation for empty fields
+    # TODO: Add steps for field validation
+```
+
+**Expected Outcome:**
+- All scenarios execute successfully
+- Step definitions properly implemented
+- Page Object separates UI logic from test logic
+- Cucumber report generated with pass/fail status
+- Screenshots captured for failures
+
+**Common Mistakes to Avoid:**
+1. Writing imperative steps instead of declarative
+2. Adding assertions in page objects
+3. Not using Background for common steps
+4. Hardcoding test data in step definitions
+5. Forgetting to initialize PageFactory
+
+**Solution Approach:**
+1. Start with Gherkin scenarios using Given-When-Then
+2. Create LoginPage with WebElements and methods
+3. Implement step definitions that call page methods
+4. Use TestContext to share data between steps
+5. Configure Cucumber runner with appropriate options
+
+---
+
+### Exercise 2: Data-Driven BDD Shopping Cart (50 minutes)
+
+**Objective:** Implement shopping cart scenarios using Scenario Outline and data tables.
+
+**Real-World Scenario:**
+Test adding multiple products to cart with different quantities and prices, then verify the total amount calculation.
+
+**Requirements:**
+1. Create shopping-cart.feature with Scenario Outline
+2. Use Examples table with 5+ product combinations
+3. Implement Data Table for product details
+4. Create CartPage with add/remove/update methods
+5. Verify cart total calculation with each scenario
+
+**Code Template:**
+```gherkin
+@cart
+Feature: Shopping Cart Management
+
+  Background:
+    # TODO: Login and navigate to products page
+
+  @regression
+  Scenario Outline: Add multiple products to cart
+    When I add the following products to cart
+      | Product   | Quantity   | Price   |
+      | <product> | <quantity> | <price> |
+    Then cart should show <quantity> items
+    And cart total should be <expected_total>
+
+    Examples:
+      | product  | quantity | price  | expected_total |
+      # TODO: Add 5+ test data rows
+
+  @negative
+  Scenario: Verify cart calculations with discounts
+    # TODO: Add discount scenario
+```
+
+**Expected Outcome:**
+- Scenario Outline runs for each example row
+- Data table properly handled in step definitions
+- Cart total calculations verified
+- All edge cases covered (discounts, taxes)
+- Each example generates separate test result
+
+**Common Mistakes to Avoid:**
+1. Not handling DataTable correctly in step definitions
+2. Mixing different data table formats
+3. Hardcoding calculations instead of using dynamic values
+4. Not clearing cart between scenarios
+5. Missing edge cases in Examples table
+
+**Solution Approach:**
+1. Define Scenario Outline with placeholders
+2. Create Examples table with comprehensive test data
+3. Use DataTable in step definitions: `List<Map<String, String>>`
+4. Loop through products and add to cart
+5. Implement cart total calculation verification
+
+---
+
+### Exercise 3: User Registration with BDD and API Validation (50 minutes)
+
+**Objective:** Create hybrid BDD tests combining UI actions with API validation.
+
+**Real-World Scenario:**
+User registers through UI, then verify the user is created in database via API. This ensures UI and backend are in sync.
+
+**Requirements:**
+1. Create registration.feature with multiple validation scenarios
+2. Implement UI steps for registration form
+3. Add API step to verify user created in backend
+4. Use Background for setup steps
+5. Handle both positive and negative scenarios
+
+**Code Template:**
+```gherkin
+@registration
+Feature: User Registration
+
+  Background:
+    # TODO: Navigate to registration page
+
+  @smoke
+  Scenario: New user registration successful
+    When I register with the following details
+      | Field     | Value              |
+      | Name      | TODO               |
+      | Email     | TODO               |
+      | Password  | TODO               |
+    Then I should see registration success message
+    And user should be created in database via API
+    And welcome email should be sent
+
+  @validation
+  Scenario Outline: Registration validation
+    # TODO: Add validation scenarios
+
+    Examples:
+      | field    | value   | error_message |
+      # TODO: Add validation test data
+```
+
+**Expected Outcome:**
+- UI registration completes successfully
+- API validates user exists in backend
+- Both UI and API assertions pass
+- Validation scenarios catch all edge cases
+- Proper error messages displayed for invalid inputs
+
+**Common Mistakes to Avoid:**
+1. Not cleaning up test data after scenario
+2. Using same email for multiple test runs
+3. Not verifying API response status codes
+4. Missing timeout handling for API calls
+5. Hardcoding API endpoints
+
+**Solution Approach:**
+1. Create RegistrationPage for UI interactions
+2. Add API utility class for backend verification
+3. Use unique identifiers (timestamp) for test data
+4. Implement cleanup in @After hook
+5. Store created user ID in ScenarioContext for cleanup
+
+---
+
+### Exercise 4: BDD Search Functionality with Tags (45 minutes)
+
+**Objective:** Implement search feature scenarios with proper tag organization and filtering.
+
+**Real-World Scenario:**
+E-commerce site search needs to handle various scenarios: valid searches, no results, filters, sorting, and search suggestions.
+
+**Requirements:**
+1. Create search.feature with 6+ scenarios
+2. Use tags for organization (@smoke, @regression, @negative)
+3. Implement search with filters and sorting
+4. Verify search results count and content
+5. Handle "no results found" scenario
+
+**Code Template:**
+```gherkin
+@search
+Feature: Product Search
+
+  Background:
+    # TODO: Navigate to search page
+
+  @smoke @positive
+  Scenario: Search with valid product name
+    # TODO: Implement valid search
+
+  @regression
+  Scenario: Search with filters applied
+    Given I am on search page
+    When I search for "laptop"
+    And I apply the following filters
+      | Filter   | Value      |
+      | Brand    | Dell       |
+      | Price    | 500-1000   |
+      | Rating   | 4+         |
+    Then I should see filtered results
+    And all results should match filters
+
+  @negative
+  Scenario: Search with no results
+    # TODO: Implement no results scenario
+```
+
+**Expected Outcome:**
+- Different tag combinations execute correctly
+- Filters work as expected
+- Results are properly validated
+- No results scenario handled gracefully
+- Each scenario is independent
+
+**Common Mistakes to Avoid:**
+1. Not making scenarios independent
+2. Using wrong tag expressions
+3. Forgetting to clear previous search state
+4. Not waiting for search results to load
+5. Hardcoding expected result counts
+
+**Solution Approach:**
+1. Create SearchPage with filter methods
+2. Implement tag-based execution in runner
+3. Use WebDriverWait for dynamic results
+4. Verify results with flexible assertions
+5. Clear search state in Background or Before hook
+
+---
+
+### Exercise 5: BDD Reporting and Hooks (40 minutes)
+
+**Objective:** Implement comprehensive BDD reporting with hooks for setup/teardown and screenshots.
+
+**Real-World Scenario:**
+Create detailed test reports with screenshots, execution time, and proper test organization for stakeholders.
+
+**Requirements:**
+1. Configure multiple Cucumber report plugins
+2. Implement @Before and @After hooks
+3. Capture screenshots on failure
+4. Add execution time tracking
+5. Generate both HTML and JSON reports
+
+**Code Template:**
+```java
+// TODO: Create Hooks class
+public class Hooks {
+
+    @Before
+    public void setUp(Scenario scenario) {
+        // TODO: Initialize driver
+        // TODO: Log scenario start
+    }
+
+    @After
+    public void tearDown(Scenario scenario) {
+        // TODO: Check if scenario failed
+        // TODO: Capture screenshot
+        // TODO: Attach to report
+        // TODO: Close driver
+    }
+
+    @BeforeStep
+    public void beforeStep() {
+        // TODO: Optional step logging
+    }
+
+    @AfterStep
+    public void afterStep(Scenario scenario) {
+        // TODO: Capture screenshot after each step (optional)
+    }
+}
+
+// Runner configuration
+@CucumberOptions(
+    plugin = {
+        // TODO: Add report plugins
+    }
+)
+```
+
+**Expected Outcome:**
+- HTML report generated with all scenarios
+- JSON report available for CI/CD integration
+- Screenshots embedded in reports for failures
+- Execution time tracked for each scenario
+- Hooks execute in correct order
+
+**Common Mistakes to Avoid:**
+1. Not attaching screenshots to Cucumber report
+2. Using wrong image format for screenshots
+3. Not handling driver null checks in @After
+4. Forgetting to configure report output path
+5. Not using Scenario object to check test status
+
+**Solution Approach:**
+1. Create Hooks class with @Before/@After annotations
+2. Use Scenario.isFailed() to check test status
+3. Capture screenshot as byte array
+4. Attach to scenario: scenario.attach(bytes, "image/png", name)
+5. Configure plugins in @CucumberOptions
+
+---
+
+### Exercise 6: Complete BDD Framework Integration (60 minutes)
+
+**Objective:** Build an end-to-end BDD feature with Page Objects, TestContext, API validation, and comprehensive reporting.
+
+**Real-World Scenario:**
+Create a complete user journey: Registration → Login → Add to Cart → Checkout → Order Confirmation, with UI and API validations at each step.
+
+**Requirements:**
+1. Create multi-scenario feature file for complete flow
+2. Implement Page Objects for each page
+3. Use TestContext to share data between steps
+4. Add API validations at key points
+5. Generate comprehensive test report
+
+**Code Template:**
+```gherkin
+@e2e @complete-flow
+Feature: Complete User Journey
+
+  Background:
+    Given the application is accessible
+
+  @critical
+  Scenario: Complete purchase flow
+    When I register a new user account
+    Then user should be created via API
+
+    When I login with registered credentials
+    Then I should see dashboard
+
+    When I search for "laptop"
+    And I add first product to cart
+    Then cart count should be 1
+    And cart should be updated via API
+
+    When I proceed to checkout
+    And I complete payment
+    Then order should be placed successfully
+    And order should exist in database via API
+    And confirmation email should be sent
+```
+
+**Expected Outcome:**
+- Complete flow executes end-to-end
+- All UI and API validations pass
+- TestContext properly shares data across steps
+- Test data cleaned up after execution
+- Comprehensive report with all steps
+
+**Common Mistakes to Avoid:**
+1. Not handling dependencies between steps
+2. Missing data cleanup causing test failures
+3. Not using unique test data identifiers
+4. Hardcoding user credentials
+5. Not implementing proper wait strategies
+
+**Solution Approach:**
+1. Create TestContext class to store shared data
+2. Implement Page Objects for each application page
+3. Use DI (Dependency Injection) for context sharing
+4. Add API validation steps alongside UI steps
+5. Implement @AfterScenario hook for cleanup
+6. Generate Extent Report with screenshots
 
 ---
 

@@ -1203,6 +1203,493 @@ public class DocumentedTests {
 
 ---
 
+---
+
+## 17. Practice Exercises
+
+### Exercise 1: Organize Tests into Smoke and Regression Groups (20 minutes)
+
+**Objective:** Learn to categorize tests using groups for different test execution scenarios.
+
+**Scenario:** You have a test suite with various tests. Organize them into smoke tests (quick critical checks) and regression tests (comprehensive testing).
+
+**Requirements:**
+1. Create 5 test methods in a single class
+2. Assign 2 tests to "smoke" group
+3. Assign 3 tests to "regression" group
+4. One test should belong to both "smoke" and "regression" groups
+5. Create two testng.xml files: one for smoke tests, one for regression tests
+
+**Code Template:**
+```java
+public class TestOrganizationExample {
+
+    @Test(groups = "smoke")
+    public void testCriticalFeature1() {
+        // Your implementation here
+    }
+
+    @Test(groups = {"smoke", "regression"})
+    public void testImportantFeature() {
+        // Your implementation here
+    }
+
+    @Test(groups = "regression")
+    public void testDetailedFeature1() {
+        // Your implementation here
+    }
+
+    // Add 2 more test methods
+}
+```
+
+**Expected Outcome:**
+- Running smoke suite executes only smoke tests (3 tests)
+- Running regression suite executes only regression tests (4 tests)
+- Common test executes in both suites
+- Clear console output showing which group is running
+
+**Solution Approach:**
+1. Create test methods with meaningful names
+2. Add @Test annotation with groups attribute
+3. Create testng-smoke.xml with `<include name="smoke"/>`
+4. Create testng-regression.xml with `<include name="regression"/>`
+5. Add print statements to identify which test is running
+6. Run each suite separately and verify the output
+
+**Common Mistakes to Avoid:**
+- Misspelling group names (groups are case-sensitive)
+- Forgetting to specify groups in testng.xml run section
+- Not considering that one test can belong to multiple groups
+- Confusing groups with priorities (they serve different purposes)
+
+---
+
+### Exercise 2: Test Dependencies Chain (25 minutes)
+
+**Objective:** Implement a series of dependent tests using dependsOnMethods.
+
+**Scenario:** You need to test an e-commerce flow where each step depends on the previous step: Navigate to site -> Login -> Add to Cart -> Checkout -> Payment.
+
+**Requirements:**
+1. Create 5 test methods representing the e-commerce flow
+2. Implement dependsOnMethods to ensure correct execution order
+3. Use @BeforeMethod to initialize WebDriver
+4. Use @AfterMethod to clean up resources
+5. Intentionally fail one test to observe how dependencies are skipped
+
+**Code Template:**
+```java
+public class EcommerceDependencyTest {
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+    }
+
+    @Test(priority = 1)
+    public void testNavigateToSite() {
+        // Your implementation here
+    }
+
+    @Test(priority = 2, dependsOnMethods = "testNavigateToSite")
+    public void testLogin() {
+        // Your implementation here
+    }
+
+    @Test(priority = 3, dependsOnMethods = "testLogin")
+    public void testAddToCart() {
+        // Your implementation here
+    }
+
+    // Add testCheckout and testPayment with appropriate dependencies
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome:**
+- Tests execute in the correct order based on dependencies
+- If a test fails, dependent tests are automatically skipped
+- TestNG report shows the dependency chain clearly
+- No orphaned browser instances
+
+**Solution Approach:**
+1. Implement each test method with simple navigation or assertions
+2. Chain dependencies: Login depends on Navigate, AddToCart depends on Login, etc.
+3. Use System.out.println to log each step
+4. For the failure test, add Assert.fail() in one method (e.g., testLogin)
+5. Observe how subsequent tests are skipped
+6. Remove the Assert.fail() and verify all tests pass
+
+**Common Mistakes to Avoid:**
+- Circular dependencies (A depends on B, B depends on A)
+- Spelling method names incorrectly in dependsOnMethods
+- Forgetting that skipped tests still show in reports
+- Not considering that @AfterMethod runs even for skipped tests
+- Creating unnecessarily tight coupling between independent tests
+
+---
+
+### Exercise 3: Group Dependencies with alwaysRun (30 minutes)
+
+**Objective:** Use group-level dependencies and understand the alwaysRun attribute for critical cleanup tasks.
+
+**Scenario:** Create a test suite with initialization, execution, and cleanup groups where cleanup must always run regardless of test failures.
+
+**Requirements:**
+1. Create tests in three groups: "init", "execution", "cleanup"
+2. Make execution group depend on init group
+3. Make cleanup group depend on execution group but with alwaysRun = true
+4. Implement at least 2 tests in each group
+5. Intentionally fail a test in execution group to verify cleanup still runs
+
+**Code Template:**
+```java
+public class GroupDependencyWithCleanup {
+
+    @Test(groups = "init", priority = 1)
+    public void setupDatabase() {
+        System.out.println("Initializing database...");
+        // Your implementation here
+    }
+
+    @Test(groups = "init", priority = 2)
+    public void createTestData() {
+        System.out.println("Creating test data...");
+        // Your implementation here
+    }
+
+    @Test(groups = "execution", dependsOnGroups = "init", priority = 3)
+    public void executeMainTest() {
+        System.out.println("Executing main test...");
+        // Add Assert.fail() here to test cleanup behavior
+    }
+
+    @Test(groups = "cleanup", dependsOnGroups = {"init", "execution"}, alwaysRun = true, priority = 10)
+    public void cleanupResources() {
+        System.out.println("Cleaning up resources...");
+        // Your implementation here - this should ALWAYS run
+    }
+
+    // Add more tests to each group
+}
+```
+
+**Expected Outcome:**
+- Init tests run first
+- Execution tests run after init completes
+- Cleanup tests ALWAYS run, even if execution tests fail
+- Console output clearly shows the execution flow
+- TestNG report shows cleanup as "PASSED" even when other tests fail
+
+**Solution Approach:**
+1. Implement init tests with simple setup logic
+2. Implement execution tests with actual test logic
+3. Add Assert.fail() in one execution test to simulate failure
+4. Implement cleanup with actual cleanup logic (close connections, delete files, etc.)
+5. Mark cleanup with alwaysRun = true
+6. Run the suite and verify cleanup executes despite failures
+7. Check TestNG reports to see the status of each test
+
+**Common Mistakes to Avoid:**
+- Forgetting alwaysRun = true on cleanup tests (they'll be skipped on failure)
+- Not prioritizing cleanup to run last
+- Creating complex dependencies that are hard to debug
+- Not including all dependent groups in the dependsOnGroups list
+- Relying on alwaysRun for tests that aren't actually cleanup operations
+
+---
+
+### Exercise 4: Priority-Based Execution Control (25 minutes)
+
+**Objective:** Master the use of priority attribute to control test execution order.
+
+**Scenario:** You have multiple independent tests that need to run in a specific order based on business priority, not dependencies.
+
+**Requirements:**
+1. Create 6 test methods with different priorities (-1, 0, 1, 2, 3, and no priority)
+2. Do NOT use dependsOnMethods (tests are independent)
+3. Each test should print its priority and timestamp
+4. Run the tests and observe the execution order
+5. Create a testng.xml with parallel="false" to ensure sequential execution
+
+**Code Template:**
+```java
+public class PriorityBasedExecution {
+
+    @Test(priority = 2)
+    public void testMediumPriority() {
+        System.out.println("Priority 2 - Medium Priority Test - " + System.currentTimeMillis());
+        // Your implementation here
+    }
+
+    @Test(priority = -1)
+    public void testHighestPriority() {
+        System.out.println("Priority -1 - Highest Priority Test - " + System.currentTimeMillis());
+        // Your implementation here
+    }
+
+    @Test
+    public void testDefaultPriority() {
+        System.out.println("Priority 0 (default) - Default Priority Test - " + System.currentTimeMillis());
+        // Your implementation here
+    }
+
+    // Add 3 more tests with priorities 1, 3, and 0
+}
+```
+
+**Expected Outcome:**
+- Tests execute in order: -1, 0, 0, 1, 2, 3
+- Tests with same priority execute in alphabetical order by method name
+- Console output clearly shows execution sequence
+- All tests are independent (no skipping if one fails)
+
+**Solution Approach:**
+1. Create test methods with simple assertions
+2. Assign different priority values
+3. Add timestamps to output to verify execution order
+4. Run tests and note the console output order
+5. Try changing priorities and observe the difference
+6. Document when to use priority vs. dependsOnMethods
+
+**Common Mistakes to Avoid:**
+- Using priority when dependencies are actually needed (use dependsOnMethods instead)
+- Assuming negative priorities always run first (they do, but can be confusing)
+- Forgetting that tests with same priority run alphabetically
+- Using priority in parallel execution (priority works per thread)
+- Over-relying on priority instead of making tests truly independent
+
+---
+
+### Exercise 5: Complex Test Orchestration (40 minutes)
+
+**Objective:** Combine groups, dependencies, and priorities to create a sophisticated test execution strategy.
+
+**Scenario:** Build a complete test framework for a web application with environment setup, smoke tests, regression tests, and teardown, all properly orchestrated.
+
+**Requirements:**
+1. Create tests in 4 groups: "environment-setup", "smoke", "regression", "teardown"
+2. Use priorities within groups to control execution order
+3. Use group dependencies: smoke depends on environment-setup, regression depends on smoke
+4. Make teardown alwaysRun and depend on all other groups
+5. Create a testng.xml that runs specific groups with proper configuration
+6. Include at least 2 tests per group (8 tests total)
+
+**Code Template:**
+```java
+public class CompleteTestOrchestration {
+
+    @Test(groups = "environment-setup", priority = 1)
+    public void initializeDatabase() {
+        System.out.println("1. Database initialized");
+        // Your implementation here
+    }
+
+    @Test(groups = "environment-setup", priority = 2)
+    public void setupTestUsers() {
+        System.out.println("2. Test users created");
+        // Your implementation here
+    }
+
+    @Test(groups = {"smoke", "critical"}, dependsOnGroups = "environment-setup", priority = 1)
+    public void smokeTestLogin() {
+        System.out.println("3. Smoke: Login test");
+        // Your implementation here
+    }
+
+    @Test(groups = "smoke", dependsOnGroups = "environment-setup", priority = 2)
+    public void smokeTestHomepage() {
+        System.out.println("4. Smoke: Homepage test");
+        // Your implementation here
+    }
+
+    @Test(groups = "regression", dependsOnGroups = {"environment-setup", "smoke"}, priority = 1)
+    public void regressionTestCheckout() {
+        System.out.println("5. Regression: Checkout test");
+        // Your implementation here
+    }
+
+    // Add more tests for regression and teardown groups
+}
+```
+
+**testng.xml Template:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Complete Suite">
+    <test name="Full Test Execution">
+        <groups>
+            <run>
+                <include name="environment-setup"/>
+                <include name="smoke"/>
+                <include name="regression"/>
+                <include name="teardown"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CompleteTestOrchestration"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome:**
+- Environment setup runs first
+- Smoke tests run after setup
+- Regression tests run after smoke
+- Teardown always runs at the end, even if tests fail
+- Clear execution flow with proper logging
+- Ability to run only specific groups (e.g., just smoke tests)
+
+**Solution Approach:**
+1. Design the test flow on paper first
+2. Implement each test with simple logic and logging
+3. Apply groups, priorities, and dependencies systematically
+4. Create testng.xml files for different scenarios (smoke-only, full regression)
+5. Test failure scenarios by intentionally failing tests
+6. Verify teardown always runs using alwaysRun = true
+7. Document the execution flow and group purposes
+
+**Common Mistakes to Avoid:**
+- Creating overly complex dependency chains
+- Not testing the failure scenarios
+- Forgetting to make teardown alwaysRun
+- Mixing different organization strategies inconsistently
+- Not documenting the purpose of each group
+- Creating circular dependencies
+- Not considering parallel execution implications
+
+---
+
+### Exercise 6: Cross-Browser Testing with Groups and Parameters (45 minutes)
+
+**Objective:** Implement a real-world cross-browser testing framework using groups, parameters, and test organization.
+
+**Scenario:** Create a framework that runs tests across Chrome and Firefox, organizing them by test type (smoke/regression) and allowing selective execution.
+
+**Requirements:**
+1. Create a base test class with browser initialization from parameters
+2. Create test classes with methods in different groups
+3. Implement at least 3 tests: login, search, and checkout
+4. Categorize tests into smoke and regression groups
+5. Create testng.xml files for:
+   - Chrome smoke tests
+   - Firefox smoke tests
+   - Both browsers regression tests
+6. Use group hierarchies to create "all-smoke" and "all-regression" meta-groups
+
+**Code Template:**
+```java
+// BaseTest.java
+public class BaseTest {
+    protected WebDriver driver;
+
+    @BeforeMethod
+    @Parameters("browser")
+    public void setup(@Optional("chrome") String browser) {
+        if (browser.equalsIgnoreCase("chrome")) {
+            driver = new ChromeDriver();
+        } else if (browser.equalsIgnoreCase("firefox")) {
+            driver = new FirefoxDriver();
+        }
+        driver.manage().window().maximize();
+        System.out.println("Browser initialized: " + browser);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+
+// CrossBrowserTest.java
+public class CrossBrowserTest extends BaseTest {
+
+    @Test(groups = {"smoke", "login"}, priority = 1)
+    public void testLogin() {
+        System.out.println("Testing login on " +
+            driver.getClass().getSimpleName());
+        driver.get("https://example.com/login");
+        // Your implementation here
+    }
+
+    @Test(groups = {"smoke", "search"}, priority = 2)
+    public void testSearch() {
+        System.out.println("Testing search on " +
+            driver.getClass().getSimpleName());
+        // Your implementation here
+    }
+
+    @Test(groups = {"regression", "checkout"}, priority = 3)
+    public void testCheckout() {
+        System.out.println("Testing checkout on " +
+            driver.getClass().getSimpleName());
+        // Your implementation here
+    }
+}
+```
+
+**testng.xml Template (Chrome Smoke):**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Chrome Smoke Suite">
+    <test name="Chrome Smoke Tests">
+        <parameter name="browser" value="chrome"/>
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CrossBrowserTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome:**
+- Chrome smoke suite runs only smoke tests in Chrome
+- Firefox smoke suite runs only smoke tests in Firefox
+- Regression suite runs in both browsers
+- Easy to add new browsers by just adding parameters
+- Clean separation of test organization from browser configuration
+
+**Solution Approach:**
+1. Create BaseTest with parameterized browser setup
+2. Implement test methods with appropriate group annotations
+3. Create multiple testng.xml files for different scenarios
+4. Run each suite and verify browser and test selection
+5. Create a master suite that includes both browsers
+6. Add parallel execution to run browsers simultaneously (bonus)
+7. Document the framework structure and usage
+
+**Common Mistakes to Avoid:**
+- Not closing browsers properly (resource leaks)
+- Hardcoding browser initialization instead of using parameters
+- Creating separate test classes for each browser (redundant)
+- Not using groups effectively to categorize tests
+- Forgetting @Optional annotation (causes errors when parameter not provided)
+- Not maximizing browser (causes element visibility issues)
+- Missing parameter in testng.xml (causes NullPointerException)
+- Creating tight coupling between tests and specific browsers
+
+---
+
 ## 17. Key Takeaways
 
 1. **Groups organize tests** into logical categories for selective execution

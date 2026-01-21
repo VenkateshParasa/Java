@@ -2730,123 +2730,903 @@ notify-slack:
 
 ---
 
-## Practical Exercises
+## Beginner-Friendly Exercises
 
-### Exercise 1: Basic Jenkins Pipeline
+### Exercise 1: Create Your First Jenkins Pipeline (40 minutes)
 
-**Objective**: Create a Jenkins pipeline that runs Selenium tests on commit.
+**Objective**: Learn to set up Jenkins and create a basic declarative pipeline that runs Selenium tests automatically.
 
-**Tasks**:
-1. Install Jenkins locally or using Docker
-2. Create a new pipeline job
-3. Write a Jenkinsfile that:
-   - Checks out code from Git
-   - Builds the project with Maven
-   - Runs smoke tests
-   - Publishes TestNG results
-   - Archives screenshots
-4. Trigger the pipeline manually
-5. Verify test results in Jenkins
+**Scenario**: Your team wants to automate test execution. You need to create a Jenkins pipeline that builds the project, runs smoke tests, and publishes results whenever code is pushed to the repository.
 
-**Solution Template**:
+**Requirements**:
+1. Set up Jenkins using Docker
+2. Install required Jenkins plugins (Pipeline, Git, TestNG Results, HTML Publisher)
+3. Create a new Pipeline job
+4. Write a Jenkinsfile with the following stages:
+   - Checkout code from Git
+   - Build project with Maven
+   - Run smoke tests (chrome browser)
+   - Publish TestNG results
+   - Archive test artifacts (screenshots, reports)
+5. Configure email notifications on failure
+6. Trigger the pipeline and verify results
+
+**Code Template**:
 ```groovy
+// Jenkinsfile
 pipeline {
     agent any
+
+    tools {
+        maven 'Maven-3.8.6'  // TODO: Configure this in Jenkins Global Tool Configuration
+        jdk 'JDK-11'         // TODO: Configure this in Jenkins Global Tool Configuration
+    }
 
     stages {
         stage('Checkout') {
             steps {
-                // Your code here
+                // TODO: Add checkout scm command
+                echo 'Checking out code...'
             }
         }
 
         stage('Build') {
             steps {
-                // Your code here
+                // TODO: Add Maven clean compile command
+                echo 'Building project...'
             }
         }
 
-        stage('Test') {
+        stage('Run Smoke Tests') {
             steps {
-                // Your code here
+                echo 'Running smoke tests...'
+                // TODO: Add Maven test command with:
+                // -Dbrowser=chrome
+                // -Dsurefire.suiteXmlFiles=smoke-tests.xml
+            }
+        }
+
+        stage('Publish Reports') {
+            steps {
+                // TODO: Add publishHTML for extent reports
+                // reportDir: 'target/extent-reports'
+                // reportFiles: 'extent-report.html'
+                // reportName: 'Test Report'
+                echo 'Publishing reports...'
             }
         }
     }
 
     post {
         always {
-            // Your code here
+            // TODO: Publish TestNG results
+            // Pattern: '**/testng-results.xml'
+
+            // TODO: Archive artifacts
+            // artifacts: '**/screenshots/*, **/extent-reports/*'
+        }
+
+        failure {
+            // TODO: Send email notification
+            // subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+            // body: "Check console output at ${env.BUILD_URL}"
+            // to: 'team@example.com'
         }
     }
 }
 ```
 
-### Exercise 2: GitHub Actions Cross-Browser Testing
+**Expected Outcome**:
+- Jenkins pipeline executes successfully
+- All 4 stages complete (Checkout, Build, Run Smoke Tests, Publish Reports)
+- TestNG results are visible in Jenkins
+- ExtentReports HTML is accessible from Jenkins
+- Screenshots are archived and downloadable
+- Email notification sent on failure
 
-**Objective**: Set up GitHub Actions to run tests on multiple browsers.
+**Common Mistakes to Avoid**:
+1. **Forgetting to configure Maven/JDK in Jenkins Global Tool Configuration**: Always set up tools before referencing them in pipeline
+2. **Not using absolute paths for reports**: Use `${WORKSPACE}/target/extent-reports` or relative paths from workspace root
+3. **Missing 'always' condition for publishing results**: Test results should be published even if tests fail
+4. **Hardcoding credentials**: Use Jenkins credentials plugin and credentials() function
+5. **Not cleaning workspace**: Add `cleanWs()` in post block to prevent disk space issues
 
-**Tasks**:
-1. Create `.github/workflows/test.yml`
-2. Configure matrix strategy for Chrome, Firefox, and Edge
-3. Set up Selenium Grid as a service
-4. Run tests on all browsers in parallel
-5. Upload test reports as artifacts
-6. Add badge to README showing test status
+**Solution Approach**:
+- Start by running Jenkins in Docker: `docker run -p 8080:8080 jenkins/jenkins:lts`
+- Access Jenkins at http://localhost:8080 and complete initial setup
+- Install suggested plugins + Pipeline, TestNG, HTML Publisher plugins
+- Create a new Pipeline job and paste your Jenkinsfile
+- For each TODO: Add the appropriate command (sh 'mvn ...', publishHTML(...), etc.)
+- Test each stage individually by commenting out other stages
+- Once working, enable email notifications using Email Extension plugin
 
-**Solution Template**:
+---
+
+### Exercise 2: GitHub Actions with Matrix Strategy (45 minutes)
+
+**Objective**: Implement cross-browser testing using GitHub Actions matrix strategy to run tests in parallel on multiple browsers and operating systems.
+
+**Scenario**: Your application must work on Chrome, Firefox, and Edge browsers across Windows, Linux, and macOS. Create a GitHub Actions workflow that tests all combinations automatically on every push.
+
+**Requirements**:
+1. Create `.github/workflows/cross-browser-tests.yml`
+2. Configure matrix for 3 browsers (chrome, firefox, edge)
+3. Configure matrix for 3 operating systems (ubuntu-latest, windows-latest, macos-latest)
+4. Exclude invalid combinations (e.g., Edge on Linux)
+5. Set up browser drivers automatically
+6. Run tests in parallel
+7. Upload test reports as artifacts for each combination
+8. Display test results in GitHub Actions UI
+
+**Code Template**:
 ```yaml
-name: Cross-Browser Tests
+name: Cross-Browser Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false  # Continue other jobs even if one fails
+      matrix:
+        # TODO: Define matrix axes
+        os: # Add: ubuntu-latest, windows-latest, macos-latest
+        browser: # Add: chrome, firefox, edge
+        exclude:
+          # TODO: Exclude edge on macos-latest (not supported)
+          # TODO: Exclude firefox on windows-latest (optional)
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        # TODO: Add java-version: '11'
+        # TODO: Add distribution: 'temurin'
+        # TODO: Add cache: 'maven'
+
+    - name: Setup ${{ matrix.browser }} browser
+      # TODO: Add browser setup action
+      # For chrome: uses: browser-actions/setup-chrome@latest
+      # For firefox: uses: browser-actions/setup-firefox@latest
+      # For edge: uses: browser-actions/setup-edge@latest
+
+    - name: Run tests on ${{ matrix.browser }}
+      run: |
+        # TODO: Add Maven test command with browser parameter
+        # mvn clean test -Dbrowser=${{ matrix.browser }}
+
+    - name: Upload test reports
+      if: always()  # Upload even if tests fail
+      uses: actions/upload-artifact@v3
+      with:
+        # TODO: Add dynamic artifact name
+        # name: test-reports-${{ matrix.os }}-${{ matrix.browser }}
+        # TODO: Add paths to upload
+        # path: |
+        #   target/surefire-reports/
+        #   target/extent-reports/
+        #   target/screenshots/
+
+    - name: Upload screenshots on failure
+      if: failure()
+      # TODO: Upload screenshots from target/screenshots/
+      # name: failure-screenshots-${{ matrix.os }}-${{ matrix.browser }}
+```
+
+**Expected Outcome**:
+- Workflow creates multiple jobs (one for each valid matrix combination)
+- Tests run in parallel on different OS/browser combinations
+- Each job shows separate results in GitHub Actions UI
+- Artifacts are uploaded with unique names for each combination
+- Failed test screenshots are available for debugging
+- Workflow completes even if some combinations fail (fail-fast: false)
+
+**Common Mistakes to Avoid**:
+1. **Not setting `fail-fast: false`**: One failure will cancel all other jobs, losing valuable cross-browser test data
+2. **Missing conditional uploads**: Always use `if: always()` for test reports, `if: failure()` for failure screenshots
+3. **Same artifact names for different matrix combinations**: Results in overwrites; use `${{ matrix.os }}-${{ matrix.browser }}` in artifact names
+4. **Forgetting to cache Maven dependencies**: Add `cache: 'maven'` in setup-java step to speed up builds
+5. **Not excluding invalid combinations**: Edge is not available on macOS, this will cause job failures
+
+**Solution Approach**:
+- Create the workflow file in your repo under `.github/workflows/cross-browser-tests.yml`
+- Start with a simple matrix (just 2 browsers, 1 OS) and verify it works
+- Gradually expand the matrix to more combinations
+- Test the exclude feature by trying to exclude one combination
+- Verify artifacts are uploaded with correct names by checking the Actions tab
+- Add more browsers/OS as needed based on your requirements
+
+---
+
+### Exercise 3: Parameterized Pipeline with Environment Management (50 minutes)
+
+**Objective**: Create a flexible CI/CD pipeline that accepts runtime parameters to control test execution across different environments and test suites.
+
+**Scenario**: Your QA team needs to run different test suites (smoke, regression, full) on different environments (dev, staging, production) using different browsers. Create a parameterized Jenkins pipeline that provides this flexibility.
+
+**Requirements**:
+1. Add parameters for Browser, Environment, and Test Suite
+2. Load environment-specific configuration from properties files
+3. Pass parameters to Maven test execution
+4. Display selected parameters in build name
+5. Send customized email notifications with parameter details
+6. Implement conditional logic based on parameters (e.g., only allow prod tests manually)
+
+**Code Template**:
+```groovy
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven-3.8.6'
+        jdk 'JDK-11'
+    }
+
+    parameters {
+        // TODO: Add choice parameter 'BROWSER'
+        // choices: ['chrome', 'firefox', 'edge', 'safari']
+        // description: 'Select browser for test execution'
+
+        // TODO: Add choice parameter 'ENVIRONMENT'
+        // choices: ['dev', 'staging', 'production']
+        // description: 'Select target environment'
+
+        // TODO: Add choice parameter 'TEST_SUITE'
+        // choices: ['smoke', 'regression', 'full']
+        // description: 'Select test suite to run'
+
+        // TODO: Add boolean parameter 'SEND_EMAIL'
+        // defaultValue: true
+        // description: 'Send email notification after execution'
+    }
+
+    environment {
+        // TODO: Load config file based on ENVIRONMENT parameter
+        // CONFIG_FILE = "config/${params.ENVIRONMENT}.properties"
+    }
+
+    stages {
+        stage('Validate Parameters') {
+            steps {
+                script {
+                    echo "Selected Parameters:"
+                    echo "Browser: ${params.BROWSER}"
+                    echo "Environment: ${params.ENVIRONMENT}"
+                    echo "Test Suite: ${params.TEST_SUITE}"
+
+                    // TODO: Add validation - if ENVIRONMENT is 'production'
+                    // and TEST_SUITE is 'full', require manual approval
+                    // Use input() function for approval
+                }
+            }
+        }
+
+        stage('Load Configuration') {
+            steps {
+                script {
+                    echo "Loading configuration for ${params.ENVIRONMENT}"
+                    // TODO: Check if config file exists
+                    // def configExists = fileExists("${CONFIG_FILE}")
+                    // if (!configExists) { error("Config file not found") }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // TODO: Add Maven compile command
+            }
+        }
+
+        stage('Execute Tests') {
+            steps {
+                script {
+                    echo "Running ${params.TEST_SUITE} tests on ${params.BROWSER} in ${params.ENVIRONMENT}"
+
+                    // TODO: Build Maven command with parameters
+                    // sh """
+                    //     mvn test \
+                    //     -Dbrowser=${params.BROWSER} \
+                    //     -Denvironment=${params.ENVIRONMENT} \
+                    //     -Dconfig.file=${CONFIG_FILE} \
+                    //     -Dsurefire.suiteXmlFiles=${params.TEST_SUITE}-tests.xml
+                    // """
+                }
+            }
+        }
+
+        stage('Publish Results') {
+            steps {
+                // TODO: Publish TestNG results
+                // TODO: Publish HTML report
+                // Set report name to include parameters for clarity
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // TODO: Update build display name with parameters
+                // currentBuild.displayName = "#${env.BUILD_NUMBER} - ${params.BROWSER} - ${params.ENVIRONMENT} - ${params.TEST_SUITE}"
+
+                // TODO: Archive artifacts with categorized folder structure
+                // archiveArtifacts artifacts: """
+                //     target/${params.ENVIRONMENT}/${params.TEST_SUITE}/**
+                // """, allowEmptyArchive: true
+            }
+        }
+
+        success {
+            script {
+                if (params.SEND_EMAIL) {
+                    // TODO: Send success email with parameters and results link
+                    // emailext(
+                    //     subject: "✅ Tests Passed - ${params.TEST_SUITE} on ${params.ENVIRONMENT}",
+                    //     body: """Test execution completed successfully.
+                    //              Browser: ${params.BROWSER}
+                    //              Environment: ${params.ENVIRONMENT}
+                    //              Suite: ${params.TEST_SUITE}
+                    //              Build URL: ${env.BUILD_URL}""",
+                    //     to: 'qa-team@example.com'
+                    // )
+                }
+            }
+        }
+
+        failure {
+            script {
+                if (params.SEND_EMAIL) {
+                    // TODO: Send failure email with detailed information
+                }
+            }
+        }
+    }
+}
+```
+
+**Config Files to Create**:
+```properties
+# config/dev.properties
+base.url=https://dev.example.com
+api.url=https://api-dev.example.com
+timeout=10
+
+# config/staging.properties
+base.url=https://staging.example.com
+api.url=https://api-staging.example.com
+timeout=15
+
+# config/production.properties
+base.url=https://example.com
+api.url=https://api.example.com
+timeout=20
+```
+
+**Expected Outcome**:
+- Jenkins job shows parameter selection UI before execution
+- Build name displays selected parameters (e.g., "#15 - chrome - staging - regression")
+- Correct configuration file is loaded based on environment
+- Tests execute with appropriate parameters
+- Production + full suite combination requires manual approval
+- Email notifications include parameter details
+- Artifacts are organized by environment and suite
+
+**Common Mistakes to Avoid**:
+1. **Not validating parameter combinations**: Some combinations may not make sense (e.g., full suite in production)
+2. **Hardcoding values instead of using parameters**: Always reference params.PARAMETER_NAME
+3. **Missing config files**: Add file existence check before loading configuration
+4. **Not updating build display name**: Makes it hard to identify builds in Jenkins history
+5. **Forgetting to make parameters available in post blocks**: Parameters are accessible throughout the pipeline
+
+**Solution Approach**:
+- Create config directory with environment-specific property files first
+- Add parameters one at a time and test each addition
+- Use echo statements to verify parameter values are passed correctly
+- Test with different parameter combinations to ensure flexibility
+- Implement approval logic for sensitive combinations (production tests)
+- Add comprehensive email templates that show all execution details
+
+---
+
+### Exercise 4: Scheduled CI/CD with Multiple Test Tiers (45 minutes)
+
+**Objective**: Implement a comprehensive test scheduling strategy that runs different test suites at appropriate intervals (hourly smoke tests, nightly regression, weekly full suite).
+
+**Scenario**: Your team needs continuous test coverage without overwhelming the CI/CD system. Implement a scheduling strategy where quick smoke tests run frequently, comprehensive regression tests run nightly, and full test suite runs weekly.
+
+**Requirements**:
+1. Create 3 separate GitHub Actions workflows:
+   - Hourly smoke tests (critical paths only)
+   - Nightly regression tests (full functionality)
+   - Weekly full test suite (all tests + performance tests)
+2. Configure appropriate cron schedules
+3. Send different notifications based on schedule type
+4. Store test history and track trends
+5. Implement failure escalation (notify different teams based on severity)
+
+**Code Template - Hourly Smoke Tests**:
+```yaml
+# .github/workflows/hourly-smoke-tests.yml
+name: Hourly Smoke Tests
+
+on:
+  schedule:
+    # TODO: Add cron schedule for every hour
+    # Format: 'minute hour day month day-of-week'
+    # Example: '0 * * * *' runs every hour at minute 0
+    - cron: # Add your cron expression
+  workflow_dispatch:  # Allow manual trigger
+
+env:
+  TEST_SUITE: smoke
+  NOTIFICATION_CHANNEL: '#smoke-test-alerts'
+
+jobs:
+  smoke-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15  # Smoke tests should be fast
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Setup Chrome
+      uses: browser-actions/setup-chrome@latest
+
+    - name: Run smoke tests
+      run: |
+        # TODO: Run only critical smoke tests
+        # mvn test -Dsuite=smoke -Dbrowser=chrome -Dgroups=critical
+
+    - name: Upload quick results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        # TODO: Add artifact name with timestamp
+        # name: smoke-results-${{ github.run_number }}
+        # path: target/surefire-reports/
+
+    - name: Notify on failure
+      if: failure()
+      # TODO: Send Slack notification to smoke-test-alerts channel
+      # Only notify on smoke test failures (critical issues)
+```
+
+**Code Template - Nightly Regression Tests**:
+```yaml
+# .github/workflows/nightly-regression.yml
+name: Nightly Regression Tests
+
+on:
+  schedule:
+    # TODO: Add cron for every day at 2 AM UTC
+    # - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  TEST_SUITE: regression
+  NOTIFICATION_CHANNEL: '#nightly-test-results'
+
+jobs:
+  regression-tests:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120  # Regression can take up to 2 hours
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # TODO: Add matrix for cross-browser testing
+        # os: [ubuntu-latest, windows-latest]
+        # browser: [chrome, firefox, edge]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      # TODO: Add Java setup with caching
+
+    - name: Setup ${{ matrix.browser }}
+      # TODO: Add browser setup for matrix.browser
+
+    - name: Run regression tests
+      run: |
+        # TODO: Run full regression suite
+        # mvn test -Dsuite=regression -Dbrowser=${{ matrix.browser }}
+
+    - name: Generate test report
+      if: always()
+      # TODO: Generate comprehensive HTML report
+
+    - name: Upload detailed results
+      if: always()
+      # TODO: Upload reports with browser and OS in artifact name
+
+    - name: Publish test results
+      if: always()
+      uses: dorny/test-reporter@v1
+      with:
+        # TODO: Configure test reporter to show results in GitHub
+
+  send-summary:
+    needs: regression-tests
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send nightly summary
+      # TODO: Aggregate results from all matrix jobs
+      # TODO: Send comprehensive email with:
+      # - Total tests run
+      # - Pass/Fail rate
+      # - Comparison with previous night
+      # - Link to detailed reports
+```
+
+**Code Template - Weekly Full Suite**:
+```yaml
+# .github/workflows/weekly-full-suite.yml
+name: Weekly Full Test Suite
+
+on:
+  schedule:
+    # TODO: Add cron for every Sunday at 1 AM UTC
+    # - cron: '0 1 * * 0'
+  workflow_dispatch:
+
+jobs:
+  full-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240  # 4 hours for complete testing
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      # TODO: Add Java setup
+
+    - name: Run full test suite
+      run: |
+        # TODO: Run all tests including:
+        # - Functional tests
+        # - Integration tests
+        # - Performance tests
+        # - Security tests
+        # mvn verify -Psuite=full -Dinclude.performance=true
+
+    - name: Generate comprehensive report
+      if: always()
+      # TODO: Generate detailed multi-page report with:
+      # - Test results
+      # - Code coverage
+      # - Performance metrics
+      # - Trend analysis
+
+    - name: Archive weekly results
+      if: always()
+      # TODO: Upload artifacts with week number in name
+      # name: weekly-results-week-${{ github.run_number }}
+
+    - name: Publish to GitHub Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        # TODO: Publish report to GitHub Pages
+        # destination_dir: reports/week-${{ github.run_number }}
+
+    - name: Send executive summary
+      if: always()
+      # TODO: Send detailed email to leadership with:
+      # - Week-over-week comparison
+      # - Quality trends
+      # - Areas of concern
+      # - Link to published report
+```
+
+**Expected Outcome**:
+- Smoke tests run every hour automatically
+- Regression tests run every night at 2 AM
+- Full suite runs every Sunday
+- Each schedule type sends appropriate notifications
+- Test results are archived with clear naming
+- Trend data is available for analysis
+- Different stakeholders receive relevant notifications
+
+**Common Mistakes to Avoid**:
+1. **Incorrect cron syntax**: Use https://crontab.guru to validate cron expressions; remember GitHub uses UTC time
+2. **No timeout limits**: Always set timeout-minutes to prevent jobs from running indefinitely
+3. **Missing fail-fast: false in nightly tests**: You want all browser combinations to complete, not fail on first error
+4. **Not considering CI/CD load**: Running too many concurrent jobs can overwhelm runners; stagger schedules
+5. **Same notification for all schedule types**: Smoke failures are critical (immediate attention), weekly is informational
+
+**Solution Approach**:
+- Start by creating the hourly smoke test workflow and verify the cron schedule works
+- Add workflow_dispatch to all workflows for manual testing before schedules activate
+- Test each workflow manually first using workflow_dispatch
+- Gradually enable schedules starting with less frequent ones (weekly, then nightly, then hourly)
+- Monitor resource usage and adjust schedules/timeouts as needed
+- Set up different Slack channels or email lists for different schedule types
+- Use GitHub Actions insights to track runner usage and optimize
+
+---
+
+### Exercise 5: Advanced CI/CD with Comprehensive Reporting (50 minutes)
+
+**Objective**: Implement a complete CI/CD pipeline with multiple reporting tools (TestNG, ExtentReports, Allure) and automated report publishing to GitHub Pages with historical trending.
+
+**Scenario**: Stakeholders need access to detailed test reports with historical trends. Implement a pipeline that generates multiple report formats, publishes them to GitHub Pages, and maintains test execution history.
+
+**Requirements**:
+1. Generate three types of reports: TestNG XML, ExtentReports HTML, Allure Reports
+2. Publish all reports to GitHub Pages with unique URLs
+3. Maintain report history (last 30 executions)
+4. Create a landing page with links to all report types
+5. Add test execution trends and charts
+6. Send email/Slack notifications with report links
+7. Implement report retention policy (delete old reports)
+
+**Code Template**:
+```yaml
+# .github/workflows/comprehensive-reporting.yml
+name: Tests with Comprehensive Reporting
 
 on:
   push:
     branches: [ main ]
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
-  test:
+  test-and-report:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: # Complete this
 
     steps:
-      # Add steps here
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Run tests with all reporters
+      run: |
+        # TODO: Run tests with TestNG, ExtentReports, and Allure listeners
+        # mvn clean test -Dlisteners=org.testng.reporters.XMLReporter,
+        #   com.aventstack.extentreports.testng.listener.ExtentITestListenerAdapter,
+        #   io.qameta.allure.testng.AllureTestNg
+
+    - name: Generate ExtentReports
+      if: always()
+      run: |
+        # TODO: ExtentReports should be auto-generated during test execution
+        echo "ExtentReports generated at target/extent-reports/extent-report.html"
+
+    - name: Generate Allure Report
+      if: always()
+      uses: simple-elf/allure-report-action@master
+      with:
+        # TODO: Configure Allure report generation
+        # allure_results: target/allure-results
+        # allure_history: allure-history
+        # keep_reports: 30  # Keep last 30 reports
+
+    - name: Create report index page
+      if: always()
+      run: |
+        # TODO: Create an index.html that links to all report types
+        # cat > target/reports/index.html << 'EOF'
+        # <!DOCTYPE html>
+        # <html>
+        # <head><title>Test Reports</title></head>
+        # <body>
+        #   <h1>Test Execution Reports - Build #${{ github.run_number }}</h1>
+        #   <h2>Report Types:</h2>
+        #   <ul>
+        #     <li><a href="extent-report.html">ExtentReports</a></li>
+        #     <li><a href="allure-report/index.html">Allure Report</a></li>
+        #     <li><a href="testng-report.html">TestNG Report</a></li>
+        #   </ul>
+        #   <p>Generated: $(date)</p>
+        # </body>
+        # </html>
+        # EOF
+
+    - name: Copy all reports to publish directory
+      if: always()
+      run: |
+        # TODO: Organize all reports in a single directory
+        # mkdir -p reports-to-publish
+        # cp -r target/extent-reports/* reports-to-publish/
+        # cp -r allure-history/* reports-to-publish/allure-report/
+        # cp target/surefire-reports/index.html reports-to-publish/testng-report.html
+        # cp target/reports/index.html reports-to-publish/
+
+    - name: Upload reports as artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        # TODO: Upload all reports with build number in name
+        # name: test-reports-build-${{ github.run_number }}
+        # path: reports-to-publish/
+        # retention-days: 30
+
+    - name: Load previous report history
+      if: always()
+      uses: actions/checkout@v3
+      continue-on-error: true
+      with:
+        # TODO: Checkout gh-pages branch to get historical data
+        # ref: gh-pages
+        # path: gh-pages-history
+
+    - name: Update report history
+      if: always()
+      run: |
+        # TODO: Update history.json with current execution results
+        # - Read existing history.json
+        # - Add current execution data
+        # - Keep only last 30 executions
+        # - Calculate trends (pass rate, execution time)
+        echo "Updating report history..."
+
+    - name: Generate trend charts
+      if: always()
+      run: |
+        # TODO: Create charts showing:
+        # - Pass/Fail trend over last 30 executions
+        # - Execution time trend
+        # - Flaky tests identification
+        # Use Chart.js or similar library
+
+    - name: Publish to GitHub Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./reports-to-publish
+        # TODO: Add destination directory with build number
+        # destination_dir: reports/build-${{ github.run_number }}
+        # keep_files: true  # Keep previous reports
+
+    - name: Update GitHub Pages index
+      if: always()
+      run: |
+        # TODO: Update main index.html on gh-pages with links to all builds
+        # Show last 30 builds with:
+        # - Build number
+        # - Date/time
+        # - Pass/Fail status
+        # - Link to reports
+
+    - name: Send notification with report links
+      if: always()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        # TODO: Configure email with multiple report links
+        # server_address: smtp.gmail.com
+        # server_port: 465
+        # username: ${{ secrets.EMAIL_USERNAME }}
+        # password: ${{ secrets.EMAIL_PASSWORD }}
+        # subject: Test Report - Build #${{ github.run_number }} - ${{ job.status }}
+        # to: qa-team@example.com
+        # body: |
+        #   Test execution completed.
+        #   Status: ${{ job.status }}
+        #
+        #   View Reports:
+        #   - ExtentReports: https://your-username.github.io/your-repo/reports/build-${{ github.run_number }}/extent-report.html
+        #   - Allure Report: https://your-username.github.io/your-repo/reports/build-${{ github.run_number }}/allure-report/
+        #   - All Reports: https://your-username.github.io/your-repo/reports/build-${{ github.run_number }}/
+        #
+        # html: true
+
+    - name: Comment on PR with report links
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          // TODO: Create PR comment with:
+          // - Test summary (X passed, Y failed)
+          // - Links to all report types
+          // - Comparison with base branch (if available)
+          // const reportUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/build-${context.runNumber}/`;
+          // const body = `## Test Results\n\n[View Reports](${reportUrl})`;
+          // github.rest.issues.createComment({...})
+
+  cleanup-old-reports:
+    needs: test-and-report
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Cleanup old reports from GitHub Pages
+      # TODO: Implement retention policy
+      # - Checkout gh-pages branch
+      # - List all report directories
+      # - Delete reports older than 30 builds
+      # - Commit and push changes
 ```
 
-### Exercise 3: Parametrized Pipeline
+**Additional Files to Create**:
 
-**Objective**: Create a parametrized pipeline that accepts runtime parameters.
+```javascript
+// scripts/generate-trends.js
+// TODO: Create script to generate trend charts
+const fs = require('fs');
 
-**Tasks**:
-1. Add parameters for:
-   - Browser (chrome, firefox, edge)
-   - Environment (dev, staging, prod)
-   - Test suite (smoke, regression, full)
-2. Use parameters in test execution
-3. Display parameter values in build name
-4. Send email with parameter details
-5. Test with different parameter combinations
+// Read history.json
+// Calculate metrics:
+// - Pass rate trend
+// - Average execution time
+// - Flaky test detection
+// Generate Chart.js HTML
 
-### Exercise 4: Scheduled Test Execution
+// Save to trends.html
+```
 
-**Objective**: Set up scheduled test runs.
+```html
+<!-- templates/report-index-template.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Reports - Build {{BUILD_NUMBER}}</title>
+    <style>
+        /* TODO: Add styling for professional-looking report index */
+    </style>
+</head>
+<body>
+    <h1>Test Execution Dashboard</h1>
+    <!-- TODO: Add links to all report types -->
+    <!-- TODO: Add test summary -->
+    <!-- TODO: Add trend charts -->
+</body>
+</html>
+```
 
-**Tasks**:
-1. Configure Jenkins/GitLab/GitHub Actions for scheduled runs
-2. Run smoke tests hourly
-3. Run regression tests daily at 2 AM
-4. Run full test suite weekly on Sundays
-5. Send summary reports after each scheduled run
+**Expected Outcome**:
+- Three different report formats are generated (TestNG, ExtentReports, Allure)
+- All reports are published to GitHub Pages with unique URLs
+- Landing page provides easy navigation between report types
+- Historical data shows trends over last 30 executions
+- Email notifications include links to all reports
+- PR comments show test results with report links
+- Old reports are automatically cleaned up (retention policy)
+- Trend charts show pass rate and execution time over time
 
-### Exercise 5: Advanced Reporting
+**Common Mistakes to Avoid**:
+1. **Not using `keep_files: true` in GitHub Pages action**: Previous reports will be deleted
+2. **Missing `if: always()` on report generation steps**: Reports won't be generated if tests fail
+3. **Not handling concurrent builds**: Multiple builds can overwrite reports; use build numbers in paths
+4. **Exposing sensitive data in reports**: Screenshots may contain credentials; sanitize before publishing
+5. **Not implementing retention policy**: GitHub Pages has storage limits; clean up old reports
 
-**Objective**: Integrate multiple reporting tools in CI/CD.
-
-**Tasks**:
-1. Generate ExtentReports
-2. Set up Allure reporting
-3. Publish reports to GitHub Pages
-4. Create trending charts
-5. Add report links to notifications
+**Solution Approach**:
+- Start with one report type (ExtentReports) and get it publishing to GitHub Pages
+- Add additional report types one at a time
+- Create the landing page after all report types are working
+- Implement history tracking in a separate iteration
+- Add trend charts once history data is accumulating
+- Test the retention policy with a low threshold (e.g., keep 3 reports) before setting to 30
+- Ensure GitHub Pages is enabled in repository settings
+- Use a test repository first before implementing in production repository
 
 ---
 

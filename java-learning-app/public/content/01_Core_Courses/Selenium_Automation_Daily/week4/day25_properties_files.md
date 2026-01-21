@@ -1121,6 +1121,991 @@ public class LoginTestWithTestData {
 
 ---
 
+## 12. Practical Exercises
+
+---
+
+### Exercise 1: Create Basic ConfigReader (25 min)
+
+**Objective:** Build a foundational ConfigReader utility class to read and manage configuration properties.
+
+**Scenario:** Your test automation framework needs centralized configuration management. Create a ConfigReader that loads properties and provides type-safe getters.
+
+**Requirements:**
+1. Create `config.properties` file with browser, URL, and timeout settings
+2. Implement `ConfigReader` class with static initialization
+3. Add getters for String, int, and boolean properties
+4. Handle missing properties gracefully
+5. Create convenience methods for common properties
+6. Write tests demonstrating ConfigReader usage
+
+**Code Template:**
+
+```java
+// TODO 1: Create config.properties in src/test/resources/config/
+# config.properties
+app.url=https://qa.example.com
+browser=chrome
+headless=false
+implicit.wait=10
+explicit.wait=15
+page.load.timeout=30
+
+// TODO 2: Implement ConfigReader class
+package utils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+public class ConfigReader {
+
+    private static Properties properties;
+    private static final String CONFIG_FILE_PATH = "src/test/resources/config/config.properties";
+
+    // TODO 3: Implement static block to load properties
+    static {
+        try {
+            // Load properties file
+            // Your code here
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load config file: " + CONFIG_FILE_PATH);
+        }
+    }
+
+    // TODO 4: Implement getProperty() method
+    public static String getProperty(String key) {
+        String value = properties.getProperty(key);
+        if (value == null) {
+            throw new RuntimeException("Property not found: " + key);
+        }
+        return value;
+    }
+
+    // TODO 5: Implement getProperty() with default value
+    public static String getProperty(String key, String defaultValue) {
+        // Your code here
+        return null;
+    }
+
+    // TODO 6: Implement type-safe getters
+    public static int getIntProperty(String key) {
+        // Your code here
+        return 0;
+    }
+
+    public static boolean getBooleanProperty(String key) {
+        // Your code here
+        return false;
+    }
+
+    // TODO 7: Implement convenience methods
+    public static String getAppUrl() {
+        // Your code here
+        return null;
+    }
+
+    public static String getBrowser() {
+        // Your code here
+        return null;
+    }
+
+    public static int getImplicitWait() {
+        // Your code here
+        return 0;
+    }
+}
+```
+
+**Test Class:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import utils.ConfigReader;
+
+public class ConfigReaderTest {
+
+    @Test
+    public void testReadProperties() {
+        // TODO: Test reading different property types
+        String appUrl = ConfigReader.getAppUrl();
+        String browser = ConfigReader.getBrowser();
+        int timeout = ConfigReader.getImplicitWait();
+
+        Assert.assertNotNull(appUrl);
+        Assert.assertEquals(browser, "chrome");
+        Assert.assertEquals(timeout, 10);
+    }
+
+    @Test
+    public void testDefaultValues() {
+        // TODO: Test properties with default values
+        String missingProp = ConfigReader.getProperty("nonexistent", "default");
+        Assert.assertEquals(missingProp, "default");
+    }
+}
+```
+
+**Expected Outcome:**
+- Properties loaded once during class initialization
+- Type-safe methods preventing casting errors
+- Graceful handling of missing properties
+- Clean API for accessing configuration
+- Tests verify configuration loading
+
+**Common Mistakes to Avoid:**
+- Loading properties multiple times
+- Not handling missing files properly
+- Hardcoding file paths without constants
+- Forgetting null checks
+- Not providing default values
+
+---
+
+### Exercise 2: Implement Environment-Specific Configuration (35 min)
+
+**Objective:** Create a configuration system that supports multiple environments (dev, qa, prod) with dynamic switching.
+
+**Scenario:** Your tests need to run against different environments. Implement an advanced ConfigReader that loads environment-specific properties based on system property.
+
+**Requirements:**
+1. Create separate property files: config.properties, qa.properties, dev.properties, prod.properties
+2. Implement AdvancedConfigReader with environment detection
+3. Support system property for environment selection
+4. Merge base config with environment-specific overrides
+5. Create EnvironmentManager utility
+6. Write tests for different environments
+
+**Code Template:**
+
+```java
+// TODO 1: Create base config.properties
+# config.properties
+app.name=Test Automation Framework
+browser=chrome
+implicit.wait=10
+explicit.wait=15
+
+// TODO 2: Create qa.properties
+# qa.properties
+environment=QA
+app.url=https://qa.example.com
+db.url=jdbc:mysql://qa-db:3306/testdb
+test.username=qa_user@test.com
+test.password=QA_Pass@123
+
+// TODO 3: Create dev.properties
+# dev.properties
+environment=DEV
+app.url=https://dev.example.com
+db.url=jdbc:mysql://localhost:3306/devdb
+test.username=dev_user@test.com
+test.password=Dev_Pass@123
+
+// TODO 4: Implement AdvancedConfigReader
+package utils;
+
+import java.io.InputStream;
+import java.util.Properties;
+
+public class AdvancedConfigReader {
+
+    private static Properties properties;
+    private static String environment;
+
+    static {
+        loadConfiguration();
+    }
+
+    // TODO: Implement loadConfiguration()
+    private static void loadConfiguration() {
+        // Get environment from system property or default to QA
+        environment = System.getProperty("env", "qa").toLowerCase();
+
+        properties = new Properties();
+
+        try {
+            // TODO: Load base config first
+            // TODO: Load environment-specific config (overrides base)
+
+            System.out.println("Configuration loaded for environment: " + environment);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load configuration");
+        }
+    }
+
+    // TODO: Implement loadPropertiesFile()
+    private static void loadPropertiesFile(String fileName) {
+        try {
+            InputStream inputStream = AdvancedConfigReader.class
+                .getClassLoader()
+                .getResourceAsStream(fileName);
+
+            if (inputStream != null) {
+                // Your code here
+            } else {
+                System.out.println("Warning: File not found: " + fileName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getProperty(String key) {
+        // Your code here
+        return null;
+    }
+
+    public static String getEnvironment() {
+        return environment;
+    }
+
+    // TODO: Add more getters
+}
+
+// TODO 5: Implement EnvironmentManager
+package utils;
+
+public class EnvironmentManager {
+
+    public static String getCurrentEnvironment() {
+        // Your code here
+        return null;
+    }
+
+    public static boolean isQA() {
+        // Your code here
+        return false;
+    }
+
+    public static boolean isDev() {
+        // Your code here
+        return false;
+    }
+
+    public static boolean isProd() {
+        // Your code here
+        return false;
+    }
+
+    public static void printConfiguration() {
+        // TODO: Print current configuration details
+    }
+}
+```
+
+**Maven Command:**
+```bash
+# Run with QA environment (default)
+mvn clean test
+
+# Run with DEV environment
+mvn clean test -Denv=dev
+
+# Run with PROD environment
+mvn clean test -Denv=prod
+```
+
+**Expected Outcome:**
+- Environment-specific properties loaded correctly
+- Base config merged with environment override
+- System property determines environment
+- Tests work across all environments
+- Easy environment switching from command line
+
+**Common Mistakes to Avoid:**
+- Not trimming property values
+- Loading files in wrong order
+- Not checking if environment file exists
+- Case-sensitive environment names
+- Not reloading after environment change
+
+---
+
+### Exercise 3: Separate Test Data in Properties Files (30 min)
+
+**Objective:** Organize test data in dedicated properties files separate from configuration.
+
+**Scenario:** Your framework needs structured test data management. Create separate properties files for different test data categories with a TestDataReader utility.
+
+**Requirements:**
+1. Create testdata.properties with organized test data
+2. Implement TestDataReader utility class
+3. Organize data by category (users, products, payments, errors)
+4. Create type-specific getters
+5. Support data variations (valid/invalid)
+6. Use test data in actual tests
+
+**Code Template:**
+
+```java
+// TODO 1: Create testdata.properties
+# testdata.properties
+
+# Valid User Data
+user.valid.email=testuser@example.com
+user.valid.password=Test@123
+user.valid.firstname=John
+user.valid.lastname=Doe
+user.valid.phone=5551234567
+
+# Invalid User Data
+user.invalid.email=invalid-email
+user.invalid.password=123
+user.invalid.phone=abc
+
+# Product Test Data
+product.1.name=Laptop Pro 15
+product.1.price=999.99
+product.1.category=Electronics
+
+product.2.name=Wireless Mouse
+product.2.price=29.99
+product.2.category=Accessories
+
+# Payment Test Data
+payment.card.valid=4111111111111111
+payment.card.expired=4111111111111110
+payment.cvv=123
+payment.expiry.valid=12/25
+payment.expiry.expired=01/20
+
+# Error Messages
+error.invalid.login=Invalid username or password
+error.required.field=This field is required
+error.invalid.email=Please enter a valid email address
+error.password.weak=Password is too weak
+
+// TODO 2: Implement TestDataReader
+package utils;
+
+import java.io.InputStream;
+import java.util.Properties;
+
+public class TestDataReader {
+
+    private static Properties testData;
+
+    static {
+        testData = new Properties();
+        try {
+            // TODO: Load testdata.properties from classpath
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load test data");
+        }
+    }
+
+    public static String getTestData(String key) {
+        // Your code here
+        return null;
+    }
+
+    // TODO 3: Implement user data getters
+    public static String getValidEmail() {
+        // Your code here
+        return null;
+    }
+
+    public static String getValidPassword() {
+        // Your code here
+        return null;
+    }
+
+    public static String getInvalidEmail() {
+        // Your code here
+        return null;
+    }
+
+    // TODO 4: Implement product data getters
+    public static String getProductName(int productNumber) {
+        // Your code here
+        return null;
+    }
+
+    public static double getProductPrice(int productNumber) {
+        // Parse as double
+        return 0.0;
+    }
+
+    // TODO 5: Implement payment data getters
+    public static String getValidCardNumber() {
+        // Your code here
+        return null;
+    }
+
+    public static String getCardCVV() {
+        // Your code here
+        return null;
+    }
+
+    // TODO 6: Implement error message getters
+    public static String getInvalidLoginError() {
+        // Your code here
+        return null;
+    }
+
+    public static String getRequiredFieldError() {
+        // Your code here
+        return null;
+    }
+}
+```
+
+**Test Using Test Data:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import utils.TestDataReader;
+
+public class LoginTestWithTestData {
+
+    @Test
+    public void testValidLogin() {
+        // TODO: Use TestDataReader for test data
+        String email = TestDataReader.getValidEmail();
+        String password = TestDataReader.getValidPassword();
+
+        loginPage.login(email, password);
+
+        Assert.assertTrue(homePage.isLoggedIn());
+    }
+
+    @Test
+    public void testInvalidLogin() {
+        // TODO: Test with invalid data
+        String email = TestDataReader.getInvalidEmail();
+        String password = TestDataReader.getInvalidPassword();
+
+        loginPage.login(email, password);
+
+        String expectedError = TestDataReader.getInvalidLoginError();
+        String actualError = loginPage.getErrorMessage();
+
+        Assert.assertEquals(actualError, expectedError);
+    }
+}
+```
+
+**Expected Outcome:**
+- Test data completely separated from code
+- Easy to add new test data
+- Tests use TestDataReader consistently
+- Non-technical users can manage test data
+- Clear organization by data category
+
+**Common Mistakes to Avoid:**
+- Mixing configuration and test data
+- Not organizing data by category
+- Hardcoding indices or keys in tests
+- Not providing getters for common data
+- Keeping sensitive data unencrypted
+
+---
+
+### Exercise 4: Handle Multiple Properties Files (40 min)
+
+**Objective:** Build a system that loads and merges multiple properties files with priority handling.
+
+**Scenario:** Your framework needs to load configuration from multiple sources: base config, environment config, local overrides, and test data. Implement proper merging with priority.
+
+**Requirements:**
+1. Create multiple properties files with different purposes
+2. Implement PropertiesManager that loads all files
+3. Handle file loading priority (base → environment → local)
+4. Support local overrides file for personal settings
+5. Merge properties correctly
+6. Write tests verifying merge behavior
+
+**Code Template:**
+
+```java
+// TODO 1: Create base config files
+# config/base.properties
+app.name=Test Framework
+browser=chrome
+timeout=10
+
+# config/qa.properties
+app.url=https://qa.example.com
+db.url=jdbc:mysql://qa-db:3306/testdb
+
+# config/local.properties (gitignored)
+# Personal overrides
+browser=firefox
+headless=true
+
+// TODO 2: Implement PropertiesManager
+package utils;
+
+import java.io.InputStream;
+import java.util.Properties;
+
+public class PropertiesManager {
+
+    private static Properties mergedProperties;
+
+    static {
+        loadAllProperties();
+    }
+
+    // TODO: Implement loadAllProperties()
+    private static void loadAllProperties() {
+        mergedProperties = new Properties();
+
+        try {
+            // TODO: Load in priority order
+            // 1. Base config
+            loadPropertiesFile("config/base.properties");
+
+            // 2. Environment-specific config
+            String env = System.getProperty("env", "qa");
+            loadPropertiesFile("config/" + env + ".properties");
+
+            // 3. Local overrides (optional)
+            loadPropertiesFile("config/local.properties");
+
+            printLoadedProperties();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // TODO: Implement loadPropertiesFile()
+    private static void loadPropertiesFile(String fileName) {
+        try {
+            InputStream inputStream = PropertiesManager.class
+                .getClassLoader()
+                .getResourceAsStream(fileName);
+
+            if (inputStream != null) {
+                // Your code here
+                System.out.println("Loaded: " + fileName);
+            } else {
+                System.out.println("Optional file not found: " + fileName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // TODO: Implement getProperty()
+    public static String getProperty(String key) {
+        // Your code here
+        return null;
+    }
+
+    // TODO: Implement getProperty() with default
+    public static String getProperty(String key, String defaultValue) {
+        // Your code here
+        return null;
+    }
+
+    // TODO: Implement hasProperty()
+    public static boolean hasProperty(String key) {
+        // Your code here
+        return false;
+    }
+
+    // TODO: Implement getAllProperties()
+    public static Properties getAllProperties() {
+        return (Properties) mergedProperties.clone();
+    }
+
+    // TODO: Implement printLoadedProperties()
+    private static void printLoadedProperties() {
+        System.out.println("=== Loaded Properties ===");
+        // Print all properties
+        System.out.println("========================");
+    }
+
+    // TODO: Implement reloadProperties()
+    public static void reloadProperties() {
+        mergedProperties.clear();
+        loadAllProperties();
+    }
+}
+```
+
+**Expected Outcome:**
+- Multiple files loaded in correct order
+- Later files override earlier ones
+- Local overrides work correctly
+- Optional files handled gracefully
+- Clear visibility of loaded properties
+
+**Common Mistakes to Avoid:**
+- Wrong loading order
+- Not handling missing optional files
+- Committing local.properties to version control
+- Not documenting override behavior
+- Not validating loaded properties
+
+---
+
+### Exercise 5: Build Configuration Validation System (35 min)
+
+**Objective:** Create a configuration validation system that checks for required properties and valid values.
+
+**Scenario:** Your framework needs to validate configuration at startup to catch issues early. Implement validators for required properties, value ranges, and format checking.
+
+**Requirements:**
+1. Create ConfigValidator class
+2. Check for required properties
+3. Validate value formats (URL, email, numeric ranges)
+4. Provide clear error messages
+5. Validate on framework startup
+6. Write comprehensive validation tests
+
+**Code Template:**
+
+```java
+package utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ConfigValidator {
+
+    private static List<String> validationErrors = new ArrayList<>();
+
+    // TODO 1: Implement validateConfiguration()
+    public static boolean validateConfiguration() {
+        validationErrors.clear();
+
+        // TODO: Validate all required properties
+        validateRequiredProperties();
+        validateUrls();
+        validateNumericRanges();
+        validateBrowserValue();
+
+        // Print errors if any
+        if (!validationErrors.isEmpty()) {
+            System.err.println("Configuration Validation Errors:");
+            for (String error : validationErrors) {
+                System.err.println("  - " + error);
+            }
+            return false;
+        }
+
+        System.out.println("Configuration validation passed!");
+        return true;
+    }
+
+    // TODO 2: Implement validateRequiredProperties()
+    private static void validateRequiredProperties() {
+        String[] requiredProps = {
+            "app.url",
+            "browser",
+            "implicit.wait",
+            "explicit.wait"
+        };
+
+        for (String prop : requiredProps) {
+            // Your code here
+        }
+    }
+
+    // TODO 3: Implement validateUrls()
+    private static void validateUrls() {
+        // TODO: Validate app.url format
+        String appUrl = ConfigReader.getProperty("app.url", "");
+        if (!isValidUrl(appUrl)) {
+            validationErrors.add("Invalid app.url: " + appUrl);
+        }
+    }
+
+    // TODO 4: Implement validateNumericRanges()
+    private static void validateNumericRanges() {
+        // TODO: Validate timeout values are positive
+        try {
+            int implicitWait = ConfigReader.getIntProperty("implicit.wait");
+            if (implicitWait < 0 || implicitWait > 60) {
+                validationErrors.add("implicit.wait must be between 0 and 60");
+            }
+        } catch (Exception e) {
+            validationErrors.add("implicit.wait must be a valid number");
+        }
+
+        // TODO: Validate explicit.wait
+    }
+
+    // TODO 5: Implement validateBrowserValue()
+    private static void validateBrowserValue() {
+        String browser = ConfigReader.getProperty("browser", "");
+        String[] validBrowsers = {"chrome", "firefox", "edge", "safari"};
+
+        // Your code here
+    }
+
+    // TODO 6: Implement helper methods
+    private static boolean isValidUrl(String url) {
+        // Check if URL is valid format
+        return url.matches("https?://.*");
+    }
+
+    private static boolean isPropertyPresent(String key) {
+        try {
+            String value = ConfigReader.getProperty(key);
+            return value != null && !value.trim().isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // TODO 7: Implement getValidationErrors()
+    public static List<String> getValidationErrors() {
+        return new ArrayList<>(validationErrors);
+    }
+}
+```
+
+**Test Class:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import utils.ConfigValidator;
+
+public class ConfigValidatorTest {
+
+    @Test
+    public void testValidConfiguration() {
+        boolean isValid = ConfigValidator.validateConfiguration();
+        Assert.assertTrue(isValid, "Configuration should be valid");
+    }
+
+    @Test
+    public void testMissingRequiredProperty() {
+        // TODO: Test with missing required property
+        // This would require mocking or temporary config
+    }
+
+    @Test
+    public void testInvalidUrl() {
+        // TODO: Test with invalid URL format
+    }
+
+    @Test
+    public void testInvalidNumericValue() {
+        // TODO: Test with out-of-range timeout
+    }
+}
+```
+
+**Expected Outcome:**
+- All configuration validated at startup
+- Clear error messages for invalid config
+- Tests catch configuration issues early
+- Validation prevents runtime failures
+- Easy to add new validation rules
+
+**Common Mistakes to Avoid:**
+- Not validating configuration early
+- Cryptic error messages
+- Not checking all required properties
+- Not validating value formats
+- Failing silently on validation errors
+
+---
+
+### Exercise 6: Create Property File Encryption Utility (45 min)
+
+**Objective:** Implement encryption/decryption for sensitive properties like passwords and API keys.
+
+**Scenario:** Your properties files contain sensitive data that shouldn't be stored in plain text. Create a utility to encrypt/decrypt sensitive properties.
+
+**Requirements:**
+1. Implement simple encryption/decryption utility
+2. Mark sensitive properties with prefix (e.g., ENC(...))
+3. Decrypt automatically when reading
+4. Provide command-line tool to encrypt values
+5. Update ConfigReader to handle encrypted properties
+6. Test encryption/decryption workflow
+
+**Code Template:**
+
+```java
+package utils;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
+public class PropertyEncryption {
+
+    private static final String ALGORITHM = "AES";
+    private static final String SECRET_KEY = "MySecretKey12345"; // Should be externalized
+
+    // TODO 1: Implement encrypt()
+    public static String encrypt(String value) {
+        try {
+            SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            return "ENC(" + Base64.getEncoder().encodeToString(encrypted) + ")";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Encryption failed");
+        }
+    }
+
+    // TODO 2: Implement decrypt()
+    public static String decrypt(String encryptedValue) {
+        try {
+            // Remove ENC( ) wrapper
+            if (!encryptedValue.startsWith("ENC(") || !encryptedValue.endsWith(")")) {
+                return encryptedValue; // Not encrypted
+            }
+
+            String encrypted = encryptedValue.substring(4, encryptedValue.length() - 1);
+
+            SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+
+            byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encrypted));
+            return new String(decrypted);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Decryption failed");
+        }
+    }
+
+    // TODO 3: Implement isEncrypted()
+    public static boolean isEncrypted(String value) {
+        // Your code here
+        return false;
+    }
+
+    // TODO 4: Implement command-line encryption tool
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: java PropertyEncryption <value-to-encrypt>");
+            return;
+        }
+
+        String valueToEncrypt = args[0];
+        String encrypted = encrypt(valueToEncrypt);
+
+        System.out.println("Original: " + valueToEncrypt);
+        System.out.println("Encrypted: " + encrypted);
+        System.out.println("Decrypted: " + decrypt(encrypted));
+    }
+}
+
+// TODO 5: Update SecureConfigReader to handle encryption
+package utils;
+
+public class SecureConfigReader extends ConfigReader {
+
+    @Override
+    public static String getProperty(String key) {
+        String value = super.getProperty(key);
+
+        // TODO: Decrypt if encrypted
+        if (PropertyEncryption.isEncrypted(value)) {
+            return PropertyEncryption.decrypt(value);
+        }
+
+        return value;
+    }
+
+    // Override other getters similarly
+}
+```
+
+**Properties File:**
+```properties
+# Sensitive data encrypted
+test.username=testuser@example.com
+test.password=ENC(aGVsbG93b3JsZDE=)
+api.key=ENC(c2VjcmV0a2V5MTIz)
+
+# Non-sensitive data plain
+app.url=https://qa.example.com
+browser=chrome
+```
+
+**Expected Outcome:**
+- Sensitive data encrypted in properties files
+- Automatic decryption when reading
+- Command-line tool for encrypting values
+- Framework handles both encrypted and plain values
+- Improved security for sensitive data
+
+**Common Mistakes to Avoid:**
+- Hardcoding encryption key in code
+- Not marking encrypted values clearly
+- Encrypting non-sensitive data unnecessarily
+- Not testing decryption failures
+- Committing unencrypted secrets
+
+---
+
+## Solution Approach for Exercises
+
+### Exercise 1 Solution Hints:
+- Use static block for one-time loading
+- Store Properties instance as static field
+- Catch and wrap IOException properly
+- Provide defaults for optional properties
+- Test with missing files to verify error handling
+
+### Exercise 2 Solution Hints:
+- Load files in correct order (base first)
+- Use getResourceAsStream for classpath loading
+- System.getProperty("env") gets environment
+- Later loaded files override earlier ones
+- Print loaded configuration for debugging
+
+### Exercise 3 Solution Hints:
+- Group related data with prefixes (user., product., etc.)
+- Provide specific getters for common data
+- Use descriptive key names
+- Consider separate files for large data sets
+- Document data structure in comments
+
+### Exercise 4 Solution Hints:
+- Each load() call merges with existing properties
+- Check for null InputStream before loading
+- Use try-catch for optional files
+- Clone properties when returning
+- Log which files were loaded
+
+### Exercise 5 Solution Hints:
+- Build list of errors, don't fail immediately
+- Use regex for URL validation
+- Check numeric ranges with try-catch
+- Validate at framework initialization
+- Provide clear, actionable error messages
+
+### Exercise 6 Solution Hints:
+- Use simple AES encryption for demo
+- Mark encrypted values with ENC() wrapper
+- Check prefix before attempting decryption
+- Store encryption key securely (not in code)
+- Provide CLI tool for generating encrypted values
+
+---
+
 ## 13. Key Takeaways
 
 1. **Properties files** provide externalized configuration for test automation

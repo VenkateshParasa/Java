@@ -2236,3 +2236,1598 @@ public class LoginTest {
 ---
 
 **Happy Learning!** Effective logging is crucial for building maintainable and debuggable test automation frameworks. Master these concepts to create production-ready test automation solutions.
+
+---
+
+## 18. Beginner-Friendly Exercises
+
+Practice these exercises to master logging and reporting concepts. Each exercise builds on previous knowledge and includes complete solutions.
+
+---
+
+### Exercise 1: Basic Log4j2 Setup and Configuration (40 minutes)
+
+**Objective:** Set up Log4j2 in your Selenium project with multiple appenders and custom log patterns.
+
+**Scenario:** You need to implement logging in your test automation framework with both console and file output.
+
+**Requirements:**
+1. Add Log4j2 Maven dependencies (log4j-core and log4j-api)
+2. Create log4j2.xml configuration file with:
+   - Console appender with colored output
+   - File appender for detailed logs
+   - Error-only file appender
+3. Configure different log patterns for each appender
+4. Set up package-specific log levels
+5. Test the configuration in a sample test class
+
+**Code Template:**
+
+```java
+package tests;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+
+public class LoggingSetupExercise {
+
+    // TODO: Create logger instance for this class
+    private static final Logger logger = null;
+
+    private WebDriver driver;
+
+    @BeforeClass
+    public void setupClass() {
+        // TODO: Log suite setup information
+    }
+
+    @BeforeMethod
+    public void setup() {
+        // TODO: Log test initialization
+        // TODO: Initialize browser
+        // TODO: Log browser launch
+    }
+
+    @Test(description = "Test with comprehensive logging")
+    public void testWithLogging() {
+        // TODO: Log test start
+
+        try {
+            // TODO: Log navigation
+            driver.get("https://www.saucedemo.com");
+
+            // TODO: Log page title retrieval
+            String pageTitle = driver.getTitle();
+
+            // TODO: Log verification steps
+            if (pageTitle.contains("Swag Labs")) {
+                // TODO: Log success
+            } else {
+                // TODO: Log warning
+            }
+
+        } catch (Exception e) {
+            // TODO: Log error with exception
+            throw e;
+        }
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            // TODO: Log browser closure
+            driver.quit();
+        }
+    }
+
+    @AfterClass
+    public void teardownClass() {
+        // TODO: Log suite completion
+    }
+}
+```
+
+**log4j2.xml Template:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <!-- TODO: Define properties for log pattern and directory -->
+    <Properties>
+        <Property name="LOG_PATTERN">???</Property>
+        <Property name="LOG_DIR">???</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- TODO: Configure Console Appender with colors -->
+
+        <!-- TODO: Configure File Appender for all logs -->
+
+        <!-- TODO: Configure separate Error File Appender -->
+
+    </Appenders>
+
+    <Loggers>
+        <!-- TODO: Configure logger for test package -->
+
+        <!-- TODO: Configure Root logger -->
+
+    </Loggers>
+</Configuration>
+```
+
+**Expected Output:**
+```
+Console:
+14:30:25.123 INFO  LoggingSetupExercise - Setting up test suite
+14:30:25.456 INFO  LoggingSetupExercise - Initializing browser
+14:30:26.789 INFO  LoggingSetupExercise - Test started: testWithLogging
+14:30:27.012 INFO  LoggingSetupExercise - Navigating to https://www.saucedemo.com
+14:30:28.234 INFO  LoggingSetupExercise - Page title: Swag Labs
+14:30:28.456 PASS  LoggingSetupExercise - Page title verification successful
+
+File: logs/application.log (detailed logs)
+File: logs/errors.log (error logs only)
+```
+
+**Common Mistakes to Avoid:**
+1. Forgetting to create logs directory - causes file write failures
+2. Using System.out.println() instead of logger methods
+3. Not setting proper log levels for different environments
+4. Incorrect log4j2.xml location (must be in src/test/resources)
+5. Using wrong pattern syntax causing configuration errors
+
+**Solution Hints:**
+<details>
+<summary>Click to see hints</summary>
+
+1. Logger instantiation:
+```java
+private static final Logger logger = LogManager.getLogger(LoggingSetupExercise.class);
+```
+
+2. Log4j2.xml console appender:
+```xml
+<Console name="Console" target="SYSTEM_OUT">
+    <PatternLayout>
+        <Pattern>%d{HH:mm:ss.SSS} %highlight{%-5level}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan} %logger{36} - %msg%n</Pattern>
+    </PatternLayout>
+</Console>
+```
+
+3. File appender:
+```xml
+<File name="FileAppender" fileName="${LOG_DIR}/application.log">
+    <PatternLayout pattern="${LOG_PATTERN}"/>
+</File>
+```
+
+4. Logger configuration:
+```xml
+<Logger name="tests" level="DEBUG" additivity="false">
+    <AppenderRef ref="Console"/>
+    <AppenderRef ref="FileAppender"/>
+</Logger>
+```
+
+5. Logging methods:
+```java
+logger.info("Starting test: {}", testName);
+logger.debug("Current URL: {}", driver.getCurrentUrl());
+logger.error("Test failed", exception);
+```
+</details>
+
+---
+
+### Exercise 2: Implementing LoggerUtil with SLF4J (35 minutes)
+
+**Objective:** Create a reusable LoggerUtil class using SLF4J facade with Log4j2 backend.
+
+**Scenario:** Build a logger utility that provides consistent logging methods across your framework.
+
+**Requirements:**
+1. Add SLF4J API and Log4j2 SLF4J bridge dependencies
+2. Create LoggerUtil class with static helper methods
+3. Implement methods for: info, debug, error, warn
+4. Add test step logging with formatted messages
+5. Create methods for test start/end logging
+6. Test the utility in multiple test classes
+
+**Code Template:**
+
+```java
+package utils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class LoggerUtil {
+
+    /**
+     * Get logger for calling class automatically
+     */
+    public static Logger getLogger() {
+        // TODO: Get stack trace and determine calling class
+        // TODO: Return logger for that class
+        return null;
+    }
+
+    /**
+     * Log test start with banner
+     */
+    public static void logTestStart(String testName) {
+        // TODO: Get logger
+        // TODO: Log separator line
+        // TODO: Log "TEST STARTED: testName"
+        // TODO: Log separator line
+    }
+
+    /**
+     * Log test end with status and duration
+     */
+    public static void logTestEnd(String testName, String status, long durationMs) {
+        // TODO: Get logger
+        // TODO: Log separator line
+        // TODO: Log "TEST COMPLETED: testName"
+        // TODO: Log "Status: status"
+        // TODO: Log "Duration: durationMs ms"
+        // TODO: Log separator line
+    }
+
+    /**
+     * Log test step
+     */
+    public static void logStep(String step) {
+        // TODO: Get logger and log "STEP: step"
+    }
+
+    /**
+     * Log pass message
+     */
+    public static void logPass(String message) {
+        // TODO: Get logger and log "PASS: message"
+    }
+
+    /**
+     * Log fail message
+     */
+    public static void logFail(String message) {
+        // TODO: Get logger and log "FAIL: message"
+    }
+
+    /**
+     * Log fail message with exception
+     */
+    public static void logFail(String message, Throwable throwable) {
+        // TODO: Get logger and log error with exception
+    }
+
+    /**
+     * Log info with variable arguments
+     */
+    public static void info(String message, Object... args) {
+        // TODO: Implement with SLF4J parameterized logging
+    }
+
+    /**
+     * Log debug with variable arguments
+     */
+    public static void debug(String message, Object... args) {
+        // TODO: Implement with SLF4J parameterized logging
+    }
+
+    /**
+     * Log error with variable arguments
+     */
+    public static void error(String message, Object... args) {
+        // TODO: Implement
+    }
+}
+```
+
+**Test Class Template:**
+
+```java
+package tests;
+
+import utils.LoggerUtil;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+
+public class LoggerUtilTest {
+
+    private WebDriver driver;
+
+    @Test
+    public void testLoginWithLoggerUtil() {
+        long startTime = System.currentTimeMillis();
+        String testName = "testLoginWithLoggerUtil";
+
+        // TODO: Log test start using LoggerUtil
+
+        try {
+            // TODO: Log step - Navigate to website
+            driver.get("https://www.saucedemo.com");
+
+            // TODO: Log step - Enter username
+            driver.findElement(By.id("user-name")).sendKeys("standard_user");
+
+            // TODO: Log step - Enter password
+            driver.findElement(By.id("password")).sendKeys("secret_sauce");
+
+            // TODO: Log step - Click login
+            driver.findElement(By.id("login-button")).click();
+
+            // TODO: Log pass - Login successful
+
+            long duration = System.currentTimeMillis() - startTime;
+            // TODO: Log test end with PASSED status
+
+        } catch (Exception e) {
+            // TODO: Log fail with exception
+            long duration = System.currentTimeMillis() - startTime;
+            // TODO: Log test end with FAILED status
+            throw e;
+        }
+    }
+}
+```
+
+**Expected Output:**
+```
+========================================
+TEST STARTED: testLoginWithLoggerUtil
+========================================
+STEP: Navigate to https://www.saucedemo.com
+STEP: Enter username: standard_user
+STEP: Enter password
+STEP: Click login button
+PASS: Login successful
+========================================
+TEST COMPLETED: testLoginWithLoggerUtil
+Status: PASSED
+Duration: 3456 ms
+========================================
+```
+
+**Common Mistakes to Avoid:**
+1. Using Log4j2 classes directly instead of SLF4J facade
+2. Not handling null values in parameterized logging
+3. Creating new logger instances repeatedly instead of reusing
+4. Missing SLF4J bridge dependency causing runtime errors
+5. Using string concatenation instead of parameterized messages
+
+**Solution Hints:**
+<details>
+<summary>Click to see hints</summary>
+
+1. Get calling class:
+```java
+StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+String callingClass = stackTrace[2].getClassName();
+return LoggerFactory.getLogger(Class.forName(callingClass));
+```
+
+2. Parameterized logging:
+```java
+public static void info(String message, Object... args) {
+    Logger logger = getLogger();
+    logger.info(message, args);
+}
+```
+
+3. Test start logging:
+```java
+public static void logTestStart(String testName) {
+    Logger logger = getLogger();
+    logger.info("========================================");
+    logger.info("TEST STARTED: {}", testName);
+    logger.info("========================================");
+}
+```
+
+4. Usage in tests:
+```java
+LoggerUtil.logTestStart("testLogin");
+LoggerUtil.logStep("Navigate to login page");
+LoggerUtil.info("Using username: {}", username);
+LoggerUtil.logPass("Login successful");
+```
+</details>
+
+---
+
+### Exercise 3: Implementing Rolling File Appenders (40 minutes)
+
+**Objective:** Configure rolling file appenders for automatic log rotation and management.
+
+**Scenario:** Your test suite generates large log files. Implement rolling file appenders to manage log file size and retention.
+
+**Requirements:**
+1. Create RollingFile appender with time-based policy (daily)
+2. Add size-based policy (10MB limit)
+3. Configure log compression (.gz format)
+4. Set retention policy (30 days)
+5. Create separate rolling appenders for different log levels
+6. Test log rotation by generating large logs
+
+**log4j2.xml Template:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="ARCHIVE_DIR">${LOG_DIR}/archives</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- TODO: Configure Console Appender -->
+
+        <!-- TODO: Configure RollingFile for all logs
+             - Daily rotation at midnight
+             - Size rotation at 10 MB
+             - Compression enabled
+             - Keep 30 days
+        -->
+
+        <!-- TODO: Configure RollingFile for error logs only
+             - Daily rotation
+             - Size rotation at 5 MB
+             - Keep 60 days
+        -->
+
+        <!-- TODO: Configure RollingFile for test execution logs
+             - Rotation on startup
+             - Size rotation at 10 MB
+             - Keep 10 most recent files
+        -->
+
+    </Appenders>
+
+    <Loggers>
+        <!-- TODO: Configure loggers -->
+    </Loggers>
+</Configuration>
+```
+
+**Test Code Template:**
+
+```java
+package tests;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.Test;
+
+public class RollingFileAppenderTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(RollingFileAppenderTest.class);
+
+    @Test
+    public void testLogRotation() {
+        // TODO: Generate logs to test rotation
+        for (int i = 0; i < 10000; i++) {
+            // TODO: Log info messages
+            // TODO: Log debug messages
+            // TODO: Log error messages every 100 iterations
+        }
+
+        // TODO: Verify log files are created in correct directories
+    }
+
+    @Test
+    public void testErrorLogSeparation() {
+        // TODO: Log various levels
+        logger.info("This is info message");
+        logger.debug("This is debug message");
+        logger.error("This is error message");
+        logger.warn("This is warning message");
+
+        // TODO: Verify only errors go to error log file
+    }
+}
+```
+
+**Verification Steps:**
+```java
+package tests;
+
+import java.io.File;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+public class LogFileVerification {
+
+    @Test
+    public void verifyLogFilesCreated() {
+        // TODO: Check if application.log exists
+        File appLog = new File("logs/application.log");
+        Assert.assertTrue(appLog.exists(), "Application log file should exist");
+
+        // TODO: Check if errors.log exists
+        // TODO: Check if test-execution.log exists
+
+        // TODO: Verify archives directory is created
+        File archiveDir = new File("logs/archives");
+        Assert.assertTrue(archiveDir.exists(), "Archive directory should exist");
+    }
+
+    @Test
+    public void verifyLogRotation() {
+        // TODO: Check for archived log files
+        File archiveDir = new File("logs/archives");
+        File[] archivedFiles = archiveDir.listFiles((dir, name) ->
+            name.startsWith("application-") && name.endsWith(".log.gz"));
+
+        // TODO: Assert archived files exist after rotation
+    }
+}
+```
+
+**Expected File Structure:**
+```
+logs/
+├── application.log
+├── errors.log
+├── test-execution.log
+└── archives/
+    ├── application-2024-01-15-001.log.gz
+    ├── application-2024-01-16-001.log.gz
+    ├── errors-2024-01-15-001.log.gz
+    └── test-execution-001.log
+```
+
+**Common Mistakes to Avoid:**
+1. Incorrect file pattern causing rotation failures
+2. Missing compression in file pattern (.gz extension)
+3. Not setting proper DefaultRolloverStrategy max value
+4. Using same file name for different appenders
+5. Not creating log directory structure in advance
+
+**Solution Hints:**
+<details>
+<summary>Click to see hints</summary>
+
+1. Daily rolling with size and compression:
+```xml
+<RollingFile name="AppLog"
+             fileName="${LOG_DIR}/application.log"
+             filePattern="${ARCHIVE_DIR}/application-%d{yyyy-MM-dd}-%i.log.gz">
+    <PatternLayout pattern="${LOG_PATTERN}"/>
+    <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+    </Policies>
+    <DefaultRolloverStrategy max="30"/>
+</RollingFile>
+```
+
+2. Error-only appender:
+```xml
+<RollingFile name="ErrorLog"
+             fileName="${LOG_DIR}/errors.log"
+             filePattern="${ARCHIVE_DIR}/errors-%d{yyyy-MM-dd}-%i.log.gz">
+    <PatternLayout pattern="${LOG_PATTERN}"/>
+    <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+    <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="5 MB"/>
+    </Policies>
+    <DefaultRolloverStrategy max="60"/>
+</RollingFile>
+```
+
+3. On-startup rotation:
+```xml
+<RollingFile name="TestLog"
+             fileName="${LOG_DIR}/test-execution.log"
+             filePattern="${LOG_DIR}/test-execution-%i.log">
+    <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level - %msg%n"/>
+    <Policies>
+        <OnStartupTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+    </Policies>
+    <DefaultRolloverStrategy max="10"/>
+</RollingFile>
+```
+
+4. Log generation for testing:
+```java
+for (int i = 0; i < 10000; i++) {
+    logger.info("Test log entry number: {}", i);
+    if (i % 100 == 0) {
+        logger.error("Periodic error log at iteration: {}", i);
+    }
+}
+```
+</details>
+
+---
+
+### Exercise 4: Implementing TestNG Listener with Logging (45 minutes)
+
+**Objective:** Create a TestNG listener that logs all test lifecycle events with proper formatting.
+
+**Scenario:** Automatically log all test events (start, pass, fail, skip) without modifying individual test classes.
+
+**Requirements:**
+1. Implement ITestListener interface
+2. Log suite start and end with summary
+3. Log individual test start, success, failure, and skip
+4. Add duration tracking for each test
+5. Include test parameters and descriptions in logs
+6. Create formatted summary at suite completion
+
+**Code Template:**
+
+```java
+package listeners;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.*;
+
+public class LoggingTestListener implements ITestListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoggingTestListener.class);
+
+    // TODO: Track test counts
+    private int passedTests = 0;
+    private int failedTests = 0;
+    private int skippedTests = 0;
+
+    @Override
+    public void onStart(ITestContext context) {
+        // TODO: Log suite start
+        // TODO: Log test suite name
+        // TODO: Log total test count
+    }
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        // TODO: Log test start with class and method name
+        // TODO: Log test description if available
+        // TODO: Log test parameters if any
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        // TODO: Increment passed count
+        // TODO: Calculate test duration
+        // TODO: Log success message with duration
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        // TODO: Increment failed count
+        // TODO: Calculate test duration
+        // TODO: Log failure message
+        // TODO: Log exception details
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result) {
+        // TODO: Increment skipped count
+        // TODO: Log skip message
+        // TODO: Log skip reason if available
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+        // TODO: Log suite completion
+        // TODO: Log summary statistics
+        // TODO: Log passed, failed, skipped counts
+        // TODO: Calculate and log total execution time
+        // TODO: Calculate pass percentage
+    }
+
+    /**
+     * Helper method to format duration
+     */
+    private String formatDuration(long millis) {
+        // TODO: Convert milliseconds to readable format
+        // TODO: Return formatted string (e.g., "3.45s" or "1m 23s")
+        return null;
+    }
+}
+```
+
+**Sample Test Classes:**
+
+```java
+package tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
+public class SampleTests {
+
+    @Test(description = "Verify successful scenario")
+    public void testPass() {
+        // TODO: Add test logic that passes
+        Assert.assertTrue(true);
+    }
+
+    @Test(description = "Verify failure handling")
+    public void testFail() {
+        // TODO: Add test logic that fails
+        Assert.assertTrue(false, "Intentional failure for demonstration");
+    }
+
+    @Test(description = "Test that should be skipped", enabled = false)
+    public void testSkip() {
+        // TODO: This test will be skipped
+    }
+
+    @Parameters({"browser", "environment"})
+    @Test(description = "Test with parameters")
+    public void testWithParameters(String browser, String environment) {
+        // TODO: Use parameters in test
+        System.out.println("Browser: " + browser);
+        System.out.println("Environment: " + environment);
+    }
+}
+```
+
+**testng.xml:**
+
+```xml
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Logging Test Suite">
+
+    <!-- TODO: Register the listener -->
+    <listeners>
+        <listener class-name="???"/>
+    </listeners>
+
+    <!-- TODO: Define parameters -->
+    <parameter name="browser" value="chrome"/>
+    <parameter name="environment" value="QA"/>
+
+    <test name="Sample Tests">
+        <classes>
+            <class name="tests.SampleTests"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Output:**
+```
+======================================
+Test Suite Started: Logging Test Suite
+Total Tests: 4
+======================================
+
+>>> Test Started: tests.SampleTests.testPass
+    Description: Verify successful scenario
+
+<<< Test PASSED: tests.SampleTests.testPass
+    Duration: 1.23s
+
+>>> Test Started: tests.SampleTests.testFail
+    Description: Verify failure handling
+
+<<< Test FAILED: tests.SampleTests.testFail
+    Duration: 0.45s
+    Reason: Intentional failure for demonstration
+    Exception: java.lang.AssertionError: Intentional failure
+
+<<< Test SKIPPED: tests.SampleTests.testSkip
+    Description: Test that should be skipped
+
+>>> Test Started: tests.SampleTests.testWithParameters
+    Description: Test with parameters
+    Parameters: browser=chrome, environment=QA
+
+<<< Test PASSED: tests.SampleTests.testWithParameters
+    Duration: 2.34s
+
+======================================
+Test Suite Finished: Logging Test Suite
+Total Tests: 4
+Passed: 2
+Failed: 1
+Skipped: 1
+Pass Rate: 50.0%
+Total Execution Time: 12.5s
+======================================
+```
+
+**Common Mistakes to Avoid:**
+1. Not registering listener in testng.xml
+2. Forgetting to handle null descriptions or parameters
+3. Not calculating duration properly (start vs end time)
+4. Missing exception logging in onTestFailure
+5. Not formatting test names properly (showing full path)
+
+**Solution Hints:**
+<details>
+<summary>Click to see hints</summary>
+
+1. Listener registration in testng.xml:
+```xml
+<listeners>
+    <listener class-name="listeners.LoggingTestListener"/>
+</listeners>
+```
+
+2. Test start logging:
+```java
+@Override
+public void onTestStart(ITestResult result) {
+    logger.info(">>> Test Started: {}.{}",
+               result.getTestClass().getName(),
+               result.getMethod().getMethodName());
+
+    String description = result.getMethod().getDescription();
+    if (description != null && !description.isEmpty()) {
+        logger.info("    Description: {}", description);
+    }
+}
+```
+
+3. Test failure logging:
+```java
+@Override
+public void onTestFailure(ITestResult result) {
+    failedTests++;
+    long duration = result.getEndMillis() - result.getStartMillis();
+
+    logger.error("<<< Test FAILED: {}.{}",
+                result.getTestClass().getName(),
+                result.getMethod().getMethodName());
+    logger.error("    Duration: {}ms", duration);
+    logger.error("    Reason: {}", result.getThrowable().getMessage());
+}
+```
+
+4. Suite completion summary:
+```java
+@Override
+public void onFinish(ITestContext context) {
+    logger.info("======================================");
+    logger.info("Test Suite Finished: {}", context.getName());
+    logger.info("Total Tests: {}", context.getAllTestMethods().length);
+    logger.info("Passed: {}", passedTests);
+    logger.info("Failed: {}", failedTests);
+    logger.info("Skipped: {}", skippedTests);
+
+    double passRate = (passedTests * 100.0) /
+                      (passedTests + failedTests + skippedTests);
+    logger.info("Pass Rate: {:.1f}%", passRate);
+    logger.info("======================================");
+}
+```
+
+5. Duration formatting:
+```java
+private String formatDuration(long millis) {
+    if (millis < 1000) {
+        return millis + "ms";
+    } else if (millis < 60000) {
+        return String.format("%.2fs", millis / 1000.0);
+    } else {
+        long minutes = millis / 60000;
+        long seconds = (millis % 60000) / 1000;
+        return String.format("%dm %ds", minutes, seconds);
+    }
+}
+```
+</details>
+
+---
+
+### Exercise 5: Implementing Package-Specific Logging Levels (35 minutes)
+
+**Objective:** Configure different log levels for different packages and reduce third-party library verbosity.
+
+**Scenario:** Your framework has multiple packages, and you want detailed logs from your code but minimal logs from Selenium and TestNG.
+
+**Requirements:**
+1. Set DEBUG level for your test package
+2. Set INFO level for your page package
+3. Set WARN level for Selenium package
+4. Set WARN level for TestNG package
+5. Create custom logger for specific test class
+6. Test the configuration and verify log levels
+
+**log4j2.xml Template:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Properties>
+        <Property name="LOG_PATTERN">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="LOG_DIR">logs</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <RollingFile name="AppLog"
+                     fileName="${LOG_DIR}/application.log"
+                     filePattern="${LOG_DIR}/application-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- TODO: Configure logger for tests package with DEBUG level -->
+
+        <!-- TODO: Configure logger for pages package with INFO level -->
+
+        <!-- TODO: Configure logger for utils package with DEBUG level -->
+
+        <!-- TODO: Configure logger for Selenium to reduce verbosity -->
+
+        <!-- TODO: Configure logger for TestNG to reduce verbosity -->
+
+        <!-- TODO: Configure logger for specific test class with TRACE level -->
+
+        <!-- TODO: Configure Root logger -->
+
+    </Loggers>
+</Configuration>
+```
+
+**Test Package Classes:**
+
+```java
+package tests;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.Test;
+
+public class DetailedLoggingTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(DetailedLoggingTest.class);
+
+    @Test
+    public void testWithDetailedLogs() {
+        // TODO: Log TRACE level (should not appear for most loggers)
+        logger.trace("TRACE: Method entry");
+
+        // TODO: Log DEBUG level (should appear for test package)
+        logger.debug("DEBUG: Initializing test data");
+
+        // TODO: Log INFO level (should appear for all)
+        logger.info("INFO: Test execution started");
+
+        // TODO: Log WARN level (should appear for all)
+        logger.warn("WARN: Using default configuration");
+
+        // TODO: Log ERROR level (should appear for all)
+        logger.error("ERROR: Test assertion failed");
+    }
+}
+```
+
+```java
+package pages;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class LoginPage {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginPage.class);
+
+    public void login(String username, String password) {
+        // TODO: These DEBUG logs should NOT appear (INFO level for pages)
+        logger.debug("DEBUG: Finding username field");
+        logger.debug("DEBUG: Finding password field");
+
+        // TODO: These INFO logs SHOULD appear
+        logger.info("INFO: Performing login for user: {}", username);
+        logger.info("INFO: Login completed successfully");
+    }
+}
+```
+
+```java
+package utils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ConfigReader {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConfigReader.class);
+
+    public String getProperty(String key) {
+        // TODO: These DEBUG logs SHOULD appear (DEBUG level for utils)
+        logger.debug("DEBUG: Reading property: {}", key);
+        logger.debug("DEBUG: Property value retrieved successfully");
+
+        // TODO: This INFO log SHOULD appear
+        logger.info("INFO: Configuration loaded");
+
+        return "value";
+    }
+}
+```
+
+**Verification Test:**
+
+```java
+package tests;
+
+import org.testng.annotations.Test;
+import pages.LoginPage;
+import utils.ConfigReader;
+
+public class LogLevelVerificationTest {
+
+    @Test
+    public void verifyLogLevels() {
+        // TODO: Call method from tests package (DEBUG level)
+        DetailedLoggingTest test = new DetailedLoggingTest();
+        test.testWithDetailedLogs();
+
+        // TODO: Call method from pages package (INFO level)
+        LoginPage loginPage = new LoginPage();
+        loginPage.login("testuser", "password");
+
+        // TODO: Call method from utils package (DEBUG level)
+        ConfigReader config = new ConfigReader();
+        config.getProperty("base.url");
+
+        // TODO: Verify in console which logs appear
+    }
+}
+```
+
+**Expected Console Output:**
+```
+14:30:25.123 [main] DEBUG tests.DetailedLoggingTest - DEBUG: Initializing test data
+14:30:25.124 [main] INFO  tests.DetailedLoggingTest - INFO: Test execution started
+14:30:25.125 [main] WARN  tests.DetailedLoggingTest - WARN: Using default configuration
+14:30:25.126 [main] ERROR tests.DetailedLoggingTest - ERROR: Test assertion failed
+
+14:30:25.127 [main] INFO  pages.LoginPage - INFO: Performing login for user: testuser
+14:30:25.128 [main] INFO  pages.LoginPage - INFO: Login completed successfully
+
+14:30:25.129 [main] DEBUG utils.ConfigReader - DEBUG: Reading property: base.url
+14:30:25.130 [main] DEBUG utils.ConfigReader - DEBUG: Property value retrieved successfully
+14:30:25.131 [main] INFO  utils.ConfigReader - INFO: Configuration loaded
+```
+
+**Common Mistakes to Avoid:**
+1. Setting additivity="true" causing duplicate logs
+2. Not using correct package names in logger configuration
+3. Forgetting to set level attribute in Logger elements
+4. Root logger level overriding package-specific levels
+5. Not testing all log levels to verify configuration
+
+**Solution Hints:**
+<details>
+<summary>Click to see hints</summary>
+
+1. Test package logger (DEBUG):
+```xml
+<Logger name="tests" level="DEBUG" additivity="false">
+    <AppenderRef ref="Console"/>
+    <AppenderRef ref="AppLog"/>
+</Logger>
+```
+
+2. Pages package logger (INFO):
+```xml
+<Logger name="pages" level="INFO" additivity="false">
+    <AppenderRef ref="Console"/>
+    <AppenderRef ref="AppLog"/>
+</Logger>
+```
+
+3. Utils package logger (DEBUG):
+```xml
+<Logger name="utils" level="DEBUG" additivity="false">
+    <AppenderRef ref="Console"/>
+    <AppenderRef ref="AppLog"/>
+</Logger>
+```
+
+4. Reduce Selenium verbosity:
+```xml
+<Logger name="org.openqa.selenium" level="WARN" additivity="false">
+    <AppenderRef ref="Console"/>
+</Logger>
+```
+
+5. Reduce TestNG verbosity:
+```xml
+<Logger name="org.testng" level="WARN" additivity="false">
+    <AppenderRef ref="Console"/>
+</Logger>
+```
+
+6. Specific class with TRACE level:
+```xml
+<Logger name="tests.DetailedLoggingTest" level="TRACE" additivity="false">
+    <AppenderRef ref="Console"/>
+    <AppenderRef ref="AppLog"/>
+</Logger>
+```
+
+7. Root logger:
+```xml
+<Root level="INFO">
+    <AppenderRef ref="Console"/>
+    <AppenderRef ref="AppLog"/>
+</Root>
+```
+</details>
+
+---
+
+### Exercise 6: Creating Production-Ready Logging Framework (50 minutes)
+
+**Objective:** Build a complete, production-ready logging framework with multiple appenders, filters, and utility methods.
+
+**Scenario:** Create an enterprise-level logging framework for your Selenium automation that can be used across multiple projects.
+
+**Requirements:**
+1. Create comprehensive log4j2.xml with all appender types
+2. Implement LogManager utility with helper methods
+3. Add automatic exception logging
+4. Implement log file cleanup for old logs
+5. Create environment-specific log configurations
+6. Add performance logging capability
+7. Integrate with test framework
+
+**Advanced log4j2.xml:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+        </Property>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="ARCHIVE_DIR">${LOG_DIR}/archives</Property>
+        <Property name="ENV">${sys:test.env:-qa}</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- TODO: Console Appender with colors -->
+
+        <!-- TODO: Main Application Log with daily rotation -->
+
+        <!-- TODO: Error Log (ERROR and above only) -->
+
+        <!-- TODO: Debug Log (DEBUG and above) -->
+
+        <!-- TODO: Performance Log (custom for timing logs) -->
+
+        <!-- TODO: Test Execution Log (clean format for CI/CD) -->
+
+    </Appenders>
+
+    <Loggers>
+        <!-- TODO: Configure all package loggers -->
+
+        <!-- TODO: Configure third-party library loggers -->
+
+        <!-- TODO: Root logger with environment-based level -->
+
+    </Loggers>
+</Configuration>
+```
+
+**LogManager Utility:**
+
+```java
+package framework.logging;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class LogManager {
+
+    private static final String LOG_DIR = "logs";
+    private static final String ARCHIVE_DIR = "logs/archives";
+    private static final int LOG_RETENTION_DAYS = 30;
+
+    /**
+     * Get logger for calling class
+     */
+    public static Logger getLogger() {
+        // TODO: Implement automatic logger retrieval
+        return null;
+    }
+
+    /**
+     * Get logger for specific class
+     */
+    public static Logger getLogger(Class<?> clazz) {
+        // TODO: Return logger for specified class
+        return null;
+    }
+
+    /**
+     * Initialize logging framework
+     */
+    public static void initialize() {
+        // TODO: Create log directories
+        // TODO: Clean old log files
+        // TODO: Log initialization message
+    }
+
+    /**
+     * Clean old log files
+     */
+    public static void cleanOldLogs() {
+        // TODO: Find files older than retention period
+        // TODO: Delete old files
+        // TODO: Log cleanup summary
+    }
+
+    /**
+     * Log test start with metadata
+     */
+    public static void logTestStart(String testName, String description) {
+        // TODO: Log formatted test start
+        // TODO: Include timestamp
+        // TODO: Include test metadata
+    }
+
+    /**
+     * Log test end with results
+     */
+    public static void logTestEnd(String testName, String status,
+                                   long duration, Throwable error) {
+        // TODO: Log formatted test end
+        // TODO: Include status and duration
+        // TODO: Include error details if failed
+    }
+
+    /**
+     * Log performance metrics
+     */
+    public static void logPerformance(String operation, long durationMs) {
+        // TODO: Log to performance log
+        // TODO: Include operation name and duration
+    }
+
+    /**
+     * Log with exception details
+     */
+    public static void logException(Logger logger, String message, Throwable throwable) {
+        // TODO: Log error message
+        // TODO: Log exception type
+        // TODO: Log full stack trace
+        // TODO: Log cause chain
+    }
+
+    /**
+     * Create structured log entry
+     */
+    public static String createLogEntry(String category, String message,
+                                       String... details) {
+        // TODO: Format structured log entry
+        // TODO: Include category, message, and details
+        return null;
+    }
+
+    /**
+     * Helper method to format duration
+     */
+    private static String formatDuration(long millis) {
+        // TODO: Convert to readable format
+        return null;
+    }
+}
+```
+
+**Performance Logging Utility:**
+
+```java
+package framework.logging;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PerformanceLogger {
+
+    private static final Logger perfLogger = LoggerFactory.getLogger("PERFORMANCE");
+
+    /**
+     * Log operation timing
+     */
+    public static void logTiming(String operation, long durationMs) {
+        // TODO: Log performance metric
+    }
+
+    /**
+     * Time and log operation execution
+     */
+    public static <T> T timeOperation(String operationName,
+                                     java.util.function.Supplier<T> operation) {
+        // TODO: Record start time
+        // TODO: Execute operation
+        // TODO: Record end time
+        // TODO: Log timing
+        // TODO: Return result
+        return null;
+    }
+
+    /**
+     * Time and log void operation
+     */
+    public static void timeOperation(String operationName, Runnable operation) {
+        // TODO: Similar to above but for void operations
+    }
+}
+```
+
+**Integration Test:**
+
+```java
+package tests;
+
+import framework.logging.LogManager;
+import framework.logging.PerformanceLogger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.slf4j.Logger;
+import org.testng.annotations.*;
+
+public class ProductionLoggingFrameworkTest {
+
+    private Logger logger;
+    private WebDriver driver;
+
+    @BeforeSuite
+    public void suiteSetup() {
+        // TODO: Initialize logging framework
+        LogManager.initialize();
+
+        // TODO: Clean old logs
+        LogManager.cleanOldLogs();
+    }
+
+    @BeforeMethod
+    public void setup() {
+        // TODO: Get logger
+        logger = LogManager.getLogger();
+
+        // TODO: Initialize browser
+        driver = new ChromeDriver();
+    }
+
+    @Test
+    public void testWithProductionLogging() {
+        String testName = "testWithProductionLogging";
+        long startTime = System.currentTimeMillis();
+
+        try {
+            // TODO: Log test start with metadata
+            LogManager.logTestStart(testName, "Comprehensive production logging test");
+
+            // TODO: Navigate with performance logging
+            PerformanceLogger.timeOperation("Navigate to homepage", () -> {
+                driver.get("https://www.saucedemo.com");
+            });
+
+            // TODO: Log business operation
+            logger.info("Performing login operation");
+
+            // TODO: Simulate some actions with timing
+            String pageTitle = PerformanceLogger.timeOperation(
+                "Get page title",
+                () -> driver.getTitle()
+            );
+
+            logger.info("Page title retrieved: {}", pageTitle);
+
+            // TODO: Log successful completion
+            long duration = System.currentTimeMillis() - startTime;
+            LogManager.logTestEnd(testName, "PASSED", duration, null);
+
+        } catch (Exception e) {
+            // TODO: Log exception with full details
+            long duration = System.currentTimeMillis() - startTime;
+            LogManager.logException(logger, "Test failed", e);
+            LogManager.logTestEnd(testName, "FAILED", duration, e);
+            throw e;
+        }
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Output Structure:**
+```
+logs/
+├── application.log (all logs)
+├── errors.log (errors only)
+├── debug.log (debug and above)
+├── performance.log (timing metrics)
+├── test-execution.log (test results)
+└── archives/
+    ├── application-2024-01-15-001.log.gz
+    ├── errors-2024-01-15-001.log.gz
+    └── ... (older rotated logs)
+
+Console Output:
+[INIT] Logging framework initialized
+[INIT] Log directories created
+[CLEANUP] Removed 5 old log files
+========================================
+TEST STARTED: testWithProductionLogging
+Description: Comprehensive production logging test
+Started at: 2024-01-15 14:30:25
+========================================
+[PERF] Navigate to homepage: 1234ms
+[INFO] Performing login operation
+[PERF] Get page title: 45ms
+[INFO] Page title retrieved: Swag Labs
+========================================
+TEST COMPLETED: testWithProductionLogging
+Status: PASSED
+Duration: 2.5s
+Ended at: 2024-01-15 14:30:28
+========================================
+```
+
+**Common Mistakes to Avoid:**
+1. Not initializing log directories before writing
+2. Missing exception in catch block logging
+3. Not cleaning old logs causing disk space issues
+4. Incorrect file patterns in rolling appenders
+5. Not handling null values in utility methods
+
+**Solution Hints:**
+<details>
+<summary>Click to see hints</summary>
+
+1. Initialize logging:
+```java
+public static void initialize() {
+    createDirectory(LOG_DIR);
+    createDirectory(ARCHIVE_DIR);
+    Logger logger = LoggerFactory.getLogger(LogManager.class);
+    logger.info("Logging framework initialized");
+    cleanOldLogs();
+}
+
+private static void createDirectory(String path) {
+    File dir = new File(path);
+    if (!dir.exists()) {
+        dir.mkdirs();
+    }
+}
+```
+
+2. Clean old logs:
+```java
+public static void cleanOldLogs() {
+    File logDir = new File(LOG_DIR);
+    File[] files = logDir.listFiles();
+    if (files == null) return;
+
+    long cutoffTime = System.currentTimeMillis() -
+                     (LOG_RETENTION_DAYS * 24 * 60 * 60 * 1000L);
+    int deletedCount = 0;
+
+    for (File file : files) {
+        if (file.lastModified() < cutoffTime) {
+            if (file.delete()) {
+                deletedCount++;
+            }
+        }
+    }
+
+    Logger logger = LoggerFactory.getLogger(LogManager.class);
+    logger.info("Cleaned {} old log files", deletedCount);
+}
+```
+
+3. Performance timing:
+```java
+public static <T> T timeOperation(String operationName,
+                                 Supplier<T> operation) {
+    long startTime = System.currentTimeMillis();
+    T result = operation.get();
+    long duration = System.currentTimeMillis() - startTime;
+    perfLogger.info("{}: {}ms", operationName, duration);
+    return result;
+}
+```
+
+4. Exception logging:
+```java
+public static void logException(Logger logger, String message,
+                               Throwable throwable) {
+    logger.error("Exception occurred: {}", message);
+    logger.error("Exception type: {}", throwable.getClass().getName());
+    logger.error("Exception message: {}", throwable.getMessage());
+    logger.error("Stack trace:", throwable);
+
+    Throwable cause = throwable.getCause();
+    if (cause != null) {
+        logger.error("Caused by: {}", cause.getMessage());
+    }
+}
+```
+
+5. Test logging with metadata:
+```java
+public static void logTestStart(String testName, String description) {
+    Logger logger = getLogger();
+    logger.info("========================================");
+    logger.info("TEST STARTED: {}", testName);
+    if (description != null && !description.isEmpty()) {
+        logger.info("Description: {}", description);
+    }
+    logger.info("Started at: {}", LocalDateTime.now().format(
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+    logger.info("========================================");
+}
+```
+</details>
+
+---
+
+## Practice Project: Complete Logging Implementation
+
+Create a comprehensive logging framework for a multi-page test automation project.
+
+**Requirements:**
+1. Configure Log4j2 with all appender types
+2. Implement LoggerUtil with helper methods
+3. Create TestNG listener for automatic logging
+4. Add package-specific log levels
+5. Implement performance logging
+6. Create log cleanup utility
+7. Test with real Selenium tests
+
+**Acceptance Criteria:**
+- All tests have automatic logging
+- Logs are properly formatted and readable
+- Old logs are automatically cleaned
+- Performance metrics are tracked
+- Exception details are captured
+- Different log levels work correctly
+- Log files rotate properly
+
+---
+
+## Additional Resources
+
+- [Log4j2 Official Documentation](https://logging.apache.org/log4j/2.x/)
+- [SLF4J User Manual](http://www.slf4j.org/manual.html)
+- [Log4j2 Configuration Documentation](https://logging.apache.org/log4j/2.x/manual/configuration.html)
+- [TestNG Listeners Documentation](https://testng.org/doc/documentation-main.html#testng-listeners)
+
+**Remember:** Good logging is essential for debugging, monitoring, and maintaining test automation frameworks!
