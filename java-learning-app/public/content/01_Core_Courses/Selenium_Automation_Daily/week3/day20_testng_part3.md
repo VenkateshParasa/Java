@@ -1205,6 +1205,369 @@ public class DocumentedTests {
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Misspelling Group Names
+**Problem**: Group names in tests don't match the names in testng.xml due to typos or case differences.
+**Why It's Wrong**: Tests won't be included/excluded as expected, leading to incorrect test execution.
+**Correct Approach**: Use consistent, carefully spelled group names (they are case-sensitive).
+
+```java
+// ❌ WRONG: Inconsistent group names
+@Test(groups = "Smoke")  // Capital S
+public void test1() { }
+
+@Test(groups = "smoke")  // Lowercase s
+public void test2() { }
+
+// testng.xml
+// <include name="smoke"/>  // Only test2 runs, test1 is excluded!
+
+// ✅ CORRECT: Consistent naming
+@Test(groups = "smoke")
+public void test1() { }
+
+@Test(groups = "smoke")
+public void test2() { }
+```
+
+### 2. Circular Dependencies
+**Problem**: Creating circular dependencies where Test A depends on Test B, and Test B depends on Test A.
+**Why It's Wrong**: Causes TestNG to fail with circular dependency exception.
+**Correct Approach**: Design linear or tree-like dependency chains, never circular.
+
+```java
+// ❌ WRONG: Circular dependency
+@Test
+public void testA() {
+    System.out.println("Test A");
+}
+
+@Test(dependsOnMethods = "testA")
+public void testB() {
+    System.out.println("Test B");
+}
+
+@Test(dependsOnMethods = "testB")  // Creates cycle!
+public void testA() {
+    System.out.println("Test A depends on B");
+}
+
+// ✅ CORRECT: Linear dependency
+@Test
+public void testSetup() {
+    System.out.println("Setup");
+}
+
+@Test(dependsOnMethods = "testSetup")
+public void testExecution() {
+    System.out.println("Execution");
+}
+
+@Test(dependsOnMethods = "testExecution")
+public void testCleanup() {
+    System.out.println("Cleanup");
+}
+```
+
+### 3. Forgetting alwaysRun for Cleanup Methods
+**Problem**: Not using alwaysRun=true on cleanup/teardown methods.
+**Why It's Wrong**: Cleanup won't execute if dependent tests fail, leading to resource leaks.
+**Correct Approach**: Always use alwaysRun=true for cleanup operations.
+
+```java
+// ❌ WRONG: Cleanup skipped if test fails
+@Test
+public void testMain() {
+    Assert.fail("Test failed");
+}
+
+@Test(dependsOnMethods = "testMain")
+public void cleanup() {
+    // This won't run because testMain failed!
+    System.out.println("Cleaning up resources");
+}
+
+// ✅ CORRECT: Cleanup always runs
+@Test
+public void testMain() {
+    Assert.fail("Test failed");
+}
+
+@Test(dependsOnMethods = "testMain", alwaysRun = true)
+public void cleanup() {
+    // This WILL run even though testMain failed
+    System.out.println("Cleaning up resources");
+}
+```
+
+### 4. Creating Unnecessary Test Dependencies
+**Problem**: Making tests dependent on each other when they should be independent.
+**Why It's Wrong**: Breaks test isolation, makes tests fragile, and prevents parallel execution.
+**Correct Approach**: Keep tests independent unless there's a legitimate reason for dependency.
+
+```java
+// ❌ WRONG: Unnecessary dependencies
+@Test
+public void testLogin() {
+    // Login test
+}
+
+@Test(dependsOnMethods = "testLogin")  // Unnecessary!
+public void testSearch() {
+    // Search should be independent
+    // Re-login if needed
+}
+
+// ✅ CORRECT: Independent tests
+@Test
+public void testLogin() {
+    // Login test
+}
+
+@Test
+public void testSearch() {
+    // Search test - performs its own login if needed
+    // Tests are independent and can run in parallel
+}
+```
+
+### 5. Misunderstanding Priority Execution
+**Problem**: Thinking priority 10 runs before priority 1.
+**Why It's Wrong**: Lower priority numbers execute first in TestNG.
+**Correct Approach**: Remember: Lower number = Higher priority (runs first).
+
+```java
+// ❌ WRONG: Misunderstanding priority
+@Test(priority = 10)
+public void criticalTest() {
+    // Thinking this runs first, but it runs LAST
+}
+
+@Test(priority = 1)
+public void normalTest() {
+    // This actually runs FIRST
+}
+
+// ✅ CORRECT: Proper priority understanding
+@Test(priority = 1)  // Highest priority - runs first
+public void criticalTest() {
+    System.out.println("Critical test runs first");
+}
+
+@Test(priority = 5)  // Lower priority - runs later
+public void normalTest() {
+    System.out.println("Normal test runs later");
+}
+```
+
+### 6. Not Handling Group Dependencies Properly
+**Problem**: Forgetting that dependsOnGroups skips test if any test in the group fails.
+**Why It's Wrong**: Can cause unexpected test skips if group dependencies aren't well understood.
+**Correct Approach**: Understand that ALL tests in dependent group must pass.
+
+```java
+// ❌ WRONG: Not considering group dependency failures
+@Test(groups = "setup")
+public void setupDB() {
+    Assert.fail("Setup failed");  // This fails
+}
+
+@Test(groups = "setup")
+public void setupUsers() {
+    // This passes
+}
+
+@Test(dependsOnGroups = "setup")
+public void mainTest() {
+    // This will be SKIPPED because one test in "setup" group failed
+}
+
+// ✅ CORRECT: Handle failures appropriately
+@Test(groups = "setup", alwaysRun = true)
+public void setupDB() {
+    try {
+        // Setup logic
+    } catch (Exception e) {
+        // Log error but don't fail completely
+        System.out.println("Setup warning: " + e.getMessage());
+    }
+}
+```
+
+---
+
+## 💡 Best Practices
+
+### 1. Use Meaningful and Consistent Group Names
+**Why**: Makes test organization clear and test selection intuitive.
+**How**: Establish naming conventions for groups across the project.
+
+```java
+// ✅ GOOD: Clear, consistent group names
+@Test(groups = {"smoke", "critical", "authentication"})
+public void testLogin() {
+    // Multiple relevant groups
+}
+
+@Test(groups = {"regression", "checkout", "payment"})
+public void testPayment() {
+    // Organized by type and feature
+}
+
+// Common group naming conventions:
+// - Test Type: smoke, regression, sanity, integration
+// - Priority: critical, high, medium, low
+// - Feature: login, checkout, search, payment
+// - Layer: ui, api, database
+```
+
+### 2. Organize Groups Hierarchically
+**Why**: Provides flexibility in test execution and better organization.
+**How**: Use meta-groups to create logical test hierarchies.
+
+```xml
+<!-- ✅ GOOD: Hierarchical group organization -->
+<suite name="Test Suite">
+    <test name="Quick Tests">
+        <groups>
+            <define name="quick-tests">
+                <include name="smoke"/>
+                <include name="sanity"/>
+            </define>
+
+            <define name="critical-tests">
+                <include name="smoke"/>
+                <include name="critical"/>
+            </define>
+
+            <run>
+                <include name="quick-tests"/>
+            </run>
+        </groups>
+        <!-- test classes -->
+    </test>
+</suite>
+```
+
+### 3. Use Dependencies Sparingly and Wisely
+**Why**: Too many dependencies make tests fragile and hard to maintain.
+**How**: Only create dependencies for genuine prerequisites.
+
+```java
+// ✅ GOOD: Legitimate dependencies
+@Test(groups = "init", priority = 1)
+public void initializeDatabase() {
+    // Database initialization
+}
+
+@Test(groups = "init", priority = 2)
+public void loadTestData() {
+    // Load data
+}
+
+@Test(dependsOnGroups = "init")
+public void testBusinessLogic() {
+    // Genuinely depends on initialization
+}
+```
+
+### 4. Always Use alwaysRun for Cleanup
+**Why**: Ensures resources are always released, preventing leaks and conflicts.
+**How**: Mark all cleanup/teardown methods with alwaysRun=true.
+
+```java
+// ✅ GOOD: Always run cleanup
+@Test(groups = "main")
+public void performOperations() {
+    // Test logic
+}
+
+@AfterClass(alwaysRun = true)
+public void cleanup() {
+    // Close connections
+    // Delete test data
+    // Release resources
+    // This ALWAYS runs regardless of test failures
+}
+
+@Test(groups = "cleanup", dependsOnGroups = "main", alwaysRun = true)
+public void finalCleanup() {
+    System.out.println("Final cleanup - always executes");
+}
+```
+
+### 5. Combine Groups, Dependencies, and Priorities Strategically
+**Why**: Creates a robust, well-organized test execution flow.
+**How**: Use all three features together where appropriate.
+
+```java
+// ✅ GOOD: Strategic combination
+@Test(groups = {"init", "database"}, priority = 1)
+public void setupDatabase() {
+    // Initialization with high priority
+}
+
+@Test(groups = {"smoke", "login"}, priority = 2, dependsOnGroups = "init")
+public void testLogin() {
+    // Smoke test depending on init, medium priority
+}
+
+@Test(groups = {"regression", "checkout"}, priority = 3, dependsOnMethods = "testLogin")
+public void testCheckout() {
+    // Regression test with dependencies
+}
+```
+
+### 6. Document Group Purposes
+**Why**: Helps team understand test organization and makes maintenance easier.
+**How**: Add comments or documentation explaining each group's purpose.
+
+```java
+/**
+ * Test Groups:
+ * - smoke: Quick validation tests (5-10 minutes)
+ * - regression: Comprehensive test coverage (30-60 minutes)
+ * - critical: Must-pass tests for production deployment
+ * - database: Tests requiring database connectivity
+ * - integration: End-to-end integration tests
+ * - ui: User interface tests
+ * - api: API-level tests
+ */
+
+// ✅ GOOD: Well-documented groups
+@Test(groups = {"smoke", "critical", "ui"})
+public void testUserLoginFlow() {
+    // Quick, critical UI smoke test
+}
+```
+
+### 7. Use Priority for Test Order, Not Dependencies
+**Why**: Priority is better for order without creating actual dependencies.
+**How**: Use priority when tests should run in order but don't truly depend on each other.
+
+```java
+// ✅ GOOD: Using priority for order
+@Test(priority = 1)
+public void testCreateAccount() {
+    // Runs first but independent
+}
+
+@Test(priority = 2)
+public void testLogin() {
+    // Runs second but independent (has its own account creation if needed)
+}
+
+@Test(priority = 3)
+public void testProfileUpdate() {
+    // Runs third but independent
+}
+
+// Each test is independent and can be run alone, but they execute in logical order
+```
+
+---
+
 ## 17. Practice Exercises
 
 ### Exercise 1: Organize Tests into Smoke and Regression Groups (20 minutes)

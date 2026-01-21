@@ -814,6 +814,349 @@ public class LoginTest {
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Not Adding TestNG Dependency
+**Problem**: Developers forget to add TestNG dependency to their project, leading to compilation errors.
+**Why It's Wrong**: Without the dependency, TestNG annotations and classes won't be recognized.
+**Correct Approach**: Always add TestNG dependency to pom.xml or build.gradle.
+
+```java
+// ❌ WRONG: Missing dependency leads to errors
+import org.testng.annotations.Test;  // Cannot resolve symbol 'testng'
+
+@Test
+public void testMethod() {
+    // Code here
+}
+
+// ✅ CORRECT: Add dependency in pom.xml
+/*
+<dependency>
+    <groupId>org.testng</groupId>
+    <artifactId>testng</artifactId>
+    <version>7.8.0</version>
+    <scope>test</scope>
+</dependency>
+*/
+```
+
+### 2. Using JUnit Annotations Instead of TestNG
+**Problem**: Mixing up JUnit and TestNG annotations.
+**Why It's Wrong**: JUnit's @Before/@After are different from TestNG's @BeforeMethod/@AfterMethod.
+**Correct Approach**: Use TestNG annotations consistently.
+
+```java
+// ❌ WRONG: Using JUnit annotations
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
+@Before  // This is JUnit, not TestNG
+public void setup() { }
+
+// ✅ CORRECT: Use TestNG annotations
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+
+@BeforeMethod
+public void setup() { }
+```
+
+### 3. Forgetting to Close Browser in @AfterMethod
+**Problem**: Not closing the browser after each test, causing resource leaks.
+**Why It's Wrong**: Leaves multiple browser instances running, consuming memory and resources.
+**Correct Approach**: Always quit driver in @AfterMethod with null check.
+
+```java
+// ❌ WRONG: No cleanup
+@Test
+public void testMethod() {
+    WebDriver driver = new ChromeDriver();
+    driver.get("https://google.com");
+    // Browser never closes!
+}
+
+// ✅ CORRECT: Proper cleanup
+WebDriver driver;
+
+@BeforeMethod
+public void setup() {
+    driver = new ChromeDriver();
+}
+
+@AfterMethod
+public void teardown() {
+    if (driver != null) {
+        driver.quit();
+    }
+}
+```
+
+### 4. Incorrect Annotation Hierarchy Understanding
+**Problem**: Expecting @BeforeClass to run before each test method.
+**Why It's Wrong**: @BeforeClass runs only once before the first test in the class, not before each test.
+**Correct Approach**: Use @BeforeMethod for per-test setup and @BeforeClass for one-time setup.
+
+```java
+// ❌ WRONG: Misunderstanding annotation hierarchy
+@BeforeClass
+public void setup() {
+    driver = new ChromeDriver();  // Only creates driver once for all tests
+}
+
+@Test
+public void test1() {
+    driver.get("https://google.com");
+}
+
+@Test
+public void test2() {
+    driver.get("https://facebook.com");  // Tests share same driver instance
+}
+
+// ✅ CORRECT: Use appropriate annotation
+@BeforeMethod  // Runs before EACH test
+public void setup() {
+    driver = new ChromeDriver();
+}
+
+@BeforeClass  // Use for one-time setup only
+public void setupClass() {
+    System.out.println("Setting up test class");
+}
+```
+
+### 5. Not Using Assertions
+**Problem**: Using System.out.println() instead of assertions to verify test results.
+**Why It's Wrong**: Tests will always pass even when conditions fail; no actual verification happens.
+**Correct Approach**: Use TestNG assertions to verify expected outcomes.
+
+```java
+// ❌ WRONG: No actual verification
+@Test
+public void testTitle() {
+    driver.get("https://google.com");
+    String title = driver.getTitle();
+    System.out.println("Title is: " + title);  // Test always passes!
+}
+
+// ✅ CORRECT: Use assertions
+@Test
+public void testTitle() {
+    driver.get("https://google.com");
+    String title = driver.getTitle();
+    Assert.assertEquals(title, "Google", "Title should be Google");
+}
+```
+
+### 6. Incorrect Priority Usage
+**Problem**: Assuming higher priority numbers execute first.
+**Why It's Wrong**: In TestNG, lower priority numbers execute first.
+**Correct Approach**: Remember that priority 1 runs before priority 2.
+
+```java
+// ❌ WRONG: Misunderstanding priority
+@Test(priority = 3)
+public void testLogin() {
+    // Expecting this to run first, but it runs last
+}
+
+@Test(priority = 1)
+public void testHomePage() {
+    // This actually runs first
+}
+
+// ✅ CORRECT: Proper priority usage
+@Test(priority = 1)  // Runs first
+public void testLogin() {
+    System.out.println("Login test - runs first");
+}
+
+@Test(priority = 2)  // Runs second
+public void testDashboard() {
+    System.out.println("Dashboard test - runs second");
+}
+```
+
+---
+
+## 💡 Best Practices
+
+### 1. Organize Tests with Meaningful Names
+**Why**: Clear test names make reports easier to understand and maintain.
+**How**: Use descriptive method names that explain what the test does.
+
+```java
+// ✅ GOOD: Clear, descriptive test names
+@Test
+public void testLoginWithValidCredentials() {
+    // Test implementation
+}
+
+@Test
+public void testLoginWithInvalidPassword() {
+    // Test implementation
+}
+
+@Test
+public void testLoginWithEmptyUsername() {
+    // Test implementation
+}
+
+// ❌ BAD: Unclear test names
+@Test
+public void test1() { }
+
+@Test
+public void testMethod() { }
+```
+
+### 2. Use @BeforeMethod and @AfterMethod for Browser Management
+**Why**: Ensures clean state for each test and proper resource cleanup.
+**How**: Initialize driver in @BeforeMethod, close it in @AfterMethod.
+
+```java
+// ✅ GOOD: Proper browser lifecycle management
+public class LoginTests {
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    }
+
+    @Test
+    public void testValidLogin() {
+        driver.get("https://example.com/login");
+        // Test logic
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+### 3. Add Descriptions to Test Methods
+**Why**: Descriptions appear in reports and help others understand test purpose.
+**How**: Use the description attribute in @Test annotation.
+
+```java
+// ✅ GOOD: Tests with descriptions
+@Test(description = "Verify user can login with valid email and password")
+public void testValidLogin() {
+    // Test implementation
+}
+
+@Test(description = "Verify error message appears for invalid credentials")
+public void testInvalidLogin() {
+    // Test implementation
+}
+```
+
+### 4. Use testng.xml for Test Suite Management
+**Why**: Centralizes test configuration and makes it easy to run specific test suites.
+**How**: Create testng.xml files for different test scenarios.
+
+```xml
+<!-- ✅ GOOD: Organized test suite -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Regression Test Suite">
+    <test name="Login Tests">
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.LogoutTest"/>
+        </classes>
+    </test>
+
+    <test name="Checkout Tests">
+        <classes>
+            <class name="tests.CheckoutTest"/>
+            <class name="tests.PaymentTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+### 5. Use Soft Assertions for Multiple Verifications
+**Why**: Allows test to continue after assertion failure, reporting all failures at once.
+**How**: Use SoftAssert instead of Assert for multiple verifications.
+
+```java
+// ✅ GOOD: Using SoftAssert for multiple checks
+@Test
+public void testUserProfile() {
+    SoftAssert softAssert = new SoftAssert();
+
+    driver.get("https://example.com/profile");
+
+    String username = driver.findElement(By.id("username")).getText();
+    String email = driver.findElement(By.id("email")).getText();
+    String phone = driver.findElement(By.id("phone")).getText();
+
+    softAssert.assertEquals(username, "JohnDoe", "Username mismatch");
+    softAssert.assertEquals(email, "john@example.com", "Email mismatch");
+    softAssert.assertEquals(phone, "1234567890", "Phone mismatch");
+
+    softAssert.assertAll();  // Reports all failures together
+}
+```
+
+### 6. Leverage Test Priorities Strategically
+**Why**: Ensures critical tests run first and test flow is logical.
+**How**: Assign priorities based on test importance and dependencies.
+
+```java
+// ✅ GOOD: Strategic priority usage
+@Test(priority = 1, description = "Setup: Create test account")
+public void testCreateAccount() {
+    // Account creation
+}
+
+@Test(priority = 2, description = "Login with created account")
+public void testLogin() {
+    // Login test
+}
+
+@Test(priority = 3, description = "Perform main operations")
+public void testMainFunctionality() {
+    // Main test
+}
+```
+
+### 7. Use Proper Assertion Messages
+**Why**: Makes debugging easier when tests fail by providing context.
+**How**: Always provide meaningful failure messages in assertions.
+
+```java
+// ✅ GOOD: Assertions with clear messages
+@Test
+public void testLoginRedirection() {
+    driver.get("https://example.com/login");
+    // Login logic
+    String currentUrl = driver.getCurrentUrl();
+
+    Assert.assertTrue(
+        currentUrl.contains("dashboard"),
+        "User should be redirected to dashboard after successful login. Current URL: " + currentUrl
+    );
+}
+
+// ❌ BAD: No message
+Assert.assertTrue(currentUrl.contains("dashboard"));  // Why did this fail?
+```
+
+---
+
 ## 17. Beginner-Friendly Exercises
 
 ### Exercise 1: First TestNG Test Creation

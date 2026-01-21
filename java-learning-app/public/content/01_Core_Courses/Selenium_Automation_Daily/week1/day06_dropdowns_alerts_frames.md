@@ -2347,6 +2347,253 @@ public void selectFromCustomDropdown(String dropdownId, String optionText) {
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Not Using Select Class for Dropdowns
+**Problem**: Trying to click on dropdown options directly without using the Select class.
+
+**Why It's Wrong**: Standard HTML `<select>` dropdowns require the Select class to interact properly. Direct clicking doesn't trigger the selection mechanism and can cause unreliable behavior or failures.
+
+**Correct Approach**: Always use Select class for HTML select elements.
+
+```java
+// ❌ WRONG: Trying to click dropdown options directly
+WebElement dropdown = driver.findElement(By.id("country"));
+dropdown.click(); // Opens dropdown
+driver.findElement(By.xpath("//option[text()='India']")).click(); // Unreliable
+
+// ✅ CORRECT: Use Select class
+WebElement dropdownElement = driver.findElement(By.id("country"));
+Select dropdown = new Select(dropdownElement);
+dropdown.selectByVisibleText("India");
+
+// ✅ CORRECT: Complete example with verification
+WebElement countryElement = driver.findElement(By.id("country"));
+Select countryDropdown = new Select(countryElement);
+
+// Select option
+countryDropdown.selectByVisibleText("India");
+
+// Verify selection
+String selected = countryDropdown.getFirstSelectedOption().getText();
+System.out.println("Selected: " + selected);
+assert selected.equals("India") : "Wrong country selected";
+```
+
+### 2. Not Waiting for Alerts Before Switching
+**Problem**: Attempting to switch to an alert immediately after an action without waiting.
+
+**Why It's Wrong**: Alerts might not appear instantly. JavaScript needs time to execute and create the alert. Switching too early causes `NoAlertPresentException`.
+
+**Correct Approach**: Use explicit wait for alert to be present.
+
+```java
+// ❌ WRONG: Immediate switch to alert
+driver.findElement(By.id("alert-btn")).click();
+Alert alert = driver.switchTo().alert(); // Might throw NoAlertPresentException
+
+// ✅ CORRECT: Wait for alert to be present
+driver.findElement(By.id("alert-btn")).click();
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+alert.accept();
+
+// ✅ BETTER: Create reusable method
+public Alert waitForAlert(int timeoutSeconds) {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds));
+    return wait.until(ExpectedConditions.alertIsPresent());
+}
+
+// Usage
+driver.findElement(By.id("alert-btn")).click();
+Alert alert = waitForAlert(10);
+System.out.println("Alert text: " + alert.getText());
+alert.accept();
+```
+
+### 3. Not Switching Back from Frames
+**Problem**: Switching to a frame and forgetting to switch back to default content.
+
+**Why It's Wrong**: Once you switch to a frame, all subsequent element searches happen within that frame context. Elements outside the frame become inaccessible, causing `NoSuchElementException` for elements that clearly exist on the page.
+
+**Correct Approach**: Always switch back to default content after frame operations.
+
+```java
+// ❌ WRONG: Not switching back from frame
+driver.switchTo().frame("frame1");
+driver.findElement(By.id("inside-frame-element")).click();
+
+// Try to interact with main page - FAILS!
+driver.findElement(By.id("main-page-element")).click(); // NoSuchElementException
+
+// ✅ CORRECT: Switch back to default content
+driver.switchTo().frame("frame1");
+driver.findElement(By.id("inside-frame-element")).click();
+driver.switchTo().defaultContent(); // Switch back to main page
+
+// Now main page elements are accessible
+driver.findElement(By.id("main-page-element")).click();
+
+// ✅ BEST: Use try-finally to ensure switching back
+try {
+    driver.switchTo().frame("frame1");
+    driver.findElement(By.id("inside-frame-element")).click();
+} finally {
+    driver.switchTo().defaultContent();
+}
+```
+
+### 4. Not Handling Multi-Window Context Properly
+**Problem**: Opening a new window/tab and not switching driver context to it.
+
+**Why It's Wrong**: Even when a new window/tab opens, the driver remains focused on the original window. All actions still target the old window unless you explicitly switch context.
+
+**Correct Approach**: Get all window handles, switch to the new window.
+
+```java
+// ❌ WRONG: Not switching to new window
+String mainWindow = driver.getWindowHandle();
+driver.findElement(By.id("open-new-window")).click();
+
+// Trying to interact with new window - FAILS!
+driver.findElement(By.id("new-window-element")).click(); // NoSuchElementException
+
+// ✅ CORRECT: Switch to new window
+String mainWindow = driver.getWindowHandle();
+driver.findElement(By.id("open-new-window")).click();
+
+// Wait for new window to open
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+
+// Get all windows and switch to new one
+Set<String> allWindows = driver.getWindowHandles();
+for (String window : allWindows) {
+    if (!window.equals(mainWindow)) {
+        driver.switchTo().window(window);
+        break;
+    }
+}
+
+// Now you can interact with new window
+driver.findElement(By.id("new-window-element")).click();
+
+// Close new window and switch back
+driver.close();
+driver.switchTo().window(mainWindow);
+
+// ✅ BETTER: Reusable method for window switching
+public void switchToNewWindow() {
+    String mainWindow = driver.getWindowHandle();
+    Set<String> allWindows = driver.getWindowHandles();
+
+    for (String window : allWindows) {
+        if (!window.equals(mainWindow)) {
+            driver.switchTo().window(window);
+            return;
+        }
+    }
+    throw new RuntimeException("New window not found");
+}
+```
+
+### 5. Using Wrong Methods for Non-Select Dropdowns
+**Problem**: Trying to use Select class on custom dropdowns (div-based, JavaScript-based).
+
+**Why It's Wrong**: Select class only works with HTML `<select>` elements. Custom dropdowns use `<div>`, `<ul>`, `<li>` and won't work with Select class, causing `UnexpectedTagNameException`.
+
+**Correct Approach**: Identify dropdown type and use appropriate method.
+
+```java
+// ❌ WRONG: Using Select on custom dropdown
+WebElement customDropdown = driver.findElement(By.className("custom-dropdown"));
+Select select = new Select(customDropdown); // UnexpectedTagNameException!
+
+// ✅ CORRECT: Check if it's a select element first
+WebElement dropdownElement = driver.findElement(By.id("dropdown"));
+
+// Check tag name
+if (dropdownElement.getTagName().equals("select")) {
+    // It's a standard select dropdown
+    Select select = new Select(dropdownElement);
+    select.selectByVisibleText("Option 1");
+} else {
+    // It's a custom dropdown - use click
+    dropdownElement.click();
+    driver.findElement(By.xpath("//li[text()='Option 1']")).click();
+}
+
+// ✅ BETTER: Separate methods for each type
+public void selectFromStandardDropdown(By locator, String optionText) {
+    WebElement element = driver.findElement(locator);
+    Select dropdown = new Select(element);
+    dropdown.selectByVisibleText(optionText);
+}
+
+public void selectFromCustomDropdown(By dropdownLocator, String optionText) {
+    driver.findElement(dropdownLocator).click();
+
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebElement option = wait.until(ExpectedConditions.elementToBeClickable(
+        By.xpath("//li[text()='" + optionText + "']")
+    ));
+    option.click();
+}
+```
+
+### 6. Not Verifying Alert Text Before Accepting
+**Problem**: Accepting or dismissing alerts without reading or verifying the message.
+
+**Why It's Wrong**: You might accept wrong alerts or miss important error messages. Tests should verify that the correct alert appears with expected text before accepting.
+
+**Correct Approach**: Always read alert text and verify it before accepting/dismissing.
+
+```java
+// ❌ WRONG: Blindly accepting alert
+driver.findElement(By.id("delete-btn")).click();
+Alert alert = driver.switchTo().alert();
+alert.accept(); // What if it's the wrong alert?
+
+// ✅ CORRECT: Verify alert text before accepting
+driver.findElement(By.id("delete-btn")).click();
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+
+String alertText = alert.getText();
+System.out.println("Alert message: " + alertText);
+
+if (alertText.contains("Are you sure you want to delete")) {
+    alert.accept();
+    System.out.println("Delete confirmed");
+} else {
+    alert.dismiss();
+    throw new RuntimeException("Unexpected alert: " + alertText);
+}
+
+// ✅ BETTER: Reusable method with verification
+public void handleAlert(String expectedText, boolean accept) {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+
+    String actualText = alert.getText();
+    assert actualText.contains(expectedText) :
+        "Expected: " + expectedText + ", but got: " + actualText;
+
+    if (accept) {
+        alert.accept();
+    } else {
+        alert.dismiss();
+    }
+}
+
+// Usage
+handleAlert("Are you sure you want to delete", true);
+```
+
+---
+
 ## Practice Exercises
 
 ### Exercise 1: Dropdown Selection and Verification

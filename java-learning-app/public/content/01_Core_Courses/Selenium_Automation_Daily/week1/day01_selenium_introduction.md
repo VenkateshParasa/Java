@@ -309,6 +309,170 @@ driver.get("https://example.com");
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Forgetting to Close the Browser
+**Problem**: Developers often forget to call `driver.quit()`, leaving browser instances running in the background.
+
+**Why It's Wrong**: Each unclosed browser consumes system memory. Running multiple tests without cleanup can lead to hundreds of Chrome/Firefox processes running, eventually crashing your system or CI/CD server.
+
+**Correct Approach**: Always use `try-finally` block to ensure cleanup.
+
+```java
+// ✅ CORRECT: Browser will close even if test fails
+WebDriver driver = new ChromeDriver();
+try {
+    driver.get("https://www.google.com");
+    // Your test code here
+} finally {
+    driver.quit(); // Always executes, even on exception
+}
+
+// ❌ WRONG: Browser stays open if exception occurs
+WebDriver driver = new ChromeDriver();
+driver.get("https://www.google.com");
+driver.quit(); // Never reached if error occurs above
+```
+
+### 2. Using close() Instead of quit()
+**Problem**: Calling `driver.close()` instead of `driver.quit()` at the end of tests.
+
+**Why It's Wrong**: `close()` only closes the current window but doesn't end the WebDriver session. The driver process continues running in the background, consuming memory. If your test opened multiple windows/tabs, `close()` won't close them all.
+
+**Correct Approach**: Use `quit()` to close all windows and end the session properly.
+
+```java
+// ✅ CORRECT: Ends entire session
+driver.quit();
+
+// ❌ WRONG: Leaves WebDriver process running
+driver.close();
+
+// ⚠️ close() is only useful when:
+// - You intentionally want to keep other windows open
+// - You're switching between multiple windows in a test
+```
+
+### 3. Not Setting Up WebDriverManager Properly
+**Problem**: Manually downloading browser drivers and hardcoding paths.
+
+**Why It's Wrong**: Hardcoded paths break when:
+- You move your project to another machine
+- Browser updates make the driver incompatible
+- Different team members have different folder structures
+- CI/CD servers have different file systems
+
+**Correct Approach**: Use WebDriverManager to handle driver setup automatically.
+
+```java
+// ❌ WRONG: Hardcoded path (breaks on different machines)
+System.setProperty("webdriver.chrome.driver", "C:\\Users\\John\\drivers\\chromedriver.exe");
+WebDriver driver = new ChromeDriver();
+
+// ✅ CORRECT: Automatic driver management
+WebDriverManager.chromedriver().setup();
+WebDriver driver = new ChromeDriver();
+
+// ✅ EVEN BETTER: Specify version for consistency
+WebDriverManager.chromedriver().driverVersion("119.0.6045.105").setup();
+WebDriver driver = new ChromeDriver();
+```
+
+### 4. Missing Exception Handling
+**Problem**: Not wrapping Selenium code in try-catch blocks.
+
+**Why It's Wrong**: Selenium operations can fail for many reasons (network issues, element not found, timeout). Without exception handling:
+- Tests crash with unhelpful error messages
+- Browser remains open after failure
+- No cleanup code executes
+- Difficult to debug what went wrong
+
+**Correct Approach**: Use proper exception handling with meaningful messages.
+
+```java
+// ❌ WRONG: No error handling
+WebDriver driver = new ChromeDriver();
+driver.get("https://www.example.com");
+String title = driver.getTitle();
+driver.quit();
+
+// ✅ CORRECT: Comprehensive error handling
+WebDriver driver = null;
+try {
+    WebDriverManager.chromedriver().setup();
+    driver = new ChromeDriver();
+    driver.get("https://www.example.com");
+
+    String title = driver.getTitle();
+    System.out.println("Page title: " + title);
+
+} catch (Exception e) {
+    System.err.println("Test failed: " + e.getMessage());
+    e.printStackTrace();
+
+} finally {
+    if (driver != null) {
+        driver.quit();
+    }
+}
+```
+
+### 5. Not Maximizing Browser Window
+**Problem**: Running tests in the default small browser window size.
+
+**Why It's Wrong**:
+- Elements might not be visible in a small window (especially dropdowns, menus)
+- Responsive websites show different layouts at different sizes
+- Screenshots capture only partial content
+- Some elements may be hidden on smaller viewports
+
+**Correct Approach**: Maximize the browser window or set a specific size.
+
+```java
+// ❌ WRONG: Default small window (varies by OS)
+WebDriver driver = new ChromeDriver();
+driver.get("https://www.example.com");
+
+// ✅ CORRECT: Maximize window
+WebDriver driver = new ChromeDriver();
+driver.manage().window().maximize();
+driver.get("https://www.example.com");
+
+// ✅ ALTERNATIVE: Set specific size
+driver.manage().window().setSize(new Dimension(1920, 1080));
+
+// ✅ FULLSCREEN: Use fullscreen mode
+driver.manage().window().fullscreen();
+```
+
+### 6. Hardcoding Thread.sleep()
+**Problem**: Using `Thread.sleep()` to wait for pages to load.
+
+**Why It's Wrong**:
+- Slows down tests unnecessarily (waits full time even if page loads faster)
+- Unreliable (might not wait long enough on slow networks)
+- Makes tests flaky (sometimes passes, sometimes fails)
+- Wastes time in test execution
+
+**Correct Approach**: We'll learn proper wait mechanisms (Implicit/Explicit waits) in Day 5, but here's a preview.
+
+```java
+// ❌ WRONG: Fixed wait time
+driver.get("https://www.example.com");
+Thread.sleep(5000); // Always waits 5 seconds
+String title = driver.getTitle();
+
+// ✅ CORRECT: Use implicit wait (we'll learn this in Day 5)
+driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+driver.get("https://www.example.com");
+String title = driver.getTitle(); // Waits only as long as needed
+
+// Note: For Day 1, Thread.sleep() is acceptable for learning
+// We'll learn better approaches in upcoming lessons
+```
+
+---
+
 ## 💻 Practice Exercises
 
 ### Exercise 1: Basic Navigation

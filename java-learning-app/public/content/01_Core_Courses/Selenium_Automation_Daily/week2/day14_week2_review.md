@@ -727,6 +727,134 @@ js.executeScript("arguments[0].click();", element);
 
 ---
 
+## ⚠️ Common Mistakes to Avoid - Week 2 Recap
+
+### 1. Forgetting to Call perform() on Actions
+**Problem**: Building action chains without executing them.
+
+**Why It's Wrong**: Actions class methods don't execute until `perform()` is called.
+
+**Correct Approach**: Always end action chains with `.perform()`.
+
+```java
+// ❌ WRONG
+actions.moveToElement(element).click(); // Nothing happens!
+
+// ✅ CORRECT
+actions.moveToElement(element).click().perform();
+```
+
+### 2. Not Handling HTML5 Drag and Drop
+**Problem**: Using `dragAndDrop()` on HTML5 elements.
+
+**Why It's Wrong**: Standard Selenium drag-and-drop doesn't work with HTML5 drag events.
+
+**Correct Approach**: Use JavaScript or Actions with pauses for HTML5 drag-and-drop.
+
+```java
+// ❌ WRONG
+actions.dragAndDrop(source, target).perform(); // Fails on HTML5
+
+// ✅ CORRECT
+actions.clickAndHold(source)
+       .pause(Duration.ofMillis(200))
+       .moveToElement(target)
+       .pause(Duration.ofMillis(200))
+       .release()
+       .perform();
+```
+
+### 3. Using Hardcoded Table Indexes
+**Problem**: Finding table cells with fixed row/column numbers.
+
+**Why It's Wrong**: Breaks when data changes or is sorted.
+
+**Correct Approach**: Find cells by content, not position.
+
+```java
+// ❌ WRONG
+String value = driver.findElement(By.xpath("//tr[5]/td[3]")).getText();
+
+// ✅ CORRECT
+String value = driver.findElement(
+    By.xpath("//tr[td[text()='Product A']]/td[3]")
+).getText();
+```
+
+### 4. Overusing JavascriptExecutor
+**Problem**: Using JavaScript for everything instead of standard Selenium.
+
+**Why It's Wrong**: JavaScript bypasses browser checks and doesn't simulate real user behavior.
+
+**Correct Approach**: Use JavaScript only when Selenium methods fail.
+
+```java
+// ❌ WRONG (if element is clickable normally)
+js.executeScript("arguments[0].click()", element);
+
+// ✅ CORRECT
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+element.click();
+
+// ✅ JAVASCRIPT: Only for hidden/overlapped elements
+if (!element.isDisplayed()) {
+    js.executeScript("arguments[0].click()", element);
+}
+```
+
+### 5. Not Waiting Between Actions
+**Problem**: Chaining actions without pauses for animations.
+
+**Why It's Wrong**: UIs need time for hover effects, animations, and AJAX calls.
+
+**Correct Approach**: Add appropriate waits between complex actions.
+
+```java
+// ❌ WRONG
+actions.moveToElement(menu).moveToElement(submenu).click().perform();
+
+// ✅ CORRECT
+actions.moveToElement(menu)
+       .pause(Duration.ofMillis(500))
+       .moveToElement(submenu)
+       .pause(Duration.ofMillis(300))
+       .click()
+       .perform();
+```
+
+### 6. Ignoring StaleElementReferenceException in Dynamic Tables
+**Problem**: Reusing WebElement references after table updates.
+
+**Why It's Wrong**: DOM changes invalidate element references.
+
+**Correct Approach**: Re-find elements after table modifications.
+
+```java
+// ❌ WRONG
+WebElement row = driver.findElement(By.xpath("//tr[1]"));
+// ... table refreshes via AJAX ...
+row.click(); // StaleElementReferenceException!
+
+// ✅ CORRECT
+// Find element fresh each time after updates
+driver.findElement(By.xpath("//tr[1]")).click();
+
+// ✅ BETTER: Retry logic
+public void clickWithRetry(By locator, int attempts) {
+    for (int i = 0; i < attempts; i++) {
+        try {
+            driver.findElement(locator).click();
+            return;
+        } catch (StaleElementReferenceException e) {
+            if (i == attempts - 1) throw e;
+        }
+    }
+}
+```
+
+---
+
 ## 📝 Week 2 Assessment
 
 Test your knowledge:

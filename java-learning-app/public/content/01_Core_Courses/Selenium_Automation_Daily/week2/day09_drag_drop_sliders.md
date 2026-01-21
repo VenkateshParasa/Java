@@ -2919,6 +2919,300 @@ public class JavaScriptDragDropWorkarounds {
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Using dragAndDrop() on HTML5 Drag and Drop
+**Problem**: Using Selenium's `dragAndDrop()` method on HTML5 drag-and-drop implementations.
+
+**Why It's Wrong**: Selenium's `dragAndDrop()` method was designed for traditional drag-and-drop and doesn't properly simulate HTML5 drag events (dragstart, drag, dragenter, dragleave, drop, dragend). This causes the drop operation to fail silently or not trigger the expected behavior.
+
+**Correct Approach**: Use JavaScript to simulate HTML5 drag-and-drop or use the low-level Actions API with pauses.
+
+```java
+// ❌ WRONG: dragAndDrop() on HTML5 elements
+WebElement source = driver.findElement(By.id("draggable"));
+WebElement target = driver.findElement(By.id("droppable"));
+actions.dragAndDrop(source, target).perform(); // Often fails with HTML5
+
+// ✅ CORRECT: Use JavaScript for HTML5 drag-and-drop
+public void html5DragAndDrop(WebElement source, WebElement target) {
+    String javaScript =
+        "function createEvent(typeOfEvent) {" +
+        "var event = document.createEvent('CustomEvent');" +
+        "event.initCustomEvent(typeOfEvent, true, true, null);" +
+        "event.dataTransfer = {" +
+        "  data: {}," +
+        "  setData: function (key, value) { this.data[key] = value; }," +
+        "  getData: function (key) { return this.data[key]; }" +
+        "};" +
+        "return event;" +
+        "}" +
+        "function dispatchEvent(element, event, transferData) {" +
+        "if (transferData !== undefined) {" +
+        "  event.dataTransfer = transferData;" +
+        "}" +
+        "if (element.dispatchEvent) {" +
+        "  element.dispatchEvent(event);" +
+        "}" +
+        "}" +
+        "var source = arguments[0];" +
+        "var target = arguments[1];" +
+        "var dragStart = createEvent('dragstart');" +
+        "dispatchEvent(source, dragStart);" +
+        "var drop = createEvent('drop');" +
+        "dispatchEvent(target, drop, dragStart.dataTransfer);" +
+        "var dragEnd = createEvent('dragend');" +
+        "dispatchEvent(source, dragEnd);";
+
+    ((JavascriptExecutor) driver).executeScript(javaScript, source, target);
+}
+
+// ✅ ALTERNATIVE: Use Actions with explicit pauses
+actions.clickAndHold(source)
+       .pause(Duration.ofMillis(200))
+       .moveToElement(target)
+       .pause(Duration.ofMillis(200))
+       .release()
+       .perform();
+```
+
+### 2. Not Handling Slider Offset Calculations Incorrectly
+**Problem**: Moving sliders without understanding offset calculations or assuming the slider track width.
+
+**Why It's Wrong**: Sliders have specific ranges and the pixel-to-value conversion varies. Simply moving by arbitrary pixels often results in setting wrong values. Also, the clickable area might not match the visible slider width.
+
+**Correct Approach**: Calculate the exact offset based on slider properties and desired value.
+
+```java
+// ❌ WRONG: Random offset without calculation
+WebElement slider = driver.findElement(By.id("price-slider"));
+actions.clickAndHold(slider)
+       .moveByOffset(100, 0) // Random 100px - wrong value!
+       .release()
+       .perform();
+
+// ✅ CORRECT: Calculate offset based on slider range and desired value
+public void setSliderValue(WebElement slider, int minValue, int maxValue, int desiredValue) {
+    // Get slider width
+    int sliderWidth = slider.getSize().getWidth();
+
+    // Calculate the percentage of desired value in the range
+    double percentage = (double)(desiredValue - minValue) / (maxValue - minValue);
+
+    // Calculate pixel offset (relative to slider center)
+    int xOffset = (int) ((percentage * sliderWidth) - (sliderWidth / 2));
+
+    // Perform the drag
+    actions.clickAndHold(slider)
+           .moveByOffset(xOffset, 0)
+           .release()
+           .perform();
+}
+
+// Usage
+WebElement priceSlider = driver.findElement(By.id("price-slider"));
+setSliderValue(priceSlider, 0, 1000, 750); // Set slider to $750
+
+// ✅ ALTERNATIVE: Use slider attributes if available
+WebElement slider = driver.findElement(By.id("slider"));
+String min = slider.getAttribute("min");
+String max = slider.getAttribute("max");
+String current = slider.getAttribute("value");
+// Calculate based on these values
+```
+
+### 3. Not Waiting for Drag and Drop Animations
+**Problem**: Immediately verifying or performing next action after drag-and-drop without waiting for animations.
+
+**Why It's Wrong**: Many modern UIs have smooth animations during drag-and-drop. If you verify the result immediately, the element might still be animating to its final position, causing test failures or incorrect verifications.
+
+**Correct Approach**: Wait for animations to complete before verification.
+
+```java
+// ❌ WRONG: Immediate verification after drop
+actions.dragAndDrop(source, target).perform();
+String result = target.getText(); // Might get old value if animation ongoing
+
+// ✅ CORRECT: Wait for animation to complete
+actions.dragAndDrop(source, target).perform();
+
+// Wait for element to settle
+try {
+    Thread.sleep(500); // Wait for animation
+} catch (InterruptedException e) {
+    e.printStackTrace();
+}
+
+// Verify result
+String result = target.getText();
+
+// ✅ BETTER: Wait for specific condition
+actions.dragAndDrop(source, target).perform();
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.attributeToBe(target, "class", "dropped"));
+
+// Now verify
+String result = target.getText();
+
+// ✅ BEST: Wait for element count or text to change
+int initialCount = driver.findElements(By.className("dropped-item")).size();
+actions.dragAndDrop(source, target).perform();
+
+wait.until(driver ->
+    driver.findElements(By.className("dropped-item")).size() > initialCount
+);
+```
+
+### 4. Not Scrolling Elements Into View Before Dragging
+**Problem**: Attempting to drag elements that are not in the viewport.
+
+**Why It's Wrong**: If source or target elements are outside the visible viewport, the drag operation will fail. The browser cannot interact with elements it cannot "see", even if they exist in the DOM.
+
+**Correct Approach**: Scroll elements into view before performing drag-and-drop.
+
+```java
+// ❌ WRONG: Dragging without checking viewport
+WebElement source = driver.findElement(By.id("item-50")); // May be scrolled out
+WebElement target = driver.findElement(By.id("basket"));
+actions.dragAndDrop(source, target).perform(); // Fails if source not visible
+
+// ✅ CORRECT: Scroll into view first
+WebElement source = driver.findElement(By.id("item-50"));
+WebElement target = driver.findElement(By.id("basket"));
+
+// Scroll source into view
+((JavascriptExecutor) driver).executeScript(
+    "arguments[0].scrollIntoView({block: 'center'});", source
+);
+Thread.sleep(300); // Wait for scroll animation
+
+// Scroll target into view
+((JavascriptExecutor) driver).executeScript(
+    "arguments[0].scrollIntoView({block: 'center'});", target
+);
+Thread.sleep(300);
+
+// Now perform drag and drop
+actions.dragAndDrop(source, target).perform();
+
+// ✅ BETTER: Combined method with error handling
+public void dragAndDropWithScroll(By sourceLocator, By targetLocator) {
+    WebElement source = driver.findElement(sourceLocator);
+    WebElement target = driver.findElement(targetLocator);
+
+    // Scroll source into view
+    ((JavascriptExecutor) driver).executeScript(
+        "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", source
+    );
+
+    // Wait for source to be clickable
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    wait.until(ExpectedConditions.elementToBeClickable(source));
+
+    // Scroll target into view if needed (for visible drop zones)
+    ((JavascriptExecutor) driver).executeScript(
+        "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", target
+    );
+
+    wait.until(ExpectedConditions.elementToBeClickable(target));
+
+    // Perform drag and drop
+    actions.dragAndDrop(source, target).perform();
+}
+```
+
+### 5. Using moveByOffset() with Incorrect Element Position
+**Problem**: Using `moveByOffset()` without considering the current mouse position or element center.
+
+**Why It's Wrong**: `moveByOffset()` moves from the current mouse position, not from the element center. If you've already moved to an element, subsequent `moveByOffset()` calls move from that location, which can lead to incorrect final positions.
+
+**Correct Approach**: Understand whether offset is from current position or element, use `moveToElement()` with offsets when needed.
+
+```java
+// ❌ WRONG: Confusing absolute and relative offsets
+WebElement slider = driver.findElement(By.id("slider"));
+actions.moveToElement(slider) // Moves to center
+       .moveByOffset(50, 0) // Moves 50px from center
+       .moveByOffset(30, 0) // Moves ANOTHER 30px (total 80px from center!)
+       .click()
+       .perform();
+
+// ✅ CORRECT: Use single offset or reset position
+WebElement slider = driver.findElement(By.id("slider"));
+actions.moveToElement(slider)
+       .moveByOffset(80, 0) // Single offset of 80px from center
+       .click()
+       .perform();
+
+// ✅ CORRECT: Use moveToElement with offset directly
+actions.moveToElement(slider, 80, 0) // Offset from element center
+       .click()
+       .perform();
+
+// ✅ BEST: For sliders, calculate from track start
+WebElement sliderTrack = driver.findElement(By.id("slider-track"));
+int trackWidth = sliderTrack.getSize().getWidth();
+int desiredOffset = (int) (trackWidth * 0.75); // 75% of track
+
+actions.moveToElement(sliderTrack)
+       .moveByOffset(-(trackWidth / 2), 0) // Move to track start
+       .moveByOffset(desiredOffset, 0) // Move to desired position
+       .click()
+       .perform();
+```
+
+### 6. Not Handling Drag Threshold Requirements
+**Problem**: Starting drag operations without moving enough distance to trigger drag mode.
+
+**Why It's Wrong**: Many drag-and-drop implementations require a minimum movement distance (drag threshold) before they recognize a drag operation. Small movements might be interpreted as clicks instead.
+
+**Correct Approach**: Ensure sufficient movement distance when initiating drag.
+
+```java
+// ❌ WRONG: Insufficient movement for drag recognition
+WebElement source = driver.findElement(By.id("draggable"));
+WebElement target = driver.findElement(By.id("droppable"));
+
+actions.clickAndHold(source)
+       .moveByOffset(2, 2) // Too small - might not trigger drag
+       .moveToElement(target)
+       .release()
+       .perform();
+
+// ✅ CORRECT: Move sufficient distance to trigger drag mode
+actions.clickAndHold(source)
+       .moveByOffset(5, 5) // Clear drag initiation
+       .pause(Duration.ofMillis(100))
+       .moveToElement(target)
+       .release()
+       .perform();
+
+// ✅ BETTER: Use dragAndDropBy with sufficient offset first
+actions.clickAndHold(source)
+       .moveByOffset(10, 0) // Clearly initiate drag
+       .pause(Duration.ofMillis(200))
+       .moveToElement(target)
+       .pause(Duration.ofMillis(200))
+       .release()
+       .perform();
+
+// ✅ BEST: Complete drag and drop with proper sequence
+public void performReliableDragAndDrop(WebElement source, WebElement target) {
+    actions.clickAndHold(source)
+           .pause(Duration.ofMillis(300))
+           .moveByOffset(10, 10) // Ensure drag mode
+           .pause(Duration.ofMillis(200))
+           .moveToElement(target)
+           .pause(Duration.ofMillis(300))
+           .release()
+           .pause(Duration.ofMillis(200))
+           .perform();
+}
+```
+
+---
+
 ## Best Practices
 
 1. **Always Verify Elements First**

@@ -2401,6 +2401,207 @@ public class RowGroupTableExample {
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Using Hardcoded Row/Column Indexes
+**Problem**: Using fixed row and column numbers that break when table data changes.
+
+**Why It's Wrong**: Hardcoded indexes like `tr[2]/td[3]` assume data is always in the same position. When rows are added, deleted, or sorted, your tests break even though the application works correctly.
+
+**Correct Approach**: Find cells by content or use dynamic lookups.
+
+```java
+// ❌ WRONG: Hardcoded indexes
+String price = driver.findElement(By.xpath("//table//tr[5]/td[3]")).getText();
+
+// ✅ CORRECT: Find by content
+String price = driver.findElement(
+    By.xpath("//table//tr[td[text()='iPhone 15']]/td[3]")
+).getText();
+
+// ✅ BETTER: Use helper method
+public String getCellValueByRowName(String rowName, int columnIndex) {
+    String xpath = String.format(
+        "//table//tr[td[text()='%s']]/td[%d]",
+        rowName, columnIndex
+    );
+    return driver.findElement(By.xpath(xpath)).getText();
+}
+```
+
+### 2. Not Handling Pagination
+**Problem**: Only searching in the first page of a paginated table.
+
+**Why It's Wrong**: Data might be on subsequent pages. Tests fail when searching for records that exist but aren't on the current page.
+
+**Correct Approach**: Iterate through all pages or use search functionality.
+
+```java
+// ❌ WRONG: Only checking first page
+List<WebElement> rows = driver.findElements(By.xpath("//table//tr"));
+// Item might be on page 2, 3, etc.
+
+// ✅ CORRECT: Check all pages
+public boolean findInAllPages(String searchText) {
+    while (true) {
+        // Check current page
+        List<WebElement> rows = driver.findElements(By.xpath("//table//tbody/tr"));
+        for (WebElement row : rows) {
+            if (row.getText().contains(searchText)) {
+                return true;
+            }
+        }
+
+        // Check if next page exists
+        List<WebElement> nextButtons = driver.findElements(
+            By.xpath("//a[text()='Next' and not(contains(@class, 'disabled'))]")
+        );
+
+        if (nextButtons.isEmpty()) {
+            break; // No more pages
+        }
+
+        nextButtons.get(0).click();
+        waitForTableToLoad();
+    }
+    return false;
+}
+```
+
+### 3. Confusing Table Structure (thead/tbody/tfoot)
+**Problem**: Using incorrect XPath that doesn't account for table structure.
+
+**Why It's Wrong**: Tables have `<thead>`, `<tbody>`, and sometimes `<tfoot>`. Using `//tr` might include header rows in data rows, causing off-by-one errors.
+
+**Correct Approach**: Always specify whether you're targeting header or body rows.
+
+```java
+// ❌ WRONG: Includes header row in count
+List<WebElement> rows = driver.findElements(By.xpath("//table//tr"));
+int rowCount = rows.size(); // Includes header!
+
+// ✅ CORRECT: Target tbody only
+List<WebElement> dataRows = driver.findElements(By.xpath("//table//tbody/tr"));
+int actualDataRows = dataRows.size();
+
+// ✅ CORRECT: Get headers separately
+List<WebElement> headers = driver.findElements(By.xpath("//table//thead/tr/th"));
+List<WebElement> dataRows = driver.findElements(By.xpath("//table//tbody/tr"));
+```
+
+### 4. Not Waiting for Dynamic Table Updates
+**Problem**: Reading table data immediately after actions that trigger AJAX updates.
+
+**Why It's Wrong**: Modern tables often load data asynchronously. Reading immediately gets stale or incomplete data.
+
+**Correct Approach**: Wait for table updates to complete.
+
+```java
+// ❌ WRONG: Immediate read after filter
+driver.findElement(By.id("search-box")).sendKeys("iPhone");
+driver.findElement(By.id("search-btn")).click();
+List<WebElement> rows = driver.findElements(By.xpath("//table//tbody/tr"));
+// Might get old data!
+
+// ✅ CORRECT: Wait for table to update
+driver.findElement(By.id("search-box")).sendKeys("iPhone");
+driver.findElement(By.id("search-btn")).click();
+
+// Wait for loading indicator to disappear or table to refresh
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.invisibilityOfElementLocated(
+    By.className("loading-spinner")
+));
+
+// Or wait for specific row count change
+int oldCount = driver.findElements(By.xpath("//table//tbody/tr")).size();
+wait.until(driver ->
+    driver.findElements(By.xpath("//table//tbody/tr")).size() != oldCount
+);
+
+List<WebElement> rows = driver.findElements(By.xpath("//table//tbody/tr"));
+```
+
+### 5. Not Handling Empty Tables
+**Problem**: Assuming tables always have data and not checking for empty states.
+
+**Why It's Wrong**: Empty tables might show "No data" messages or have zero rows, causing `NoSuchElementException` or index errors.
+
+**Correct Approach**: Always check if table has data before processing.
+
+```java
+// ❌ WRONG: Assuming table has data
+List<WebElement> rows = driver.findElements(By.xpath("//table//tbody/tr"));
+String firstCell = rows.get(0).findElement(By.xpath("./td[1]")).getText();
+// Crashes if table is empty!
+
+// ✅ CORRECT: Check for data first
+List<WebElement> rows = driver.findElements(By.xpath("//table//tbody/tr"));
+
+if (rows.isEmpty()) {
+    System.out.println("Table is empty");
+    return;
+}
+
+// Check for "No data" row
+if (rows.size() == 1 && rows.get(0).getText().contains("No data")) {
+    System.out.println("No data available");
+    return;
+}
+
+// Process data rows
+for (WebElement row : rows) {
+    String firstCell = row.findElement(By.xpath("./td[1]")).getText();
+    System.out.println(firstCell);
+}
+```
+
+### 6. Not Scrolling to Table Elements
+**Problem**: Trying to interact with table rows that are outside the viewport.
+
+**Why It's Wrong**: Large tables have scrolling, and elements not in view can't be clicked reliably.
+
+**Correct Approach**: Scroll elements into view before interaction.
+
+```java
+// ❌ WRONG: Clicking element that might be scrolled out of view
+driver.findElement(By.xpath("//table//tr[50]/td//button")).click();
+// Fails if row 50 is not visible!
+
+// ✅ CORRECT: Scroll to element first
+WebElement targetRow = driver.findElement(By.xpath("//table//tr[50]"));
+((JavascriptExecutor) driver).executeScript(
+    "arguments[0].scrollIntoView({block: 'center'});", targetRow
+);
+
+// Wait for scroll to complete
+Thread.sleep(300);
+
+// Now click
+targetRow.findElement(By.xpath(".//button")).click();
+
+// ✅ BETTER: Combined method
+public void clickTableButton(int rowIndex) {
+    String xpath = String.format("//table//tbody/tr[%d]", rowIndex);
+    WebElement row = driver.findElement(By.xpath(xpath));
+
+    // Scroll into view
+    ((JavascriptExecutor) driver).executeScript(
+        "arguments[0].scrollIntoView({block: 'center'});", row
+    );
+
+    // Wait for visibility
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebElement button = wait.until(
+        ExpectedConditions.elementToBeClickable(row.findElement(By.tagName("button")))
+    );
+
+    button.click();
+}
+```
+
+---
+
 ## Best Practices
 
 ### 1. Use Relative XPath

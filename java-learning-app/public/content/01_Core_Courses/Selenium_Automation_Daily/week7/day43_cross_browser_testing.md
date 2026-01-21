@@ -1920,6 +1920,1083 @@ public class DataProviderCrossBrowserTest {
 
 ---
 
+## 17. Beginner-Friendly Exercises
+
+Practice cross-browser testing and Selenium Grid with these hands-on exercises.
+
+---
+
+### Exercise 1: Create Browser Factory for Multiple Browsers (35 minutes)
+
+**Objective**: Build a flexible BrowserFactory that supports Chrome, Firefox, and Edge with browser-specific configurations.
+
+**Scenario**: Your team needs a centralized way to create browser instances with different configurations for cross-browser testing.
+
+**Requirements**:
+1. Create BrowserFactory class with getBrowser(String browserName) method
+2. Support Chrome, Firefox, and Edge browsers
+3. Add browser-specific options (headless mode, window size, etc.)
+4. Implement proper error handling for unsupported browsers
+5. Create a test class that uses the factory to test all browsers
+
+**Code Template**:
+```java
+package com.automation.factory;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class BrowserFactory {
+
+    public static WebDriver getBrowser(String browserName) {
+        WebDriver driver;
+
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                // TODO: Setup ChromeDriver using WebDriverManager
+                // TODO: Create ChromeOptions and configure settings
+                // TODO: Return ChromeDriver instance
+                break;
+
+            case "firefox":
+                // TODO: Setup FirefoxDriver using WebDriverManager
+                // TODO: Create FirefoxOptions and configure settings
+                // TODO: Return FirefoxDriver instance
+                break;
+
+            case "edge":
+                // TODO: Setup EdgeDriver using WebDriverManager
+                // TODO: Create EdgeOptions and configure settings
+                // TODO: Return EdgeDriver instance
+                break;
+
+            default:
+                // TODO: Throw exception for unsupported browser
+        }
+
+        return driver;
+    }
+
+    // TODO: Add method to get browser with custom options
+    public static WebDriver getBrowser(String browserName, boolean headless) {
+        // Implement headless configuration
+    }
+}
+```
+
+**Test Class**:
+```java
+package com.automation.tests;
+
+import org.testng.annotations.*;
+import org.openqa.selenium.WebDriver;
+import com.automation.factory.BrowserFactory;
+
+public class Exercise1_BrowserFactoryTest {
+
+    private WebDriver driver;
+
+    @Parameters("browser")
+    @BeforeMethod
+    public void setup(@Optional("chrome") String browser) {
+        // TODO: Get driver from BrowserFactory
+        driver = BrowserFactory.getBrowser(browser);
+        driver.manage().window().maximize();
+    }
+
+    @Test
+    public void testGoogleSearch() {
+        // TODO: Navigate to Google
+        // TODO: Verify page title
+        // TODO: Print browser name
+        System.out.println("Testing on: " + /* TODO: Get browser name */);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- BrowserFactory creates Chrome, Firefox, and Edge drivers
+- Each browser navigates to test URL successfully
+- Browser-specific options are applied correctly
+- Tests run on all configured browsers
+- Proper error handling for invalid browser names
+
+**Common Mistakes to Avoid**:
+1. Not using WebDriverManager to setup drivers automatically
+2. Hardcoding browser options instead of making them configurable
+3. Not implementing null checks before quitting driver
+4. Creating new factory instance instead of using static methods
+5. Not handling browser-specific exceptions properly
+
+**Solution Approach**:
+- Use switch-case for browser selection
+- Call `WebDriverManager.browserDriver().setup()` before creating driver
+- Create browser-specific Options objects (ChromeOptions, FirefoxOptions, etc.)
+- Add common options like `--start-maximized`, `--disable-notifications`
+- For headless: `options.addArguments("--headless")`
+- Use `instanceof` or Capabilities to get browser name
+- Return WebDriver interface type for flexibility
+
+---
+
+### Exercise 2: Set Up Local Selenium Grid Hub and Nodes (40 minutes)
+
+**Objective**: Configure and start Selenium Grid 4 in standalone mode and hub-node mode, then execute tests on the Grid.
+
+**Scenario**: Your team wants to run tests in parallel across multiple browsers using Selenium Grid on local machines.
+
+**Requirements**:
+1. Download Selenium Server JAR (Grid 4)
+2. Start Grid in standalone mode and verify it's running
+3. Start Grid in hub-node mode (separate processes)
+4. Create configuration files for hub and node
+5. Write a test that executes on Grid using RemoteWebDriver
+
+**Steps to Start Grid**:
+
+**Standalone Mode**:
+```bash
+# TODO: Download selenium-server-<version>.jar
+# TODO: Run command to start standalone Grid
+java -jar selenium-server-4.15.0.jar standalone
+
+# Verify Grid is running
+# TODO: Open browser and navigate to http://localhost:4444
+```
+
+**Hub-Node Mode**:
+```bash
+# Terminal 1 - Start Hub
+# TODO: Run command to start hub
+java -jar selenium-server-4.15.0.jar hub
+
+# Terminal 2 - Start Chrome Node
+# TODO: Run command to start node
+java -jar selenium-server-4.15.0.jar node --detect-drivers true
+
+# Terminal 3 - Start Firefox Node
+# TODO: Run command to start another node with different port
+java -jar selenium-server-4.15.0.jar node --detect-drivers true --port 5556
+```
+
+**Code Template**:
+```java
+package com.automation.grid;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testng.annotations.*;
+import java.net.URL;
+
+public class Exercise2_GridExecutionTest {
+
+    private WebDriver driver;
+    private String gridUrl = "http://localhost:4444";
+
+    @Parameters("browser")
+    @BeforeMethod
+    public void setup(@Optional("chrome") String browser) throws Exception {
+        // TODO: Create RemoteWebDriver based on browser parameter
+        if (browser.equalsIgnoreCase("chrome")) {
+            // TODO: Create ChromeOptions
+            // TODO: Initialize RemoteWebDriver with Grid URL and options
+        } else if (browser.equalsIgnoreCase("firefox")) {
+            // TODO: Create FirefoxOptions
+            // TODO: Initialize RemoteWebDriver with Grid URL and options
+        }
+    }
+
+    @Test
+    public void testOnGrid() {
+        // TODO: Navigate to test URL
+        driver.get("https://www.selenium.dev");
+
+        // TODO: Get and print session information
+        System.out.println("Session ID: " + ((RemoteWebDriver) driver).getSessionId());
+        System.out.println("Browser: " + ((RemoteWebDriver) driver).getCapabilities().getBrowserName());
+
+        // TODO: Perform test actions and assertions
+        String title = driver.getTitle();
+        System.out.println("Page Title: " + title);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**TestNG XML**:
+```xml
+<!-- TODO: Create testng.xml for parallel execution -->
+<suite name="Grid Test Suite" parallel="tests" thread-count="2">
+    <test name="Chrome Test">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="com.automation.grid.Exercise2_GridExecutionTest"/>
+        </classes>
+    </test>
+
+    <test name="Firefox Test">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="com.automation.grid.Exercise2_GridExecutionTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome**:
+- Grid Hub starts successfully on port 4444
+- Grid UI is accessible at http://localhost:4444
+- Nodes register with Hub successfully
+- Tests execute on Grid remotely
+- Session information is printed correctly
+- Both Chrome and Firefox tests run in parallel
+
+**Common Mistakes to Avoid**:
+1. Not downloading correct Selenium Server version matching your code
+2. Starting hub/nodes on same port causing conflicts
+3. Not waiting for nodes to register before running tests
+4. Using local WebDriver instead of RemoteWebDriver
+5. Not handling URL exceptions when connecting to Grid
+
+**Solution Approach**:
+- Download selenium-server JAR from https://www.selenium.dev/downloads/
+- For standalone: Use `java -jar selenium-server.jar standalone`
+- For hub: Use `java -jar selenium-server.jar hub`
+- For node: Use `java -jar selenium-server.jar node --detect-drivers true`
+- Check Grid UI at http://localhost:4444 to see registered nodes
+- Use `new RemoteWebDriver(new URL(gridUrl), options)` to connect
+- Cast to RemoteWebDriver to access session details
+- Always check Grid is running before executing tests
+
+---
+
+### Exercise 3: Implement ThreadLocal for Parallel Cross-Browser Testing (45 minutes)
+
+**Objective**: Create thread-safe WebDriver management using ThreadLocal to enable parallel test execution across multiple browsers.
+
+**Scenario**: Your test suite needs to run the same tests on Chrome, Firefox, and Edge simultaneously without thread interference.
+
+**Requirements**:
+1. Create DriverManager class using ThreadLocal pattern
+2. Implement getDriver() and setDriver() methods
+3. Implement removeDriver() for cleanup
+4. Create BaseTest class that manages driver lifecycle
+5. Write parallel tests using TestNG that run on multiple browsers
+6. Verify thread safety by logging thread IDs
+
+**Code Template**:
+```java
+package com.automation.driver;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class DriverManager {
+
+    // TODO: Create ThreadLocal variable for WebDriver
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    public static WebDriver getDriver() {
+        // TODO: Return driver from ThreadLocal
+        // TODO: If null, throw exception or create new driver
+    }
+
+    public static void setDriver(WebDriver driverInstance) {
+        // TODO: Set driver in ThreadLocal
+    }
+
+    public static void createDriver(String browser) {
+        WebDriver driverInstance;
+
+        switch (browser.toLowerCase()) {
+            case "chrome":
+                // TODO: Setup and create ChromeDriver
+                break;
+            case "firefox":
+                // TODO: Setup and create FirefoxDriver
+                break;
+            case "edge":
+                // TODO: Setup and create EdgeDriver
+                break;
+            default:
+                throw new IllegalArgumentException("Browser not supported: " + browser);
+        }
+
+        // TODO: Set driver in ThreadLocal
+        // TODO: Maximize window
+    }
+
+    public static void quitDriver() {
+        // TODO: Get driver from ThreadLocal
+        // TODO: Quit driver if not null
+        // TODO: Remove driver from ThreadLocal
+    }
+}
+```
+
+**BaseTest Class**:
+```java
+package com.automation.base;
+
+import org.testng.annotations.*;
+import com.automation.driver.DriverManager;
+import org.openqa.selenium.WebDriver;
+
+public class BaseTest {
+
+    @Parameters("browser")
+    @BeforeMethod
+    public void setup(@Optional("chrome") String browser) {
+        // TODO: Create driver using DriverManager
+        // TODO: Log thread ID and browser
+        System.out.println("Thread ID: " + Thread.currentThread().getId() +
+                         " - Browser: " + browser);
+    }
+
+    protected WebDriver getDriver() {
+        // TODO: Return driver from DriverManager
+        return DriverManager.getDriver();
+    }
+
+    @AfterMethod
+    public void teardown() {
+        // TODO: Quit driver using DriverManager
+        System.out.println("Thread ID: " + Thread.currentThread().getId() +
+                         " - Teardown complete");
+    }
+}
+```
+
+**Test Class**:
+```java
+package com.automation.tests;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import com.automation.base.BaseTest;
+
+public class Exercise3_ParallelCrossBrowserTest extends BaseTest {
+
+    @Test
+    public void testHomePage() {
+        // TODO: Navigate using getDriver()
+        getDriver().get("https://www.selenium.dev");
+
+        // TODO: Log thread and browser info
+        System.out.println("Thread: " + Thread.currentThread().getId());
+
+        // TODO: Perform assertions
+        String title = getDriver().getTitle();
+        Assert.assertTrue(title.contains("Selenium"));
+    }
+
+    @Test
+    public void testDownloadsPage() {
+        // TODO: Navigate to downloads page
+        getDriver().get("https://www.selenium.dev/downloads");
+
+        // TODO: Verify page loaded
+        Assert.assertTrue(getDriver().getCurrentUrl().contains("downloads"));
+    }
+}
+```
+
+**TestNG XML for Parallel Execution**:
+```xml
+<!-- TODO: Configure suite for parallel test execution -->
+<suite name="Parallel Cross-Browser Suite" parallel="tests" thread-count="3">
+    <test name="Chrome Tests">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="com.automation.tests.Exercise3_ParallelCrossBrowserTest"/>
+        </classes>
+    </test>
+
+    <test name="Firefox Tests">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="com.automation.tests.Exercise3_ParallelCrossBrowserTest"/>
+        </classes>
+    </test>
+
+    <test name="Edge Tests">
+        <parameter name="browser" value="edge"/>
+        <classes>
+            <class name="com.automation.tests.Exercise3_ParallelCrossBrowserTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome**:
+- Each thread gets its own WebDriver instance
+- No thread interference during parallel execution
+- Different thread IDs printed for each browser
+- All tests pass on all browsers
+- Proper cleanup after each test
+- No "driver already closed" or "null pointer" exceptions
+
+**Common Mistakes to Avoid**:
+1. Forgetting to call remove() on ThreadLocal causing memory leaks
+2. Sharing driver instance across threads without ThreadLocal
+3. Not checking if driver is null before operations
+4. Calling quit() without removing from ThreadLocal
+5. Using class-level driver variable instead of ThreadLocal
+
+**Solution Approach**:
+- Declare: `private static ThreadLocal<WebDriver> driver = new ThreadLocal<>()`
+- Set: `driver.set(driverInstance)`
+- Get: `driver.get()`
+- Remove: `driver.remove()` (crucial for cleanup)
+- Always remove driver in finally block or @AfterMethod
+- Use thread-count in testng.xml to control parallelism
+- Log Thread.currentThread().getId() to verify thread safety
+- Each test tag in testng.xml runs in separate thread
+
+---
+
+### Exercise 4: Configure Grid with Docker Compose (50 minutes)
+
+**Objective**: Set up Selenium Grid using Docker and Docker Compose with Hub and multiple browser nodes.
+
+**Scenario**: Your team wants to quickly spin up a Grid environment without manual installation, using containerization.
+
+**Requirements**:
+1. Install Docker Desktop and verify installation
+2. Create docker-compose.yml file for Grid setup
+3. Configure Hub and Node services (Chrome, Firefox, Edge)
+4. Start Grid using Docker Compose
+5. Write tests that connect to Dockerized Grid
+6. Scale nodes dynamically
+
+**docker-compose.yml Template**:
+```yaml
+version: '3'
+services:
+  # TODO: Configure Selenium Hub service
+  selenium-hub:
+    image: selenium/hub:4.15.0
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"  # TODO: Expose port for Hub UI and connections
+      - "4442:4442"  # Event bus publish port
+      - "4443:4443"  # Event bus subscribe port
+    environment:
+      - SE_SESSION_REQUEST_TIMEOUT=300
+      - SE_SESSION_RETRY_INTERVAL=5
+
+  # TODO: Configure Chrome Node service
+  chrome-node:
+    image: selenium/node-chrome:4.15.0
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=2
+    ports:
+      - "5900:5900"  # VNC port for debugging
+    shm_size: '2gb'  # Shared memory for browser
+
+  # TODO: Configure Firefox Node service
+  firefox-node:
+    image: selenium/node-firefox:4.15.0
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=2
+    ports:
+      - "5901:5900"
+    shm_size: '2gb'
+
+  # TODO: Configure Edge Node service (optional)
+  edge-node:
+    image: selenium/node-edge:4.15.0
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=2
+    ports:
+      - "5902:5900"
+    shm_size: '2gb'
+```
+
+**Docker Commands**:
+```bash
+# TODO: Start Grid containers
+docker-compose up -d
+
+# TODO: Check running containers
+docker-compose ps
+
+# TODO: View logs
+docker-compose logs -f selenium-hub
+
+# TODO: Scale Chrome nodes to 3
+docker-compose up -d --scale chrome-node=3
+
+# TODO: Stop and remove containers
+docker-compose down
+```
+
+**Test Code**:
+```java
+package com.automation.docker;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testng.annotations.*;
+import java.net.URL;
+
+public class Exercise4_DockerGridTest {
+
+    private WebDriver driver;
+    private String gridUrl = "http://localhost:4444";
+
+    @Parameters("browser")
+    @BeforeMethod
+    public void setup(@Optional("chrome") String browser) throws Exception {
+        System.out.println("Connecting to Docker Grid at: " + gridUrl);
+
+        // TODO: Create RemoteWebDriver for Docker Grid
+        if (browser.equalsIgnoreCase("chrome")) {
+            ChromeOptions options = new ChromeOptions();
+            driver = new RemoteWebDriver(new URL(gridUrl), options);
+        } else if (browser.equalsIgnoreCase("firefox")) {
+            FirefoxOptions options = new FirefoxOptions();
+            driver = new RemoteWebDriver(new URL(gridUrl), options);
+        }
+
+        System.out.println("Connected to browser: " + browser);
+    }
+
+    @Test
+    public void testDockerGrid() {
+        // TODO: Navigate and test
+        driver.get("https://www.docker.com");
+
+        // TODO: Print session details
+        System.out.println("Session ID: " +
+            ((RemoteWebDriver) driver).getSessionId());
+        System.out.println("Browser: " +
+            ((RemoteWebDriver) driver).getCapabilities().getBrowserName());
+        System.out.println("Platform: " +
+            ((RemoteWebDriver) driver).getCapabilities().getPlatformName());
+
+        // TODO: Perform test
+        String title = driver.getTitle();
+        System.out.println("Page Title: " + title);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Docker containers start successfully
+- Grid Hub accessible at http://localhost:4444
+- Chrome, Firefox, and Edge nodes register with Hub
+- Tests execute on containerized browsers
+- Grid UI shows active sessions
+- Containers can be scaled up/down easily
+- Clean shutdown with docker-compose down
+
+**Common Mistakes to Avoid**:
+1. Not installing Docker Desktop before attempting to run
+2. Using wrong Docker image versions (hub and node versions must match)
+3. Not configuring shm_size causing browser crashes
+4. Missing depends_on causing nodes to start before hub
+5. Not exposing port 4444 preventing client connections
+
+**Solution Approach**:
+- Install Docker Desktop from docker.com
+- Create docker-compose.yml in project root
+- Use official Selenium Docker images: selenium/hub and selenium/node-*
+- Set shm_size to at least 2gb for browser stability
+- Use depends_on to ensure hub starts before nodes
+- Environment variables configure node-to-hub connection
+- VNC ports (5900+) allow debugging with VNC viewer
+- Run `docker-compose up -d` to start in detached mode
+- Access Grid UI at http://localhost:4444 to verify setup
+- Use `docker-compose logs <service>` to debug issues
+
+---
+
+### Exercise 5: Implement Cross-Browser Testing with Cloud Platform (45 minutes)
+
+**Objective**: Configure and execute tests on BrowserStack cloud platform for cross-browser and cross-platform testing.
+
+**Scenario**: Your team needs to test on browsers and OS combinations not available locally, using a cloud testing platform.
+
+**Requirements**:
+1. Sign up for BrowserStack free trial account
+2. Get username and access key from account settings
+3. Configure RemoteWebDriver to connect to BrowserStack
+4. Set desired capabilities for browser, OS, and device
+5. Execute tests on multiple browser/OS combinations
+6. View test results in BrowserStack dashboard
+
+**Code Template**:
+```java
+package com.automation.cloud;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.*;
+import java.net.URL;
+
+public class Exercise5_BrowserStackTest {
+
+    private WebDriver driver;
+
+    // TODO: Replace with your BrowserStack credentials
+    public static final String USERNAME = "YOUR_USERNAME";
+    public static final String ACCESS_KEY = "YOUR_ACCESS_KEY";
+    public static final String URL = "https://" + USERNAME + ":" + ACCESS_KEY +
+                                     "@hub-cloud.browserstack.com/wd/hub";
+
+    @Parameters({"browser", "browserVersion", "os", "osVersion"})
+    @BeforeMethod
+    public void setup(@Optional("Chrome") String browser,
+                     @Optional("latest") String browserVersion,
+                     @Optional("Windows") String os,
+                     @Optional("10") String osVersion) throws Exception {
+
+        // TODO: Create DesiredCapabilities
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+
+        // TODO: Set browser capabilities
+        capabilities.setCapability("browserName", browser);
+        capabilities.setCapability("browserVersion", browserVersion);
+
+        // TODO: Set OS capabilities
+        capabilities.setCapability("os", os);
+        capabilities.setCapability("osVersion", osVersion);
+
+        // TODO: Set BrowserStack specific capabilities
+        capabilities.setCapability("name", "Exercise 5 - Cross Browser Test");
+        capabilities.setCapability("build", "BrowserStack Build 1");
+        capabilities.setCapability("project", "Cross Browser Testing Project");
+
+        // TODO: Enable various BrowserStack features
+        capabilities.setCapability("browserstack.debug", "true");
+        capabilities.setCapability("browserstack.console", "info");
+        capabilities.setCapability("browserstack.networkLogs", "true");
+
+        // TODO: Create RemoteWebDriver
+        driver = new RemoteWebDriver(new URL(URL), capabilities);
+
+        System.out.println("Testing on BrowserStack: " + browser + " " +
+                         browserVersion + " on " + os + " " + osVersion);
+    }
+
+    @Test
+    public void testOnBrowserStack() {
+        // TODO: Navigate to test URL
+        driver.get("https://www.browserstack.com");
+
+        // TODO: Perform test actions
+        String title = driver.getTitle();
+        System.out.println("Page Title: " + title);
+
+        // TODO: Mark test as passed/failed in BrowserStack
+        // This helps in BrowserStack dashboard
+        try {
+            org.junit.Assert.assertTrue(title.contains("BrowserStack"));
+            markTestStatus("passed", "Test passed successfully", driver);
+        } catch (AssertionError e) {
+            markTestStatus("failed", e.getMessage(), driver);
+            throw e;
+        }
+    }
+
+    @AfterMethod
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    // Helper method to mark test status in BrowserStack
+    public static void markTestStatus(String status, String reason, WebDriver driver) {
+        // TODO: Use JavascriptExecutor to mark test status
+        org.openqa.selenium.JavascriptExecutor jse =
+            (org.openqa.selenium.JavascriptExecutor) driver;
+        jse.executeScript(
+            "browserstack_executor: {\"action\": \"setSessionStatus\", " +
+            "\"arguments\": {\"status\": \"" + status + "\", " +
+            "\"reason\": \"" + reason + "\"}}"
+        );
+    }
+}
+```
+
+**TestNG XML for Multiple Configurations**:
+```xml
+<suite name="BrowserStack Cross-Browser Suite" parallel="tests" thread-count="3">
+    <!-- Chrome on Windows 10 -->
+    <test name="Chrome Windows 10">
+        <parameter name="browser" value="Chrome"/>
+        <parameter name="browserVersion" value="latest"/>
+        <parameter name="os" value="Windows"/>
+        <parameter name="osVersion" value="10"/>
+        <classes>
+            <class name="com.automation.cloud.Exercise5_BrowserStackTest"/>
+        </classes>
+    </test>
+
+    <!-- Firefox on Windows 11 -->
+    <test name="Firefox Windows 11">
+        <parameter name="browser" value="Firefox"/>
+        <parameter name="browserVersion" value="latest"/>
+        <parameter name="os" value="Windows"/>
+        <parameter name="osVersion" value="11"/>
+        <classes>
+            <class name="com.automation.cloud.Exercise5_BrowserStackTest"/>
+        </classes>
+    </test>
+
+    <!-- Safari on Mac -->
+    <test name="Safari macOS">
+        <parameter name="browser" value="Safari"/>
+        <parameter name="browserVersion" value="latest"/>
+        <parameter name="os" value="OS X"/>
+        <parameter name="osVersion" value="Ventura"/>
+        <classes>
+            <class name="com.automation.cloud.Exercise5_BrowserStackTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Expected Outcome**:
+- Tests execute on BrowserStack cloud infrastructure
+- Multiple browser/OS combinations tested simultaneously
+- Test results visible in BrowserStack dashboard
+- Screenshots and logs available for debugging
+- Test marked as passed/failed in dashboard
+- Video recording available for failed tests
+
+**Common Mistakes to Avoid**:
+1. Not signing up for BrowserStack account first
+2. Hardcoding credentials instead of using environment variables
+3. Using incorrect capability names (case-sensitive)
+4. Not setting "name", "build", "project" capabilities
+5. Forgetting to mark test status causing all tests to show as "completed"
+
+**Solution Approach**:
+- Sign up at browserstack.com for free trial
+- Get credentials from Settings > Automate
+- Use format: `https://USERNAME:ACCESS_KEY@hub-cloud.browserstack.com/wd/hub`
+- Use DesiredCapabilities to set browser, OS, and features
+- Enable debugging features: browserstack.debug, browserstack.console
+- Use JavascriptExecutor with "browserstack_executor" to mark status
+- View results at https://automate.browserstack.com
+- Use environment variables for credentials:
+  ```java
+  String username = System.getenv("BROWSERSTACK_USERNAME");
+  String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
+  ```
+
+---
+
+### Exercise 6: Create Complete Cross-Browser Test Report (50 minutes)
+
+**Objective**: Build a comprehensive reporting system that captures browser-specific test results, failures, and execution metrics.
+
+**Scenario**: Your team needs detailed reports showing which tests passed/failed on which browsers, with execution time and failure reasons.
+
+**Requirements**:
+1. Create BrowserTestResult class to store test data
+2. Create CrossBrowserTestReporter class to collect results
+3. Capture test results for each browser separately
+4. Generate HTML report with browser-wise summary
+5. Include pass/fail counts, execution time, and failure details
+6. Integrate with TestNG listeners for automatic reporting
+
+**Code Template**:
+```java
+package com.automation.reporting;
+
+import java.util.*;
+
+public class BrowserTestResult {
+    private String browserName;
+    private String browserVersion;
+    private String testName;
+    private String status;  // PASS, FAIL, SKIP
+    private long executionTime;
+    private String failureReason;
+    private String timestamp;
+
+    // TODO: Create constructor
+    public BrowserTestResult(String browserName, String testName, String status) {
+        this.browserName = browserName;
+        this.testName = testName;
+        this.status = status;
+        this.timestamp = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                             .format(new Date());
+    }
+
+    // TODO: Add getters and setters
+    // ... (generate using IDE)
+}
+```
+
+**Reporter Class**:
+```java
+package com.automation.reporting;
+
+import java.io.*;
+import java.util.*;
+
+public class CrossBrowserTestReporter {
+
+    private static Map<String, List<BrowserTestResult>> results = new HashMap<>();
+
+    public static void addResult(String browser, BrowserTestResult result) {
+        // TODO: Add result to map
+        results.computeIfAbsent(browser, k -> new ArrayList<>()).add(result);
+    }
+
+    public static void generateHTMLReport(String filePath) throws IOException {
+        // TODO: Create HTML report file
+        StringBuilder html = new StringBuilder();
+
+        // TODO: Add HTML header
+        html.append("<!DOCTYPE html><html><head>");
+        html.append("<title>Cross-Browser Test Report</title>");
+        html.append("<style>");
+        html.append("body { font-family: Arial; margin: 20px; }");
+        html.append("table { border-collapse: collapse; width: 100%; }");
+        html.append("th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }");
+        html.append("th { background-color: #4CAF50; color: white; }");
+        html.append(".pass { background-color: #90EE90; }");
+        html.append(".fail { background-color: #FFB6C1; }");
+        html.append(".skip { background-color: #FFE4B5; }");
+        html.append("</style></head><body>");
+
+        // TODO: Add report title and timestamp
+        html.append("<h1>Cross-Browser Test Execution Report</h1>");
+        html.append("<p>Generated: ").append(new Date()).append("</p>");
+
+        // TODO: Add summary section
+        html.append("<h2>Summary</h2>");
+        html.append("<table>");
+        html.append("<tr><th>Browser</th><th>Total</th><th>Pass</th><th>Fail</th><th>Skip</th><th>Pass %</th></tr>");
+
+        // TODO: Calculate and add summary for each browser
+        for (String browser : results.keySet()) {
+            List<BrowserTestResult> browserResults = results.get(browser);
+            int total = browserResults.size();
+            int pass = 0, fail = 0, skip = 0;
+
+            for (BrowserTestResult result : browserResults) {
+                if (result.getStatus().equals("PASS")) pass++;
+                else if (result.getStatus().equals("FAIL")) fail++;
+                else if (result.getStatus().equals("SKIP")) skip++;
+            }
+
+            double passPercentage = (pass * 100.0) / total;
+
+            html.append("<tr>");
+            html.append("<td>").append(browser).append("</td>");
+            html.append("<td>").append(total).append("</td>");
+            html.append("<td class='pass'>").append(pass).append("</td>");
+            html.append("<td class='fail'>").append(fail).append("</td>");
+            html.append("<td class='skip'>").append(skip).append("</td>");
+            html.append("<td>").append(String.format("%.2f%%", passPercentage)).append("</td>");
+            html.append("</tr>");
+        }
+
+        html.append("</table>");
+
+        // TODO: Add detailed results section
+        html.append("<h2>Detailed Results</h2>");
+
+        for (String browser : results.keySet()) {
+            html.append("<h3>").append(browser).append("</h3>");
+            html.append("<table>");
+            html.append("<tr><th>Test Name</th><th>Status</th><th>Execution Time</th><th>Timestamp</th><th>Failure Reason</th></tr>");
+
+            for (BrowserTestResult result : results.get(browser)) {
+                String rowClass = result.getStatus().toLowerCase();
+                html.append("<tr class='").append(rowClass).append("'>");
+                html.append("<td>").append(result.getTestName()).append("</td>");
+                html.append("<td>").append(result.getStatus()).append("</td>");
+                html.append("<td>").append(result.getExecutionTime()).append(" ms</td>");
+                html.append("<td>").append(result.getTimestamp()).append("</td>");
+                html.append("<td>").append(result.getFailureReason() != null ? result.getFailureReason() : "-").append("</td>");
+                html.append("</tr>");
+            }
+
+            html.append("</table>");
+        }
+
+        html.append("</body></html>");
+
+        // TODO: Write HTML to file
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(html.toString());
+        }
+
+        System.out.println("Report generated: " + filePath);
+    }
+
+    public static void clearResults() {
+        results.clear();
+    }
+}
+```
+
+**TestNG Listener**:
+```java
+package com.automation.listeners;
+
+import org.testng.*;
+import com.automation.reporting.*;
+
+public class CrossBrowserReportListener implements ITestListener {
+
+    private long startTime;
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        startTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        // TODO: Get browser name from parameters or capabilities
+        String browser = getBrowserName(result);
+        long executionTime = System.currentTimeMillis() - startTime;
+
+        BrowserTestResult testResult = new BrowserTestResult(
+            browser,
+            result.getMethod().getMethodName(),
+            "PASS"
+        );
+        testResult.setExecutionTime(executionTime);
+
+        CrossBrowserTestReporter.addResult(browser, testResult);
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        // TODO: Record failure with reason
+        String browser = getBrowserName(result);
+        long executionTime = System.currentTimeMillis() - startTime;
+
+        BrowserTestResult testResult = new BrowserTestResult(
+            browser,
+            result.getMethod().getMethodName(),
+            "FAIL"
+        );
+        testResult.setExecutionTime(executionTime);
+        testResult.setFailureReason(result.getThrowable().getMessage());
+
+        CrossBrowserTestReporter.addResult(browser, testResult);
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+        // TODO: Generate report after all tests complete
+        try {
+            CrossBrowserTestReporter.generateHTMLReport("cross-browser-report.html");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getBrowserName(ITestResult result) {
+        // TODO: Extract browser name from test parameters
+        ITestNGMethod method = result.getMethod();
+        String browser = method.getXmlTest().getParameter("browser");
+        return browser != null ? browser : "Unknown";
+    }
+}
+```
+
+**Usage in TestNG XML**:
+```xml
+<suite name="Cross-Browser Suite">
+    <listeners>
+        <listener class-name="com.automation.listeners.CrossBrowserReportListener"/>
+    </listeners>
+
+    <!-- Test configurations -->
+</suite>
+```
+
+**Expected Outcome**:
+- HTML report generated with browser-wise summary
+- Pass/Fail/Skip counts for each browser
+- Pass percentage calculated for each browser
+- Detailed test results with execution time
+- Failure reasons captured and displayed
+- Color-coded results (green=pass, red=fail, yellow=skip)
+- Professional-looking report accessible in browser
+
+**Common Mistakes to Avoid**:
+1. Not implementing all ITestListener methods (use default implementations)
+2. Forgetting to register listener in testng.xml
+3. Not handling null parameters when getting browser name
+4. Not closing FileWriter causing incomplete report
+5. Not using thread-safe collections when tests run in parallel
+
+**Solution Approach**:
+- Use HashMap to group results by browser name
+- Use computeIfAbsent to create lists lazily
+- Extract browser name from TestNG parameters or WebDriver capabilities
+- Calculate summary stats by iterating through results
+- Use StringBuilder for efficient HTML generation
+- Apply CSS classes for colored status indicators
+- Write complete HTML structure with proper tags
+- Use try-with-resources for file operations
+- Register listener in testng.xml <listeners> section
+- For thread-safety, use ConcurrentHashMap if tests run in parallel
+
+---
+
 ## 18. Key Takeaways
 
 1. **Cross-Browser Testing** ensures consistent functionality across different browsers

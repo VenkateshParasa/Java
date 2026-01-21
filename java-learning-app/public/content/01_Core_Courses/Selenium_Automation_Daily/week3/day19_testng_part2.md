@@ -747,6 +747,329 @@ public class DataDrivenLoginTest {
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Parameter Name Mismatch
+**Problem**: Parameter name in @Parameters annotation doesn't match the name in testng.xml.
+**Why It's Wrong**: TestNG won't be able to inject the parameter, causing NullPointerException or using default values.
+**Correct Approach**: Ensure parameter names match exactly (case-sensitive).
+
+```java
+// ❌ WRONG: Parameter name mismatch
+@Test
+@Parameters({"userName"})  // Expecting "userName"
+public void testLogin(String username) {  // But parameter is "username" in XML
+    System.out.println(username);
+}
+
+// testng.xml has:
+// <parameter name="username" value="admin"/>
+
+// ✅ CORRECT: Matching parameter names
+@Test
+@Parameters({"username"})  // Matches XML
+public void testLogin(String username) {
+    System.out.println(username);
+}
+```
+
+### 2. Not Using @Optional for Parameters
+**Problem**: Forgetting @Optional annotation when parameter might not be provided in testng.xml.
+**Why It's Wrong**: Test fails with ParameterException if parameter is missing.
+**Correct Approach**: Always use @Optional with default value for optional parameters.
+
+```java
+// ❌ WRONG: No @Optional annotation
+@Test
+@Parameters({"browser", "env"})
+public void testSetup(String browser, String env) {
+    // Fails if env parameter not in testng.xml
+}
+
+// ✅ CORRECT: Use @Optional for optional parameters
+@Test
+@Parameters({"browser", "env"})
+public void testSetup(String browser, @Optional("QA") String env) {
+    // Uses "QA" if env not provided
+    System.out.println("Browser: " + browser + ", Env: " + env);
+}
+```
+
+### 3. Wrong DataProvider Return Type
+**Problem**: DataProvider returns Object[] instead of Object[][].
+**Why It's Wrong**: TestNG expects a 2D array where each row represents one test execution.
+**Correct Approach**: Always return Object[][] from DataProvider.
+
+```java
+// ❌ WRONG: Returning Object[] (1D array)
+@DataProvider(name = "loginData")
+public Object[] getLoginData() {
+    return new Object[] {"user1", "pass1"};  // Wrong!
+}
+
+// ✅ CORRECT: Returning Object[][] (2D array)
+@DataProvider(name = "loginData")
+public Object[][] getLoginData() {
+    return new Object[][] {
+        {"user1", "pass1"},
+        {"user2", "pass2"},
+        {"user3", "pass3"}
+    };
+}
+```
+
+### 4. Forgetting to Name DataProvider
+**Problem**: Not providing a name for DataProvider or mismatching names in @Test.
+**Why It's Wrong**: TestNG can't link the DataProvider to the test method.
+**Correct Approach**: Name DataProvider and reference it correctly in @Test.
+
+```java
+// ❌ WRONG: DataProvider without name
+@DataProvider
+public Object[][] getData() {
+    return new Object[][] {{"data"}};
+}
+
+@Test(dataProvider = "getData")  // Won't work!
+public void testWithData(String data) { }
+
+// ✅ CORRECT: Named DataProvider
+@DataProvider(name = "testData")
+public Object[][] getData() {
+    return new Object[][] {{"data"}};
+}
+
+@Test(dataProvider = "testData")  // Matches the name
+public void testWithData(String data) { }
+```
+
+### 5. Incorrect Parameter Count in Test Method
+**Problem**: Test method parameters don't match DataProvider column count.
+**Why It's Wrong**: Causes IllegalArgumentException at runtime.
+**Correct Approach**: Ensure test method has correct number of parameters matching DataProvider columns.
+
+```java
+// ❌ WRONG: Parameter count mismatch
+@DataProvider(name = "userData")
+public Object[][] getUserData() {
+    return new Object[][] {
+        {"John", "john@example.com", 25},  // 3 columns
+        {"Jane", "jane@example.com", 30}
+    };
+}
+
+@Test(dataProvider = "userData")
+public void testUser(String name, String email) {  // Only 2 parameters!
+    // IllegalArgumentException!
+}
+
+// ✅ CORRECT: Matching parameter count
+@Test(dataProvider = "userData")
+public void testUser(String name, String email, int age) {  // 3 parameters
+    System.out.println(name + ", " + email + ", " + age);
+}
+```
+
+### 6. Not Making External DataProvider Static
+**Problem**: DataProvider in separate class is not static when using dataProviderClass.
+**Why It's Wrong**: TestNG can't invoke non-static method from another class.
+**Correct Approach**: Make external DataProvider methods static.
+
+```java
+// ❌ WRONG: Non-static DataProvider in separate class
+public class TestDataProviders {
+    @DataProvider(name = "loginData")
+    public Object[][] getLoginData() {  // Not static!
+        return new Object[][] {{"user", "pass"}};
+    }
+}
+
+@Test(dataProvider = "loginData", dataProviderClass = TestDataProviders.class)
+public void testLogin(String user, String pass) {
+    // Fails! Method must be static
+}
+
+// ✅ CORRECT: Static DataProvider
+public class TestDataProviders {
+    @DataProvider(name = "loginData")
+    public static Object[][] getLoginData() {  // Static
+        return new Object[][] {{"user", "pass"}};
+    }
+}
+```
+
+---
+
+## 💡 Best Practices
+
+### 1. Use Descriptive Parameter Names
+**Why**: Makes test code self-documenting and easier to understand.
+**How**: Choose clear, meaningful names for parameters.
+
+```java
+// ✅ GOOD: Clear parameter names
+@Test
+@Parameters({"browserType", "environmentUrl", "timeout Seconds"})
+public void setupTest(String browserType, String environmentUrl, String timeoutSeconds) {
+    System.out.println("Browser: " + browserType);
+    System.out.println("URL: " + environmentUrl);
+}
+
+// ❌ BAD: Unclear names
+@Parameters({"p1", "p2", "p3"})
+public void setupTest(String p1, String p2, String p3) {
+    // What do these parameters mean?
+}
+```
+
+### 2. Organize DataProviders in Separate Classes
+**Why**: Improves code organization, reusability, and maintainability.
+**How**: Create dedicated classes for DataProviders.
+
+```java
+// ✅ GOOD: Organized DataProvider class
+package dataproviders;
+
+public class LoginDataProvider {
+
+    @DataProvider(name = "validLogins")
+    public static Object[][] getValidLogins() {
+        return new Object[][] {
+            {"admin@example.com", "Admin@123"},
+            {"user@example.com", "User@123"}
+        };
+    }
+
+    @DataProvider(name = "invalidLogins")
+    public static Object[][] getInvalidLogins() {
+        return new Object[][] {
+            {"invalid@example.com", "wrong"},
+            {"", "password"}
+        };
+    }
+}
+
+// Use in test class
+@Test(dataProvider = "validLogins", dataProviderClass = LoginDataProvider.class)
+public void testValidLogin(String email, String password) {
+    // Test logic
+}
+```
+
+### 3. Use @Optional with Meaningful Defaults
+**Why**: Makes tests runnable without testng.xml and provides sensible defaults.
+**How**: Provide @Optional with appropriate default values.
+
+```java
+// ✅ GOOD: Meaningful defaults
+@Test
+@Parameters({"browser", "env", "headless"})
+public void setupTest(
+    @Optional("chrome") String browser,
+    @Optional("QA") String env,
+    @Optional("false") String headless
+) {
+    // Runs with defaults if parameters not provided
+}
+```
+
+### 4. Include Expected Results in DataProvider
+**Why**: Makes data-driven tests more comprehensive by including expected outcomes.
+**How**: Add expected result as last column in DataProvider.
+
+```java
+// ✅ GOOD: DataProvider with expected results
+@DataProvider(name = "loginTestData")
+public static Object[][] getLoginTestData() {
+    return new Object[][] {
+        // username, password, shouldSucceed
+        {"valid@example.com", "ValidPass123", true},
+        {"invalid@example.com", "WrongPass", false},
+        {"", "password", false},
+        {"user@example.com", "", false}
+    };
+}
+
+@Test(dataProvider = "loginTestData")
+public void testLogin(String username, String password, boolean shouldSucceed) {
+    driver.get("https://example.com/login");
+    // Login logic
+
+    if (shouldSucceed) {
+        Assert.assertTrue(driver.getCurrentUrl().contains("dashboard"));
+    } else {
+        Assert.assertTrue(driver.findElement(By.className("error")).isDisplayed());
+    }
+}
+```
+
+### 5. Use Method-Based DataProvider for Dynamic Data
+**Why**: Allows DataProvider to return different data based on test method.
+**How**: Use Method parameter in DataProvider to check calling method name.
+
+```java
+// ✅ GOOD: Dynamic DataProvider based on method
+@DataProvider(name = "dynamicData")
+public Object[][] getDynamicData(Method method) {
+    if (method.getName().equals("testLogin")) {
+        return new Object[][] {
+            {"admin", "admin123"},
+            {"user", "user123"}
+        };
+    } else if (method.getName().equals("testSearch")) {
+        return new Object[][] {
+            {"Selenium"},
+            {"TestNG"}
+        };
+    }
+    return new Object[][] {{}};
+}
+```
+
+### 6. Externalize Test Data to Files
+**Why**: Separates test data from test logic, making it easier to manage and update.
+**How**: Read data from Excel, CSV, or JSON files in DataProvider.
+
+```java
+// ✅ GOOD: Reading from external file
+@DataProvider(name = "excelData")
+public Object[][] getExcelData() {
+    String filePath = "src/test/resources/testdata.xlsx";
+    String sheetName = "LoginData";
+    return ExcelUtils.getExcelData(filePath, sheetName);
+}
+
+@Test(dataProvider = "excelData")
+public void testWithExcelData(String username, String password, String expectedResult) {
+    // Test logic
+}
+```
+
+### 7. Use Parallel DataProvider for Performance
+**Why**: Reduces test execution time by running data sets concurrently.
+**How**: Set parallel=true in DataProvider annotation.
+
+```java
+// ✅ GOOD: Parallel DataProvider
+@DataProvider(name = "parallelData", parallel = true)
+public Object[][] getParallelData() {
+    return new Object[][] {
+        {"Data1"},
+        {"Data2"},
+        {"Data3"},
+        {"Data4"}
+    };
+}
+
+@Test(dataProvider = "parallelData")
+public void testParallel(String data) {
+    System.out.println("Thread: " + Thread.currentThread().getId() + " - " + data);
+    // Test logic
+}
+```
+
+---
+
 ## 15. Practice Exercises
 
 ### Exercise 1: Multi-Browser Login Test with @Parameters (20 minutes)

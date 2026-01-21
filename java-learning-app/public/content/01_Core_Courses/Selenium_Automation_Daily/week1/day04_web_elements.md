@@ -1253,6 +1253,220 @@ public class ElementUtils {
 
 ---
 
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Not Clearing Input Fields Before Typing
+**Problem**: Using `sendKeys()` without first clearing the input field when the field might already contain text.
+
+**Why It's Wrong**: `sendKeys()` appends text to existing content rather than replacing it. If the field has pre-filled text (default values, previously entered data), your test will fail or enter incorrect data.
+
+**Correct Approach**: Always call `clear()` before `sendKeys()` for input fields.
+
+```java
+// ❌ WRONG: Text appends to existing content
+WebElement searchBox = driver.findElement(By.id("search"));
+searchBox.sendKeys("Selenium"); // If box has "Test", becomes "TestSelenium"
+
+// ✅ CORRECT: Clear first, then enter text
+WebElement searchBox = driver.findElement(By.id("search"));
+searchBox.clear(); // Removes any existing text
+searchBox.sendKeys("Selenium"); // Now enters only "Selenium"
+
+// ✅ BETTER: Create a reusable method
+public void typeText(By locator, String text) {
+    WebElement element = driver.findElement(locator);
+    element.clear();
+    element.sendKeys(text);
+}
+```
+
+### 2. Clicking Elements That Aren't Ready
+**Problem**: Attempting to click an element immediately after page load without waiting for it to be clickable.
+
+**Why It's Wrong**: Elements might be present in the DOM but not yet clickable (covered by overlays, still loading, disabled). Clicking too early causes `ElementNotInteractableException` or `ElementClickInterceptedException`.
+
+**Correct Approach**: Wait for the element to be clickable before clicking.
+
+```java
+// ❌ WRONG: Immediate click after navigation
+driver.get("https://example.com");
+driver.findElement(By.id("submit-btn")).click(); // Might fail if page still loading
+
+// ✅ CORRECT: Wait for element to be clickable
+driver.get("https://example.com");
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+WebElement submitButton = wait.until(
+    ExpectedConditions.elementToBeClickable(By.id("submit-btn"))
+);
+submitButton.click();
+
+// ✅ ALTERNATIVE: Check if enabled before clicking
+WebElement button = driver.findElement(By.id("submit-btn"));
+if (button.isEnabled()) {
+    button.click();
+} else {
+    System.out.println("Button is not enabled yet");
+}
+```
+
+### 3. Using getText() on Hidden Elements
+**Problem**: Calling `getText()` on elements that are not visible or have CSS display:none.
+
+**Why It's Wrong**: `getText()` returns an empty string for hidden elements, even if the HTML contains text. This leads to false test failures when you expect text but get empty string.
+
+**Correct Approach**: Check visibility first or use getAttribute("textContent") for hidden elements.
+
+```java
+// ❌ WRONG: getText() on hidden element returns empty
+WebElement hiddenDiv = driver.findElement(By.id("hidden-message"));
+String text = hiddenDiv.getText(); // Returns "" even if HTML has text
+System.out.println("Text: " + text); // Prints: Text:
+
+// ✅ CORRECT: Check visibility first
+WebElement element = driver.findElement(By.id("message"));
+if (element.isDisplayed()) {
+    String text = element.getText();
+    System.out.println("Visible text: " + text);
+} else {
+    String textContent = element.getAttribute("textContent");
+    System.out.println("Hidden text content: " + textContent);
+}
+
+// ✅ ALTERNATIVE: Use getAttribute for hidden elements
+String innerText = element.getAttribute("innerText");
+String textContent = element.getAttribute("textContent");
+```
+
+### 4. Forgetting to Check Element State
+**Problem**: Interacting with elements without checking if they are displayed, enabled, or selected.
+
+**Why It's Wrong**: Selenium allows finding elements that exist in DOM but aren't visible or enabled. Interacting with such elements causes exceptions or unexpected behavior.
+
+**Correct Approach**: Always verify element state before interaction.
+
+```java
+// ❌ WRONG: No state verification
+WebElement checkbox = driver.findElement(By.id("terms"));
+checkbox.click(); // Might fail if checkbox is hidden or disabled
+
+// ✅ CORRECT: Verify state before interaction
+WebElement checkbox = driver.findElement(By.id("terms"));
+
+// Check if displayed
+if (!checkbox.isDisplayed()) {
+    throw new RuntimeException("Checkbox is not visible");
+}
+
+// Check if enabled
+if (!checkbox.isEnabled()) {
+    throw new RuntimeException("Checkbox is disabled");
+}
+
+// Check if already selected (avoid unnecessary clicks)
+if (!checkbox.isSelected()) {
+    checkbox.click();
+    System.out.println("Checkbox checked");
+} else {
+    System.out.println("Checkbox already checked");
+}
+
+// ✅ BETTER: Comprehensive check method
+public void safeClick(By locator) {
+    WebElement element = driver.findElement(locator);
+
+    if (!element.isDisplayed()) {
+        throw new RuntimeException("Element not visible: " + locator);
+    }
+
+    if (!element.isEnabled()) {
+        throw new RuntimeException("Element not enabled: " + locator);
+    }
+
+    element.click();
+}
+```
+
+### 5. Using submit() Instead of click() Incorrectly
+**Problem**: Using `submit()` on non-form elements or assuming it works the same as `click()`.
+
+**Why It's Wrong**: `submit()` only works on form elements and submits the entire form, not just the clicked element. Using it on non-form elements throws `UnsupportedOperationException`.
+
+**Correct Approach**: Use `click()` for buttons; use `submit()` only for form submission.
+
+```java
+// ❌ WRONG: Using submit() on a button outside a form
+WebElement button = driver.findElement(By.id("calculate-btn"));
+button.submit(); // Throws exception if button not in a form
+
+// ❌ WRONG: Using submit() when click() is needed
+WebElement loginButton = driver.findElement(By.id("login-btn"));
+loginButton.submit(); // Might bypass JavaScript validations that click() triggers
+
+// ✅ CORRECT: Use click() for buttons
+WebElement loginButton = driver.findElement(By.id("login-btn"));
+loginButton.click();
+
+// ✅ CORRECT: Use submit() on any form element to submit the form
+WebElement usernameField = driver.findElement(By.id("username"));
+usernameField.sendKeys("testuser");
+WebElement passwordField = driver.findElement(By.id("password"));
+passwordField.sendKeys("password123");
+passwordField.submit(); // Submits the form (same as clicking submit button)
+
+// ✅ BEST: Use submit() for forms, click() for buttons
+// For form submission via Enter key
+passwordField.submit();
+
+// For button clicks
+driver.findElement(By.id("submit-btn")).click();
+```
+
+### 6. Not Handling StaleElementReferenceException
+**Problem**: Storing WebElement references and reusing them after page refresh or DOM updates.
+
+**Why It's Wrong**: After DOM changes (page refresh, AJAX updates, navigation), stored WebElement references become stale. Interacting with stale elements throws `StaleElementReferenceException`.
+
+**Correct Approach**: Re-find elements after DOM changes or use a re-try mechanism.
+
+```java
+// ❌ WRONG: Reusing element after page changes
+WebElement searchButton = driver.findElement(By.id("search-btn"));
+searchButton.click();
+driver.navigate().refresh(); // Page refreshes, DOM recreated
+searchButton.click(); // FAILS: StaleElementReferenceException
+
+// ✅ CORRECT: Re-find element after page change
+WebElement searchButton = driver.findElement(By.id("search-btn"));
+searchButton.click();
+driver.navigate().refresh();
+// Find element again
+searchButton = driver.findElement(By.id("search-btn"));
+searchButton.click(); // Works
+
+// ✅ BETTER: Don't store references, find when needed
+driver.findElement(By.id("search-btn")).click();
+driver.navigate().refresh();
+driver.findElement(By.id("search-btn")).click();
+
+// ✅ BEST: Create retry method for stale elements
+public void clickWithRetry(By locator, int attempts) {
+    for (int i = 0; i < attempts; i++) {
+        try {
+            driver.findElement(locator).click();
+            return; // Success
+        } catch (StaleElementReferenceException e) {
+            if (i == attempts - 1) throw e; // Last attempt failed
+            System.out.println("Retrying due to stale element...");
+        }
+    }
+}
+
+// Usage
+clickWithRetry(By.id("search-btn"), 3);
+```
+
+---
+
 ## Practice Exercises
 
 ### Exercise 1: Basic Element Interactions

@@ -1210,7 +1210,7 @@ wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("element")));
 
 ---
 
-## 9. Best Practices for Waits {#best-practices}
+## 9. 📚 Best Practices {#best-practices}
 
 ### 1. Prefer Explicit Wait Over Implicit Wait
 
@@ -1450,7 +1450,7 @@ WebElement successMessage = waitForElement.until(
 
 ---
 
-## 10. Common Mistakes and Solutions {#common-mistakes}
+## 10. ⚠️ Common Mistakes to Avoid {#common-mistakes}
 
 ### Mistake 1: Using Thread.sleep() Everywhere
 

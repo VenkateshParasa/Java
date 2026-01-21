@@ -2998,11 +2998,2908 @@ Database testing is a critical component of comprehensive test automation. By ma
 
 ---
 
+## Beginner-Friendly Exercises
+
+### Exercise 1: Setup JDBC Connection and Execute Basic Queries (45 minutes)
+
+**Objective**: Learn to establish a database connection and execute basic SQL queries using JDBC.
+
+**Real-world Scenario**: You're testing a user management system and need to verify that user data is correctly stored in the database after registration through the UI.
+
+**Requirements**:
+1. Set up JDBC connection to a database (H2 or MySQL)
+2. Create a simple users table with test data
+3. Execute SELECT query to retrieve all users
+4. Execute SELECT query to find a specific user by ID
+5. Print and validate query results
+
+**Code Template**:
+```java
+package com.automation.database.exercises;
+
+import java.sql.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
+public class Exercise1_BasicJDBC {
+
+    private Connection connection;
+    private static final String DB_URL = "jdbc:h2:mem:testdb";
+    private static final String DB_USER = "sa";
+    private static final String DB_PASSWORD = "";
+
+    @BeforeClass
+    public void setupDatabase() throws SQLException {
+        // TODO: Establish database connection
+        connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+        // TODO: Create users table
+        String createTableSQL = "CREATE TABLE users (" +
+            "id INT PRIMARY KEY AUTO_INCREMENT, " +
+            "username VARCHAR(50), " +
+            "email VARCHAR(100), " +
+            "status VARCHAR(20))";
+
+        // Execute create table statement
+
+        // TODO: Insert test data
+        String insertSQL = "INSERT INTO users (username, email, status) VALUES (?, ?, ?)";
+
+        // Insert 3 test users
+    }
+
+    @Test(priority = 1)
+    public void testGetAllUsers() throws SQLException {
+        // TODO: Execute SELECT query to get all users
+        String query = "SELECT * FROM users";
+
+        // TODO: Create Statement and execute query
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        // TODO: Count number of users
+        int userCount = 0;
+        while (resultSet.next()) {
+            userCount++;
+            // Print user details
+            System.out.println("User ID: " + resultSet.getInt("id"));
+            System.out.println("Username: " + resultSet.getString("username"));
+            System.out.println("Email: " + resultSet.getString("email"));
+            System.out.println("---");
+        }
+
+        // TODO: Verify expected number of users
+        assertEquals(userCount, 3, "Should have 3 users");
+
+        // TODO: Close resources
+    }
+
+    @Test(priority = 2)
+    public void testGetUserById() throws SQLException {
+        // TODO: Execute SELECT query with WHERE clause
+        String query = "SELECT * FROM users WHERE id = ?";
+
+        // TODO: Use PreparedStatement
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, 1);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        // TODO: Verify user found
+        assertTrue(resultSet.next(), "User with ID 1 should exist");
+
+        // TODO: Validate user data
+        String username = resultSet.getString("username");
+        assertNotNull(username, "Username should not be null");
+
+        System.out.println("Found user: " + username);
+
+        // TODO: Close resources
+    }
+
+    @Test(priority = 3)
+    public void testGetUserByEmail() throws SQLException {
+        // TODO: Query user by email
+        String query = "SELECT * FROM users WHERE email = ?";
+
+        // TODO: Execute query with email parameter
+
+        // TODO: Verify results
+        // TODO: Print user details
+    }
+
+    @Test(priority = 4)
+    public void testCountUsers() throws SQLException {
+        // TODO: Execute COUNT query
+        String query = "SELECT COUNT(*) as total FROM users";
+
+        // TODO: Get count from result
+        // TODO: Verify count equals 3
+    }
+
+    @AfterClass
+    public void cleanup() throws SQLException {
+        // TODO: Close database connection
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Database connection is successfully established
+- Users table is created with test data
+- SELECT queries retrieve correct data
+- PreparedStatement prevents SQL injection
+- All query results are properly validated
+- Resources are properly closed after use
+
+**Common Mistakes to Avoid**:
+1. Not closing ResultSet, Statement, and Connection resources
+2. Using Statement instead of PreparedStatement for parameterized queries
+3. Not handling SQLException properly
+4. Forgetting to close connection in @AfterClass
+5. Not validating query results before using data
+
+**Solution Approach (Hints)**:
+- Use try-with-resources for automatic resource management
+- Always use PreparedStatement for queries with parameters
+- Execute: `statement.executeUpdate(createTableSQL)` for DDL
+- ResultSet navigation: `while(rs.next())` for multiple rows
+- Close in reverse order: ResultSet → Statement → Connection
+
+---
+
+### Exercise 2: Database CRUD Operations with PreparedStatement (50 minutes)
+
+**Objective**: Implement complete CRUD (Create, Read, Update, Delete) operations using PreparedStatement.
+
+**Real-world Scenario**: You need to manage test data for product testing - creating products, updating prices, and cleaning up after tests.
+
+**Requirements**:
+1. Create a products table in the database
+2. Implement INSERT operation to add products
+3. Implement UPDATE operation to modify product data
+4. Implement DELETE operation to remove products
+5. Validate all operations with SELECT queries
+
+**Code Template**:
+```java
+package com.automation.database.exercises;
+
+import java.sql.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
+public class Exercise2_CRUDOperations {
+
+    private Connection connection;
+    private static final String DB_URL = "jdbc:h2:mem:testdb";
+    private static final String DB_USER = "sa";
+    private static final String DB_PASSWORD = "";
+
+    @BeforeClass
+    public void setupDatabase() throws SQLException {
+        // TODO: Establish connection
+        connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+        // TODO: Create products table
+        String createTableSQL = "CREATE TABLE products (" +
+            "id INT PRIMARY KEY AUTO_INCREMENT, " +
+            "name VARCHAR(100), " +
+            "price DECIMAL(10,2), " +
+            "quantity INT, " +
+            "category VARCHAR(50))";
+
+        // Execute create table
+    }
+
+    @Test(priority = 1)
+    public void testCreateProduct() throws SQLException {
+        // TODO: Prepare INSERT statement
+        String insertSQL = "INSERT INTO products (name, price, quantity, category) " +
+                          "VALUES (?, ?, ?, ?)";
+
+        PreparedStatement pstmt = connection.prepareStatement(insertSQL,
+            Statement.RETURN_GENERATED_KEYS);
+
+        // TODO: Set parameters
+        pstmt.setString(1, "Laptop");
+        pstmt.setDouble(2, 999.99);
+        pstmt.setInt(3, 10);
+        pstmt.setString(4, "Electronics");
+
+        // TODO: Execute update
+        int rowsAffected = pstmt.executeUpdate();
+
+        // TODO: Verify insertion
+        assertEquals(rowsAffected, 1, "Should insert 1 row");
+
+        // TODO: Get generated ID
+        ResultSet generatedKeys = pstmt.getGeneratedKeys();
+        assertTrue(generatedKeys.next(), "Should have generated key");
+        int productId = generatedKeys.getInt(1);
+
+        System.out.println("Created product with ID: " + productId);
+
+        // TODO: Verify product exists
+        String selectSQL = "SELECT * FROM products WHERE id = ?";
+        PreparedStatement selectStmt = connection.prepareStatement(selectSQL);
+        selectStmt.setInt(1, productId);
+
+        ResultSet rs = selectStmt.executeQuery();
+        assertTrue(rs.next(), "Product should exist");
+        assertEquals(rs.getString("name"), "Laptop");
+
+        // TODO: Close resources
+    }
+
+    @Test(priority = 2)
+    public void testReadProduct() throws SQLException {
+        // TODO: Insert a product first
+        insertProduct("Mouse", 29.99, 50, "Accessories");
+
+        // TODO: Read the product
+        String selectSQL = "SELECT * FROM products WHERE name = ?";
+
+        // TODO: Verify all fields match expected values
+    }
+
+    @Test(priority = 3)
+    public void testUpdateProduct() throws SQLException {
+        // TODO: Insert a product
+        int productId = insertProduct("Keyboard", 49.99, 20, "Accessories");
+
+        // TODO: Update product price
+        String updateSQL = "UPDATE products SET price = ? WHERE id = ?";
+        PreparedStatement pstmt = connection.prepareStatement(updateSQL);
+        pstmt.setDouble(1, 39.99);
+        pstmt.setInt(2, productId);
+
+        // TODO: Execute update
+        int rowsAffected = pstmt.executeUpdate();
+        assertEquals(rowsAffected, 1, "Should update 1 row");
+
+        // TODO: Verify update
+        String selectSQL = "SELECT price FROM products WHERE id = ?";
+        PreparedStatement selectStmt = connection.prepareStatement(selectSQL);
+        selectStmt.setInt(1, productId);
+
+        ResultSet rs = selectStmt.executeQuery();
+        assertTrue(rs.next());
+        assertEquals(rs.getDouble("price"), 39.99, 0.01);
+
+        System.out.println("Product price updated successfully");
+
+        // TODO: Close resources
+    }
+
+    @Test(priority = 4)
+    public void testDeleteProduct() throws SQLException {
+        // TODO: Insert a product
+        int productId = insertProduct("Monitor", 299.99, 5, "Electronics");
+
+        // TODO: Delete the product
+        String deleteSQL = "DELETE FROM products WHERE id = ?";
+
+        // TODO: Execute delete
+        // TODO: Verify deletion (should affect 1 row)
+
+        // TODO: Verify product doesn't exist
+        String selectSQL = "SELECT * FROM products WHERE id = ?";
+
+        // TODO: Execute select and verify no results
+    }
+
+    @Test(priority = 5)
+    public void testBulkInsert() throws SQLException {
+        // TODO: Insert multiple products using batch
+        String insertSQL = "INSERT INTO products (name, price, quantity, category) " +
+                          "VALUES (?, ?, ?, ?)";
+        PreparedStatement pstmt = connection.prepareStatement(insertSQL);
+
+        // Add products to batch
+        String[] products = {"Product1", "Product2", "Product3"};
+        for (int i = 0; i < products.length; i++) {
+            pstmt.setString(1, products[i]);
+            pstmt.setDouble(2, 10.00 + i);
+            pstmt.setInt(3, 10);
+            pstmt.setString(4, "Test");
+            pstmt.addBatch();
+        }
+
+        // TODO: Execute batch
+        int[] results = pstmt.executeBatch();
+
+        // TODO: Verify all inserts succeeded
+        assertEquals(results.length, 3);
+
+        // TODO: Count products
+        String countSQL = "SELECT COUNT(*) FROM products";
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery(countSQL);
+        rs.next();
+        int count = rs.getInt(1);
+
+        System.out.println("Total products: " + count);
+
+        // TODO: Close resources
+    }
+
+    // Helper method
+    private int insertProduct(String name, double price, int quantity, String category)
+        throws SQLException {
+        String insertSQL = "INSERT INTO products (name, price, quantity, category) " +
+                          "VALUES (?, ?, ?, ?)";
+        PreparedStatement pstmt = connection.prepareStatement(insertSQL,
+            Statement.RETURN_GENERATED_KEYS);
+
+        pstmt.setString(1, name);
+        pstmt.setDouble(2, price);
+        pstmt.setInt(3, quantity);
+        pstmt.setString(4, category);
+
+        pstmt.executeUpdate();
+
+        ResultSet rs = pstmt.getGeneratedKeys();
+        rs.next();
+        int id = rs.getInt(1);
+
+        pstmt.close();
+        return id;
+    }
+
+    @AfterClass
+    public void cleanup() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Products table is created successfully
+- INSERT operations add products and return generated IDs
+- UPDATE operations modify existing products
+- DELETE operations remove products
+- Batch inserts handle multiple products efficiently
+- All operations are validated with SELECT queries
+
+**Common Mistakes to Avoid**:
+1. Not using RETURN_GENERATED_KEYS when inserting
+2. Forgetting to commit changes in non-autocommit mode
+3. Not validating operations with SELECT queries
+4. Mixing Statement and PreparedStatement incorrectly
+5. Not handling SQLException for each operation
+
+**Solution Approach (Hints)**:
+- Use `Statement.RETURN_GENERATED_KEYS` flag for INSERT
+- Get generated keys: `pstmt.getGeneratedKeys()`
+- Batch operations: `pstmt.addBatch()` then `pstmt.executeBatch()`
+- Always validate operations with corresponding SELECT
+- Use helper methods to avoid code duplication
+
+---
+
+### Exercise 3: Database Utility Class and Connection Pooling (55 minutes)
+
+**Objective**: Create a reusable DatabaseUtils class with connection pooling for efficient database operations.
+
+**Real-world Scenario**: Your framework needs a centralized database utility that manages connections efficiently and provides reusable methods for common operations.
+
+**Requirements**:
+1. Create DatabaseUtils class with connection management
+2. Implement connection pooling using HikariCP
+3. Create utility methods for SELECT, INSERT, UPDATE, DELETE
+4. Implement proper resource management
+5. Create tests using the utility class
+
+**Code Template**:
+
+**pom.xml** (add dependency):
+```xml
+<dependency>
+    <groupId>com.zaxxer</groupId>
+    <artifactId>HikariCP</artifactId>
+    <version>5.0.1</version>
+</dependency>
+```
+
+**DatabaseUtils.java**:
+```java
+package com.automation.database.utils;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import java.sql.*;
+import java.util.*;
+
+public class DatabaseUtils {
+
+    private static HikariDataSource dataSource;
+
+    // TODO: Initialize connection pool
+    static {
+        // TODO: Create HikariConfig
+        // TODO: Set database properties
+        // TODO: Create HikariDataSource
+    }
+
+    public static void initializeConnectionPool(String jdbcUrl, String username,
+                                               String password) {
+        HikariConfig config = new HikariConfig();
+        // TODO: Configure connection pool
+        config.setJdbcUrl(jdbcUrl);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(2);
+        config.setConnectionTimeout(30000);
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws SQLException {
+        // TODO: Return connection from pool
+        return dataSource.getConnection();
+    }
+
+    public static ResultSet executeQuery(String query, Object... params)
+        throws SQLException {
+        // TODO: Execute SELECT query with parameters
+        // TODO: Return ResultSet
+        return null;
+    }
+
+    public static int executeUpdate(String query, Object... params)
+        throws SQLException {
+        // TODO: Execute INSERT/UPDATE/DELETE
+        // TODO: Return number of affected rows
+        return 0;
+    }
+
+    public static int executeInsert(String query, Object... params)
+        throws SQLException {
+        // TODO: Execute INSERT and return generated ID
+        return 0;
+    }
+
+    public static List<Map<String, Object>> getResultsAsList(String query,
+                                                             Object... params)
+        throws SQLException {
+        // TODO: Execute query and convert ResultSet to List of Maps
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        // TODO: Implement conversion logic
+
+        return results;
+    }
+
+    public static Map<String, Object> getSingleResult(String query, Object... params)
+        throws SQLException {
+        // TODO: Get single row as Map
+        List<Map<String, Object>> results = getResultsAsList(query, params);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    public static boolean exists(String query, Object... params) throws SQLException {
+        // TODO: Check if record exists
+        return false;
+    }
+
+    public static int getCount(String query, Object... params) throws SQLException {
+        // TODO: Get count from query
+        return 0;
+    }
+
+    public static void closePool() {
+        // TODO: Close connection pool
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+        }
+    }
+
+    // Private helper method to set parameters
+    private static void setParameters(PreparedStatement pstmt, Object... params)
+        throws SQLException {
+        // TODO: Set parameters on PreparedStatement
+        for (int i = 0; i < params.length; i++) {
+            pstmt.setObject(i + 1, params[i]);
+        }
+    }
+}
+```
+
+**Exercise3_DatabaseUtilsTests.java**:
+```java
+package com.automation.database.exercises;
+
+import com.automation.database.utils.DatabaseUtils;
+import org.testng.annotations.*;
+import java.sql.*;
+import java.util.*;
+import static org.testng.Assert.*;
+
+public class Exercise3_DatabaseUtilsTests {
+
+    @BeforeClass
+    public void setup() throws SQLException {
+        // TODO: Initialize connection pool
+        DatabaseUtils.initializeConnectionPool(
+            "jdbc:h2:mem:testdb",
+            "sa",
+            ""
+        );
+
+        // TODO: Create test table
+        try (Connection conn = DatabaseUtils.getConnection()) {
+            String createTableSQL = "CREATE TABLE employees (" +
+                "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                "name VARCHAR(100), " +
+                "email VARCHAR(100), " +
+                "salary DECIMAL(10,2), " +
+                "department VARCHAR(50))";
+
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(createTableSQL);
+        }
+    }
+
+    @Test(priority = 1)
+    public void testInsertUsingUtils() throws SQLException {
+        // TODO: Insert employee using DatabaseUtils
+        String insertSQL = "INSERT INTO employees (name, email, salary, department) " +
+                          "VALUES (?, ?, ?, ?)";
+
+        int employeeId = DatabaseUtils.executeInsert(insertSQL,
+            "John Doe", "john@example.com", 50000.00, "IT");
+
+        // TODO: Verify insertion
+        assertTrue(employeeId > 0, "Should return generated ID");
+
+        // Verify employee exists
+        String selectSQL = "SELECT * FROM employees WHERE id = ?";
+        Map<String, Object> result = DatabaseUtils.getSingleResult(selectSQL, employeeId);
+
+        assertNotNull(result, "Employee should exist");
+        assertEquals(result.get("NAME"), "John Doe");
+    }
+
+    @Test(priority = 2)
+    public void testGetResultsAsList() throws SQLException {
+        // TODO: Insert multiple employees
+        String insertSQL = "INSERT INTO employees (name, email, salary, department) " +
+                          "VALUES (?, ?, ?, ?)";
+
+        DatabaseUtils.executeUpdate(insertSQL, "Alice Smith",
+            "alice@example.com", 60000.00, "HR");
+        DatabaseUtils.executeUpdate(insertSQL, "Bob Johnson",
+            "bob@example.com", 55000.00, "IT");
+
+        // TODO: Get all IT employees
+        String selectSQL = "SELECT * FROM employees WHERE department = ?";
+        List<Map<String, Object>> results =
+            DatabaseUtils.getResultsAsList(selectSQL, "IT");
+
+        // TODO: Verify results
+        assertTrue(results.size() >= 1, "Should have at least 1 IT employee");
+
+        // Print results
+        for (Map<String, Object> row : results) {
+            System.out.println("Employee: " + row.get("NAME") +
+                             ", Salary: " + row.get("SALARY"));
+        }
+    }
+
+    @Test(priority = 3)
+    public void testUpdateUsingUtils() throws SQLException {
+        // TODO: Insert employee
+        String insertSQL = "INSERT INTO employees (name, email, salary, department) " +
+                          "VALUES (?, ?, ?, ?)";
+        int empId = DatabaseUtils.executeInsert(insertSQL,
+            "Charlie Brown", "charlie@example.com", 45000.00, "Sales");
+
+        // TODO: Update salary
+        String updateSQL = "UPDATE employees SET salary = ? WHERE id = ?";
+        int rowsUpdated = DatabaseUtils.executeUpdate(updateSQL, 50000.00, empId);
+
+        // TODO: Verify update
+        assertEquals(rowsUpdated, 1, "Should update 1 row");
+
+        Map<String, Object> result = DatabaseUtils.getSingleResult(
+            "SELECT salary FROM employees WHERE id = ?", empId);
+        assertEquals(((Number) result.get("SALARY")).doubleValue(), 50000.00, 0.01);
+    }
+
+    @Test(priority = 4)
+    public void testExistsMethod() throws SQLException {
+        // TODO: Test exists method
+        boolean exists = DatabaseUtils.exists(
+            "SELECT 1 FROM employees WHERE email = ?",
+            "john@example.com"
+        );
+
+        assertTrue(exists, "Employee with email should exist");
+
+        boolean notExists = DatabaseUtils.exists(
+            "SELECT 1 FROM employees WHERE email = ?",
+            "nonexistent@example.com"
+        );
+
+        assertFalse(notExists, "Non-existent email should return false");
+    }
+
+    @Test(priority = 5)
+    public void testGetCount() throws SQLException {
+        // TODO: Get total employee count
+        int totalCount = DatabaseUtils.getCount("SELECT COUNT(*) FROM employees");
+
+        assertTrue(totalCount > 0, "Should have employees");
+
+        // TODO: Get department-specific count
+        int itCount = DatabaseUtils.getCount(
+            "SELECT COUNT(*) FROM employees WHERE department = ?", "IT");
+
+        System.out.println("Total employees: " + totalCount);
+        System.out.println("IT employees: " + itCount);
+    }
+
+    @AfterClass
+    public void cleanup() {
+        // TODO: Close connection pool
+        DatabaseUtils.closePool();
+    }
+}
+```
+
+**Expected Outcome**:
+- Connection pool is initialized with HikariCP
+- DatabaseUtils provides reusable database operations
+- All utility methods work correctly
+- Results are properly converted to Java objects
+- Connection pooling improves performance
+- Resources are properly managed
+
+**Common Mistakes to Avoid**:
+1. Not configuring connection pool properly
+2. Forgetting to close ResultSet in utility methods
+3. Not handling null results properly
+4. Hardcoding database credentials
+5. Not closing the connection pool in cleanup
+
+**Solution Approach (Hints)**:
+- Use HikariConfig for connection pool configuration
+- Set pool size based on expected load
+- Use try-with-resources for automatic resource management
+- Convert ResultSet to List<Map<String, Object>> for easier handling
+- Store credentials in properties file
+
+---
+
+### Exercise 4: Database Validation with Selenium Tests (60 minutes)
+
+**Objective**: Integrate database validation with Selenium UI tests to verify end-to-end data flow.
+
+**Real-world Scenario**: Test user registration where a user signs up through UI, and you need to verify that the user data is correctly stored in the database.
+
+**Requirements**:
+1. Create user registration test using Selenium
+2. Validate user data in database after UI registration
+3. Set up test data via database before UI test
+4. Clean up test data after test execution
+5. Verify UI and database data consistency
+
+**Code Template**:
+```java
+package com.automation.hybrid.exercises;
+
+import com.automation.database.utils.DatabaseUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import java.sql.*;
+import java.util.Map;
+import static org.testng.Assert.*;
+
+public class Exercise4_HybridDatabaseTests {
+
+    private WebDriver driver;
+    private String testEmail;
+
+    @BeforeClass
+    public void setup() throws SQLException {
+        // TODO: Setup WebDriver
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+
+        // TODO: Initialize database connection pool
+        DatabaseUtils.initializeConnectionPool(
+            "jdbc:h2:mem:testdb", "sa", ""
+        );
+
+        // TODO: Create users table
+        try (Connection conn = DatabaseUtils.getConnection()) {
+            String createTableSQL = "CREATE TABLE users (" +
+                "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                "username VARCHAR(50), " +
+                "email VARCHAR(100) UNIQUE, " +
+                "password VARCHAR(100), " +
+                "created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(createTableSQL);
+        }
+    }
+
+    @Test(priority = 1)
+    public void testUserRegistrationWithDBValidation() throws SQLException {
+        // TODO: Generate unique test data
+        testEmail = "testuser" + System.currentTimeMillis() + "@example.com";
+        String username = "testuser" + System.currentTimeMillis();
+        String password = "Test@123";
+
+        // TODO: In real scenario, navigate to registration page
+        // driver.get("https://example.com/register");
+
+        // Simulate registration (in real test, interact with UI)
+        System.out.println("Simulating user registration via UI...");
+
+        // TODO: Insert user as if UI did it (simulating backend behavior)
+        String insertSQL = "INSERT INTO users (username, email, password) " +
+                          "VALUES (?, ?, ?)";
+        int userId = DatabaseUtils.executeInsert(insertSQL,
+            username, testEmail, password);
+
+        // TODO: Verify user in database
+        String selectSQL = "SELECT * FROM users WHERE email = ?";
+        Map<String, Object> user = DatabaseUtils.getSingleResult(selectSQL, testEmail);
+
+        // TODO: Validate user data
+        assertNotNull(user, "User should exist in database");
+        assertEquals(user.get("USERNAME"), username);
+        assertEquals(user.get("EMAIL"), testEmail);
+
+        System.out.println("User registered successfully with ID: " + userId);
+        System.out.println("Username: " + user.get("USERNAME"));
+        System.out.println("Email: " + user.get("EMAIL"));
+    }
+
+    @Test(priority = 2, dependsOnMethods = "testUserRegistrationWithDBValidation")
+    public void testLoginWithDBCreatedUser() throws SQLException {
+        // TODO: Verify user exists before attempting login
+        boolean userExists = DatabaseUtils.exists(
+            "SELECT 1 FROM users WHERE email = ?", testEmail
+        );
+
+        assertTrue(userExists, "User should exist in database");
+
+        // TODO: In real scenario, perform login via UI
+        // driver.get("https://example.com/login");
+        // loginPage.login(testEmail, "Test@123");
+
+        System.out.println("Simulating login with DB-verified credentials");
+
+        // TODO: Verify login timestamp update (in real scenario)
+        String updateSQL = "UPDATE users SET last_login = CURRENT_TIMESTAMP " +
+                          "WHERE email = ?";
+        int rowsUpdated = DatabaseUtils.executeUpdate(updateSQL, testEmail);
+
+        assertEquals(rowsUpdated, 1, "Should update login timestamp");
+    }
+
+    @Test(priority = 3)
+    public void testSetupTestDataViaDB() throws SQLException {
+        // TODO: Setup test user via database (faster than UI)
+        String insertSQL = "INSERT INTO users (username, email, password) " +
+                          "VALUES (?, ?, ?)";
+
+        int userId1 = DatabaseUtils.executeInsert(insertSQL,
+            "admin_user", "admin@example.com", "Admin@123");
+        int userId2 = DatabaseUtils.executeInsert(insertSQL,
+            "test_user", "testuser@example.com", "Test@123");
+
+        // TODO: Verify setup
+        int userCount = DatabaseUtils.getCount("SELECT COUNT(*) FROM users");
+        assertTrue(userCount >= 2, "Should have at least 2 users");
+
+        System.out.println("Test data setup completed");
+        System.out.println("Created users: " + userId1 + ", " + userId2);
+
+        // TODO: In real scenario, proceed with UI tests using this data
+    }
+
+    @Test(priority = 4)
+    public void testUIActionWithDBVerification() throws SQLException {
+        // TODO: Create a user
+        String email = "actionuser@example.com";
+        DatabaseUtils.executeInsert(
+            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+            "actionuser", email, "Pass@123"
+        );
+
+        // TODO: Simulate UI action (e.g., update profile)
+        System.out.println("Simulating profile update via UI...");
+
+        // Update via database (simulating backend)
+        String updateSQL = "UPDATE users SET username = ? WHERE email = ?";
+        DatabaseUtils.executeUpdate(updateSQL, "updated_user", email);
+
+        // TODO: Verify update in database
+        Map<String, Object> user = DatabaseUtils.getSingleResult(
+            "SELECT * FROM users WHERE email = ?", email
+        );
+
+        assertEquals(user.get("USERNAME"), "updated_user",
+            "Username should be updated");
+
+        System.out.println("Profile updated and verified in database");
+    }
+
+    @Test(priority = 5)
+    public void testDatabaseStateValidation() throws SQLException {
+        // TODO: Test complex database state validation
+
+        // 1. Count users by registration date
+        String countSQL = "SELECT COUNT(*) FROM users " +
+                         "WHERE created_date > CURRENT_TIMESTAMP - INTERVAL '1' HOUR";
+        int recentUsers = DatabaseUtils.getCount(countSQL);
+
+        System.out.println("Recent users (last hour): " + recentUsers);
+
+        // 2. Verify no duplicate emails
+        String duplicateSQL = "SELECT email, COUNT(*) as count FROM users " +
+                             "GROUP BY email HAVING COUNT(*) > 1";
+        int duplicates = DatabaseUtils.getCount(duplicateSQL);
+
+        assertEquals(duplicates, 0, "Should have no duplicate emails");
+
+        // 3. Verify all users have required fields
+        String invalidSQL = "SELECT COUNT(*) FROM users " +
+                           "WHERE username IS NULL OR email IS NULL";
+        int invalidUsers = DatabaseUtils.getCount(invalidSQL);
+
+        assertEquals(invalidUsers, 0, "All users should have required fields");
+    }
+
+    @AfterMethod
+    public void afterEachTest() {
+        // TODO: Capture screenshot if test fails
+        // In real scenario: if test failed, take screenshot
+    }
+
+    @AfterClass
+    public void cleanup() throws SQLException {
+        // TODO: Delete test users
+        if (testEmail != null) {
+            DatabaseUtils.executeUpdate("DELETE FROM users WHERE email = ?",
+                testEmail);
+        }
+
+        // TODO: Clean up all test data
+        DatabaseUtils.executeUpdate("DELETE FROM users WHERE email LIKE '%@example.com'");
+
+        // TODO: Close browser
+        if (driver != null) {
+            driver.quit();
+        }
+
+        // TODO: Close database connection pool
+        DatabaseUtils.closePool();
+    }
+}
+```
+
+**Expected Outcome**:
+- Selenium tests successfully interact with UI
+- Database validation confirms UI actions
+- Test data setup via database is faster than UI
+- Data consistency between UI and database is verified
+- Test data is properly cleaned up after execution
+- Hybrid approach provides comprehensive validation
+
+**Common Mistakes to Avoid**:
+1. Not verifying database state before UI actions
+2. Forgetting to clean up test data after tests
+3. Not using unique identifiers for test data
+4. Hard-coded waits instead of database verification
+5. Not handling database connection in test setup/teardown
+
+**Solution Approach (Hints)**:
+- Always verify database state before proceeding to UI
+- Use timestamps in test data: `System.currentTimeMillis()`
+- Query database instead of waiting for UI updates
+- Clean up test data in @AfterClass or @AfterMethod
+- Use database to setup complex test scenarios faster
+
+---
+
+### Exercise 5: Transaction Management and Data Integrity (50 minutes)
+
+**Objective**: Learn to manage database transactions, handle rollbacks, and ensure data integrity in tests.
+
+**Real-world Scenario**: Test an order processing system where multiple database operations must succeed or fail together (atomicity).
+
+**Requirements**:
+1. Implement transaction management with commit/rollback
+2. Test successful transaction completion
+3. Test transaction rollback on failure
+4. Verify data integrity after rollback
+5. Implement savepoints for partial rollback
+
+**Code Template**:
+```java
+package com.automation.database.exercises;
+
+import java.sql.*;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
+public class Exercise5_TransactionManagement {
+
+    private Connection connection;
+    private static final String DB_URL = "jdbc:h2:mem:testdb";
+
+    @BeforeClass
+    public void setup() throws SQLException {
+        connection = DriverManager.getConnection(DB_URL, "sa", "");
+
+        // TODO: Create tables for order processing
+        Statement stmt = connection.createStatement();
+
+        String createOrdersTable = "CREATE TABLE orders (" +
+            "id INT PRIMARY KEY AUTO_INCREMENT, " +
+            "customer_id INT, " +
+            "total_amount DECIMAL(10,2), " +
+            "status VARCHAR(20))";
+
+        String createOrderItemsTable = "CREATE TABLE order_items (" +
+            "id INT PRIMARY KEY AUTO_INCREMENT, " +
+            "order_id INT, " +
+            "product_id INT, " +
+            "quantity INT, " +
+            "price DECIMAL(10,2))";
+
+        String createInventoryTable = "CREATE TABLE inventory (" +
+            "product_id INT PRIMARY KEY, " +
+            "quantity INT)";
+
+        stmt.executeUpdate(createOrdersTable);
+        stmt.executeUpdate(createOrderItemsTable);
+        stmt.executeUpdate(createInventoryTable);
+
+        // TODO: Insert test inventory
+        stmt.executeUpdate("INSERT INTO inventory VALUES (1, 100)");
+        stmt.executeUpdate("INSERT INTO inventory VALUES (2, 50)");
+    }
+
+    @Test(priority = 1)
+    public void testSuccessfulTransaction() throws SQLException {
+        // TODO: Disable auto-commit
+        connection.setAutoCommit(false);
+
+        try {
+            // Step 1: Create order
+            String insertOrderSQL = "INSERT INTO orders (customer_id, total_amount, status) " +
+                                   "VALUES (?, ?, ?)";
+            PreparedStatement orderStmt = connection.prepareStatement(insertOrderSQL,
+                Statement.RETURN_GENERATED_KEYS);
+
+            orderStmt.setInt(1, 1001);
+            orderStmt.setDouble(2, 150.00);
+            orderStmt.setString(3, "PENDING");
+            orderStmt.executeUpdate();
+
+            ResultSet rs = orderStmt.getGeneratedKeys();
+            rs.next();
+            int orderId = rs.getInt(1);
+
+            // Step 2: Add order items
+            String insertItemSQL = "INSERT INTO order_items " +
+                "(order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+            PreparedStatement itemStmt = connection.prepareStatement(insertItemSQL);
+
+            itemStmt.setInt(1, orderId);
+            itemStmt.setInt(2, 1);
+            itemStmt.setInt(3, 2);
+            itemStmt.setDouble(4, 50.00);
+            itemStmt.executeUpdate();
+
+            // Step 3: Update inventory
+            String updateInventorySQL = "UPDATE inventory SET quantity = quantity - ? " +
+                                       "WHERE product_id = ?";
+            PreparedStatement invStmt = connection.prepareStatement(updateInventorySQL);
+
+            invStmt.setInt(1, 2);
+            invStmt.setInt(2, 1);
+            invStmt.executeUpdate();
+
+            // TODO: Commit transaction
+            connection.commit();
+
+            System.out.println("Transaction committed successfully");
+
+            // TODO: Verify all operations
+            // Verify order exists
+            PreparedStatement verifyOrder = connection.prepareStatement(
+                "SELECT * FROM orders WHERE id = ?");
+            verifyOrder.setInt(1, orderId);
+            ResultSet orderRs = verifyOrder.executeQuery();
+            assertTrue(orderRs.next(), "Order should exist");
+
+            // Verify inventory updated
+            PreparedStatement verifyInv = connection.prepareStatement(
+                "SELECT quantity FROM inventory WHERE product_id = ?");
+            verifyInv.setInt(1, 1);
+            ResultSet invRs = verifyInv.executeQuery();
+            invRs.next();
+            assertEquals(invRs.getInt("quantity"), 98, "Inventory should be reduced");
+
+        } catch (SQLException e) {
+            // TODO: Rollback on error
+            connection.rollback();
+            throw e;
+        } finally {
+            // TODO: Restore auto-commit
+            connection.setAutoCommit(true);
+        }
+    }
+
+    @Test(priority = 2)
+    public void testTransactionRollback() throws SQLException {
+        // TODO: Get initial inventory
+        PreparedStatement getInvStmt = connection.prepareStatement(
+            "SELECT quantity FROM inventory WHERE product_id = ?");
+        getInvStmt.setInt(1, 1);
+        ResultSet rs = getInvStmt.executeQuery();
+        rs.next();
+        int initialQuantity = rs.getInt("quantity");
+
+        // TODO: Disable auto-commit
+        connection.setAutoCommit(false);
+
+        try {
+            // Create order
+            PreparedStatement orderStmt = connection.prepareStatement(
+                "INSERT INTO orders (customer_id, total_amount, status) VALUES (?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS
+            );
+            orderStmt.setInt(1, 1002);
+            orderStmt.setDouble(2, 200.00);
+            orderStmt.setString(3, "PENDING");
+            orderStmt.executeUpdate();
+
+            ResultSet generatedKeys = orderStmt.getGeneratedKeys();
+            generatedKeys.next();
+            int orderId = generatedKeys.getInt(1);
+
+            // TODO: Simulate error - try to deduct more than available
+            PreparedStatement updateInv = connection.prepareStatement(
+                "UPDATE inventory SET quantity = quantity - ? WHERE product_id = ?");
+            updateInv.setInt(1, 1000); // More than available
+            updateInv.setInt(2, 1);
+            updateInv.executeUpdate();
+
+            // TODO: Check if quantity is negative (business logic violation)
+            PreparedStatement checkInv = connection.prepareStatement(
+                "SELECT quantity FROM inventory WHERE product_id = ?");
+            checkInv.setInt(1, 1);
+            ResultSet invRs = checkInv.executeQuery();
+            invRs.next();
+            int newQuantity = invRs.getInt("quantity");
+
+            if (newQuantity < 0) {
+                throw new SQLException("Insufficient inventory");
+            }
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO: Rollback transaction
+            System.out.println("Error occurred, rolling back: " + e.getMessage());
+            connection.rollback();
+
+            // TODO: Verify rollback - inventory should be unchanged
+            PreparedStatement verifyInv = connection.prepareStatement(
+                "SELECT quantity FROM inventory WHERE product_id = ?");
+            verifyInv.setInt(1, 1);
+            ResultSet invRs = verifyInv.executeQuery();
+            invRs.next();
+            assertEquals(invRs.getInt("quantity"), initialQuantity,
+                "Inventory should be rolled back");
+
+            System.out.println("Transaction rolled back successfully");
+
+        } finally {
+            connection.setAutoCommit(true);
+        }
+    }
+
+    @Test(priority = 3)
+    public void testSavepoints() throws SQLException {
+        connection.setAutoCommit(false);
+        Savepoint savepoint1 = null;
+
+        try {
+            // TODO: Create first order
+            PreparedStatement order1 = connection.prepareStatement(
+                "INSERT INTO orders (customer_id, total_amount, status) VALUES (?, ?, ?)");
+            order1.setInt(1, 1003);
+            order1.setDouble(2, 100.00);
+            order1.setString(3, "PENDING");
+            order1.executeUpdate();
+
+            // TODO: Create savepoint
+            savepoint1 = connection.setSavepoint("SavePoint1");
+
+            // TODO: Create second order
+            PreparedStatement order2 = connection.prepareStatement(
+                "INSERT INTO orders (customer_id, total_amount, status) VALUES (?, ?, ?)");
+            order2.setInt(1, 1004);
+            order2.setDouble(2, 200.00);
+            order2.setString(3, "PENDING");
+            order2.executeUpdate();
+
+            // TODO: Simulate error in second operation
+            // Rollback to savepoint
+            System.out.println("Error in second order, rolling back to savepoint");
+            connection.rollback(savepoint1);
+
+            // TODO: Commit first order
+            connection.commit();
+
+            // TODO: Verify first order exists, second doesn't
+            PreparedStatement verify = connection.prepareStatement(
+                "SELECT COUNT(*) FROM orders WHERE customer_id IN (1003, 1004)");
+            ResultSet rs = verify.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+
+            assertEquals(count, 1, "Should have only first order");
+
+            System.out.println("Savepoint rollback successful");
+
+        } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
+        }
+    }
+
+    @Test(priority = 4)
+    public void testDataIntegrity() throws SQLException {
+        // TODO: Test referential integrity
+        connection.setAutoCommit(false);
+
+        try {
+            // Try to insert order item without order (should fail)
+            PreparedStatement stmt = connection.prepareStatement(
+                "INSERT INTO order_items (order_id, product_id, quantity, price) " +
+                "VALUES (?, ?, ?, ?)");
+
+            stmt.setInt(1, 99999); // Non-existent order
+            stmt.setInt(2, 1);
+            stmt.setInt(3, 1);
+            stmt.setDouble(4, 50.00);
+
+            try {
+                stmt.executeUpdate();
+                connection.commit();
+                fail("Should fail due to referential integrity");
+            } catch (SQLException e) {
+                // Expected failure
+                System.out.println("Referential integrity maintained: " + e.getMessage());
+                connection.rollback();
+            }
+
+        } finally {
+            connection.setAutoCommit(true);
+        }
+    }
+
+    @AfterClass
+    public void cleanup() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Successful transactions commit all operations
+- Failed transactions rollback completely
+- Data integrity is maintained after rollback
+- Savepoints allow partial rollback
+- Inventory and orders remain consistent
+- Business logic validation prevents invalid states
+
+**Common Mistakes to Avoid**:
+1. Forgetting to disable auto-commit before transactions
+2. Not restoring auto-commit in finally block
+3. Not handling SQLException properly
+4. Committing before all validations complete
+5. Not testing rollback scenarios
+
+**Solution Approach (Hints)**:
+- Always use try-catch-finally for transactions
+- Set `connection.setAutoCommit(false)` before transaction
+- Use `connection.commit()` on success
+- Use `connection.rollback()` on failure
+- Restore auto-commit in finally: `connection.setAutoCommit(true)`
+- Savepoints: `connection.setSavepoint("name")`
+
+---
+
+### Exercise 6: Advanced Database Testing Patterns (55 minutes)
+
+**Objective**: Implement advanced database testing patterns including test data builders, database assertions, and query optimization.
+
+**Real-world Scenario**: Build a comprehensive database testing framework with reusable patterns for complex test scenarios.
+
+**Requirements**:
+1. Create a Test Data Builder pattern for database entities
+2. Implement custom database assertions
+3. Create a database state comparison utility
+4. Implement query performance testing
+5. Build a test data cleanup strategy
+
+**Code Template**:
+
+**UserBuilder.java** (Test Data Builder):
+```java
+package com.automation.database.builders;
+
+import java.sql.*;
+import com.automation.database.utils.DatabaseUtils;
+
+public class UserBuilder {
+    private String username;
+    private String email;
+    private String password;
+    private String status = "ACTIVE";
+    private String role = "USER";
+
+    public UserBuilder withUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public UserBuilder withEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public UserBuilder withPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public UserBuilder withStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
+    public UserBuilder withRole(String role) {
+        this.role = role;
+        return this;
+    }
+
+    public int build() throws SQLException {
+        // TODO: Insert user and return ID
+        String insertSQL = "INSERT INTO users (username, email, password, status, role) " +
+                          "VALUES (?, ?, ?, ?, ?)";
+
+        return DatabaseUtils.executeInsert(insertSQL,
+            username, email, password, status, role);
+    }
+
+    public static UserBuilder aUser() {
+        return new UserBuilder();
+    }
+}
+```
+
+**DatabaseAssertions.java**:
+```java
+package com.automation.database.assertions;
+
+import java.sql.*;
+import java.util.*;
+import com.automation.database.utils.DatabaseUtils;
+import static org.testng.Assert.*;
+
+public class DatabaseAssertions {
+
+    public static void assertRecordExists(String table, String column, Object value)
+        throws SQLException {
+        // TODO: Assert record exists
+        String query = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " = ?";
+        int count = DatabaseUtils.getCount(query, value);
+
+        assertTrue(count > 0, "Record should exist in " + table +
+            " where " + column + " = " + value);
+    }
+
+    public static void assertRecordNotExists(String table, String column, Object value)
+        throws SQLException {
+        // TODO: Assert record doesn't exist
+        String query = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " = ?";
+        int count = DatabaseUtils.getCount(query, value);
+
+        assertEquals(count, 0, "Record should not exist in " + table +
+            " where " + column + " = " + value);
+    }
+
+    public static void assertColumnValue(String table, String whereColumn,
+                                        Object whereValue, String columnToCheck,
+                                        Object expectedValue) throws SQLException {
+        // TODO: Assert specific column value
+        String query = "SELECT " + columnToCheck + " FROM " + table +
+                      " WHERE " + whereColumn + " = ?";
+
+        Map<String, Object> result = DatabaseUtils.getSingleResult(query, whereValue);
+        assertNotNull(result, "Record should exist");
+
+        Object actualValue = result.get(columnToCheck.toUpperCase());
+        assertEquals(actualValue, expectedValue,
+            "Column " + columnToCheck + " should have expected value");
+    }
+
+    public static void assertRowCount(String table, int expectedCount)
+        throws SQLException {
+        // TODO: Assert row count
+        int actualCount = DatabaseUtils.getCount("SELECT COUNT(*) FROM " + table);
+        assertEquals(actualCount, expectedCount,
+            "Table " + table + " should have " + expectedCount + " rows");
+    }
+
+    public static void assertColumnNotNull(String table, String column,
+                                          String whereColumn, Object whereValue)
+        throws SQLException {
+        // TODO: Assert column is not null
+        String query = "SELECT " + column + " FROM " + table +
+                      " WHERE " + whereColumn + " = ?";
+
+        Map<String, Object> result = DatabaseUtils.getSingleResult(query, whereValue);
+        assertNotNull(result, "Record should exist");
+
+        Object value = result.get(column.toUpperCase());
+        assertNotNull(value, "Column " + column + " should not be null");
+    }
+}
+```
+
+**Exercise6_AdvancedPatterns.java**:
+```java
+package com.automation.database.exercises;
+
+import com.automation.database.builders.UserBuilder;
+import com.automation.database.assertions.DatabaseAssertions;
+import com.automation.database.utils.DatabaseUtils;
+import org.testng.annotations.*;
+import java.sql.*;
+import static org.testng.Assert.*;
+
+public class Exercise6_AdvancedPatterns {
+
+    @BeforeClass
+    public void setup() throws SQLException {
+        // TODO: Initialize database
+        DatabaseUtils.initializeConnectionPool("jdbc:h2:mem:testdb", "sa", "");
+
+        // TODO: Create users table
+        try (Connection conn = DatabaseUtils.getConnection()) {
+            String createTableSQL = "CREATE TABLE users (" +
+                "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                "username VARCHAR(50), " +
+                "email VARCHAR(100), " +
+                "password VARCHAR(100), " +
+                "status VARCHAR(20), " +
+                "role VARCHAR(20), " +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(createTableSQL);
+        }
+    }
+
+    @Test(priority = 1)
+    public void testUserBuilder() throws SQLException {
+        // TODO: Use builder pattern to create user
+        int userId = UserBuilder.aUser()
+            .withUsername("john_doe")
+            .withEmail("john@example.com")
+            .withPassword("password123")
+            .withRole("ADMIN")
+            .withStatus("ACTIVE")
+            .build();
+
+        System.out.println("Created user with ID: " + userId);
+
+        // TODO: Verify using custom assertions
+        DatabaseAssertions.assertRecordExists("users", "id", userId);
+        DatabaseAssertions.assertColumnValue("users", "id", userId, "role", "ADMIN");
+        DatabaseAssertions.assertColumnValue("users", "id", userId, "status", "ACTIVE");
+    }
+
+    @Test(priority = 2)
+    public void testMultipleUsersWithBuilder() throws SQLException {
+        // TODO: Create multiple users with different configurations
+        int user1 = UserBuilder.aUser()
+            .withUsername("admin_user")
+            .withEmail("admin@example.com")
+            .withPassword("admin123")
+            .withRole("ADMIN")
+            .build();
+
+        int user2 = UserBuilder.aUser()
+            .withUsername("regular_user")
+            .withEmail("user@example.com")
+            .withPassword("user123")
+            .withRole("USER")
+            .build();
+
+        int user3 = UserBuilder.aUser()
+            .withUsername("inactive_user")
+            .withEmail("inactive@example.com")
+            .withPassword("inactive123")
+            .withStatus("INACTIVE")
+            .build();
+
+        // TODO: Verify using assertions
+        DatabaseAssertions.assertRowCount("users", 4); // Including user from test 1
+
+        // Verify specific users
+        DatabaseAssertions.assertColumnValue("users", "id", user1, "role", "ADMIN");
+        DatabaseAssertions.assertColumnValue("users", "id", user3, "status", "INACTIVE");
+    }
+
+    @Test(priority = 3)
+    public void testDatabaseAssertions() throws SQLException {
+        // TODO: Create test user
+        int userId = UserBuilder.aUser()
+            .withUsername("test_assertions")
+            .withEmail("assertions@example.com")
+            .withPassword("test123")
+            .build();
+
+        // TODO: Test various assertions
+        DatabaseAssertions.assertRecordExists("users", "email", "assertions@example.com");
+        DatabaseAssertions.assertColumnNotNull("users", "created_at", "id", userId);
+        DatabaseAssertions.assertColumnValue("users", "email",
+            "assertions@example.com", "username", "test_assertions");
+
+        // TODO: Test negative assertion
+        DatabaseAssertions.assertRecordNotExists("users", "email",
+            "nonexistent@example.com");
+
+        System.out.println("All database assertions passed");
+    }
+
+    @Test(priority = 4)
+    public void testQueryPerformance() throws SQLException {
+        // TODO: Insert bulk test data
+        System.out.println("Inserting test data...");
+
+        for (int i = 0; i < 100; i++) {
+            UserBuilder.aUser()
+                .withUsername("user" + i)
+                .withEmail("user" + i + "@example.com")
+                .withPassword("pass" + i)
+                .build();
+        }
+
+        // TODO: Test query performance
+        long startTime = System.currentTimeMillis();
+
+        String query = "SELECT * FROM users WHERE status = ?";
+        DatabaseUtils.getResultsAsList(query, "ACTIVE");
+
+        long endTime = System.currentTimeMillis();
+        long queryTime = endTime - startTime;
+
+        System.out.println("Query execution time: " + queryTime + "ms");
+
+        // TODO: Verify performance threshold
+        assertTrue(queryTime < 1000, "Query should complete within 1 second");
+
+        // TODO: Test with index
+        try (Connection conn = DatabaseUtils.getConnection()) {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("CREATE INDEX idx_status ON users(status)");
+        }
+
+        startTime = System.currentTimeMillis();
+        DatabaseUtils.getResultsAsList(query, "ACTIVE");
+        endTime = System.currentTimeMillis();
+        long indexedQueryTime = endTime - startTime;
+
+        System.out.println("Indexed query time: " + indexedQueryTime + "ms");
+    }
+
+    @Test(priority = 5)
+    public void testDataCleanupStrategy() throws SQLException {
+        // TODO: Mark test data with special marker
+        String testMarker = "_TEST_" + System.currentTimeMillis();
+
+        int user1 = UserBuilder.aUser()
+            .withUsername("cleanup_user1" + testMarker)
+            .withEmail("cleanup1" + testMarker + "@example.com")
+            .withPassword("pass1")
+            .build();
+
+        int user2 = UserBuilder.aUser()
+            .withUsername("cleanup_user2" + testMarker)
+            .withEmail("cleanup2" + testMarker + "@example.com")
+            .withPassword("pass2")
+            .build();
+
+        // TODO: Verify users created
+        DatabaseAssertions.assertRecordExists("users", "id", user1);
+        DatabaseAssertions.assertRecordExists("users", "id", user2);
+
+        // TODO: Cleanup test data using marker
+        String cleanupSQL = "DELETE FROM users WHERE email LIKE ?";
+        int deletedCount = DatabaseUtils.executeUpdate(cleanupSQL,
+            "%" + testMarker + "@example.com");
+
+        System.out.println("Cleaned up " + deletedCount + " test records");
+
+        // TODO: Verify cleanup
+        DatabaseAssertions.assertRecordNotExists("users", "id", user1);
+        DatabaseAssertions.assertRecordNotExists("users", "id", user2);
+    }
+
+    @AfterClass
+    public void cleanup() {
+        DatabaseUtils.closePool();
+    }
+}
+```
+
+**Expected Outcome**:
+- Test Data Builder creates users with fluent API
+- Custom assertions provide clear database validation
+- Query performance is measured and optimized
+- Test data cleanup is efficient and reliable
+- All patterns work together seamlessly
+- Code is reusable and maintainable
+
+**Common Mistakes to Avoid**:
+1. Not using builder pattern for complex test data
+2. Writing repetitive assertion code
+3. Not measuring query performance
+4. Inadequate test data cleanup
+5. Not creating unique identifiers for test data
+
+**Solution Approach (Hints)**:
+- Builder pattern returns `this` for method chaining
+- Use generic assertion methods for reusability
+- Measure time with `System.currentTimeMillis()`
+- Use unique markers for test data identification
+- Create indexes to improve query performance
+- Clean up based on test markers or timestamps
+
+---
+
 **Next Steps:**
 - Practice JDBC operations with different databases
 - Implement connection pooling in your framework
 - Create comprehensive database utility classes
 - Integrate database validation with existing Selenium tests
 - Explore advanced topics like stored procedures and triggers testing
+
+**Happy Testing!**
+
+---
+
+## Common Mistakes
+
+### 1. Not Closing Database Connections Properly
+
+**Problem:**
+```java
+// Bad - Connection leak
+public void getData() {
+    try {
+        Connection conn = DriverManager.getConnection(url, user, pass);
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+        // Processing...
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    // Connection never closed - memory leak!
+}
+```
+
+**Why It's Wrong:**
+- Unclosed connections remain open indefinitely
+- Database connection pool exhaustion
+- Application performance degradation
+- Eventual OutOfMemoryError
+- Prevents other tests from getting connections
+
+**Solution:**
+```java
+// Good - Proper resource management
+public void getData() {
+    try (Connection conn = DriverManager.getConnection(url, user, pass);
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery("SELECT * FROM users")) {
+
+        // Process results
+        while (rs.next()) {
+            // Processing logic
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    // All resources automatically closed
+}
+
+// Alternative - Manual cleanup
+public void getDataManual() {
+    Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+
+    try {
+        conn = DriverManager.getConnection(url, user, pass);
+        stmt = conn.createStatement();
+        rs = stmt.executeQuery("SELECT * FROM users");
+
+        while (rs.next()) {
+            // Process
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**Best Practice:**
+- Always use try-with-resources for JDBC objects
+- Close resources in reverse order: ResultSet → Statement → Connection
+- Implement connection pooling (HikariCP) for better management
+- Monitor active connections in production
+- Set connection timeout values appropriately
+
+---
+
+### 2. Using Statement Instead of PreparedStatement
+
+**Problem:**
+```java
+// Bad - SQL Injection vulnerability
+public User getUser(String username) {
+    String sql = "SELECT * FROM users WHERE username = '" + username + "'";
+
+    try (Connection conn = getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
+
+        if (rs.next()) {
+            return mapUser(rs);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+// If username = "admin' OR '1'='1' --"
+// SQL becomes: SELECT * FROM users WHERE username = 'admin' OR '1'='1' --'
+// Returns all users!
+```
+
+**Why It's Wrong:**
+- Vulnerable to SQL injection attacks
+- No query compilation/caching
+- Poor performance for repeated queries
+- Difficult to handle special characters
+- No type safety
+
+**Solution:**
+```java
+// Good - Using PreparedStatement
+public User getUser(String username) {
+    String sql = "SELECT * FROM users WHERE username = ?";
+
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setString(1, username);
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return mapUser(rs);
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+// Even with malicious input, PreparedStatement treats it as literal string
+// Safe from SQL injection
+```
+
+**Best Practice:**
+- Always use PreparedStatement for queries with parameters
+- Never concatenate user input into SQL strings
+- Validate input before database operations
+- Use parameterized queries: `?` placeholders
+- PreparedStatement is pre-compiled and cached by database
+- Provides better performance for repeated queries
+
+---
+
+### 3. Not Handling Transactions Properly
+
+**Problem:**
+```java
+// Bad - Incomplete transaction handling
+public void transferMoney(int fromAccount, int toAccount, double amount) {
+    try (Connection conn = getConnection()) {
+        conn.setAutoCommit(false);
+
+        // Deduct from source account
+        String deductSQL = "UPDATE accounts SET balance = balance - ? WHERE id = ?";
+        PreparedStatement deductStmt = conn.prepareStatement(deductSQL);
+        deductStmt.setDouble(1, amount);
+        deductStmt.setInt(2, fromAccount);
+        deductStmt.executeUpdate();
+
+        // If exception occurs here, first update is not rolled back
+
+        // Add to destination account
+        String addSQL = "UPDATE accounts SET balance = balance + ? WHERE id = ?";
+        PreparedStatement addStmt = conn.prepareStatement(addSQL);
+        addStmt.setDouble(1, amount);
+        addStmt.setInt(2, toAccount);
+        addStmt.executeUpdate();
+
+        conn.commit();
+    } catch (SQLException e) {
+        // No rollback! First update persists
+        e.printStackTrace();
+    }
+}
+```
+
+**Why It's Wrong:**
+- No rollback on failure leaves database in inconsistent state
+- Partial transactions commit
+- Data integrity violated
+- AutoCommit not restored in finally block
+- Lost data or corrupted records
+
+**Solution:**
+```java
+// Good - Proper transaction handling
+public void transferMoney(int fromAccount, int toAccount, double amount) {
+    Connection conn = null;
+
+    try {
+        conn = getConnection();
+        conn.setAutoCommit(false);
+
+        // Deduct from source
+        try (PreparedStatement deductStmt = conn.prepareStatement(
+            "UPDATE accounts SET balance = balance - ? WHERE id = ?")) {
+            deductStmt.setDouble(1, amount);
+            deductStmt.setInt(2, fromAccount);
+            deductStmt.executeUpdate();
+        }
+
+        // Add to destination
+        try (PreparedStatement addStmt = conn.prepareStatement(
+            "UPDATE accounts SET balance = balance + ? WHERE id = ?")) {
+            addStmt.setDouble(1, amount);
+            addStmt.setInt(2, toAccount);
+            addStmt.executeUpdate();
+        }
+
+        // Both operations successful - commit
+        conn.commit();
+        System.out.println("Transfer successful");
+
+    } catch (SQLException e) {
+        // Rollback on any error
+        if (conn != null) {
+            try {
+                conn.rollback();
+                System.out.println("Transaction rolled back");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        e.printStackTrace();
+        throw new RuntimeException("Transfer failed", e);
+
+    } finally {
+        // Always restore autoCommit
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+**Best Practice:**
+- Always use transactions for multi-step operations
+- Disable autoCommit before starting transaction
+- Commit on success, rollback on failure
+- Restore autoCommit in finally block
+- Use savepoints for complex transactions
+- Test rollback scenarios explicitly
+- Log transaction success/failure
+
+---
+
+### 4. Hardcoding Database Credentials
+
+**Problem:**
+```java
+// Bad - Hardcoded credentials in code
+public class DatabaseConfig {
+    public static final String URL = "jdbc:mysql://localhost:3306/proddb";
+    public static final String USERNAME = "admin";
+    public static final String PASSWORD = "Admin@123";  // Exposed!
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+    }
+}
+
+// Committed to version control - security breach!
+```
+
+**Why It's Wrong:**
+- Credentials visible in source code
+- Committed to version control (Git history)
+- Difficult to change per environment
+- Security vulnerability
+- Fails code review and security audits
+- Cannot use different credentials for dev/test/prod
+
+**Solution:**
+```java
+// Good - Externalized configuration
+// database.properties file (in .gitignore)
+/*
+db.url=jdbc:mysql://localhost:3306/testdb
+db.username=test_user
+db.password=test_pass_encrypted
+*/
+
+public class DatabaseConfig {
+    private static Properties properties;
+
+    static {
+        try {
+            properties = new Properties();
+            FileInputStream fis = new FileInputStream("config/database.properties");
+            properties.load(fis);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load database config", e);
+        }
+    }
+
+    public static String getUrl() {
+        return properties.getProperty("db.url");
+    }
+
+    public static String getUsername() {
+        return properties.getProperty("db.username");
+    }
+
+    public static String getPassword() {
+        // Decrypt password before use
+        String encrypted = properties.getProperty("db.password");
+        return decrypt(encrypted);
+    }
+}
+
+// Better - Use environment variables
+public class DatabaseConfig {
+    public static String getUrl() {
+        return System.getenv("DB_URL");
+    }
+
+    public static String getUsername() {
+        return System.getenv("DB_USERNAME");
+    }
+
+    public static String getPassword() {
+        return System.getenv("DB_PASSWORD");
+    }
+}
+
+// Best - Use secrets management
+public class DatabaseConfig {
+    private static SecretsManager secretsManager;
+
+    public static String getPassword() {
+        // Fetch from HashiCorp Vault, AWS Secrets Manager, etc.
+        return secretsManager.getSecret("database/password");
+    }
+}
+```
+
+**Best Practice:**
+- Never hardcode credentials in source code
+- Use properties files (add to .gitignore)
+- Use environment variables for CI/CD
+- Encrypt sensitive configuration
+- Use secrets management tools (Vault, AWS Secrets Manager)
+- Different configs for dev/test/prod environments
+- Rotate credentials regularly
+- Implement proper access controls
+
+---
+
+### 5. Not Using Connection Pooling
+
+**Problem:**
+```java
+// Bad - Creating new connection for every query
+public class DatabaseOperations {
+
+    public void executeQuery1() {
+        try (Connection conn = DriverManager.getConnection(url, user, pass);
+             Statement stmt = conn.createStatement()) {
+            // Execute query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void executeQuery2() {
+        try (Connection conn = DriverManager.getConnection(url, user, pass);
+             Statement stmt = conn.createStatement()) {
+            // Execute query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Each test method creates new connection
+    // Creating connection is expensive (100-500ms)
+}
+```
+
+**Why It's Wrong:**
+- Creating connections is slow and expensive
+- High overhead for each database operation
+- Poor performance under load
+- Resource wastage
+- Database server overload
+- Test execution takes much longer
+
+**Solution:**
+```java
+// Good - Using HikariCP connection pool
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+public class ConnectionPool {
+    private static HikariDataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(DatabaseConfig.getUrl());
+        config.setUsername(DatabaseConfig.getUsername());
+        config.setPassword(DatabaseConfig.getPassword());
+
+        // Pool configuration
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(5);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+
+        // Performance
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
+    public static void closePool() {
+        if (dataSource != null) {
+            dataSource.close();
+        }
+    }
+}
+
+// Usage
+public void executeQuery() {
+    try (Connection conn = ConnectionPool.getConnection();
+         Statement stmt = conn.createStatement()) {
+        // Execute query - connection from pool (fast)
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    // Connection returned to pool, not closed
+}
+
+// Cleanup in test suite
+@AfterSuite
+public void cleanup() {
+    ConnectionPool.closePool();
+}
+```
+
+**Best Practice:**
+- Always use connection pooling in test automation
+- HikariCP is the recommended pool (fastest, reliable)
+- Configure pool size based on expected load
+- Set appropriate timeouts
+- Close pool after test suite completion
+- Monitor pool statistics for optimization
+- Use pool for all database operations
+
+---
+
+### 6. Not Cleaning Up Test Data
+
+**Problem:**
+```java
+// Bad - Test data left in database
+@Test
+public void testUserRegistration() {
+    String username = "testuser";
+    String email = "test@example.com";
+
+    // Insert test user
+    DatabaseUtils.executeInsert(
+        "INSERT INTO users (username, email) VALUES (?, ?)",
+        username, email
+    );
+
+    // Test logic...
+
+    // No cleanup - test data remains in database!
+}
+
+// After 1000 test runs:
+// - Database filled with test data
+// - Performance degradation
+// - Unique constraint violations
+// - Test failures due to existing data
+```
+
+**Why It's Wrong:**
+- Database fills with test data over time
+- Test data interferes with subsequent tests
+- Unique constraint violations
+- Performance issues with large datasets
+- Difficult to identify real vs test data
+- Database maintenance problems
+
+**Solution:**
+```java
+// Good - Proper test data cleanup
+@Test
+public void testUserRegistration() {
+    String username = "testuser_" + System.currentTimeMillis();
+    String email = username + "@example.com";
+    int userId = -1;
+
+    try {
+        // Insert test user
+        userId = DatabaseUtils.executeInsertWithGeneratedKey(
+            "INSERT INTO users (username, email) VALUES (?, ?)",
+            username, email
+        );
+
+        // Test logic...
+        Assert.assertTrue(userId > 0);
+
+        // Verify in database
+        Map<String, Object> user = DatabaseUtils.getSingleRecord(
+            "SELECT * FROM users WHERE id = ?", userId
+        );
+        Assert.assertNotNull(user);
+
+    } finally {
+        // Cleanup - always executes
+        if (userId > 0) {
+            DatabaseUtils.executeUpdate(
+                "DELETE FROM users WHERE id = ?", userId
+            );
+        }
+    }
+}
+
+// Alternative - Using @AfterMethod
+private int createdUserId;
+
+@Test
+public void testUserRegistration() {
+    String username = "testuser_" + System.currentTimeMillis();
+    String email = username + "@example.com";
+
+    createdUserId = DatabaseUtils.executeInsertWithGeneratedKey(
+        "INSERT INTO users (username, email) VALUES (?, ?)",
+        username, email
+    );
+
+    // Test logic...
+}
+
+@AfterMethod
+public void cleanup() {
+    if (createdUserId > 0) {
+        DatabaseUtils.executeUpdate(
+            "DELETE FROM users WHERE id = ?", createdUserId
+        );
+    }
+}
+
+// Best - Test Data Manager
+public class TestDataManager {
+    private static List<Integer> createdUserIds = new ArrayList<>();
+
+    public static int createTestUser(String username, String email) {
+        int userId = DatabaseUtils.executeInsertWithGeneratedKey(
+            "INSERT INTO users (username, email) VALUES (?, ?)",
+            username, email
+        );
+        createdUserIds.add(userId);
+        return userId;
+    }
+
+    public static void cleanupAllTestData() {
+        for (int userId : createdUserIds) {
+            DatabaseUtils.executeUpdate(
+                "DELETE FROM users WHERE id = ?", userId
+            );
+        }
+        createdUserIds.clear();
+    }
+}
+
+@AfterClass
+public void cleanupClass() {
+    TestDataManager.cleanupAllTestData();
+}
+```
+
+**Best Practice:**
+- Always clean up test data after tests
+- Use unique identifiers (timestamps, UUIDs) for test data
+- Implement cleanup in @AfterMethod or finally block
+- Use test data manager for centralized cleanup
+- Clean up in correct order (handle foreign keys)
+- Use transactions with rollback for isolated tests
+- Consider using separate test database
+- Implement automated cleanup jobs for orphaned data
+
+---
+
+## Best Practices
+
+### 1. Implement Database Utility Class
+
+**Why:**
+Centralized database operations reduce code duplication and provide consistent error handling.
+
+**How:**
+```java
+public class DatabaseUtils {
+
+    // Execute SELECT and return List of Maps
+    public static List<Map<String, Object>> executeQuery(String sql, Object... params) {
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        try (Connection conn = ConnectionPool.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            setParameters(pstmt, params);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnName(i);
+                        Object value = rs.getObject(i);
+                        row.put(columnName, value);
+                    }
+                    results.add(row);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Query execution failed: " + sql, e);
+        }
+
+        return results;
+    }
+
+    // Execute INSERT/UPDATE/DELETE
+    public static int executeUpdate(String sql, Object... params) {
+        try (Connection conn = ConnectionPool.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            setParameters(pstmt, params);
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Update execution failed: " + sql, e);
+        }
+    }
+
+    // Execute INSERT and return generated key
+    public static int executeInsertWithGeneratedKey(String sql, Object... params) {
+        try (Connection conn = ConnectionPool.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            setParameters(pstmt, params);
+            pstmt.executeUpdate();
+
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+
+            return -1;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Insert execution failed: " + sql, e);
+        }
+    }
+
+    // Get single record
+    public static Map<String, Object> getSingleRecord(String sql, Object... params) {
+        List<Map<String, Object>> results = executeQuery(sql, params);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    // Check if record exists
+    public static boolean recordExists(String tableName, String whereClause, Object... params) {
+        String sql = "SELECT COUNT(*) as count FROM " + tableName + " WHERE " + whereClause;
+        Map<String, Object> result = getSingleRecord(sql, params);
+        return result != null && ((Number) result.get("count")).intValue() > 0;
+    }
+
+    // Get count
+    public static int getCount(String sql, Object... params) {
+        Map<String, Object> result = getSingleRecord(sql, params);
+        if (result != null) {
+            Object count = result.values().iterator().next();
+            return ((Number) count).intValue();
+        }
+        return 0;
+    }
+
+    // Helper to set parameters
+    private static void setParameters(PreparedStatement pstmt, Object... params) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            pstmt.setObject(i + 1, params[i]);
+        }
+    }
+}
+
+// Usage in tests
+@Test
+public void testDatabaseOperations() {
+    // Insert
+    int userId = DatabaseUtils.executeInsertWithGeneratedKey(
+        "INSERT INTO users (username, email) VALUES (?, ?)",
+        "john_doe", "john@example.com"
+    );
+
+    // Query
+    List<Map<String, Object>> users = DatabaseUtils.executeQuery(
+        "SELECT * FROM users WHERE id = ?", userId
+    );
+
+    // Check existence
+    boolean exists = DatabaseUtils.recordExists(
+        "users", "username = ?", "john_doe"
+    );
+
+    // Update
+    int rowsUpdated = DatabaseUtils.executeUpdate(
+        "UPDATE users SET email = ? WHERE id = ?",
+        "newemail@example.com", userId
+    );
+
+    // Delete
+    DatabaseUtils.executeUpdate("DELETE FROM users WHERE id = ?", userId);
+}
+```
+
+**Benefits:**
+- Reduces code duplication across tests
+- Consistent error handling and logging
+- Easy to add new utility methods
+- Simplified test code
+- Centralized connection management
+- Better maintainability
+
+---
+
+### 2. Use Fluent Interface for Database Operations
+
+**Why:**
+Fluent interfaces make test code more readable and maintainable.
+
+**How:**
+```java
+public class QueryBuilder {
+    private StringBuilder query;
+    private List<Object> parameters;
+
+    public QueryBuilder() {
+        this.query = new StringBuilder();
+        this.parameters = new ArrayList<>();
+    }
+
+    public QueryBuilder select(String... columns) {
+        query.append("SELECT ");
+        query.append(columns.length == 0 ? "*" : String.join(", ", columns));
+        return this;
+    }
+
+    public QueryBuilder from(String table) {
+        query.append(" FROM ").append(table);
+        return this;
+    }
+
+    public QueryBuilder where(String condition, Object... params) {
+        query.append(" WHERE ").append(condition);
+        parameters.addAll(Arrays.asList(params));
+        return this;
+    }
+
+    public QueryBuilder and(String condition, Object... params) {
+        query.append(" AND ").append(condition);
+        parameters.addAll(Arrays.asList(params));
+        return this;
+    }
+
+    public QueryBuilder orderBy(String column, String direction) {
+        query.append(" ORDER BY ").append(column).append(" ").append(direction);
+        return this;
+    }
+
+    public QueryBuilder limit(int limit) {
+        query.append(" LIMIT ").append(limit);
+        return this;
+    }
+
+    public List<Map<String, Object>> execute() {
+        return DatabaseUtils.executeQuery(query.toString(), parameters.toArray());
+    }
+
+    public String getQuery() {
+        return query.toString();
+    }
+}
+
+// Usage in tests - much more readable
+@Test
+public void testFluentQuery() {
+    List<Map<String, Object>> results = new QueryBuilder()
+        .select("id", "username", "email")
+        .from("users")
+        .where("status = ?", "active")
+        .and("created_at > ?", "2024-01-01")
+        .orderBy("created_at", "DESC")
+        .limit(10)
+        .execute();
+
+    Assert.assertFalse(results.isEmpty());
+}
+
+// Compared to traditional approach
+@Test
+public void testTraditionalQuery() {
+    String sql = "SELECT id, username, email FROM users " +
+                 "WHERE status = ? AND created_at > ? " +
+                 "ORDER BY created_at DESC LIMIT 10";
+
+    List<Map<String, Object>> results = DatabaseUtils.executeQuery(
+        sql, "active", "2024-01-01"
+    );
+}
+```
+
+**Benefits:**
+- More readable and maintainable code
+- Reduces SQL syntax errors
+- Easy to build complex queries programmatically
+- Better IDE auto-completion support
+- Clearer intent in test code
+
+---
+
+### 3. Implement Test Data Builder Pattern
+
+**Why:**
+Test data builders provide flexible and readable test data creation.
+
+**How:**
+```java
+public class UserBuilder {
+    private String username;
+    private String email;
+    private String password = "Default@123";
+    private String status = "active";
+    private String role = "user";
+
+    public static UserBuilder aUser() {
+        return new UserBuilder();
+    }
+
+    public UserBuilder withUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public UserBuilder withEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public UserBuilder withPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public UserBuilder withStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
+    public UserBuilder asAdmin() {
+        this.role = "admin";
+        return this;
+    }
+
+    public UserBuilder asInactive() {
+        this.status = "inactive";
+        return this;
+    }
+
+    public int build() {
+        String sql = "INSERT INTO users (username, email, password, status, role) " +
+                     "VALUES (?, ?, ?, ?, ?)";
+
+        return DatabaseUtils.executeInsertWithGeneratedKey(
+            sql, username, email, password, status, role
+        );
+    }
+}
+
+// Usage in tests - very readable
+@Test
+public void testUserBuilder() {
+    // Create regular user
+    int userId1 = UserBuilder.aUser()
+        .withUsername("john_doe")
+        .withEmail("john@example.com")
+        .build();
+
+    // Create admin user
+    int userId2 = UserBuilder.aUser()
+        .withUsername("admin_user")
+        .withEmail("admin@example.com")
+        .asAdmin()
+        .build();
+
+    // Create inactive user
+    int userId3 = UserBuilder.aUser()
+        .withUsername("inactive_user")
+        .withEmail("inactive@example.com")
+        .asInactive()
+        .build();
+
+    // Verify users created
+    Assert.assertTrue(userId1 > 0);
+    Assert.assertTrue(userId2 > 0);
+    Assert.assertTrue(userId3 > 0);
+}
+```
+
+**Benefits:**
+- Clear and readable test data creation
+- Flexible - easy to create variations
+- Reduces code duplication
+- Self-documenting code
+- Easy to maintain and extend
+- Encapsulates database insert logic
+
+---
+
+### 4. Validate Database State Before and After Tests
+
+**Why:**
+Database state validation ensures tests start from known state and verify correct changes.
+
+**How:**
+```java
+@Test
+public void testUserRegistration() {
+    String username = "newuser_" + System.currentTimeMillis();
+    String email = username + "@example.com";
+
+    // Pre-condition: User should not exist
+    boolean userExistsBefore = DatabaseUtils.recordExists(
+        "users", "username = ?", username
+    );
+    Assert.assertFalse(userExistsBefore, "User should not exist before registration");
+
+    // Get initial user count
+    int initialCount = DatabaseUtils.getCount("SELECT COUNT(*) FROM users");
+
+    // Perform registration through UI
+    registrationPage.registerUser(username, email, "Password@123");
+
+    // Post-condition: User should exist in database
+    boolean userExistsAfter = DatabaseUtils.recordExists(
+        "users", "username = ?", username
+    );
+    Assert.assertTrue(userExistsAfter, "User should exist after registration");
+
+    // Verify user count increased by 1
+    int finalCount = DatabaseUtils.getCount("SELECT COUNT(*) FROM users");
+    Assert.assertEquals(finalCount, initialCount + 1, "User count should increase by 1");
+
+    // Verify user details in database
+    Map<String, Object> user = DatabaseUtils.getSingleRecord(
+        "SELECT * FROM users WHERE username = ?", username
+    );
+
+    Assert.assertNotNull(user, "User record should exist");
+    Assert.assertEquals(user.get("email"), email);
+    Assert.assertEquals(user.get("status"), "active");
+    Assert.assertNotNull(user.get("created_at"));
+
+    // Cleanup
+    DatabaseUtils.executeUpdate("DELETE FROM users WHERE username = ?", username);
+}
+
+@Test
+public void testOrderCreation() {
+    int userId = createTestUser();
+
+    // Pre-condition: User should have no orders
+    int orderCountBefore = DatabaseUtils.getCount(
+        "SELECT COUNT(*) FROM orders WHERE user_id = ?", userId
+    );
+    Assert.assertEquals(orderCountBefore, 0, "User should have no orders initially");
+
+    // Create order through UI
+    checkoutPage.placeOrder(userId);
+
+    // Post-condition: Order should exist
+    int orderCountAfter = DatabaseUtils.getCount(
+        "SELECT COUNT(*) FROM orders WHERE user_id = ?", userId
+    );
+    Assert.assertEquals(orderCountAfter, 1, "User should have 1 order");
+
+    // Verify order details
+    Map<String, Object> order = DatabaseUtils.getSingleRecord(
+        "SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+        userId
+    );
+
+    Assert.assertNotNull(order);
+    Assert.assertEquals(order.get("status"), "pending");
+    Assert.assertTrue((Double) order.get("total_amount") > 0);
+}
+```
+
+**Benefits:**
+- Ensures tests start from known state
+- Verifies correct database changes
+- Catches unexpected database modifications
+- Provides detailed failure information
+- Increases test reliability
+- Documents expected behavior
+
+---
+
+### 5. Use Database Assertions for Better Test Clarity
+
+**Why:**
+Custom database assertions make test intent clear and provide better error messages.
+
+**How:**
+```java
+public class DatabaseAssertions {
+
+    public static void assertRecordExists(String tableName, String column, Object value) {
+        boolean exists = DatabaseUtils.recordExists(
+            tableName, column + " = ?", value
+        );
+
+        Assert.assertTrue(exists,
+            String.format("Record should exist in %s where %s = %s",
+                tableName, column, value));
+    }
+
+    public static void assertRecordNotExists(String tableName, String column, Object value) {
+        boolean exists = DatabaseUtils.recordExists(
+            tableName, column + " = ?", value
+        );
+
+        Assert.assertFalse(exists,
+            String.format("Record should not exist in %s where %s = %s",
+                tableName, column, value));
+    }
+
+    public static void assertColumnValue(String tableName, String whereColumn,
+                                        Object whereValue, String checkColumn,
+                                        Object expectedValue) {
+        Map<String, Object> record = DatabaseUtils.getSingleRecord(
+            "SELECT * FROM " + tableName + " WHERE " + whereColumn + " = ?",
+            whereValue
+        );
+
+        Assert.assertNotNull(record, "Record not found");
+        Assert.assertEquals(record.get(checkColumn), expectedValue,
+            String.format("Column %s should have value %s", checkColumn, expectedValue));
+    }
+
+    public static void assertRowCount(String tableName, int expectedCount) {
+        int actualCount = DatabaseUtils.getCount(
+            "SELECT COUNT(*) FROM " + tableName
+        );
+
+        Assert.assertEquals(actualCount, expectedCount,
+            String.format("Table %s should have %d rows", tableName, expectedCount));
+    }
+
+    public static void assertColumnNotNull(String tableName, String whereColumn,
+                                          Object whereValue, String checkColumn) {
+        Map<String, Object> record = DatabaseUtils.getSingleRecord(
+            "SELECT * FROM " + tableName + " WHERE " + whereColumn + " = ?",
+            whereValue
+        );
+
+        Assert.assertNotNull(record, "Record not found");
+        Assert.assertNotNull(record.get(checkColumn),
+            String.format("Column %s should not be null", checkColumn));
+    }
+}
+
+// Usage in tests - much clearer
+@Test
+public void testUserCreation() {
+    String username = "testuser_" + System.currentTimeMillis();
+
+    // Pre-condition
+    DatabaseAssertions.assertRecordNotExists("users", "username", username);
+
+    // Create user
+    int userId = createUser(username);
+
+    // Post-condition assertions
+    DatabaseAssertions.assertRecordExists("users", "id", userId);
+    DatabaseAssertions.assertColumnValue("users", "id", userId, "username", username);
+    DatabaseAssertions.assertColumnValue("users", "id", userId, "status", "active");
+    DatabaseAssertions.assertColumnNotNull("users", "id", userId, "created_at");
+}
+```
+
+**Benefits:**
+- Clear and readable test assertions
+- Better error messages on failure
+- Self-documenting test code
+- Reusable across tests
+- Reduces boilerplate code
+- Easier debugging when tests fail
+
+---
+
+### 6. Implement Retry Logic for Transient Database Failures
+
+**Why:**
+Network issues and database locks can cause transient failures that should be retried.
+
+**How:**
+```java
+public class DatabaseRetryUtils {
+
+    public static <T> T executeWithRetry(Supplier<T> operation, int maxRetries) {
+        int attempts = 0;
+        Exception lastException = null;
+
+        while (attempts < maxRetries) {
+            try {
+                return operation.get();
+            } catch (Exception e) {
+                lastException = e;
+                attempts++;
+
+                if (attempts < maxRetries) {
+                    System.out.println("Database operation failed, retrying... (" +
+                                     attempts + "/" + maxRetries + ")");
+
+                    try {
+                        Thread.sleep(1000 * attempts); // Exponential backoff
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+
+        throw new RuntimeException("Operation failed after " + maxRetries + " retries",
+                                 lastException);
+    }
+
+    public static void executeUpdateWithRetry(String sql, Object... params) {
+        executeWithRetry(() -> {
+            DatabaseUtils.executeUpdate(sql, params);
+            return null;
+        }, 3);
+    }
+
+    public static List<Map<String, Object>> executeQueryWithRetry(String sql, Object... params) {
+        return executeWithRetry(() -> DatabaseUtils.executeQuery(sql, params), 3);
+    }
+}
+
+// Usage
+@Test
+public void testWithRetry() {
+    // Retry on transient failures
+    DatabaseRetryUtils.executeUpdateWithRetry(
+        "UPDATE users SET status = ? WHERE id = ?",
+        "inactive", 123
+    );
+
+    List<Map<String, Object>> results = DatabaseRetryUtils.executeQueryWithRetry(
+        "SELECT * FROM users WHERE status = ?",
+        "active"
+    );
+}
+```
+
+**Benefits:**
+- Handles transient failures gracefully
+- Reduces flaky test failures
+- Improves test reliability
+- Provides exponential backoff
+- Easy to configure retry count
+- Better production-like behavior
+
+---
+
+### 7. Monitor and Log Database Operations
+
+**Why:**
+Logging database operations helps with debugging and performance analysis.
+
+**How:**
+```java
+public class DatabaseLogger {
+    private static final Logger logger = LogManager.getLogger(DatabaseLogger.class);
+
+    public static List<Map<String, Object>> executeQueryWithLogging(
+            String sql, Object... params) {
+        long startTime = System.currentTimeMillis();
+
+        logger.info("Executing query: {}", sql);
+        logger.debug("Parameters: {}", Arrays.toString(params));
+
+        try {
+            List<Map<String, Object>> results = DatabaseUtils.executeQuery(sql, params);
+
+            long executionTime = System.currentTimeMillis() - startTime;
+            logger.info("Query executed successfully. Rows: {}, Time: {}ms",
+                       results.size(), executionTime);
+
+            if (executionTime > 1000) {
+                logger.warn("Slow query detected: {}ms for SQL: {}", executionTime, sql);
+            }
+
+            return results;
+
+        } catch (Exception e) {
+            long executionTime = System.currentTimeMillis() - startTime;
+            logger.error("Query failed after {}ms. SQL: {}, Error: {}",
+                        executionTime, sql, e.getMessage());
+            throw e;
+        }
+    }
+
+    public static int executeUpdateWithLogging(String sql, Object... params) {
+        long startTime = System.currentTimeMillis();
+
+        logger.info("Executing update: {}", sql);
+        logger.debug("Parameters: {}", Arrays.toString(params));
+
+        try {
+            int rowsAffected = DatabaseUtils.executeUpdate(sql, params);
+
+            long executionTime = System.currentTimeMillis() - startTime;
+            logger.info("Update executed successfully. Rows affected: {}, Time: {}ms",
+                       rowsAffected, executionTime);
+
+            return rowsAffected;
+
+        } catch (Exception e) {
+            long executionTime = System.currentTimeMillis() - startTime;
+            logger.error("Update failed after {}ms. SQL: {}, Error: {}",
+                        executionTime, sql, e.getMessage());
+            throw e;
+        }
+    }
+}
+
+// Configure logging in log4j2.xml
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="DatabaseLog" fileName="logs/database.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="DatabaseLogger" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="DatabaseLog"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
+*/
+```
+
+**Benefits:**
+- Easy debugging of database issues
+- Performance monitoring and optimization
+- Audit trail of database operations
+- Identifies slow queries
+- Helps diagnose test failures
+- Production-ready logging practices
+
+---
 
 **Happy Testing!**

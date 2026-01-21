@@ -3111,6 +3111,1218 @@ Feature: Complete User Journey
 
 ---
 
+## Common Mistakes to Avoid
+
+### 1. Writing Implementation Details in Gherkin Scenarios
+
+**Problem:**
+```gherkin
+Scenario: User logs into the application
+  Given I navigate to "https://example.com/login"
+  When I locate element with id "username" and send keys "testuser"
+  And I locate element with id "password" and send keys "pass123"
+  And I locate element with xpath "//button[@type='submit']" and click
+  Then I verify element with class "dashboard-header" is displayed
+```
+
+**Why It's Wrong:**
+- Gherkin becomes too technical and loses business readability
+- Exposes implementation details (IDs, XPaths) in feature files
+- Non-technical stakeholders cannot understand the scenarios
+- Defeats the purpose of BDD as living documentation
+- Tightly couples feature files to UI implementation
+
+**Correct Approach:**
+```gherkin
+Scenario: User logs into the application
+  Given the user is on the login page
+  When the user enters valid credentials
+  And the user clicks the login button
+  Then the user should be redirected to the dashboard
+
+# Step Definitions separate the "what" from the "how"
+```
+
+**Step Definition Implementation:**
+```java
+public class LoginSteps {
+
+    private WebDriver driver;
+    private LoginPage loginPage;
+    private DashboardPage dashboardPage;
+
+    public LoginSteps(TestContext context) {
+        this.driver = context.getDriver();
+        this.loginPage = new LoginPage(driver);
+        this.dashboardPage = new DashboardPage(driver);
+    }
+
+    @Given("the user is on the login page")
+    public void userIsOnLoginPage() {
+        loginPage.navigateToLoginPage();
+    }
+
+    @When("the user enters valid credentials")
+    public void userEntersValidCredentials() {
+        // Read credentials from config, not hardcoded
+        String username = ConfigReader.getProperty("valid.username");
+        String password = ConfigReader.getProperty("valid.password");
+        loginPage.enterCredentials(username, password);
+    }
+
+    @When("the user clicks the login button")
+    public void userClicksLoginButton() {
+        loginPage.clickLoginButton();
+    }
+
+    @Then("the user should be redirected to the dashboard")
+    public void userShouldBeRedirectedToDashboard() {
+        Assert.assertTrue(dashboardPage.isDashboardDisplayed(),
+            "Dashboard should be displayed after successful login");
+        Assert.assertEquals(driver.getCurrentUrl(),
+            ConfigReader.getProperty("dashboard.url"),
+            "URL should match dashboard URL");
+    }
+}
+```
+
+---
+
+### 2. Not Using TestContext for Sharing State Between Step Definitions
+
+**Problem:**
+```java
+// LoginSteps.java
+public class LoginSteps {
+    private static WebDriver driver; // Static - causes issues in parallel execution
+    private static String username; // Shared across all threads
+
+    @Given("user logs in as {string}")
+    public void userLogsIn(String user) {
+        username = user;
+        // ...
+    }
+}
+
+// OrderSteps.java
+public class OrderSteps {
+    private static WebDriver driver; // Same static driver
+
+    @When("user creates an order")
+    public void userCreatesOrder() {
+        // Uses shared static driver - thread-safety issues
+    }
+}
+```
+
+**Why It's Wrong:**
+- Static variables cause thread-safety issues in parallel execution
+- Different scenarios interfere with each other
+- Cannot run tests in parallel reliably
+- Difficult to manage state across multiple step definition classes
+- Memory leaks from not cleaning up static resources
+
+**Correct Approach:**
+```java
+// TestContext.java - Manages shared state per scenario
+public class TestContext {
+
+    private WebDriver driver;
+    private ScenarioContext scenarioContext;
+    private PageObjectManager pageObjectManager;
+
+    public TestContext() {
+        driver = DriverFactory.createDriver();
+        scenarioContext = new ScenarioContext();
+        pageObjectManager = new PageObjectManager(driver);
+    }
+
+    public WebDriver getDriver() {
+        return driver;
+    }
+
+    public ScenarioContext getScenarioContext() {
+        return scenarioContext;
+    }
+
+    public PageObjectManager getPageObjectManager() {
+        return pageObjectManager;
+    }
+
+    public void quitDriver() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+
+// ScenarioContext.java - Stores data within scenario
+public class ScenarioContext {
+
+    private Map<String, Object> scenarioData;
+
+    public ScenarioContext() {
+        scenarioData = new HashMap<>();
+    }
+
+    public void setContext(String key, Object value) {
+        scenarioData.put(key, value);
+    }
+
+    public Object getContext(String key) {
+        return scenarioData.get(key);
+    }
+
+    public Boolean containsKey(String key) {
+        return scenarioData.containsKey(key);
+    }
+}
+
+// Use PicoContainer for dependency injection
+// LoginSteps.java
+public class LoginSteps {
+
+    private TestContext testContext;
+    private LoginPage loginPage;
+
+    // Constructor injection via PicoContainer
+    public LoginSteps(TestContext testContext) {
+        this.testContext = testContext;
+        this.loginPage = testContext.getPageObjectManager().getLoginPage();
+    }
+
+    @When("user logs in as {string}")
+    public void userLogsIn(String username) {
+        loginPage.login(username, "password");
+        // Store username in scenario context for later use
+        testContext.getScenarioContext().setContext("LOGGED_IN_USER", username);
+    }
+}
+
+// OrderSteps.java
+public class OrderSteps {
+
+    private TestContext testContext;
+    private OrderPage orderPage;
+
+    public OrderSteps(TestContext testContext) {
+        this.testContext = testContext;
+        this.orderPage = testContext.getPageObjectManager().getOrderPage();
+    }
+
+    @When("user creates an order")
+    public void userCreatesOrder() {
+        // Retrieve data from scenario context
+        String username = (String) testContext.getScenarioContext()
+                                              .getContext("LOGGED_IN_USER");
+        orderPage.createOrder(username);
+    }
+}
+
+// Hooks.java
+public class Hooks {
+
+    private TestContext testContext;
+
+    public Hooks(TestContext testContext) {
+        this.testContext = testContext;
+    }
+
+    @After
+    public void afterScenario(Scenario scenario) {
+        // Clean up per scenario
+        if (scenario.isFailed()) {
+            // Take screenshot
+            byte[] screenshot = ((TakesScreenshot) testContext.getDriver())
+                    .getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot, "image/png", "Screenshot on failure");
+        }
+        testContext.quitDriver();
+    }
+}
+```
+
+**POM Dependency for PicoContainer:**
+```xml
+<dependency>
+    <groupId>io.cucumber</groupId>
+    <artifactId>cucumber-picocontainer</artifactId>
+    <version>7.14.0</version>
+    <scope>test</scope>
+</dependency>
+```
+
+---
+
+### 3. Overusing Scenario Outline Without Proper Validation
+
+**Problem:**
+```gherkin
+Scenario Outline: User searches for products
+  Given user is on search page
+  When user searches for "<product>"
+  Then results should be displayed
+
+  Examples:
+    | product   |
+    | laptop    |
+    | phone     |
+    | tablet    |
+    | watch     |
+    | camera    |
+    # ... 50 more rows without actual verification
+```
+
+**Why It's Wrong:**
+- Tests become data-driven without meaningful assertions
+- Just verifying "results displayed" doesn't validate correctness
+- Creates numerous scenarios without adding test coverage
+- Increases execution time without proportional value
+- Masks failures in bulk execution
+
+**Correct Approach:**
+```gherkin
+# Use Scenario Outline for meaningful variations with proper validation
+Scenario Outline: User searches for products with different filters
+  Given user is on the search page
+  When user searches for "<product>" in category "<category>"
+  And user applies price filter from <minPrice> to <maxPrice>
+  Then search results should contain products matching "<product>"
+  And all results should be in category "<category>"
+  And all prices should be between <minPrice> and <maxPrice>
+  And results count should be at least <expectedCount>
+
+  Examples:
+    | product  | category    | minPrice | maxPrice | expectedCount |
+    | laptop   | Electronics | 500      | 2000     | 5             |
+    | tablet   | Electronics | 200      | 800      | 3             |
+    | watch    | Accessories | 50       | 500      | 10            |
+
+# For large datasets, use single scenario with data table
+Scenario: Verify product search functionality for multiple categories
+  Given user is on the search page
+  When user searches for products in following categories
+    | Category    | Expected Products                    |
+    | Electronics | laptop, phone, tablet, headphones    |
+    | Clothing    | shirt, pants, jacket, shoes          |
+    | Books       | fiction, non-fiction, textbooks      |
+  Then each category should return relevant results
+  And results should be properly categorized
+```
+
+**Step Definition with Proper Validation:**
+```java
+@When("user searches for {string} in category {string}")
+public void userSearchesInCategory(String product, String category) {
+    searchPage.selectCategory(category);
+    searchPage.searchFor(product);
+}
+
+@When("user applies price filter from {int} to {int}")
+public void userAppliesPriceFilter(int minPrice, int maxPrice) {
+    searchPage.setPriceRange(minPrice, maxPrice);
+}
+
+@Then("all prices should be between {int} and {int}")
+public void allPricesShouldBeInRange(int minPrice, int maxPrice) {
+    List<Double> prices = searchPage.getAllProductPrices();
+
+    for (Double price : prices) {
+        Assert.assertTrue(price >= minPrice && price <= maxPrice,
+            String.format("Price %.2f is not between %d and %d",
+                        price, minPrice, maxPrice));
+    }
+}
+
+@Then("results count should be at least {int}")
+public void resultsCountShouldBeAtLeast(int expectedCount) {
+    int actualCount = searchPage.getResultsCount();
+    Assert.assertTrue(actualCount >= expectedCount,
+        String.format("Expected at least %d results, but found %d",
+                    expectedCount, actualCount));
+}
+
+// For data table approach
+@When("user searches for products in following categories")
+public void userSearchesForCategories(DataTable dataTable) {
+    List<Map<String, String>> rows = dataTable.asMaps();
+
+    Map<String, List<String>> categoryResults = new HashMap<>();
+
+    for (Map<String, String> row : rows) {
+        String category = row.get("Category");
+        String expectedProducts = row.get("Expected Products");
+
+        // Perform search and store results
+        searchPage.selectCategory(category);
+        List<String> products = searchPage.getAllProductNames();
+        categoryResults.put(category, products);
+    }
+
+    // Store in scenario context for validation in next step
+    testContext.getScenarioContext().setContext("CATEGORY_RESULTS", categoryResults);
+}
+```
+
+---
+
+### 4. Not Implementing Proper Hooks for Setup and Teardown
+
+**Problem:**
+```java
+public class LoginSteps {
+
+    @Given("user is on login page")
+    public void userIsOnLoginPage() {
+        // Driver initialization in step definition - Wrong!
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://example.com/login");
+    }
+
+    @After
+    public void tearDown() {
+        // No cleanup - driver instances keep accumulating
+    }
+}
+```
+
+**Why It's Wrong:**
+- Driver creation mixed with test logic
+- No centralized setup/teardown management
+- Resources not properly cleaned up
+- Cannot take screenshots on failure easily
+- Difficult to configure different environments
+
+**Correct Approach:**
+```java
+public class Hooks {
+
+    private TestContext testContext;
+
+    public Hooks(TestContext testContext) {
+        this.testContext = testContext;
+    }
+
+    @Before(order = 0)
+    public void beforeScenario(Scenario scenario) {
+        System.out.println("Starting Scenario: " + scenario.getName());
+
+        // Initialize driver through TestContext
+        // Driver is already created in TestContext constructor via PicoContainer
+    }
+
+    @Before(value = "@database", order = 1)
+    public void setupDatabase() {
+        // Only runs for scenarios tagged with @database
+        DatabaseHelper.clearTestData();
+        DatabaseHelper.insertTestData();
+    }
+
+    @Before(value = "@api", order = 1)
+    public void setupApiMocks() {
+        // Only runs for scenarios tagged with @api
+        MockServerHelper.startMockServer();
+        MockServerHelper.setupDefaultMocks();
+    }
+
+    @After(order = 1)
+    public void afterScenario(Scenario scenario) {
+        // Take screenshot on failure
+        if (scenario.isFailed()) {
+            captureScreenshot(scenario);
+        }
+
+        // Log scenario result
+        System.out.println("Scenario Status: " + scenario.getStatus());
+
+        // Capture browser logs if failed
+        if (scenario.isFailed()) {
+            captureBrowserLogs(scenario);
+        }
+    }
+
+    @After(order = 0)
+    public void quitDriver() {
+        // Always quit driver to free resources
+        testContext.quitDriver();
+    }
+
+    @After(value = "@database", order = 2)
+    public void cleanupDatabase() {
+        DatabaseHelper.clearTestData();
+    }
+
+    @After(value = "@api", order = 2)
+    public void stopMockServer() {
+        MockServerHelper.stopMockServer();
+    }
+
+    @BeforeStep
+    public void beforeStep(Scenario scenario) {
+        // Optional: Log each step execution
+        // System.out.println("Executing step...");
+    }
+
+    @AfterStep
+    public void afterStep(Scenario scenario) {
+        // Optional: Take screenshot after each step for detailed reporting
+        if (ConfigReader.getProperty("screenshot.mode").equals("all_steps")) {
+            captureStepScreenshot(scenario);
+        }
+    }
+
+    private void captureScreenshot(Scenario scenario) {
+        try {
+            byte[] screenshot = ((TakesScreenshot) testContext.getDriver())
+                    .getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot, "image/png",
+                          "Screenshot_" + System.currentTimeMillis());
+        } catch (Exception e) {
+            System.out.println("Failed to capture screenshot: " + e.getMessage());
+        }
+    }
+
+    private void captureBrowserLogs(Scenario scenario) {
+        try {
+            LogEntries logEntries = testContext.getDriver()
+                    .manage().logs().get(LogType.BROWSER);
+
+            StringBuilder logs = new StringBuilder("Browser Console Logs:\\n");
+            for (LogEntry entry : logEntries) {
+                logs.append(entry.getLevel()).append(": ")
+                    .append(entry.getMessage()).append("\\n");
+            }
+
+            scenario.attach(logs.toString().getBytes(),
+                          "text/plain", "BrowserLogs");
+        } catch (Exception e) {
+            System.out.println("Failed to capture browser logs: " + e.getMessage());
+        }
+    }
+
+    private void captureStepScreenshot(Scenario scenario) {
+        try {
+            byte[] screenshot = ((TakesScreenshot) testContext.getDriver())
+                    .getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot, "image/png",
+                          "Step_" + System.currentTimeMillis());
+        } catch (Exception e) {
+            // Silently fail for step screenshots
+        }
+    }
+}
+```
+
+---
+
+### 5. Not Using Tags Effectively for Test Organization
+
+**Problem:**
+```gherkin
+# No tags - all tests run always, taking too long
+
+Feature: User Management
+
+  Scenario: Create new user
+    Given admin is logged in
+    When admin creates a new user
+    Then user should be created successfully
+
+  Scenario: Delete user
+    Given admin is logged in
+    When admin deletes a user
+    Then user should be deleted
+
+  Scenario: Update user profile
+    Given user is logged in
+    When user updates profile information
+    Then profile should be updated
+```
+
+**Why It's Wrong:**
+- Cannot run selective tests (smoke, regression, etc.)
+- Cannot exclude slow or flaky tests in CI
+- No way to run environment-specific tests
+- All tests run in every execution, wasting time
+
+**Correct Approach:**
+```gherkin
+Feature: User Management
+
+  @smoke @critical @fast
+  Scenario: Admin creates a new user
+    Given admin is logged in
+    When admin creates a user with following details
+      | Field     | Value           |
+      | Username  | testuser        |
+      | Email     | test@email.com  |
+      | Role      | User            |
+    Then user should be created successfully
+    And user should receive welcome email
+
+  @regression @admin @database
+  Scenario: Admin deletes inactive user accounts
+    Given there are 5 inactive user accounts
+    And admin is logged in
+    When admin deletes all inactive accounts
+    Then all inactive accounts should be removed from database
+    And admin should see success message
+
+  @regression @user @slow
+  Scenario: User updates profile with image upload
+    Given user "testuser" is logged in
+    When user uploads profile picture
+    And user updates profile information
+    Then profile should be updated with new image
+    And image should be resized and optimized
+
+  @flaky @todo
+  @ignore # Temporarily disabled due to service instability
+  Scenario: Password reset email
+    Given user requests password reset
+    When user receives reset email
+    Then user should be able to reset password
+
+  @integration @api @security
+  Scenario: API authentication with JWT token
+    Given user obtains JWT token via API
+    When user accesses protected endpoint with token
+    Then API should return authorized response
+    And token should be valid for 1 hour
+```
+
+**TestNG Runner with Tag Selection:**
+```java
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = {"stepdefinitions", "hooks"},
+    plugin = {
+        "pretty",
+        "html:target/cucumber-reports/cucumber.html",
+        "json:target/cucumber-reports/cucumber.json",
+        "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"
+    },
+    tags = "@smoke and not @ignore",
+    monochrome = true,
+    dryRun = false
+)
+public class SmokeTestRunner extends AbstractTestNGCucumberTests {
+    @Override
+    @DataProvider(parallel = true)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
+}
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = {"stepdefinitions", "hooks"},
+    tags = "@regression and not (@flaky or @ignore)",
+    plugin = {"pretty", "html:target/cucumber-reports/regression.html"}
+)
+public class RegressionTestRunner extends AbstractTestNGCucumberTests {
+    // Runs all regression tests except flaky ones
+}
+
+@CucumberOptions(
+    tags = "(@critical or @smoke) and not @slow"
+)
+public class FastTestRunner extends AbstractTestNGCucumberTests {
+    // Only fast, critical tests for quick feedback
+}
+```
+
+**Maven Command-Line Tag Execution:**
+```xml
+<!-- pom.xml -->
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M9</version>
+            <configuration>
+                <includes>
+                    <include>**/*TestRunner.java</include>
+                </includes>
+                <systemPropertyVariables>
+                    <cucumber.filter.tags>${cucumber.tags}</cucumber.filter.tags>
+                </systemPropertyVariables>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+**Command Line Usage:**
+```bash
+# Run smoke tests only
+mvn test -Dcucumber.tags="@smoke and not @ignore"
+
+# Run all tests except flaky
+mvn test -Dcucumber.tags="not @flaky"
+
+# Run specific feature combinations
+mvn test -Dcucumber.tags="(@smoke or @regression) and @database"
+```
+
+---
+
+## Best Practices for BDD with Cucumber
+
+### 1. Write Declarative, Business-Readable Scenarios
+
+**Why:**
+- BDD scenarios should serve as living documentation
+- Non-technical stakeholders should understand test coverage
+- Focus on business behavior, not implementation details
+
+**How:**
+```gherkin
+# Good: Declarative, business-focused
+Scenario: Customer places order with discount code
+  Given the customer has items in their cart
+  And a valid 20% discount code is available
+  When the customer applies the discount code
+  And proceeds to checkout
+  Then the order total should reflect the 20% discount
+  And the customer should receive order confirmation
+
+# Avoid: Imperative, implementation-focused
+Scenario: Customer places order with discount code
+  Given I navigate to URL "https://shop.com"
+  When I click on element with ID "product-123"
+  And I click button with class "add-to-cart"
+  And I enter "DISCOUNT20" in textbox with name "coupon"
+  And I click submit button with xpath "//button[@type='submit']"
+  Then I verify text "Order Confirmed" is present
+```
+
+**Implementation with Page Object Model:**
+```java
+@When("the customer applies the discount code")
+public void customerAppliesDiscountCode() {
+    String discountCode = (String) testContext.getScenarioContext()
+                                              .getContext("DISCOUNT_CODE");
+    checkoutPage.applyDiscountCode(discountCode);
+}
+
+@Then("the order total should reflect the {int}% discount")
+public void orderTotalShouldReflectDiscount(int discountPercent) {
+    double originalTotal = (double) testContext.getScenarioContext()
+                                                .getContext("ORIGINAL_TOTAL");
+    double expectedTotal = originalTotal * (1 - discountPercent / 100.0);
+    double actualTotal = checkoutPage.getOrderTotal();
+
+    Assert.assertEquals(actualTotal, expectedTotal, 0.01,
+        String.format("Expected total %.2f after %d%% discount, but got %.2f",
+                    expectedTotal, discountPercent, actualTotal));
+}
+```
+
+---
+
+### 2. Implement Proper Page Object Management
+
+**Why:**
+- Centralizes page object creation and lifecycle
+- Ensures efficient resource usage
+- Provides single source of truth for page objects
+- Makes step definitions cleaner and more maintainable
+
+**How:**
+```java
+public class PageObjectManager {
+
+    private WebDriver driver;
+
+    // Lazy initialization of page objects
+    private LoginPage loginPage;
+    private DashboardPage dashboardPage;
+    private CheckoutPage checkoutPage;
+    private OrderPage orderPage;
+
+    public PageObjectManager(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public LoginPage getLoginPage() {
+        if (loginPage == null) {
+            loginPage = new LoginPage(driver);
+        }
+        return loginPage;
+    }
+
+    public DashboardPage getDashboardPage() {
+        if (dashboardPage == null) {
+            dashboardPage = new DashboardPage(driver);
+        }
+        return dashboardPage;
+    }
+
+    public CheckoutPage getCheckoutPage() {
+        if (checkoutPage == null) {
+            checkoutPage = new CheckoutPage(driver);
+        }
+        return checkoutPage;
+    }
+
+    public OrderPage getOrderPage() {
+        if (orderPage == null) {
+            orderPage = new OrderPage(driver);
+        }
+        return orderPage;
+    }
+}
+
+// Usage in Step Definitions
+public class CheckoutSteps {
+
+    private TestContext testContext;
+    private CheckoutPage checkoutPage;
+
+    public CheckoutSteps(TestContext testContext) {
+        this.testContext = testContext;
+        // Get page from manager - created only when needed
+        this.checkoutPage = testContext.getPageObjectManager().getCheckoutPage();
+    }
+
+    @When("customer proceeds to checkout")
+    public void customerProceedsToCheckout() {
+        checkoutPage.proceedToCheckout();
+    }
+}
+```
+
+---
+
+### 3. Use Background for Common Preconditions
+
+**Why:**
+- Reduces code duplication across scenarios
+- Makes scenarios more concise and readable
+- Clearly separates common setup from scenario-specific steps
+
+**How:**
+```gherkin
+Feature: Order Management
+
+  Background:
+    Given the user is logged in as "customer@email.com"
+    And the user has the following items in cart
+      | Product   | Quantity | Price |
+      | Laptop    | 1        | 999   |
+      | Mouse     | 2        | 29    |
+
+  Scenario: Apply discount code to order
+    When the user applies discount code "SAVE20"
+    Then the order total should be reduced by 20%
+
+  Scenario: Remove item from cart
+    When the user removes "Mouse" from cart
+    Then the cart should contain only 1 item
+    And the order total should be $999
+
+  Scenario: Update item quantity
+    When the user updates "Mouse" quantity to 3
+    Then the order total should reflect updated quantity
+```
+
+---
+
+### 4. Implement Comprehensive Reporting with Extent Reports
+
+**Why:**
+- Provides detailed, visual test execution reports
+- Captures screenshots and logs automatically
+- Shows test trends and execution history
+- Facilitates stakeholder communication
+
+**How:**
+
+**POM Dependencies:**
+```xml
+<dependency>
+    <groupId>tech.grasshopper</groupId>
+    <artifactId>extentreports-cucumber7-adapter</artifactId>
+    <version>1.14.0</version>
+</dependency>
+```
+
+**extent.properties:**
+```properties
+extent.reporter.spark.start=true
+extent.reporter.spark.out=target/extent-reports/ExtentReport.html
+
+# Screenshots
+screenshot.dir=target/screenshots
+screenshot.rel.path=../screenshots
+
+# System info
+systeminfo.os=Windows 11
+systeminfo.browser=Chrome
+systeminfo.environment=QA
+
+# Report theme
+extent.reporter.spark.vieworder=dashboard,test,category,exception,author,device,log
+
+# Charts
+extent.reporter.spark.config=src/test/resources/extent-config.xml
+```
+
+**extent-config.xml:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<extentreports>
+    <configuration>
+        <theme>dark</theme>
+        <encoding>UTF-8</encoding>
+        <protocol>https</protocol>
+        <documentTitle>Cucumber BDD Test Report</documentTitle>
+        <reportName>Automation Test Results</reportName>
+        <timeStampFormat>MMM dd, yyyy HH:mm:ss</timeStampFormat>
+        <css>
+            <![CDATA[
+                .test-name { font-weight: bold; }
+            ]]>
+        </css>
+        <js>
+            <![CDATA[
+                // Custom JavaScript if needed
+            ]]>
+        </js>
+    </configuration>
+</extentreports>
+```
+
+**TestRunner with Extent Reports:**
+```java
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = {"stepdefinitions", "hooks"},
+    plugin = {
+        "pretty",
+        "html:target/cucumber-reports/cucumber.html",
+        "json:target/cucumber-reports/cucumber.json",
+        "junit:target/cucumber-reports/cucumber.xml",
+        "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:",
+        "timeline:target/test-output-thread/"
+    },
+    monochrome = true
+)
+public class TestRunner extends AbstractTestNGCucumberTests {
+
+    @Override
+    @DataProvider(parallel = true)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
+}
+```
+
+---
+
+### 5. Handle Test Data Externally with Configuration Management
+
+**Why:**
+- Separates test data from test logic
+- Enables easy updates without code changes
+- Supports multiple environments (dev, QA, staging)
+- Allows non-technical users to manage test data
+
+**How:**
+
+**config.properties:**
+```properties
+# Environment URLs
+base.url=https://qa.example.com
+api.base.url=https://api-qa.example.com
+
+# Test Users
+admin.username=admin@example.com
+admin.password=Admin@123
+customer.username=customer@example.com
+customer.password=Customer@123
+
+# Database
+db.url=jdbc:mysql://qa-db.example.com:3306/testdb
+db.username=testuser
+db.password=testpass
+
+# Test Data
+default.timeout=10
+screenshot.mode=on_failure
+```
+
+**ConfigReader.java:**
+```java
+public class ConfigReader {
+
+    private static Properties properties;
+    private static final String CONFIG_FILE_PATH = "src/test/resources/config.properties";
+
+    static {
+        try {
+            properties = new Properties();
+            FileInputStream fis = new FileInputStream(CONFIG_FILE_PATH);
+            properties.load(fis);
+            fis.close();
+
+            // Override with environment variables if present (for CI/CD)
+            properties.stringPropertyNames().forEach(key -> {
+                String envValue = System.getenv(key.toUpperCase().replace(".", "_"));
+                if (envValue != null) {
+                    properties.setProperty(key, envValue);
+                }
+            });
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load configuration file", e);
+        }
+    }
+
+    public static String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
+    public static int getIntProperty(String key) {
+        return Integer.parseInt(properties.getProperty(key));
+    }
+
+    public static boolean getBooleanProperty(String key) {
+        return Boolean.parseBoolean(properties.getProperty(key));
+    }
+}
+```
+
+**Test Data JSON Files:**
+```json
+// testdata/users.json
+{
+  "admin": {
+    "username": "admin@example.com",
+    "password": "Admin@123",
+    "role": "Administrator"
+  },
+  "customer": {
+    "username": "customer@example.com",
+    "password": "Customer@123",
+    "role": "Customer"
+  }
+}
+
+// testdata/products.json
+{
+  "products": [
+    {
+      "id": "PROD001",
+      "name": "Laptop",
+      "price": 999.99,
+      "category": "Electronics"
+    },
+    {
+      "id": "PROD002",
+      "name": "Mouse",
+      "price": 29.99,
+      "category": "Accessories"
+    }
+  ]
+}
+```
+
+**TestDataReader.java:**
+```java
+public class TestDataReader {
+
+    private static final String TEST_DATA_PATH = "src/test/resources/testdata/";
+
+    public static Map<String, Object> getUserData(String userType) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(new File(TEST_DATA_PATH + "users.json"));
+            return mapper.convertValue(root.get(userType), Map.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read user test data", e);
+        }
+    }
+
+    public static List<Map<String, Object>> getAllProducts() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(new File(TEST_DATA_PATH + "products.json"));
+            return mapper.convertValue(root.get("products"), List.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read product test data", e);
+        }
+    }
+}
+```
+
+**Usage in Step Definitions:**
+```java
+@Given("the user is logged in as {string}")
+public void userIsLoggedInAs(String userType) {
+    Map<String, Object> userData = TestDataReader.getUserData(userType);
+    String username = (String) userData.get("username");
+    String password = (String) userData.get("password");
+
+    loginPage.login(username, password);
+
+    // Store user info for later use in scenario
+    testContext.getScenarioContext().setContext("CURRENT_USER", userData);
+}
+```
+
+---
+
+### 6. Implement Parallel Execution for Faster Feedback
+
+**Why:**
+- Reduces test execution time significantly
+- Provides faster feedback to development team
+- Better utilizes available system resources
+- Essential for large test suites in CI/CD
+
+**How:**
+
+**TestNG Parallel Runner:**
+```java
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = {"stepdefinitions", "hooks"},
+    plugin = {
+        "pretty",
+        "json:target/cucumber-reports/cucumber.json",
+        "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"
+    },
+    tags = "@regression"
+)
+public class ParallelTestRunner extends AbstractTestNGCucumberTests {
+
+    @Override
+    @DataProvider(parallel = true)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
+}
+```
+
+**testng.xml:**
+```xml
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Cucumber BDD Suite" parallel="methods" thread-count="4">
+    <test name="Cucumber Tests">
+        <classes>
+            <class name="runners.ParallelTestRunner"/>
+        </classes>
+    </test>
+</suite>
+```
+
+**Thread-Safe Driver Management:**
+```java
+public class DriverFactory {
+
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    public static WebDriver getDriver() {
+        return driver.get();
+    }
+
+    public static void setDriver(WebDriver driverInstance) {
+        driver.set(driverInstance);
+    }
+
+    public static WebDriver initializeDriver() {
+        String browser = ConfigReader.getProperty("browser");
+        WebDriver driverInstance;
+
+        switch (browser.toLowerCase()) {
+            case "chrome":
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--start-maximized");
+                chromeOptions.addArguments("--disable-notifications");
+                driverInstance = new ChromeDriver(chromeOptions);
+                break;
+
+            case "firefox":
+                WebDriverManager.firefoxdriver().setup();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                driverInstance = new FirefoxDriver(firefoxOptions);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Browser not supported: " + browser);
+        }
+
+        driver.set(driverInstance);
+        return driverInstance;
+    }
+
+    public static void quitDriver() {
+        if (driver.get() != null) {
+            driver.get().quit();
+            driver.remove();
+        }
+    }
+}
+```
+
+---
+
+### 7. Use Regular Expressions and Custom Parameter Types
+
+**Why:**
+- Makes step definitions more flexible and reusable
+- Reduces the number of step definitions needed
+- Provides type safety and automatic conversions
+- Improves code maintainability
+
+**How:**
+```java
+// Custom Parameter Types
+@ParameterType(".*")
+public User user(String userName) {
+    return TestDataReader.getUser(userName);
+}
+
+@ParameterType("[0-9]+")
+public Product product(String productId) {
+    return TestDataReader.getProduct(productId);
+}
+
+@ParameterType("\\$?[0-9]+\\.?[0-9]{0,2}")
+public Money money(String amount) {
+    amount = amount.replace("$", "");
+    return new Money(new BigDecimal(amount));
+}
+
+// Usage in Step Definitions
+@When("{user} adds {product} to cart")
+public void userAddsProductToCart(User user, Product product) {
+    // user and product are automatically converted
+    cartPage.addProduct(product);
+}
+
+@Then("the total should be {money}")
+public void totalShouldBe(Money expectedTotal) {
+    Money actualTotal = checkoutPage.getTotal();
+    Assert.assertEquals(actualTotal, expectedTotal);
+}
+```
+
+**Feature File Usage:**
+```gherkin
+Scenario: Customer adds products to cart
+  When John adds PROD001 to cart
+  And John adds PROD002 to cart
+  Then the total should be $1029.98
+```
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 44: Cross-Browser Testing](../week7/day44_cross_browser_testing.md)

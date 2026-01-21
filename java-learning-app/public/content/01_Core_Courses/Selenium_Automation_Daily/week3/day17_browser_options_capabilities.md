@@ -654,6 +654,432 @@ public class BrowserFactory {
 
 ---
 
+## Common Mistakes to Avoid
+
+### 1. Using Deprecated DesiredCapabilities
+**Problem**: Still using `DesiredCapabilities` class which is deprecated in Selenium 4.
+**Why It's Wrong**: Deprecated API, not forward-compatible, and browser-specific Options classes provide better functionality.
+**Correct Approach**: Use browser-specific Options classes (ChromeOptions, FirefoxOptions, EdgeOptions).
+```java
+// Wrong way (Deprecated in Selenium 4)
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability("browserName", "chrome");
+capabilities.setCapability("acceptInsecureCerts", true);
+WebDriver driver = new ChromeDriver(capabilities);
+
+// Correct way
+ChromeOptions options = new ChromeOptions();
+options.setAcceptInsecureCerts(true);
+options.addArguments("--start-maximized");
+WebDriver driver = new ChromeDriver(options);
+```
+
+### 2. Not Configuring Headless Mode Properly
+**Problem**: Running headless mode without necessary arguments like window size and disable-gpu.
+**Why It's Wrong**: Screenshots may be incomplete, elements may not render properly, and tests may fail unexpectedly.
+**Correct Approach**: Include all necessary arguments for stable headless execution.
+```java
+// Wrong way
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--headless");
+WebDriver driver = new ChromeDriver(options);
+// May cause issues with element visibility and screenshots
+
+// Correct way
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--headless");
+options.addArguments("--window-size=1920,1080"); // Define viewport size
+options.addArguments("--disable-gpu");          // Disable GPU acceleration
+options.addArguments("--no-sandbox");           // Required for CI/CD
+options.addArguments("--disable-dev-shm-usage"); // Overcome limited resources
+WebDriver driver = new ChromeDriver(options);
+```
+
+### 3. Hardcoding Browser Options in Test Classes
+**Problem**: Duplicating browser configuration code across multiple test classes.
+**Why It's Wrong**: Difficult to maintain, inconsistent configurations, and changes require updates in multiple places.
+**Correct Approach**: Centralize browser configuration in a factory or base class.
+```java
+// Wrong way
+public class LoginTest {
+    @BeforeMethod
+    public void setup() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("--disable-notifications");
+        driver = new ChromeDriver(options);
+    }
+}
+
+public class CheckoutTest {
+    @BeforeMethod
+    public void setup() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("--disable-notifications");
+        driver = new ChromeDriver(options);
+    }
+}
+
+// Correct way
+public class BrowserFactory {
+    public static WebDriver getDriver(String browser) {
+        ChromeOptions options = getChromeOptions();
+        return new ChromeDriver(options);
+    }
+
+    private static ChromeOptions getChromeOptions() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("--disable-notifications");
+        return options;
+    }
+}
+
+// Use in all tests
+public class LoginTest extends BaseTest {
+    @BeforeMethod
+    public void setup() {
+        driver = BrowserFactory.getDriver("chrome");
+    }
+}
+```
+
+### 4. Not Handling Download Directory Creation
+**Problem**: Setting download directory without ensuring it exists first.
+**Why It's Wrong**: Downloads fail silently, tests don't fail but files aren't saved, and hard to debug.
+**Correct Approach**: Create download directory before setting it in browser options.
+```java
+// Wrong way
+Map<String, Object> prefs = new HashMap<>();
+prefs.put("download.default_directory", "/path/to/downloads");
+options.setExperimentalOption("prefs", prefs);
+// Fails if directory doesn't exist
+
+// Correct way
+String downloadPath = System.getProperty("user.dir") + "/downloads";
+File downloadDir = new File(downloadPath);
+if (!downloadDir.exists()) {
+    downloadDir.mkdirs(); // Create directory if not exists
+}
+
+Map<String, Object> prefs = new HashMap<>();
+prefs.put("download.default_directory", downloadPath);
+prefs.put("download.prompt_for_download", false);
+prefs.put("download.directory_upgrade", true);
+options.setExperimentalOption("prefs", prefs);
+```
+
+### 5. Using Incorrect Arguments Syntax
+**Problem**: Wrong format or spelling of browser arguments, causing them to be ignored.
+**Why It's Wrong**: Options silently fail, tests don't behave as expected, and debugging is difficult.
+**Correct Approach**: Use exact argument names as documented by browser vendors.
+```java
+// Wrong way
+options.addArguments("maximize");           // Wrong
+options.addArguments("headless");           // Wrong
+options.addArguments("disable-notification"); // Wrong (typo)
+
+// Correct way
+options.addArguments("--start-maximized");   // Correct
+options.addArguments("--headless");          // Correct
+options.addArguments("--disable-notifications"); // Correct
+```
+
+### 6. Not Cleaning Up User Data Directory
+**Problem**: Reusing same Chrome user profile without cleanup, leading to accumulated cache and cookies.
+**Why It's Wrong**: Tests affected by previous test data, inconsistent test behavior, and increasing disk usage.
+**Correct Approach**: Use fresh profile or clean up between test runs.
+```java
+// Wrong way
+options.addArguments("user-data-dir=/path/to/profile");
+// Profile accumulates data over time
+
+// Correct way - Use temporary profile
+String tempProfile = System.getProperty("java.io.tmpdir") + "/chrome-profile-" +
+                    System.currentTimeMillis();
+options.addArguments("user-data-dir=" + tempProfile);
+
+// OR - Clean up after test
+@AfterClass
+public void cleanupProfile() {
+    File profileDir = new File(tempProfile);
+    if (profileDir.exists()) {
+        deleteDirectory(profileDir);
+    }
+}
+```
+
+---
+
+## Best Practices
+
+### 1. Create a Centralized Browser Configuration Manager
+**Why**: Single source of truth for browser settings, easy to modify for different environments, and consistent configuration across all tests.
+**How**: Build a configuration manager that reads settings from properties file.
+```java
+public class BrowserConfigManager {
+    private static Properties props;
+
+    static {
+        try {
+            props = new Properties();
+            FileInputStream fis = new FileInputStream("browser-config.properties");
+            props.load(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ChromeOptions getChromeOptions() {
+        ChromeOptions options = new ChromeOptions();
+
+        // Headless mode
+        if (Boolean.parseBoolean(props.getProperty("chrome.headless"))) {
+            options.addArguments("--headless");
+            options.addArguments("--disable-gpu");
+        }
+
+        // Window size
+        options.addArguments("--window-size=" + props.getProperty("window.size"));
+
+        // Other options
+        if (Boolean.parseBoolean(props.getProperty("disable.notifications"))) {
+            options.addArguments("--disable-notifications");
+        }
+
+        return options;
+    }
+}
+
+// browser-config.properties
+// chrome.headless=false
+// window.size=1920,1080
+// disable.notifications=true
+```
+
+### 2. Use Different Configurations for Different Environments
+**Why**: Local development needs visible browser, CI/CD needs headless mode, and debugging requires specific settings.
+**How**: Create environment-specific configuration methods.
+```java
+public class BrowserFactory {
+
+    public static WebDriver getDriverForEnvironment(String browser) {
+        String environment = System.getProperty("env", "local");
+
+        switch (environment.toLowerCase()) {
+            case "ci":
+                return getCIDriver(browser);
+            case "debug":
+                return getDebugDriver(browser);
+            default:
+                return getLocalDriver(browser);
+        }
+    }
+
+    private static WebDriver getCIDriver(String browser) {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
+        return new ChromeDriver(options);
+    }
+
+    private static WebDriver getLocalDriver(String browser) {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("--disable-notifications");
+        return new ChromeDriver(options);
+    }
+
+    private static WebDriver getDebugDriver(String browser) {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("--auto-open-devtools-for-tabs");
+        return new ChromeDriver(options);
+    }
+}
+
+// Run tests with: mvn test -Denv=ci
+```
+
+### 3. Implement Browser Factory Pattern
+**Why**: Supports multiple browsers, easy to switch browsers, and centralizes driver initialization logic.
+**How**: Create factory class that returns appropriate driver based on input.
+```java
+public class BrowserFactory {
+
+    public static WebDriver createDriver(String browserName) {
+        WebDriver driver;
+
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                driver = createChromeDriver();
+                break;
+            case "firefox":
+                driver = createFirefoxDriver();
+                break;
+            case "edge":
+                driver = createEdgeDriver();
+                break;
+            case "chrome-headless":
+                driver = createHeadlessChromeDriver();
+                break;
+            default:
+                throw new IllegalArgumentException("Browser not supported: " + browserName);
+        }
+
+        configureDriver(driver);
+        return driver;
+    }
+
+    private static WebDriver createChromeDriver() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-popup-blocking");
+        return new ChromeDriver(options);
+    }
+
+    private static WebDriver createHeadlessChromeDriver() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        return new ChromeDriver(options);
+    }
+
+    private static void configureDriver(WebDriver driver) {
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+    }
+}
+```
+
+### 4. Set Appropriate Timeouts in Browser Options
+**Why**: Prevents hanging tests, improves reliability, and provides better control over test execution.
+**How**: Configure timeouts in browser options and driver settings.
+```java
+public static ChromeOptions getOptimizedChromeOptions() {
+    ChromeOptions options = new ChromeOptions();
+
+    // Page load strategy - reduce waiting time
+    options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+    // Options: NORMAL, EAGER, NONE
+
+    // Browser arguments
+    options.addArguments("--start-maximized");
+
+    // Set preferences
+    Map<String, Object> prefs = new HashMap<>();
+    prefs.put("profile.default_content_setting_values.notifications", 2);
+    prefs.put("credentials_enable_service", false);
+    prefs.put("profile.password_manager_enabled", false);
+    options.setExperimentalOption("prefs", prefs);
+
+    return options;
+}
+
+// Apply timeouts after driver creation
+driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(30));
+```
+
+### 5. Disable Unnecessary Browser Features for Performance
+**Why**: Faster test execution, reduces resource usage, and minimizes interference from browser features.
+**How**: Disable extensions, notifications, and other unnecessary features.
+```java
+public static ChromeOptions getPerformanceOptimizedOptions() {
+    ChromeOptions options = new ChromeOptions();
+
+    // Performance arguments
+    options.addArguments("--disable-extensions");
+    options.addArguments("--disable-plugins");
+    options.addArguments("--disable-popup-blocking");
+    options.addArguments("--disable-notifications");
+    options.addArguments("--disable-infobars");
+    options.addArguments("--disable-blink-features=AutomationControlled");
+
+    // Disable images for faster loading (optional)
+    Map<String, Object> prefs = new HashMap<>();
+    prefs.put("profile.managed_default_content_settings.images", 2);
+    options.setExperimentalOption("prefs", prefs);
+
+    return options;
+}
+```
+
+### 6. Handle SSL Certificates and Security Settings
+**Why**: Tests should run on dev/QA environments with self-signed certificates, avoid security warnings blocking tests.
+**How**: Configure browser to accept insecure certificates.
+```java
+public static ChromeOptions getSecurityRelaxedOptions() {
+    ChromeOptions options = new ChromeOptions();
+
+    // Accept insecure certificates
+    options.setAcceptInsecureCerts(true);
+
+    // Additional security bypasses
+    options.addArguments("--ignore-certificate-errors");
+    options.addArguments("--ignore-ssl-errors");
+    options.addArguments("--allow-insecure-localhost");
+
+    // Disable web security (use only for testing!)
+    options.addArguments("--disable-web-security");
+    options.addArguments("--allow-running-insecure-content");
+
+    return options;
+}
+
+// Use cautiously - only for test environments!
+```
+
+### 7. Configure Download Handling Properly
+**Why**: Enables file download testing, provides control over download location, and prevents prompts.
+**How**: Set download preferences in browser options.
+```java
+public static ChromeOptions getDownloadConfiguredOptions() {
+    ChromeOptions options = new ChromeOptions();
+
+    // Create download directory
+    String downloadPath = System.getProperty("user.dir") + "/test-downloads";
+    new File(downloadPath).mkdirs();
+
+    // Set download preferences
+    Map<String, Object> prefs = new HashMap<>();
+    prefs.put("download.default_directory", downloadPath);
+    prefs.put("download.prompt_for_download", false);
+    prefs.put("download.directory_upgrade", true);
+    prefs.put("safebrowsing.enabled", false);
+    prefs.put("plugins.always_open_pdf_externally", true); // Auto-download PDFs
+
+    options.setExperimentalOption("prefs", prefs);
+
+    return options;
+}
+
+// Verify download in test
+@Test
+public void testFileDownload() throws InterruptedException {
+    driver.get("https://file-examples.com");
+    driver.findElement(By.linkText("Download")).click();
+
+    // Wait for download
+    Thread.sleep(5000);
+
+    // Verify file exists
+    File downloadDir = new File(System.getProperty("user.dir") + "/test-downloads");
+    File[] files = downloadDir.listFiles();
+    Assert.assertTrue(files != null && files.length > 0, "File should be downloaded");
+}
+```
+
+---
+
 ## 💻 Practical Exercises
 
 ### Exercise 1: Headless Browser

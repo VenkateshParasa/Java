@@ -2184,6 +2184,544 @@ public void testWithConditionalLogging() {
 
 ---
 
+## Common Mistakes to Avoid
+
+### 1. Not Validating Response Schema and Data Types
+
+**Problem:**
+```java
+@Test
+public void testGetUser() {
+    Response response = given()
+        .get("/api/users/1");
+
+    // Only checking status code - not validating response structure
+    assertEquals(200, response.getStatusCode());
+}
+```
+
+**Why It's Wrong:**
+- API might return 200 but with incorrect data structure
+- Changes to response schema go undetected
+- Type mismatches (string instead of integer) are not caught
+- Missing or extra fields are not validated
+
+**Correct Approach:**
+```java
+@Test
+public void testGetUserWithSchemaValidation() {
+    given()
+        .get("/api/users/1")
+    .then()
+        .statusCode(200)
+        .body(matchesJsonSchemaInClasspath("schemas/user-schema.json"))
+        .body("id", isA(Integer.class))
+        .body("email", matchesPattern("^[A-Za-z0-9+_.-]+@(.+)$"))
+        .body("firstName", notNullValue())
+        .body("lastName", notNullValue())
+        .body("roles", hasSize(greaterThan(0)));
+}
+
+// User Schema (user-schema.json)
+/*
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "email", "firstName", "lastName"],
+  "properties": {
+    "id": {"type": "integer"},
+    "email": {"type": "string", "format": "email"},
+    "firstName": {"type": "string"},
+    "lastName": {"type": "string"},
+    "roles": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
+*/
+```
+
+---
+
+### 2. Hardcoding Test Data Instead of Using Data Providers
+
+**Problem:**
+```java
+@Test
+public void testCreateUser() {
+    String requestBody = "{"
+        + "\"email\":\"test@example.com\","
+        + "\"firstName\":\"John\","
+        + "\"lastName\":\"Doe\""
+        + "}";
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(requestBody)
+    .when()
+        .post("/api/users")
+    .then()
+        .statusCode(201);
+}
+```
+
+**Why It's Wrong:**
+- Test data is embedded in test code
+- Difficult to update or maintain test data
+- Cannot easily test multiple scenarios
+- JSON formatting errors are common
+
+**Correct Approach:**
+```java
+// POJO approach
+public class User {
+    private String email;
+    private String firstName;
+    private String lastName;
+
+    // Constructor, getters, setters
+}
+
+@Test(dataProvider = "userTestData")
+public void testCreateUser(User user, int expectedStatus) {
+    given()
+        .contentType(ContentType.JSON)
+        .body(user)  // REST Assured serializes POJO to JSON
+    .when()
+        .post("/api/users")
+    .then()
+        .statusCode(expectedStatus)
+        .body("email", equalTo(user.getEmail()))
+        .body("firstName", equalTo(user.getFirstName()));
+}
+
+@DataProvider(name = "userTestData")
+public Object[][] getUserTestData() {
+    return new Object[][] {
+        {new User("john@example.com", "John", "Doe"), 201},
+        {new User("jane@example.com", "Jane", "Smith"), 201},
+        {new User("invalid-email", "Test", "User"), 400}
+    };
+}
+
+// Or load from external JSON file
+@Test
+public void testCreateUserFromFile() {
+    User user = JsonFileReader.readJson("testdata/valid-user.json", User.class);
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(user)
+    .when()
+        .post("/api/users")
+    .then()
+        .statusCode(201);
+}
+```
+
+---
+
+### 3. Not Handling Authentication and Headers Properly
+
+**Problem:**
+```java
+@Test
+public void testProtectedEndpoint() {
+    // Authentication token hardcoded and never refreshed
+    String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+
+    given()
+        .header("Authorization", "Bearer " + token)
+    .when()
+        .get("/api/protected/data")
+    .then()
+        .statusCode(200);
+}
+```
+
+**Why It's Wrong:**
+- Hardcoded tokens expire, causing intermittent failures
+- No token refresh logic
+- Headers repeated in every test
+- No centralized authentication management
+
+**Correct Approach:**
+```java
+public class AuthManager {
+    private static String accessToken;
+    private static long tokenExpiry;
+
+    public static String getAccessToken() {
+        if (accessToken == null || isTokenExpired()) {
+            refreshToken();
+        }
+        return accessToken;
+    }
+
+    private static boolean isTokenExpired() {
+        return System.currentTimeMillis() >= tokenExpiry;
+    }
+
+    private static void refreshToken() {
+        Response response = given()
+            .contentType(ContentType.JSON)
+            .body("{\"username\":\"testuser\",\"password\":\"testpass\"}")
+        .when()
+            .post("/api/auth/login");
+
+        accessToken = response.jsonPath().getString("access_token");
+        int expiresIn = response.jsonPath().getInt("expires_in");
+        tokenExpiry = System.currentTimeMillis() + (expiresIn * 1000);
+    }
+}
+
+// RequestSpecification with authentication
+public class APIBaseTest {
+    protected RequestSpecification requestSpec;
+
+    @BeforeMethod
+    public void setup() {
+        requestSpec = new RequestSpecBuilder()
+            .setBaseUri(ConfigReader.getProperty("api.base.url"))
+            .addHeader("Authorization", "Bearer " + AuthManager.getAccessToken())
+            .setContentType(ContentType.JSON)
+            .addFilter(new RequestLoggingFilter())
+            .addFilter(new ResponseLoggingFilter())
+            .build();
+    }
+
+    @Test
+    public void testProtectedEndpoint() {
+        given()
+            .spec(requestSpec)
+        .when()
+            .get("/api/protected/data")
+        .then()
+            .statusCode(200);
+    }
+}
+```
+
+---
+
+### 4. Not Extracting and Reusing Response Data Between Tests
+
+**Problem:**
+```java
+@Test(priority = 1)
+public void testCreateProduct() {
+    given()
+        .body(product)
+    .when()
+        .post("/api/products")
+    .then()
+        .statusCode(201);
+    // Product ID is not extracted - cannot use in subsequent tests
+}
+
+@Test(priority = 2, dependsOnMethods = "testCreateProduct")
+public void testGetProduct() {
+    // No way to get the product ID from previous test
+    given()
+        .get("/api/products/???")  // What ID to use?
+    .then()
+        .statusCode(200);
+}
+```
+
+**Why It's Wrong:**
+- Cannot create proper test workflows
+- Tests are not truly integrated
+- Need to hardcode IDs or look them up separately
+
+**Correct Approach:**
+```java
+public class ProductAPITests {
+    private String createdProductId;
+
+    @Test(priority = 1)
+    public void testCreateProduct() {
+        Product product = new Product("Laptop", 999.99, "Electronics");
+
+        Response response = given()
+            .spec(requestSpec)
+            .body(product)
+        .when()
+            .post("/api/products")
+        .then()
+            .statusCode(201)
+            .body("name", equalTo(product.getName()))
+            .extract().response();
+
+        // Extract product ID for use in subsequent tests
+        createdProductId = response.jsonPath().getString("id");
+        System.out.println("Created product ID: " + createdProductId);
+    }
+
+    @Test(priority = 2, dependsOnMethods = "testCreateProduct")
+    public void testGetProduct() {
+        given()
+            .spec(requestSpec)
+        .when()
+            .get("/api/products/" + createdProductId)
+        .then()
+            .statusCode(200)
+            .body("id", equalTo(createdProductId))
+            .body("name", equalTo("Laptop"));
+    }
+
+    @Test(priority = 3, dependsOnMethods = "testGetProduct")
+    public void testUpdateProduct() {
+        Product updatedProduct = new Product("Gaming Laptop", 1299.99, "Electronics");
+
+        given()
+            .spec(requestSpec)
+            .body(updatedProduct)
+        .when()
+            .put("/api/products/" + createdProductId)
+        .then()
+            .statusCode(200)
+            .body("name", equalTo(updatedProduct.getName()))
+            .body("price", equalTo(updatedProduct.getPrice()));
+    }
+
+    @Test(priority = 4, dependsOnMethods = "testUpdateProduct")
+    public void testDeleteProduct() {
+        given()
+            .spec(requestSpec)
+        .when()
+            .delete("/api/products/" + createdProductId)
+        .then()
+            .statusCode(204);
+
+        // Verify deletion
+        given()
+            .spec(requestSpec)
+        .when()
+            .get("/api/products/" + createdProductId)
+        .then()
+            .statusCode(404);
+    }
+}
+```
+
+---
+
+### 5. Not Testing Error Scenarios and Edge Cases
+
+**Problem:**
+```java
+@Test
+public void testCreateUser() {
+    // Only testing happy path
+    User user = new User("valid@email.com", "John", "Doe");
+
+    given()
+        .body(user)
+    .when()
+        .post("/api/users")
+    .then()
+        .statusCode(201);
+}
+```
+
+**Why It's Wrong:**
+- Only validates successful scenarios
+- Error handling is never tested
+- API vulnerabilities may go undetected
+- No validation of error messages or error codes
+
+**Correct Approach:**
+```java
+public class UserAPIErrorTests {
+
+    @Test
+    public void testCreateUserWithInvalidEmail() {
+        User user = new User("invalid-email", "John", "Doe");
+
+        given()
+            .spec(requestSpec)
+            .body(user)
+        .when()
+            .post("/api/users")
+        .then()
+            .statusCode(400)
+            .body("error", equalTo("INVALID_EMAIL"))
+            .body("message", containsString("Invalid email format"));
+    }
+
+    @Test
+    public void testCreateUserWithMissingRequired() {
+        String requestBody = "{\"email\":\"test@example.com\"}";  // Missing firstName, lastName
+
+        given()
+            .spec(requestSpec)
+            .body(requestBody)
+        .when()
+            .post("/api/users")
+        .then()
+            .statusCode(400)
+            .body("error", equalTo("VALIDATION_ERROR"))
+            .body("details", hasSize(2))
+            .body("details.field", hasItems("firstName", "lastName"));
+    }
+
+    @Test
+    public void testCreateDuplicateUser() {
+        User user = new User("existing@example.com", "John", "Doe");
+
+        // First creation succeeds
+        given()
+            .spec(requestSpec)
+            .body(user)
+        .when()
+            .post("/api/users")
+        .then()
+            .statusCode(201);
+
+        // Duplicate creation fails
+        given()
+            .spec(requestSpec)
+            .body(user)
+        .when()
+            .post("/api/users")
+        .then()
+            .statusCode(409)
+            .body("error", equalTo("USER_EXISTS"))
+            .body("message", containsString("User already exists"));
+    }
+
+    @Test
+    public void testGetNonExistentUser() {
+        given()
+            .spec(requestSpec)
+        .when()
+            .get("/api/users/99999")
+        .then()
+            .statusCode(404)
+            .body("error", equalTo("USER_NOT_FOUND"));
+    }
+
+    @Test
+    public void testUnauthorizedAccess() {
+        given()
+            .baseUri(ConfigReader.getProperty("api.base.url"))
+            // No authorization header
+        .when()
+            .get("/api/protected/data")
+        .then()
+            .statusCode(401)
+            .body("error", equalTo("UNAUTHORIZED"));
+    }
+
+    @Test
+    public void testInsufficientPermissions() {
+        // Login as regular user
+        String userToken = AuthManager.getToken("regular_user", "password");
+
+        given()
+            .header("Authorization", "Bearer " + userToken)
+        .when()
+            .delete("/api/admin/users/1")  // Admin-only endpoint
+        .then()
+            .statusCode(403)
+            .body("error", equalTo("FORBIDDEN"));
+    }
+}
+```
+
+---
+
+### 6. Not Implementing Proper Test Data Cleanup
+
+**Problem:**
+```java
+@Test
+public void testCreateUser() {
+    User user = new User("test@example.com", "Test", "User");
+
+    given()
+        .body(user)
+    .when()
+        .post("/api/users")
+    .then()
+        .statusCode(201);
+
+    // Test data is never cleaned up
+    // Subsequent test runs may fail due to existing data
+}
+```
+
+**Why It's Wrong:**
+- Test data accumulates in database
+- Tests fail on subsequent runs due to duplicate data
+- Environment pollution affects other tests
+- Cannot guarantee clean state for each test run
+
+**Correct Approach:**
+```java
+public class UserAPITestsWithCleanup {
+    private List<String> createdUserIds = new ArrayList<>();
+
+    @Test
+    public void testCreateUser() {
+        User user = new User("test@example.com", "Test", "User");
+
+        Response response = given()
+            .spec(requestSpec)
+            .body(user)
+        .when()
+            .post("/api/users")
+        .then()
+            .statusCode(201)
+            .extract().response();
+
+        String userId = response.jsonPath().getString("id");
+        createdUserIds.add(userId);  // Track for cleanup
+    }
+
+    @AfterMethod
+    public void cleanupTestData() {
+        // Clean up after each test
+        for (String userId : createdUserIds) {
+            try {
+                given()
+                    .spec(requestSpec)
+                .when()
+                    .delete("/api/users/" + userId)
+                .then()
+                    .statusCode(anyOf(is(204), is(404)));  // 404 if already deleted
+            } catch (Exception e) {
+                System.out.println("Failed to delete user " + userId + ": " + e.getMessage());
+            }
+        }
+        createdUserIds.clear();
+    }
+
+    @AfterClass
+    public void finalCleanup() {
+        // Additional cleanup if needed
+        // Can also use database queries to clean test data
+        DatabaseHelper.cleanupTestData();
+    }
+}
+
+// Alternative: Database-level cleanup
+public class DatabaseHelper {
+    public static void cleanupTestData() {
+        String query = "DELETE FROM users WHERE email LIKE '%@test.example.com'";
+        // Execute database cleanup query
+    }
+
+    public static void resetSequences() {
+        // Reset auto-increment sequences if needed
+    }
+}
+```
+
+---
+
 ## Best Practices for API Testing
 
 ### 1. Test Organization

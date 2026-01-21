@@ -440,6 +440,388 @@ Assert.fail("Test failed");
 
 ---
 
+## Common Mistakes to Avoid
+
+### 1. Continuing with main() Method for All Tests
+**Problem**: Developers keep using `public static void main()` for running tests instead of adopting a framework.
+**Why It's Wrong**: No test management, no reporting, difficult to maintain, cannot run tests in parallel, and no standardized assertions.
+**Correct Approach**: Transition to TestNG or JUnit framework with proper test annotations.
+```java
+// Wrong way
+public class LoginTest {
+    public static void main(String[] args) {
+        WebDriver driver = new ChromeDriver();
+        // Test logic here
+        driver.quit();
+    }
+}
+
+// Correct way
+public class LoginTest {
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+    }
+
+    @Test
+    public void testValidLogin() {
+        // Test logic with assertions
+        Assert.assertTrue(condition);
+    }
+
+    @AfterMethod
+    public void teardown() {
+        driver.quit();
+    }
+}
+```
+
+### 2. Hardcoding Values Throughout Tests
+**Problem**: URLs, credentials, timeouts, and locators are hardcoded directly in test methods.
+**Why It's Wrong**: Changes require updating multiple files, environment-specific values cannot be managed, and tests are not portable.
+**Correct Approach**: Externalize configuration to properties files or constants classes.
+```java
+// Wrong way
+driver.get("https://example.com/login");
+driver.findElement(By.id("username")).sendKeys("testuser");
+Thread.sleep(5000);
+
+// Correct way
+driver.get(ConfigReader.getProperty("base.url"));
+driver.findElement(By.id("username")).sendKeys(TestData.getUsername());
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(
+    Integer.parseInt(ConfigReader.getProperty("explicit.wait"))));
+```
+
+### 3. Not Using Assertions, Only Print Statements
+**Problem**: Relying on `System.out.println()` to verify test results instead of using assertions.
+**Why It's Wrong**: Tests don't actually fail when conditions aren't met, no automated pass/fail tracking, and manual verification is required.
+**Correct Approach**: Use TestNG or JUnit assertions for all verifications.
+```java
+// Wrong way
+if (driver.getTitle().equals("Dashboard")) {
+    System.out.println("Test Passed");
+} else {
+    System.out.println("Test Failed");
+}
+
+// Correct way
+Assert.assertEquals(driver.getTitle(), "Dashboard",
+    "User should be on Dashboard after login");
+```
+
+### 4. Creating New Driver Instance for Each Test in Same Class
+**Problem**: Manually creating and destroying WebDriver for every single test without using setup/teardown methods.
+**Why It's Wrong**: Code duplication, inconsistent setup, maintenance nightmare, and missing centralized configuration.
+**Correct Approach**: Use @BeforeMethod and @AfterMethod to manage WebDriver lifecycle.
+```java
+// Wrong way
+@Test
+public void test1() {
+    WebDriver driver = new ChromeDriver();
+    driver.manage().window().maximize();
+    // test logic
+    driver.quit();
+}
+
+@Test
+public void test2() {
+    WebDriver driver = new ChromeDriver();
+    driver.manage().window().maximize();
+    // test logic
+    driver.quit();
+}
+
+// Correct way
+WebDriver driver;
+
+@BeforeMethod
+public void setup() {
+    driver = new ChromeDriver();
+    driver.manage().window().maximize();
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+}
+
+@Test
+public void test1() {
+    // test logic
+}
+
+@Test
+public void test2() {
+    // test logic
+}
+
+@AfterMethod
+public void teardown() {
+    if (driver != null) {
+        driver.quit();
+    }
+}
+```
+
+### 5. Mixing Test Logic with Page Interactions
+**Problem**: All element locators, actions, and test logic are in the same test method.
+**Why It's Wrong**: Not reusable, difficult to maintain, violates Single Responsibility Principle, and changes to UI require test changes.
+**Correct Approach**: Separate page interactions into Page Object classes (coming in Week 4).
+```java
+// Wrong way
+@Test
+public void testLogin() {
+    driver.findElement(By.id("username")).sendKeys("user");
+    driver.findElement(By.id("password")).sendKeys("pass");
+    driver.findElement(By.id("loginBtn")).click();
+    Assert.assertTrue(driver.findElement(By.id("dashboard")).isDisplayed());
+}
+
+// Correct way (with Page Object)
+@Test
+public void testLogin() {
+    LoginPage loginPage = new LoginPage(driver);
+    DashboardPage dashboard = loginPage.login("user", "pass");
+    Assert.assertTrue(dashboard.isDashboardDisplayed());
+}
+```
+
+### 6. Not Planning for Framework Architecture
+**Problem**: Starting to write tests without thinking about overall framework structure and organization.
+**Why It's Wrong**: Results in disorganized code, difficult to scale, hard to add new features, and inconsistent patterns.
+**Correct Approach**: Plan framework layers: tests, pages, utilities, configuration, and data.
+```java
+// Plan your structure
+src/test/java/
+├── tests/           // Test classes
+├── pages/           // Page Object classes
+├── utils/           // Utility classes
+├── config/          // Configuration readers
+├── data/            // Test data providers
+└── base/            // Base test class
+```
+
+---
+
+## Best Practices
+
+### 1. Create a Base Test Class
+**Why**: Centralizes common setup and teardown logic, ensures consistency across all tests, and reduces code duplication.
+**How**: Create a BaseTest class that all test classes extend, containing WebDriver initialization, browser configuration, and common utilities.
+```java
+public class BaseTest {
+    protected WebDriver driver;
+    protected String baseUrl;
+
+    @BeforeMethod
+    public void setUp() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        baseUrl = ConfigReader.getProperty("base.url");
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    protected void takeScreenshot(String testName) {
+        // Screenshot utility
+    }
+}
+
+// All tests extend BaseTest
+public class LoginTest extends BaseTest {
+    @Test
+    public void testLogin() {
+        driver.get(baseUrl);
+        // Test logic
+    }
+}
+```
+
+### 2. Use Meaningful Test and Method Names
+**Why**: Improves code readability, makes test reports clearer, and helps in debugging failures.
+**How**: Use descriptive names that explain what the test does, follow naming conventions, and add descriptions.
+```java
+// Good naming
+@Test(description = "Verify user can login with valid credentials")
+public void testLoginWithValidCredentials() { }
+
+@Test(description = "Verify error message for invalid password")
+public void testLoginWithInvalidPasswordShowsError() { }
+
+// Avoid
+@Test
+public void test1() { }
+
+@Test
+public void loginTest() { }
+```
+
+### 3. Externalize Configuration and Test Data
+**Why**: Makes tests environment-independent, easy to run in different environments, and separates test data from test logic.
+**How**: Use properties files, JSON, or Excel for configuration and test data.
+```java
+// config.properties
+base.url=https://qa.example.com
+browser=chrome
+implicit.wait=10
+explicit.wait=20
+
+// Usage in tests
+public class ConfigReader {
+    private static Properties properties;
+
+    static {
+        try {
+            FileInputStream fis = new FileInputStream("config.properties");
+            properties = new Properties();
+            properties.load(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+}
+
+// In tests
+String url = ConfigReader.getProperty("base.url");
+```
+
+### 4. Organize Tests into Logical Test Suites
+**Why**: Enables running specific test groups (smoke, regression), better test organization, and faster feedback.
+**How**: Use testng.xml to create different suites for different purposes.
+```xml
+<!-- smoke-tests.xml -->
+<suite name="Smoke Test Suite">
+    <test name="Critical Path Tests">
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.HomePageTest"/>
+        </classes>
+    </test>
+</suite>
+
+<!-- regression-tests.xml -->
+<suite name="Full Regression Suite">
+    <test name="All Tests">
+        <packages>
+            <package name="tests.*"/>
+        </packages>
+    </test>
+</suite>
+```
+
+### 5. Implement Proper Logging and Reporting
+**Why**: Helps in debugging failures, provides execution history, and creates evidence of test execution.
+**How**: Use logging frameworks and screenshot capture, especially on failures.
+```java
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class LoginTest extends BaseTest {
+    private static final Logger logger = LogManager.getLogger(LoginTest.class);
+
+    @Test
+    public void testLogin() {
+        logger.info("Starting login test");
+        driver.get(baseUrl);
+        logger.info("Navigated to: " + baseUrl);
+
+        loginPage.enterCredentials("user", "pass");
+        logger.info("Entered credentials");
+
+        loginPage.clickLogin();
+        logger.info("Clicked login button");
+
+        Assert.assertTrue(dashboard.isDisplayed());
+        logger.info("Login successful - test passed");
+    }
+
+    @AfterMethod
+    public void afterMethod(ITestResult result) {
+        if (result.getStatus() == ITestResult.FAILURE) {
+            logger.error("Test failed: " + result.getName());
+            takeScreenshot(result.getName());
+        }
+        tearDown();
+    }
+}
+```
+
+### 6. Follow the DRY Principle (Don't Repeat Yourself)
+**Why**: Reduces maintenance effort, ensures consistency, and makes code more manageable.
+**How**: Create utility methods for common operations, use helper classes, and avoid code duplication.
+```java
+// Create utility class for common operations
+public class SeleniumUtils {
+
+    public static void waitAndClick(WebDriver driver, By locator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+        element.click();
+    }
+
+    public static void waitAndSendKeys(WebDriver driver, By locator, String text) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        element.clear();
+        element.sendKeys(text);
+    }
+
+    public static boolean isElementDisplayed(WebDriver driver, By locator) {
+        try {
+            return driver.findElement(locator).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+}
+
+// Use in tests
+SeleniumUtils.waitAndClick(driver, By.id("loginBtn"));
+SeleniumUtils.waitAndSendKeys(driver, By.id("username"), "testuser");
+```
+
+### 7. Plan for Scalability from Day One
+**Why**: Easier to add new tests, supports team growth, and maintains code quality as project grows.
+**How**: Design framework architecture with clear separation of concerns and modular structure.
+```java
+// Framework structure planning
+Framework/
+├── src/test/java/
+│   ├── base/
+│   │   └── BaseTest.java          // Common setup/teardown
+│   ├── pages/
+│   │   ├── BasePage.java          // Common page methods
+│   │   ├── LoginPage.java
+│   │   └── HomePage.java
+│   ├── tests/
+│   │   ├── LoginTests.java
+│   │   └── CheckoutTests.java
+│   ├── utils/
+│   │   ├── ConfigReader.java
+│   │   ├── SeleniumUtils.java
+│   │   └── ScreenshotUtils.java
+│   └── data/
+│       └── TestDataProvider.java
+├── src/test/resources/
+│   ├── config.properties
+│   ├── testdata.xlsx
+│   └── log4j2.xml
+└── test-suites/
+    ├── smoke-suite.xml
+    └── regression-suite.xml
+```
+
+---
+
 ## 7. Beginner-Friendly Exercises
 
 ### Exercise 1: Code Analysis & Refactoring Plan

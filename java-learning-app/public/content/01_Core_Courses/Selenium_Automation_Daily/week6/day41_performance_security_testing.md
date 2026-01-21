@@ -4004,6 +4004,1884 @@ A: IDOR testing approach:
 
 ---
 
+## Beginner-Friendly Exercises
+
+### Exercise 1: Basic Page Load Performance Measurement (40 minutes)
+
+**Objective**: Learn to measure and validate page load performance using Navigation Timing API.
+
+**Real-world Scenario**: You need to ensure that your e-commerce homepage loads within acceptable time limits (less than 3 seconds) to provide good user experience and meet performance SLAs.
+
+**Requirements**:
+1. Set up a basic performance test class
+2. Implement Navigation Timing API metrics collection
+3. Calculate key performance metrics (load time, DOM ready time)
+4. Create assertions for performance thresholds
+5. Generate a simple performance report
+
+**Code Template**:
+```java
+package com.automation.performance.exercises;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import static org.testng.Assert.*;
+
+public class Exercise1_BasicPerformanceTest {
+
+    private WebDriver driver;
+    private JavascriptExecutor js;
+
+    @BeforeClass
+    public void setup() {
+        // TODO: Setup WebDriver
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        js = (JavascriptExecutor) driver;
+        driver.manage().window().maximize();
+    }
+
+    @Test(priority = 1)
+    public void testPageLoadPerformance() {
+        // TODO: Navigate to test website
+        driver.get("https://www.example.com");
+
+        // TODO: Wait for page to fully load
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Get Navigation Timing metrics
+        Long navigationStart = (Long) js.executeScript(
+            "return window.performance.timing.navigationStart;");
+        Long loadEventEnd = (Long) js.executeScript(
+            "return window.performance.timing.loadEventEnd;");
+        Long domContentLoadedEventEnd = (Long) js.executeScript(
+            "return window.performance.timing.domContentLoadedEventEnd;");
+
+        // TODO: Calculate performance metrics
+        long pageLoadTime = loadEventEnd - navigationStart;
+        long domReadyTime = domContentLoadedEventEnd - navigationStart;
+
+        // TODO: Print metrics
+        System.out.println("=== Performance Metrics ===");
+        System.out.println("Page Load Time: " + pageLoadTime + " ms");
+        System.out.println("DOM Ready Time: " + domReadyTime + " ms");
+
+        // TODO: Assert performance thresholds
+        assertTrue(pageLoadTime < 3000,
+            "Page load time should be less than 3 seconds. Actual: " + pageLoadTime + " ms");
+        assertTrue(domReadyTime < 2000,
+            "DOM ready time should be less than 2 seconds. Actual: " + domReadyTime + " ms");
+
+        System.out.println("Performance test PASSED!");
+    }
+
+    @Test(priority = 2)
+    public void testDetailedNavigationTiming() {
+        driver.get("https://www.example.com");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Get all Navigation Timing metrics
+        Long navigationStart = (Long) js.executeScript(
+            "return window.performance.timing.navigationStart;");
+        Long fetchStart = (Long) js.executeScript(
+            "return window.performance.timing.fetchStart;");
+        Long domainLookupStart = (Long) js.executeScript(
+            "return window.performance.timing.domainLookupStart;");
+        Long domainLookupEnd = (Long) js.executeScript(
+            "return window.performance.timing.domainLookupEnd;");
+        Long connectStart = (Long) js.executeScript(
+            "return window.performance.timing.connectStart;");
+        Long connectEnd = (Long) js.executeScript(
+            "return window.performance.timing.connectEnd;");
+        Long requestStart = (Long) js.executeScript(
+            "return window.performance.timing.requestStart;");
+        Long responseStart = (Long) js.executeScript(
+            "return window.performance.timing.responseStart;");
+        Long responseEnd = (Long) js.executeScript(
+            "return window.performance.timing.responseEnd;");
+
+        // TODO: Calculate individual metrics
+        long dnsLookupTime = domainLookupEnd - domainLookupStart;
+        long tcpConnectionTime = connectEnd - connectStart;
+        long serverResponseTime = responseEnd - requestStart;
+        long ttfb = responseStart - navigationStart;  // Time To First Byte
+
+        // TODO: Print detailed metrics
+        System.out.println("\n=== Detailed Performance Metrics ===");
+        System.out.println("DNS Lookup Time: " + dnsLookupTime + " ms");
+        System.out.println("TCP Connection Time: " + tcpConnectionTime + " ms");
+        System.out.println("Server Response Time: " + serverResponseTime + " ms");
+        System.out.println("Time To First Byte (TTFB): " + ttfb + " ms");
+
+        // TODO: Verify individual metrics
+        assertTrue(dnsLookupTime < 100, "DNS lookup should be fast");
+        assertTrue(serverResponseTime < 1000, "Server response should be under 1 second");
+    }
+
+    @Test(priority = 3)
+    public void testComparePerformanceAcrossPages() {
+        // TODO: Test multiple pages and compare performance
+        String[] urls = {
+            "https://www.example.com",
+            "https://www.example.com/about",
+            "https://www.example.com/contact"
+        };
+
+        for (String url : urls) {
+            driver.get(url);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // TODO: Get load time
+            Long navigationStart = (Long) js.executeScript(
+                "return window.performance.timing.navigationStart;");
+            Long loadEventEnd = (Long) js.executeScript(
+                "return window.performance.timing.loadEventEnd;");
+
+            long pageLoadTime = loadEventEnd - navigationStart;
+
+            // TODO: Print results
+            System.out.println("\nURL: " + url);
+            System.out.println("Load Time: " + pageLoadTime + " ms");
+
+            // TODO: Verify threshold
+            assertTrue(pageLoadTime < 5000,
+                "Page " + url + " took too long to load: " + pageLoadTime + " ms");
+        }
+    }
+
+    @AfterClass
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Navigation Timing API metrics are successfully collected
+- Page load time and DOM ready time are calculated accurately
+- Performance assertions validate against defined thresholds
+- Detailed timing breakdown shows DNS, TCP, and server response times
+- Tests can compare performance across multiple pages
+- Clear performance reports are printed to console
+
+**Common Mistakes to Avoid**:
+1. Not waiting for page to fully load before collecting metrics
+2. Using Thread.sleep instead of proper waits (acceptable for this basic exercise)
+3. Not handling null values from performance API
+4. Setting unrealistic performance thresholds
+5. Not considering network conditions affecting results
+
+**Solution Approach (Hints)**:
+- Use JavascriptExecutor to access window.performance.timing
+- Calculate metrics by subtracting timestamps: `endTime - startTime`
+- Add waits to ensure loadEventEnd is populated
+- Use meaningful variable names for different timing events
+- Print metrics in milliseconds for easier reading
+- Set thresholds based on actual measurements, not guesses
+
+---
+
+### Exercise 2: Resource Performance Analysis with Resource Timing API (50 minutes)
+
+**Objective**: Analyze individual resource loading performance to identify slow assets and optimization opportunities.
+
+**Real-world Scenario**: Your web page loads slowly, and you need to identify which specific resources (images, CSS, JavaScript) are causing the delay to optimize loading performance.
+
+**Requirements**:
+1. Implement Resource Timing API data collection
+2. Analyze different resource types (images, scripts, stylesheets)
+3. Identify slowest loading resources
+4. Calculate resource loading statistics
+5. Generate a performance report with recommendations
+
+**Code Template**:
+```java
+package com.automation.performance.exercises;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import java.util.*;
+
+public class Exercise2_ResourcePerformanceAnalysis {
+
+    private WebDriver driver;
+    private JavascriptExecutor js;
+
+    @BeforeClass
+    public void setup() {
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        js = (JavascriptExecutor) driver;
+        driver.manage().window().maximize();
+    }
+
+    @Test(priority = 1)
+    public void testAnalyzeAllResources() {
+        // TODO: Navigate to website
+        driver.get("https://www.example.com");
+
+        try {
+            Thread.sleep(3000);  // Wait for resources to load
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Get all resource performance entries
+        String script = "var resources = window.performance.getEntriesByType('resource');" +
+                       "return resources.map(r => ({" +
+                       "  name: r.name," +
+                       "  duration: r.duration," +
+                       "  size: r.transferSize," +
+                       "  type: r.initiatorType" +
+                       "}));";
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> resources =
+            (List<Map<String, Object>>) js.executeScript(script);
+
+        // TODO: Print resource information
+        System.out.println("=== Resource Performance Analysis ===");
+        System.out.println("Total Resources: " + resources.size());
+
+        for (Map<String, Object> resource : resources) {
+            String name = (String) resource.get("name");
+            Number duration = (Number) resource.get("duration");
+            Number size = (Number) resource.get("size");
+            String type = (String) resource.get("type");
+
+            System.out.println("\nResource: " + getResourceFileName(name));
+            System.out.println("Type: " + type);
+            System.out.println("Duration: " + duration.longValue() + " ms");
+            System.out.println("Size: " + size.longValue() + " bytes");
+        }
+    }
+
+    @Test(priority = 2)
+    public void testIdentifySlowestResources() {
+        driver.get("https://www.example.com");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Get resource entries
+        String script = "var resources = window.performance.getEntriesByType('resource');" +
+                       "return resources.map(r => ({" +
+                       "  name: r.name," +
+                       "  duration: r.duration" +
+                       "}));";
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> resources =
+            (List<Map<String, Object>>) js.executeScript(script);
+
+        // TODO: Sort by duration (slowest first)
+        resources.sort((r1, r2) -> {
+            Number d1 = (Number) r1.get("duration");
+            Number d2 = (Number) r2.get("duration");
+            return Long.compare(d2.longValue(), d1.longValue());
+        });
+
+        // TODO: Print top 5 slowest resources
+        System.out.println("\n=== Top 5 Slowest Resources ===");
+        for (int i = 0; i < Math.min(5, resources.size()); i++) {
+            Map<String, Object> resource = resources.get(i);
+            String name = (String) resource.get("name");
+            Number duration = (Number) resource.get("duration");
+
+            System.out.println("\n" + (i + 1) + ". " + getResourceFileName(name));
+            System.out.println("   Load Time: " + duration.longValue() + " ms");
+        }
+
+        // TODO: Verify no resource takes too long
+        Map<String, Object> slowestResource = resources.get(0);
+        Number slowestDuration = (Number) slowestResource.get("duration");
+
+        if (slowestDuration.longValue() > 5000) {
+            System.out.println("\nWARNING: Slowest resource took " +
+                slowestDuration.longValue() + " ms to load!");
+        }
+    }
+
+    @Test(priority = 3)
+    public void testAnalyzeResourcesByType() {
+        driver.get("https://www.example.com");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Get resources grouped by type
+        String script = "var resources = window.performance.getEntriesByType('resource');" +
+                       "return resources.map(r => ({" +
+                       "  type: r.initiatorType," +
+                       "  duration: r.duration," +
+                       "  size: r.transferSize" +
+                       "}));";
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> resources =
+            (List<Map<String, Object>>) js.executeScript(script);
+
+        // TODO: Group resources by type
+        Map<String, List<Map<String, Object>>> resourcesByType = new HashMap<>();
+
+        for (Map<String, Object> resource : resources) {
+            String type = (String) resource.get("type");
+            resourcesByType.computeIfAbsent(type, k -> new ArrayList<>()).add(resource);
+        }
+
+        // TODO: Calculate statistics per type
+        System.out.println("\n=== Resource Statistics by Type ===");
+
+        for (Map.Entry<String, List<Map<String, Object>>> entry : resourcesByType.entrySet()) {
+            String type = entry.getKey();
+            List<Map<String, Object>> typeResources = entry.getValue();
+
+            long totalDuration = 0;
+            long totalSize = 0;
+
+            for (Map<String, Object> resource : typeResources) {
+                Number duration = (Number) resource.get("duration");
+                Number size = (Number) resource.get("size");
+                totalDuration += duration.longValue();
+                totalSize += size.longValue();
+            }
+
+            long avgDuration = typeResources.size() > 0 ?
+                totalDuration / typeResources.size() : 0;
+
+            System.out.println("\nType: " + type);
+            System.out.println("Count: " + typeResources.size());
+            System.out.println("Total Load Time: " + totalDuration + " ms");
+            System.out.println("Average Load Time: " + avgDuration + " ms");
+            System.out.println("Total Size: " + formatBytes(totalSize));
+        }
+    }
+
+    @Test(priority = 4)
+    public void testResourceLoadingRecommendations() {
+        driver.get("https://www.example.com");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Get all resources
+        String script = "var resources = window.performance.getEntriesByType('resource');" +
+                       "return resources.map(r => ({" +
+                       "  name: r.name," +
+                       "  duration: r.duration," +
+                       "  size: r.transferSize," +
+                       "  type: r.initiatorType" +
+                       "}));";
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> resources =
+            (List<Map<String, Object>>) js.executeScript(script);
+
+        // TODO: Generate recommendations
+        System.out.println("\n=== Performance Recommendations ===");
+
+        List<String> recommendations = new ArrayList<>();
+
+        // Check for large images
+        for (Map<String, Object> resource : resources) {
+            String type = (String) resource.get("type");
+            Number size = (Number) resource.get("size");
+            Number duration = (Number) resource.get("duration");
+
+            if ("img".equals(type) && size.longValue() > 500000) {
+                recommendations.add("Large image detected: " +
+                    getResourceFileName((String) resource.get("name")) +
+                    " (" + formatBytes(size.longValue()) + "). Consider compression.");
+            }
+
+            if (duration.longValue() > 3000) {
+                recommendations.add("Slow loading resource: " +
+                    getResourceFileName((String) resource.get("name")) +
+                    " (" + duration.longValue() + " ms). Investigate network or server issues.");
+            }
+        }
+
+        // TODO: Print recommendations
+        if (recommendations.isEmpty()) {
+            System.out.println("No major performance issues detected.");
+        } else {
+            for (int i = 0; i < recommendations.size(); i++) {
+                System.out.println((i + 1) + ". " + recommendations.get(i));
+            }
+        }
+    }
+
+    // Helper methods
+    private String getResourceFileName(String url) {
+        String[] parts = url.split("/");
+        return parts[parts.length - 1];
+    }
+
+    private String formatBytes(long bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024) + " KB";
+        return (bytes / (1024 * 1024)) + " MB";
+    }
+
+    @AfterClass
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Resource Timing API successfully retrieves all page resources
+- Resources are analyzed by type (images, scripts, stylesheets)
+- Slowest loading resources are identified and reported
+- Resource statistics (count, total size, average load time) are calculated
+- Performance recommendations are generated based on analysis
+- Clear, actionable reports help identify optimization opportunities
+
+**Common Mistakes to Avoid**:
+1. Not waiting long enough for all resources to load before analysis
+2. Not handling resources with missing transferSize property
+3. Hardcoding resource count expectations (varies by page)
+4. Not sorting resources properly (JavaScript number comparison)
+5. Ignoring resource type when making optimization recommendations
+
+**Solution Approach (Hints)**:
+- Use `window.performance.getEntriesByType('resource')` to get all resources
+- Map resource entries to JavaScript objects with needed properties
+- Cast JavaScript results to `List<Map<String, Object>>` in Java
+- Use `Number` type for numeric values from JavaScript
+- Sort using Java Comparator: `resources.sort((r1, r2) -> ...)`
+- Group by type using HashMap with computeIfAbsent
+- Format file sizes: bytes → KB → MB for readability
+
+---
+
+### Exercise 3: Custom Performance Marks and Measures (45 minutes)
+
+**Objective**: Implement custom performance marks and measures to track specific user journey timings.
+
+**Real-world Scenario**: You need to measure how long specific actions take in your application (e.g., search, filter, checkout) to identify performance bottlenecks in user workflows.
+
+**Requirements**:
+1. Create custom performance marks at key points
+2. Implement performance measures between marks
+3. Track multi-step user journey timings
+4. Collect and analyze custom metrics
+5. Validate performance against benchmarks
+
+**Code Template**:
+```java
+package com.automation.performance.exercises;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import static org.testng.Assert.*;
+
+public class Exercise3_CustomPerformanceMarks {
+
+    private WebDriver driver;
+    private JavascriptExecutor js;
+
+    @BeforeClass
+    public void setup() {
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        js = (JavascriptExecutor) driver;
+        driver.manage().window().maximize();
+    }
+
+    @Test(priority = 1)
+    public void testBasicPerformanceMarks() {
+        driver.get("https://www.example.com");
+
+        // TODO: Create performance mark at journey start
+        js.executeScript("window.performance.mark('journey-start');");
+
+        System.out.println("=== Custom Performance Marks Test ===");
+
+        // Simulate some user action
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Create mark at journey end
+        js.executeScript("window.performance.mark('journey-end');");
+
+        // TODO: Create measure between marks
+        js.executeScript(
+            "window.performance.measure('journey-duration', 'journey-start', 'journey-end');");
+
+        // TODO: Get the measure
+        String script = "var measure = window.performance.getEntriesByName('journey-duration')[0];" +
+                       "return measure.duration;";
+
+        Number duration = (Number) js.executeScript(script);
+
+        // TODO: Print results
+        System.out.println("Journey Duration: " + duration.longValue() + " ms");
+
+        // TODO: Verify performance
+        assertTrue(duration.longValue() < 5000,
+            "Journey should complete within 5 seconds");
+    }
+
+    @Test(priority = 2)
+    public void testMultiStepUserJourney() {
+        // TODO: Simulate an e-commerce user journey
+        driver.get("https://www.example.com");
+
+        // Mark: Journey Start
+        js.executeScript("window.performance.mark('user-journey-start');");
+
+        System.out.println("\n=== Multi-Step User Journey Performance ===");
+
+        // Step 1: View homepage
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        js.executeScript("window.performance.mark('homepage-viewed');");
+
+        // Step 2: Navigate to products
+        // (Simulated - in real test, you'd actually navigate)
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        js.executeScript("window.performance.mark('products-page-loaded');");
+
+        // Step 3: Search for product
+        try {
+            Thread.sleep(600);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        js.executeScript("window.performance.mark('search-completed');");
+
+        // Step 4: Add to cart
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        js.executeScript("window.performance.mark('added-to-cart');");
+
+        // Mark: Journey End
+        js.executeScript("window.performance.mark('user-journey-end');");
+
+        // TODO: Create measures for each step
+        js.executeScript(
+            "window.performance.measure('homepage-time', 'user-journey-start', 'homepage-viewed');" +
+            "window.performance.measure('products-time', 'homepage-viewed', 'products-page-loaded');" +
+            "window.performance.measure('search-time', 'products-page-loaded', 'search-completed');" +
+            "window.performance.measure('add-to-cart-time', 'search-completed', 'added-to-cart');" +
+            "window.performance.measure('total-journey-time', 'user-journey-start', 'user-journey-end');");
+
+        // TODO: Get all measures
+        String script = "var measures = window.performance.getEntriesByType('measure');" +
+                       "return measures.map(m => ({ name: m.name, duration: m.duration }));";
+
+        @SuppressWarnings("unchecked")
+        java.util.List<java.util.Map<String, Object>> measures =
+            (java.util.List<java.util.Map<String, Object>>) js.executeScript(script);
+
+        // TODO: Print step-by-step timings
+        for (java.util.Map<String, Object> measure : measures) {
+            String name = (String) measure.get("name");
+            Number duration = (Number) measure.get("duration");
+
+            System.out.println(name + ": " + duration.longValue() + " ms");
+        }
+
+        // TODO: Verify each step meets performance criteria
+        // This would be done based on actual measurements
+    }
+
+    @Test(priority = 3)
+    public void testSearchPerformance() {
+        driver.get("https://www.example.com");
+
+        // TODO: Mark before search
+        js.executeScript("window.performance.mark('search-start');");
+
+        // Simulate search action (in real test, interact with search field)
+        try {
+            // TODO: In real scenario:
+            // driver.findElement(By.id("search")).sendKeys("laptop");
+            // driver.findElement(By.id("search-button")).click();
+
+            Thread.sleep(1200);  // Simulating search processing time
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Mark after search results appear
+        js.executeScript("window.performance.mark('search-results-displayed');");
+
+        // TODO: Create measure
+        js.executeScript(
+            "window.performance.measure('search-duration', 'search-start', 'search-results-displayed');");
+
+        // TODO: Get search duration
+        String script = "var measure = window.performance.getEntriesByName('search-duration')[0];" +
+                       "return measure.duration;";
+
+        Number searchDuration = (Number) js.executeScript(script);
+
+        System.out.println("\n=== Search Performance ===");
+        System.out.println("Search Duration: " + searchDuration.longValue() + " ms");
+
+        // TODO: Verify search performance
+        assertTrue(searchDuration.longValue() < 2000,
+            "Search should return results within 2 seconds. Actual: " +
+            searchDuration.longValue() + " ms");
+    }
+
+    @Test(priority = 4)
+    public void testClearPerformanceMarks() {
+        // TODO: Create some marks
+        js.executeScript(
+            "window.performance.mark('mark1');" +
+            "window.performance.mark('mark2');" +
+            "window.performance.mark('mark3');");
+
+        // TODO: Get count before clearing
+        String countScript = "return window.performance.getEntriesByType('mark').length;";
+        Number beforeCount = (Number) js.executeScript(countScript);
+
+        System.out.println("\n=== Clear Performance Marks Test ===");
+        System.out.println("Marks before clearing: " + beforeCount.intValue());
+
+        // TODO: Clear specific mark
+        js.executeScript("window.performance.clearMarks('mark1');");
+
+        Number afterClearOne = (Number) js.executeScript(countScript);
+        System.out.println("Marks after clearing one: " + afterClearOne.intValue());
+
+        // TODO: Clear all marks
+        js.executeScript("window.performance.clearMarks();");
+
+        Number afterClearAll = (Number) js.executeScript(countScript);
+        System.out.println("Marks after clearing all: " + afterClearAll.intValue());
+
+        // TODO: Verify marks are cleared
+        assertEquals(afterClearAll.intValue(), 0, "All marks should be cleared");
+    }
+
+    @Test(priority = 5)
+    public void testComparePerformanceAcrossRuns() {
+        System.out.println("\n=== Performance Comparison Across Multiple Runs ===");
+
+        java.util.List<Long> durations = new java.util.ArrayList<>();
+
+        // TODO: Run the same action multiple times
+        for (int i = 1; i <= 3; i++) {
+            driver.get("https://www.example.com");
+
+            js.executeScript("window.performance.mark('run-" + i + "-start');");
+
+            // Simulate action
+            try {
+                Thread.sleep((long) (Math.random() * 1000 + 500));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            js.executeScript("window.performance.mark('run-" + i + "-end');");
+            js.executeScript(
+                "window.performance.measure('run-" + i + "', 'run-" + i + "-start', 'run-" + i + "-end');");
+
+            // Get duration
+            String script = "var measure = window.performance.getEntriesByName('run-" + i + "')[0];" +
+                           "return measure.duration;";
+
+            Number duration = (Number) js.executeScript(script);
+            durations.add(duration.longValue());
+
+            System.out.println("Run " + i + ": " + duration.longValue() + " ms");
+        }
+
+        // TODO: Calculate average
+        long sum = 0;
+        for (Long d : durations) {
+            sum += d;
+        }
+        long average = sum / durations.size();
+
+        System.out.println("\nAverage Duration: " + average + " ms");
+
+        // TODO: Verify consistency (variance shouldn't be too high)
+        for (Long d : durations) {
+            long variance = Math.abs(d - average);
+            assertTrue(variance < 1000,
+                "Performance should be consistent. Variance: " + variance + " ms");
+        }
+    }
+
+    @AfterClass
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Custom performance marks are successfully created at key points
+- Measures accurately calculate duration between marks
+- Multi-step user journeys are tracked with individual step timings
+- Performance data is collected and analyzed across multiple runs
+- Marks can be cleared individually or all at once
+- Performance consistency is validated across multiple executions
+
+**Common Mistakes to Avoid**:
+1. Creating marks before page/action is ready
+2. Not clearing marks between test runs causing data pollution
+3. Using same mark names across different tests
+4. Not handling async operations before creating marks
+5. Forgetting to create measures after creating marks
+
+**Solution Approach (Hints)**:
+- Create marks: `window.performance.mark('mark-name')`
+- Create measures: `window.performance.measure('measure-name', 'start-mark', 'end-mark')`
+- Get marks: `window.performance.getEntriesByType('mark')`
+- Get measures: `window.performance.getEntriesByType('measure')`
+- Clear marks: `window.performance.clearMarks()` or `clearMarks('specific-mark')`
+- Use descriptive mark names: 'search-start', 'search-end', 'checkout-begin'
+- Calculate averages: sum all durations and divide by count
+
+---
+
+### Exercise 4: Security Headers Validation (50 minutes)
+
+**Objective**: Implement automated security header validation to ensure proper security configurations are in place.
+
+**Real-world Scenario**: Your web application must have proper security headers configured (CSP, HSTS, X-Frame-Options) to protect against common web vulnerabilities. You need to automate validation of these headers.
+
+**Requirements**:
+1. Extract and validate HTTP response headers
+2. Check for presence of critical security headers
+3. Validate security header values
+4. Test Content Security Policy (CSP) configuration
+5. Generate security audit report
+
+**Code Template**:
+```java
+package com.automation.security.exercises;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import java.util.*;
+import static org.testng.Assert.*;
+
+public class Exercise4_SecurityHeadersValidation {
+
+    private WebDriver driver;
+    private Map<String, String> responseHeaders;
+
+    @BeforeClass
+    public void setup() {
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        responseHeaders = new HashMap<>();
+    }
+
+    @BeforeMethod
+    public void captureHeaders() {
+        // TODO: Use Chrome DevTools to capture response headers
+        // Note: This is a simplified version. In real scenarios, you might use:
+        // - Chrome DevTools Protocol
+        // - REST Assured for API endpoints
+        // - Manual header inspection via browser tools
+
+        responseHeaders.clear();
+        responseHeaders.put("strict-transport-security", "max-age=31536000; includeSubDomains");
+        responseHeaders.put("x-content-type-options", "nosniff");
+        responseHeaders.put("x-frame-options", "DENY");
+        responseHeaders.put("x-xss-protection", "1; mode=block");
+        responseHeaders.put("content-security-policy", "default-src 'self'");
+
+        // In real implementation, you would capture actual headers
+    }
+
+    @Test(priority = 1)
+    public void testSecurityHeadersPresence() {
+        driver.get("https://www.example.com");
+
+        System.out.println("=== Security Headers Presence Test ===");
+
+        // TODO: Define required security headers
+        List<String> requiredHeaders = Arrays.asList(
+            "strict-transport-security",
+            "x-content-type-options",
+            "x-frame-options",
+            "x-xss-protection",
+            "content-security-policy"
+        );
+
+        // TODO: Check for presence of each header
+        List<String> missingHeaders = new ArrayList<>();
+
+        for (String header : requiredHeaders) {
+            if (responseHeaders.containsKey(header.toLowerCase())) {
+                System.out.println("✓ " + header + ": PRESENT");
+            } else {
+                System.out.println("✗ " + header + ": MISSING");
+                missingHeaders.add(header);
+            }
+        }
+
+        // TODO: Verify all required headers are present
+        assertTrue(missingHeaders.isEmpty(),
+            "Missing security headers: " + String.join(", ", missingHeaders));
+    }
+
+    @Test(priority = 2)
+    public void testStrictTransportSecurity() {
+        driver.get("https://www.example.com");
+
+        System.out.println("\n=== Strict-Transport-Security (HSTS) Test ===");
+
+        // TODO: Get HSTS header
+        String hsts = responseHeaders.get("strict-transport-security");
+
+        assertNotNull(hsts, "Strict-Transport-Security header should be present");
+
+        System.out.println("HSTS Header: " + hsts);
+
+        // TODO: Validate HSTS configuration
+        // Should have max-age
+        assertTrue(hsts.contains("max-age="),
+            "HSTS should specify max-age");
+
+        // Extract max-age value
+        String maxAge = extractValue(hsts, "max-age=");
+        long maxAgeSeconds = Long.parseLong(maxAge.split(";")[0].trim());
+
+        System.out.println("Max-Age: " + maxAgeSeconds + " seconds");
+
+        // TODO: Verify max-age is at least 1 year (31536000 seconds)
+        assertTrue(maxAgeSeconds >= 31536000,
+            "HSTS max-age should be at least 1 year. Current: " + maxAgeSeconds);
+
+        // TODO: Check for includeSubDomains
+        if (hsts.toLowerCase().contains("includesubdomains")) {
+            System.out.println("✓ includeSubDomains: ENABLED");
+        } else {
+            System.out.println("⚠ includeSubDomains: NOT ENABLED (recommended)");
+        }
+
+        // TODO: Check for preload
+        if (hsts.toLowerCase().contains("preload")) {
+            System.out.println("✓ preload: ENABLED");
+        } else {
+            System.out.println("⚠ preload: NOT ENABLED (optional)");
+        }
+    }
+
+    @Test(priority = 3)
+    public void testContentSecurityPolicy() {
+        driver.get("https://www.example.com");
+
+        System.out.println("\n=== Content-Security-Policy (CSP) Test ===");
+
+        // TODO: Get CSP header
+        String csp = responseHeaders.get("content-security-policy");
+
+        assertNotNull(csp, "Content-Security-Policy header should be present");
+
+        System.out.println("CSP Header: " + csp);
+
+        // TODO: Validate CSP directives
+        List<String> requiredDirectives = Arrays.asList(
+            "default-src",
+            "script-src",
+            "style-src"
+        );
+
+        List<String> missingDirectives = new ArrayList<>();
+
+        for (String directive : requiredDirectives) {
+            if (csp.toLowerCase().contains(directive.toLowerCase())) {
+                System.out.println("✓ " + directive + ": PRESENT");
+            } else {
+                System.out.println("✗ " + directive + ": MISSING");
+                missingDirectives.add(directive);
+            }
+        }
+
+        // TODO: Verify critical directives are present
+        assertTrue(missingDirectives.isEmpty() || missingDirectives.size() < requiredDirectives.size(),
+            "CSP should have at least one source directive");
+
+        // TODO: Check for unsafe-inline (should not be present)
+        if (csp.toLowerCase().contains("'unsafe-inline'")) {
+            System.out.println("⚠ WARNING: 'unsafe-inline' detected - reduces CSP effectiveness");
+        }
+
+        // TODO: Check for unsafe-eval (should not be present)
+        if (csp.toLowerCase().contains("'unsafe-eval'")) {
+            System.out.println("⚠ WARNING: 'unsafe-eval' detected - allows eval() execution");
+        }
+    }
+
+    @Test(priority = 4)
+    public void testXFrameOptions() {
+        driver.get("https://www.example.com");
+
+        System.out.println("\n=== X-Frame-Options Test ===");
+
+        // TODO: Get X-Frame-Options header
+        String xFrameOptions = responseHeaders.get("x-frame-options");
+
+        assertNotNull(xFrameOptions, "X-Frame-Options header should be present");
+
+        System.out.println("X-Frame-Options: " + xFrameOptions);
+
+        // TODO: Validate value
+        List<String> validValues = Arrays.asList("DENY", "SAMEORIGIN");
+
+        assertTrue(validValues.contains(xFrameOptions.toUpperCase()),
+            "X-Frame-Options should be DENY or SAMEORIGIN. Current: " + xFrameOptions);
+
+        if ("DENY".equalsIgnoreCase(xFrameOptions)) {
+            System.out.println("✓ Clickjacking protection: MAXIMUM (DENY)");
+        } else if ("SAMEORIGIN".equalsIgnoreCase(xFrameOptions)) {
+            System.out.println("✓ Clickjacking protection: MODERATE (SAMEORIGIN)");
+        }
+    }
+
+    @Test(priority = 5)
+    public void testXContentTypeOptions() {
+        driver.get("https://www.example.com");
+
+        System.out.println("\n=== X-Content-Type-Options Test ===");
+
+        // TODO: Get X-Content-Type-Options header
+        String xContentType = responseHeaders.get("x-content-type-options");
+
+        assertNotNull(xContentType, "X-Content-Type-Options header should be present");
+
+        System.out.println("X-Content-Type-Options: " + xContentType);
+
+        // TODO: Validate value should be 'nosniff'
+        assertEquals(xContentType.toLowerCase(), "nosniff",
+            "X-Content-Type-Options should be 'nosniff'");
+
+        System.out.println("✓ MIME-sniffing protection: ENABLED");
+    }
+
+    @Test(priority = 6)
+    public void testXXSSProtection() {
+        driver.get("https://www.example.com");
+
+        System.out.println("\n=== X-XSS-Protection Test ===");
+
+        // TODO: Get X-XSS-Protection header
+        String xssProtection = responseHeaders.get("x-xss-protection");
+
+        assertNotNull(xssProtection, "X-XSS-Protection header should be present");
+
+        System.out.println("X-XSS-Protection: " + xssProtection);
+
+        // TODO: Validate value
+        assertTrue(xssProtection.startsWith("1"),
+            "X-XSS-Protection should be enabled (1)");
+
+        if (xssProtection.contains("mode=block")) {
+            System.out.println("✓ XSS Filter: ENABLED with blocking mode");
+        } else {
+            System.out.println("⚠ XSS Filter: ENABLED but not in blocking mode");
+        }
+    }
+
+    @Test(priority = 7)
+    public void testGenerateSecurityReport() {
+        driver.get("https://www.example.com");
+
+        System.out.println("\n=== Security Headers Audit Report ===");
+
+        int totalChecks = 0;
+        int passedChecks = 0;
+        int warnings = 0;
+
+        // TODO: Define all security checks
+        Map<String, String> securityChecks = new LinkedHashMap<>();
+        securityChecks.put("Strict-Transport-Security", responseHeaders.get("strict-transport-security"));
+        securityChecks.put("Content-Security-Policy", responseHeaders.get("content-security-policy"));
+        securityChecks.put("X-Frame-Options", responseHeaders.get("x-frame-options"));
+        securityChecks.put("X-Content-Type-Options", responseHeaders.get("x-content-type-options"));
+        securityChecks.put("X-XSS-Protection", responseHeaders.get("x-xss-protection"));
+
+        // TODO: Evaluate each check
+        for (Map.Entry<String, String> check : securityChecks.entrySet()) {
+            totalChecks++;
+            String header = check.getKey();
+            String value = check.getValue();
+
+            if (value != null && !value.isEmpty()) {
+                passedChecks++;
+                System.out.println("✓ " + header + ": PASS");
+            } else {
+                warnings++;
+                System.out.println("✗ " + header + ": FAIL (Missing)");
+            }
+        }
+
+        // TODO: Calculate security score
+        double securityScore = (passedChecks * 100.0) / totalChecks;
+
+        System.out.println("\n=== Summary ===");
+        System.out.println("Total Checks: " + totalChecks);
+        System.out.println("Passed: " + passedChecks);
+        System.out.println("Failed: " + warnings);
+        System.out.println("Security Score: " + String.format("%.1f", securityScore) + "%");
+
+        // TODO: Provide grade
+        String grade;
+        if (securityScore >= 90) grade = "A (Excellent)";
+        else if (securityScore >= 80) grade = "B (Good)";
+        else if (securityScore >= 70) grade = "C (Fair)";
+        else if (securityScore >= 60) grade = "D (Poor)";
+        else grade = "F (Fail)";
+
+        System.out.println("Grade: " + grade);
+
+        // TODO: Verify minimum security score
+        assertTrue(securityScore >= 80,
+            "Security score should be at least 80%. Current: " + securityScore + "%");
+    }
+
+    // Helper method
+    private String extractValue(String header, String key) {
+        int index = header.indexOf(key);
+        if (index >= 0) {
+            return header.substring(index + key.length());
+        }
+        return "";
+    }
+
+    @AfterClass
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- All critical security headers are detected and validated
+- HSTS configuration is properly verified (max-age, includeSubDomains)
+- Content Security Policy directives are checked
+- X-Frame-Options protects against clickjacking
+- X-Content-Type-Options prevents MIME-sniffing
+- X-XSS-Protection is configured correctly
+- Comprehensive security audit report is generated with scoring
+
+**Common Mistakes to Avoid**:
+1. Not checking for header presence before validating values
+2. Case-sensitive header name comparisons (headers should be lowercase)
+3. Not parsing header values correctly (comma-separated, semicolon-separated)
+4. Accepting weak security configurations (short HSTS max-age, unsafe CSP)
+5. Not providing clear security recommendations in reports
+
+**Solution Approach (Hints)**:
+- Header names are case-insensitive, convert to lowercase for comparison
+- Use `responseHeaders.containsKey()` to check presence
+- Parse HSTS: look for "max-age=", "includeSubDomains", "preload"
+- Parse CSP: check for directives like "default-src", avoid "'unsafe-inline'"
+- X-Frame-Options valid values: "DENY" or "SAMEORIGIN"
+- X-Content-Type-Options should be "nosniff"
+- X-XSS-Protection should start with "1" and contain "mode=block"
+- Calculate score: (passed / total) * 100
+
+---
+
+### Exercise 5: XSS Vulnerability Testing (55 minutes)
+
+**Objective**: Implement basic Cross-Site Scripting (XSS) vulnerability detection tests using common XSS payloads.
+
+**Real-world Scenario**: Your web application accepts user input in various forms. You need to test that input fields properly sanitize and encode user input to prevent XSS attacks.
+
+**Requirements**:
+1. Test input fields with common XSS payloads
+2. Verify that malicious scripts are not executed
+3. Check both reflected and stored XSS scenarios
+4. Validate HTML encoding of user input
+5. Generate XSS vulnerability report
+
+**Code Template**:
+```java
+package com.automation.security.exercises;
+
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import java.time.Duration;
+import java.util.*;
+import static org.testng.Assert.*;
+
+public class Exercise5_XSSVulnerabilityTesting {
+
+    private WebDriver driver;
+    private WebDriverWait wait;
+    private List<String> xssPayloads;
+    private Map<String, Boolean> testResults;
+
+    @BeforeClass
+    public void setup() {
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        driver.manage().window().maximize();
+        testResults = new LinkedHashMap<>();
+
+        // TODO: Define common XSS payloads
+        xssPayloads = Arrays.asList(
+            "<script>alert('XSS')</script>",
+            "<img src=x onerror=alert('XSS')>",
+            "<svg onload=alert('XSS')>",
+            "javascript:alert('XSS')",
+            "<iframe src='javascript:alert(\"XSS\")'></iframe>",
+            "<body onload=alert('XSS')>",
+            "\"><script>alert('XSS')</script>",
+            "'-alert('XSS')-'",
+            "<input onfocus=alert('XSS') autofocus>",
+            "<marquee onstart=alert('XSS')>"
+        );
+    }
+
+    @Test(priority = 1)
+    public void testBasicXSSInSearchField() {
+        // TODO: Navigate to test page
+        // Note: Use a test application or XSS practice site
+        driver.get("https://xss-game.appspot.com/level1/frame");
+
+        System.out.println("=== Basic XSS Test in Search Field ===");
+
+        // TODO: Test simple XSS payload
+        String payload = "<script>alert('XSS')</script>";
+
+        try {
+            // Find search/input field
+            WebElement searchField = driver.findElement(By.name("query"));
+
+            // TODO: Enter XSS payload
+            searchField.sendKeys(payload);
+            searchField.submit();
+
+            // Wait a moment
+            Thread.sleep(1000);
+
+            // TODO: Check if alert appeared (vulnerability exists)
+            try {
+                Alert alert = driver.switchTo().alert();
+                String alertText = alert.getText();
+                alert.accept();
+
+                System.out.println("✗ VULNERABLE: XSS alert triggered");
+                System.out.println("Alert text: " + alertText);
+                testResults.put("Basic XSS in search field", true);
+
+                fail("Application is vulnerable to XSS attack");
+
+            } catch (Exception e) {
+                // No alert = input was properly sanitized
+                System.out.println("✓ SAFE: XSS payload was sanitized");
+                testResults.put("Basic XSS in search field", false);
+            }
+
+        } catch (Exception e) {
+            System.out.println("⚠ Test error: " + e.getMessage());
+            testResults.put("Basic XSS in search field", false);
+        }
+    }
+
+    @Test(priority = 2)
+    public void testMultipleXSSPayloads() {
+        System.out.println("\n=== Testing Multiple XSS Payloads ===");
+
+        int vulnerableCount = 0;
+        int safeCount = 0;
+
+        for (int i = 0; i < Math.min(5, xssPayloads.size()); i++) {
+            String payload = xssPayloads.get(i);
+
+            System.out.println("\nTesting payload " + (i + 1) + ": " + payload);
+
+            try {
+                driver.get("https://xss-game.appspot.com/level1/frame");
+
+                WebElement inputField = driver.findElement(By.name("query"));
+                inputField.clear();
+                inputField.sendKeys(payload);
+                inputField.submit();
+
+                Thread.sleep(500);
+
+                // TODO: Check for alert
+                try {
+                    Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+                    alert.accept();
+
+                    System.out.println("  Result: VULNERABLE ✗");
+                    vulnerableCount++;
+                    testResults.put("Payload " + (i + 1), true);
+
+                } catch (Exception e) {
+                    System.out.println("  Result: SAFE ✓");
+                    safeCount++;
+                    testResults.put("Payload " + (i + 1), false);
+                }
+
+            } catch (Exception e) {
+                System.out.println("  Result: ERROR - " + e.getMessage());
+                safeCount++;
+            }
+        }
+
+        // TODO: Print summary
+        System.out.println("\n=== Payload Test Summary ===");
+        System.out.println("Vulnerable: " + vulnerableCount);
+        System.out.println("Safe: " + safeCount);
+
+        // TODO: Verify no vulnerabilities
+        assertEquals(vulnerableCount, 0,
+            "Application should not be vulnerable to any XSS payloads");
+    }
+
+    @Test(priority = 3)
+    public void testReflectedXSS() {
+        System.out.println("\n=== Reflected XSS Test ===");
+
+        // TODO: Construct URL with XSS payload in parameter
+        String baseUrl = "https://xss-game.appspot.com/level1/frame";
+        String xssPayload = "<script>alert('Reflected-XSS')</script>";
+        String encodedPayload = java.net.URLEncoder.encode(xssPayload,
+            java.nio.charset.StandardCharsets.UTF_8);
+
+        String urlWithPayload = baseUrl + "?query=" + encodedPayload;
+
+        System.out.println("Testing URL: " + urlWithPayload);
+
+        try {
+            // TODO: Navigate to URL with payload
+            driver.get(urlWithPayload);
+
+            Thread.sleep(1000);
+
+            // TODO: Check if script executed
+            try {
+                Alert alert = driver.switchTo().alert();
+                String alertText = alert.getText();
+                alert.accept();
+
+                System.out.println("✗ VULNERABLE: Reflected XSS executed");
+                System.out.println("Alert text: " + alertText);
+
+                fail("Application is vulnerable to reflected XSS");
+
+            } catch (Exception e) {
+                System.out.println("✓ SAFE: Reflected XSS was prevented");
+            }
+
+        } catch (Exception e) {
+            System.out.println("⚠ Test error: " + e.getMessage());
+        }
+    }
+
+    @Test(priority = 4)
+    public void testStoredXSS() {
+        System.out.println("\n=== Stored XSS Test ===");
+
+        // TODO: This tests if XSS payload stored in DB executes when retrieved
+        // Note: This requires an application with data persistence
+
+        String payload = "<script>alert('Stored-XSS')</script>";
+
+        try {
+            // TODO: Submit payload to be stored (e.g., in comment, profile, etc.)
+            // Example: driver.get("https://example.com/comment");
+            // driver.findElement(By.id("comment")).sendKeys(payload);
+            // driver.findElement(By.id("submit")).click();
+
+            // For demonstration purposes
+            System.out.println("Submitting payload: " + payload);
+            System.out.println("(In real test, submit to comment/profile form)");
+
+            Thread.sleep(1000);
+
+            // TODO: Navigate to page where stored data is displayed
+            // driver.get("https://example.com/view-comments");
+
+            Thread.sleep(1000);
+
+            // TODO: Check if stored script executes
+            try {
+                Alert alert = driver.switchTo().alert();
+                alert.accept();
+
+                System.out.println("✗ VULNERABLE: Stored XSS executed");
+                fail("Application is vulnerable to stored XSS");
+
+            } catch (Exception e) {
+                System.out.println("✓ SAFE: Stored XSS was prevented");
+            }
+
+        } catch (Exception e) {
+            System.out.println("⚠ Test skipped or error: " + e.getMessage());
+        }
+    }
+
+    @Test(priority = 5)
+    public void testHTMLEncoding() {
+        System.out.println("\n=== HTML Encoding Validation Test ===");
+
+        String payload = "<script>alert('XSS')</script>";
+
+        try {
+            driver.get("https://xss-game.appspot.com/level1/frame");
+
+            WebElement inputField = driver.findElement(By.name("query"));
+            inputField.sendKeys(payload);
+            inputField.submit();
+
+            Thread.sleep(1000);
+
+            // TODO: Get page source and check if payload is encoded
+            String pageSource = driver.getPageSource();
+
+            // Properly encoded payload should appear as HTML entities
+            boolean isEncoded = false;
+
+            // Check for HTML encoding patterns
+            if (pageSource.contains("&lt;script&gt;") ||
+                pageSource.contains("&lt;") ||
+                !pageSource.contains("<script>alert('XSS')</script>")) {
+
+                System.out.println("✓ SAFE: Payload is HTML encoded");
+                isEncoded = true;
+            } else {
+                System.out.println("✗ VULNERABLE: Payload is not encoded");
+            }
+
+            // TODO: Verify encoding is applied
+            assertTrue(isEncoded, "User input should be HTML encoded");
+
+        } catch (Exception e) {
+            System.out.println("⚠ Test error: " + e.getMessage());
+        }
+    }
+
+    @Test(priority = 6)
+    public void testGenerateXSSReport() {
+        System.out.println("\n=== XSS Vulnerability Report ===");
+
+        int totalTests = testResults.size();
+        int vulnerabilities = 0;
+        int safeInputs = 0;
+
+        // TODO: Analyze results
+        for (Map.Entry<String, Boolean> result : testResults.entrySet()) {
+            String testName = result.getKey();
+            Boolean isVulnerable = result.getValue();
+
+            if (isVulnerable) {
+                vulnerabilities++;
+                System.out.println("✗ " + testName + ": VULNERABLE");
+            } else {
+                safeInputs++;
+                System.out.println("✓ " + testName + ": SAFE");
+            }
+        }
+
+        // TODO: Calculate security score
+        double securityScore = (safeInputs * 100.0) / totalTests;
+
+        System.out.println("\n=== Summary ===");
+        System.out.println("Total Tests: " + totalTests);
+        System.out.println("Vulnerabilities Found: " + vulnerabilities);
+        System.out.println("Safe Inputs: " + safeInputs);
+        System.out.println("Security Score: " + String.format("%.1f", securityScore) + "%");
+
+        // TODO: Provide recommendations
+        if (vulnerabilities > 0) {
+            System.out.println("\n=== Recommendations ===");
+            System.out.println("1. Implement input validation and sanitization");
+            System.out.println("2. Use HTML encoding for all user inputs");
+            System.out.println("3. Apply Content Security Policy (CSP) headers");
+            System.out.println("4. Use HttpOnly and Secure flags for cookies");
+            System.out.println("5. Implement WAF (Web Application Firewall)");
+        }
+
+        // TODO: Verify no critical vulnerabilities
+        assertEquals(vulnerabilities, 0,
+            "No XSS vulnerabilities should be present");
+    }
+
+    @AfterClass
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- Multiple XSS payloads are tested against input fields
+- Alerts triggered by XSS indicate vulnerabilities
+- Reflected XSS in URL parameters is detected
+- Stored XSS in database is identified
+- HTML encoding of user input is verified
+- Comprehensive XSS vulnerability report is generated
+
+**Common Mistakes to Avoid**:
+1. Not handling alert popups properly (test may hang)
+2. Testing against production websites (use test environments)
+3. Not clearing input fields between tests
+4. Assuming no alert means safe (check HTML encoding too)
+5. Not using try-catch for alert detection
+
+**Solution Approach (Hints)**:
+- Use `driver.switchTo().alert()` to detect XSS alerts
+- Wrap alert detection in try-catch (throws exception if no alert)
+- Use `alert.accept()` to close alert dialogs
+- Check page source for HTML-encoded payload: `&lt;script&gt;`
+- URL encode payloads for GET parameters: `URLEncoder.encode()`
+- Wait after submitting: `Thread.sleep()` or WebDriverWait
+- Test multiple payload variations to ensure comprehensive coverage
+
+---
+
+### Exercise 6: SSL/TLS Certificate Validation (45 minutes)
+
+**Objective**: Implement automated SSL/TLS certificate validation to ensure secure HTTPS connections.
+
+**Real-world Scenario**: Your production web application must use valid SSL certificates to ensure secure communication. You need to automate checks for certificate validity, expiration, and proper configuration.
+
+**Requirements**:
+1. Verify HTTPS is enforced (no HTTP access)
+2. Validate SSL certificate is trusted and not self-signed
+3. Check certificate expiration date
+4. Verify certificate issuer and subject
+5. Test TLS version and cipher suites
+
+**Code Template**:
+```java
+package com.automation.security.exercises;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import javax.net.ssl.*;
+import java.net.URL;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Date;
+import static org.testng.Assert.*;
+
+public class Exercise6_SSLCertificateValidation {
+
+    private WebDriver driver;
+
+    @BeforeClass
+    public void setup() {
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+    }
+
+    @Test(priority = 1)
+    public void testHTTPSEnforcement() {
+        System.out.println("=== HTTPS Enforcement Test ===");
+
+        String httpUrl = "http://www.google.com";
+        String httpsUrl = "https://www.google.com";
+
+        // TODO: Navigate to HTTP URL
+        driver.get(httpUrl);
+
+        // Wait for redirect
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Check if redirected to HTTPS
+        String currentUrl = driver.getCurrentUrl();
+
+        System.out.println("Accessed URL: " + httpUrl);
+        System.out.println("Current URL: " + currentUrl);
+
+        // TODO: Verify HTTPS is enforced
+        assertTrue(currentUrl.startsWith("https://"),
+            "HTTP should redirect to HTTPS. Current URL: " + currentUrl);
+
+        System.out.println("✓ HTTPS enforcement: PASSED");
+    }
+
+    @Test(priority = 2)
+    public void testSSLCertificateValidity() {
+        System.out.println("\n=== SSL Certificate Validity Test ===");
+
+        String url = "https://www.google.com";
+
+        try {
+            // TODO: Get SSL certificate details
+            URL websiteUrl = new URL(url);
+            HttpsURLConnection connection = (HttpsURLConnection) websiteUrl.openConnection();
+            connection.connect();
+
+            // TODO: Get certificates
+            Certificate[] certificates = connection.getServerCertificates();
+
+            System.out.println("Certificate chain length: " + certificates.length);
+
+            // TODO: Get the site certificate (first in chain)
+            X509Certificate siteCertificate = (X509Certificate) certificates[0];
+
+            // TODO: Print certificate details
+            System.out.println("\n=== Certificate Details ===");
+            System.out.println("Subject: " + siteCertificate.getSubjectDN());
+            System.out.println("Issuer: " + siteCertificate.getIssuerDN());
+            System.out.println("Serial Number: " + siteCertificate.getSerialNumber());
+            System.out.println("Valid From: " + siteCertificate.getNotBefore());
+            System.out.println("Valid Until: " + siteCertificate.getNotAfter());
+
+            // TODO: Verify certificate is valid (not expired)
+            try {
+                siteCertificate.checkValidity();
+                System.out.println("✓ Certificate is VALID");
+            } catch (Exception e) {
+                System.out.println("✗ Certificate is INVALID: " + e.getMessage());
+                fail("SSL certificate is not valid");
+            }
+
+            connection.disconnect();
+
+        } catch (Exception e) {
+            System.out.println("Error validating certificate: " + e.getMessage());
+            fail("Failed to validate SSL certificate");
+        }
+    }
+
+    @Test(priority = 3)
+    public void testCertificateExpiration() {
+        System.out.println("\n=== Certificate Expiration Check ===");
+
+        String url = "https://www.google.com";
+
+        try {
+            URL websiteUrl = new URL(url);
+            HttpsURLConnection connection = (HttpsURLConnection) websiteUrl.openConnection();
+            connection.connect();
+
+            X509Certificate certificate = (X509Certificate) connection.getServerCertificates()[0];
+
+            // TODO: Get expiration date
+            Date expirationDate = certificate.getNotAfter();
+            Date currentDate = new Date();
+
+            System.out.println("Current Date: " + currentDate);
+            System.out.println("Expiration Date: " + expirationDate);
+
+            // TODO: Calculate days until expiration
+            long diffInMillis = expirationDate.getTime() - currentDate.getTime();
+            long daysUntilExpiration = diffInMillis / (1000 * 60 * 60 * 24);
+
+            System.out.println("Days until expiration: " + daysUntilExpiration);
+
+            // TODO: Verify certificate is not expiring soon (within 30 days)
+            assertTrue(daysUntilExpiration > 30,
+                "Certificate expires in " + daysUntilExpiration +
+                " days. Renew before expiration!");
+
+            if (daysUntilExpiration > 365) {
+                System.out.println("✓ Certificate is valid for over a year");
+            } else if (daysUntilExpiration > 90) {
+                System.out.println("✓ Certificate is valid for over 90 days");
+            } else if (daysUntilExpiration > 30) {
+                System.out.println("⚠ Certificate expires in less than 90 days");
+            } else {
+                System.out.println("✗ Certificate expires in less than 30 days - RENEW SOON!");
+            }
+
+            connection.disconnect();
+
+        } catch (Exception e) {
+            fail("Failed to check certificate expiration: " + e.getMessage());
+        }
+    }
+
+    @Test(priority = 4)
+    public void testCertificateIssuer() {
+        System.out.println("\n=== Certificate Issuer Validation ===");
+
+        String url = "https://www.google.com";
+
+        try {
+            URL websiteUrl = new URL(url);
+            HttpsURLConnection connection = (HttpsURLConnection) websiteUrl.openConnection();
+            connection.connect();
+
+            X509Certificate certificate = (X509Certificate) connection.getServerCertificates()[0];
+
+            // TODO: Get issuer details
+            String issuer = certificate.getIssuerDN().toString();
+            String subject = certificate.getSubjectDN().toString();
+
+            System.out.println("Certificate Subject: " + subject);
+            System.out.println("Certificate Issuer: " + issuer);
+
+            // TODO: Verify issuer is not same as subject (not self-signed)
+            assertNotEquals(issuer, subject,
+                "Certificate should not be self-signed");
+
+            System.out.println("✓ Certificate is issued by trusted CA");
+
+            // TODO: Check for known trusted issuers (optional)
+            String[] trustedIssuers = {"DigiCert", "Let's Encrypt", "GlobalSign", "GeoTrust"};
+
+            boolean isTrustedIssuer = false;
+            for (String trustedIssuer : trustedIssuers) {
+                if (issuer.contains(trustedIssuer)) {
+                    System.out.println("✓ Issued by trusted CA: " + trustedIssuer);
+                    isTrustedIssuer = true;
+                    break;
+                }
+            }
+
+            if (!isTrustedIssuer) {
+                System.out.println("⚠ Issuer not in common trusted CA list");
+            }
+
+            connection.disconnect();
+
+        } catch (Exception e) {
+            fail("Failed to validate certificate issuer: " + e.getMessage());
+        }
+    }
+
+    @Test(priority = 5)
+    public void testTLSVersion() {
+        System.out.println("\n=== TLS Version Check ===");
+
+        String url = "https://www.google.com";
+
+        try {
+            URL websiteUrl = new URL(url);
+            HttpsURLConnection connection = (HttpsURLConnection) websiteUrl.openConnection();
+            connection.connect();
+
+            // TODO: Get SSL session details
+            SSLSession sslSession = connection.getSSLSession();
+
+            String protocol = sslSession.getProtocol();
+            String cipherSuite = sslSession.getCipherSuite();
+
+            System.out.println("Protocol: " + protocol);
+            System.out.println("Cipher Suite: " + cipherSuite);
+
+            // TODO: Verify TLS version is secure (TLS 1.2 or higher)
+            assertTrue(protocol.equals("TLSv1.2") || protocol.equals("TLSv1.3"),
+                "TLS version should be 1.2 or higher. Current: " + protocol);
+
+            if (protocol.equals("TLSv1.3")) {
+                System.out.println("✓ Using latest TLS 1.3 protocol");
+            } else if (protocol.equals("TLSv1.2")) {
+                System.out.println("✓ Using secure TLS 1.2 protocol");
+            }
+
+            // TODO: Verify cipher suite is strong
+            assertFalse(cipherSuite.contains("NULL") ||
+                       cipherSuite.contains("EXPORT") ||
+                       cipherSuite.contains("DES"),
+                "Weak cipher suite detected: " + cipherSuite);
+
+            System.out.println("✓ Strong cipher suite in use");
+
+            connection.disconnect();
+
+        } catch (Exception e) {
+            fail("Failed to check TLS version: " + e.getMessage());
+        }
+    }
+
+    @Test(priority = 6)
+    public void testGenerateSSLReport() {
+        System.out.println("\n=== SSL/TLS Security Report ===");
+
+        String url = "https://www.google.com";
+
+        try {
+            URL websiteUrl = new URL(url);
+            HttpsURLConnection connection = (HttpsURLConnection) websiteUrl.openConnection();
+            connection.connect();
+
+            X509Certificate certificate = (X509Certificate) connection.getServerCertificates()[0];
+            SSLSession sslSession = connection.getSSLSession();
+
+            // TODO: Collect all SSL/TLS information
+            System.out.println("URL: " + url);
+            System.out.println("\n--- Certificate Information ---");
+            System.out.println("Subject: " + certificate.getSubjectDN());
+            System.out.println("Issuer: " + certificate.getIssuerDN());
+            System.out.println("Valid From: " + certificate.getNotBefore());
+            System.out.println("Valid Until: " + certificate.getNotAfter());
+
+            // Calculate expiration days
+            long daysUntilExpiration = (certificate.getNotAfter().getTime() -
+                new Date().getTime()) / (1000 * 60 * 60 * 24);
+
+            System.out.println("Days Until Expiration: " + daysUntilExpiration);
+
+            System.out.println("\n--- Connection Security ---");
+            System.out.println("Protocol: " + sslSession.getProtocol());
+            System.out.println("Cipher Suite: " + sslSession.getCipherSuite());
+
+            // TODO: Generate security score
+            int securityScore = 100;
+            List<String> issues = new ArrayList<>();
+
+            // Check expiration
+            if (daysUntilExpiration < 30) {
+                securityScore -= 30;
+                issues.add("Certificate expires in less than 30 days");
+            } else if (daysUntilExpiration < 90) {
+                securityScore -= 10;
+                issues.add("Certificate expires in less than 90 days");
+            }
+
+            // Check protocol
+            String protocol = sslSession.getProtocol();
+            if (!protocol.equals("TLSv1.3") && !protocol.equals("TLSv1.2")) {
+                securityScore -= 40;
+                issues.add("Using outdated TLS protocol: " + protocol);
+            }
+
+            // Check self-signed
+            if (certificate.getIssuerDN().equals(certificate.getSubjectDN())) {
+                securityScore -= 50;
+                issues.add("Certificate is self-signed");
+            }
+
+            // TODO: Print final score
+            System.out.println("\n=== Security Assessment ===");
+            System.out.println("Security Score: " + securityScore + "/100");
+
+            if (issues.isEmpty()) {
+                System.out.println("Status: EXCELLENT - No issues found");
+            } else {
+                System.out.println("Status: ISSUES FOUND");
+                System.out.println("\nIssues:");
+                for (int i = 0; i < issues.size(); i++) {
+                    System.out.println((i + 1) + ". " + issues.get(i));
+                }
+            }
+
+            // TODO: Verify minimum security score
+            assertTrue(securityScore >= 70,
+                "Security score should be at least 70. Current: " + securityScore);
+
+            connection.disconnect();
+
+        } catch (Exception e) {
+            fail("Failed to generate SSL report: " + e.getMessage());
+        }
+    }
+
+    @AfterClass
+    public void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+**Expected Outcome**:
+- HTTPS enforcement is verified (HTTP redirects to HTTPS)
+- SSL certificate validity is confirmed (not expired)
+- Certificate expiration date is checked (alerts if < 30 days)
+- Certificate issuer is validated (not self-signed)
+- TLS version is verified (1.2 or 1.3)
+- Cipher suites are checked for strength
+- Comprehensive SSL/TLS security report is generated
+
+**Common Mistakes to Avoid**:
+1. Not handling SSL exceptions properly
+2. Accepting invalid certificates in test code
+3. Not checking certificate chain (only checking site certificate)
+4. Ignoring cipher suite strength
+5. Not testing HTTPS enforcement (allowing HTTP access)
+
+**Solution Approach (Hints)**:
+- Use `HttpsURLConnection` to get SSL details
+- Get certificates: `connection.getServerCertificates()`
+- Cast to X509Certificate: `(X509Certificate) certificates[0]`
+- Check validity: `certificate.checkValidity()`
+- Compare dates: `certificate.getNotAfter().getTime() - new Date().getTime()`
+- Get protocol: `sslSession.getProtocol()`
+- Verify issuer != subject to ensure not self-signed
+- Calculate days: milliseconds / (1000 * 60 * 60 * 24)
+
+---
+
 ## Navigation
 
 - [Previous: Day 47 - Database Testing](day47_database_testing.md)

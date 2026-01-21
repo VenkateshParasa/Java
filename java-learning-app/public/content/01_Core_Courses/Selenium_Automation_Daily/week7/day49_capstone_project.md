@@ -2799,6 +2799,417 @@ wait.until(condition3); // Each waits full timeout
 
 ---
 
+## 18.5. Capstone Project Milestones
+
+Build your complete E-Commerce automation framework through these structured milestones. Each milestone builds upon the previous one, culminating in a production-ready framework.
+
+---
+
+### Milestone 1: Project Setup and Base Framework (4-6 hours)
+
+**Objective**: Set up the project structure, Maven dependencies, and create the base framework components.
+
+**Tasks**:
+1. Create Maven project with proper directory structure
+2. Add all required dependencies (Selenium, TestNG, Log4j2, Extent Reports, Apache POI)
+3. Create configuration files (config.properties, log4j2.xml)
+4. Implement ConfigReader utility class
+5. Create BaseTest class with setup and teardown
+6. Implement DriverManager with ThreadLocal pattern
+7. Set up basic logging infrastructure
+
+**Deliverables**:
+- Maven project with pom.xml containing all dependencies
+- src/test/resources/config.properties with environment settings
+- src/test/resources/log4j2.xml for logging configuration
+- Base framework classes: BaseTest, DriverManager, ConfigReader
+- Project compiles and runs successfully
+
+**Success Criteria**:
+- Maven build succeeds without errors
+- Config properties are loaded correctly
+- Driver can be initialized for Chrome/Firefox
+- Logs are generated in test-output/logs folder
+- BaseTest setup and teardown work properly
+
+**Resources Needed**:
+- Maven 3.x
+- Java JDK 11 or higher
+- IDE (IntelliJ IDEA or Eclipse)
+- Chrome and Firefox browsers installed
+
+---
+
+### Milestone 2: Page Object Model Implementation (6-8 hours)
+
+**Objective**: Implement complete Page Object Model for key e-commerce pages.
+
+**Tasks**:
+1. Create BasePage class with common WebDriver methods
+2. Implement LoginPage with all locators and methods
+3. Implement HomePage with navigation and search functionality
+4. Implement ProductListPage with filtering and sorting
+5. Implement ProductDetailsPage
+6. Implement ShoppingCartPage with cart operations
+7. Implement CheckoutPage with payment flow
+8. Use PageFactory annotations for element initialization
+
+**Deliverables**:
+- BasePage with reusable methods (click, sendKeys, waitFor, etc.)
+- 6-7 Page Object classes covering main flows
+- Each page class has proper locators using @FindBy
+- Page classes have meaningful method names (not clickElement1)
+- Constructor initializes elements using PageFactory
+
+**Success Criteria**:
+- All page objects compile without errors
+- Page navigation methods return correct page objects
+- Elements are properly encapsulated (private locators)
+- Methods have descriptive names matching user actions
+- No WebDriver interactions in test classes
+
+**Key Pages to Implement**:
+```
+- LoginPage
+- HomePage
+- ProductListPage
+- ProductDetailsPage
+- ShoppingCartPage
+- CheckoutPage
+- MyAccountPage (optional)
+```
+
+---
+
+### Milestone 3: Test Implementation and Data-Driven Testing (6-8 hours)
+
+**Objective**: Create comprehensive test scenarios with data-driven approach.
+
+**Tasks**:
+1. Create LoginTest class with positive and negative scenarios
+2. Implement ProductSearchTest with multiple search terms
+3. Create End-to-End checkout test
+4. Implement ExcelUtils class for reading test data
+5. Create Excel file with test data (users, products, etc.)
+6. Implement TestNG DataProvider for data-driven tests
+7. Add proper assertions and validations
+8. Implement soft assertions where appropriate
+
+**Deliverables**:
+- Minimum 15-20 test methods covering critical flows
+- ExcelUtils class for reading Excel data
+- Test data Excel file with multiple sheets
+- Data providers connected to test methods
+- Clear test method names following naming convention
+- Comprehensive assertions in all tests
+
+**Success Criteria**:
+- All tests execute successfully
+- Data-driven tests read from Excel correctly
+- Assertions validate expected vs actual results
+- Tests are independent and can run in any order
+- No hardcoded test data in test methods
+
+**Test Scenarios to Cover**:
+```
+Login Tests:
+- Valid login
+- Invalid username
+- Invalid password
+- Empty credentials
+- Account lockout
+
+Search Tests:
+- Valid product search
+- Partial product name
+- No results found
+- Special characters
+- Multiple products
+
+E2E Tests:
+- Complete purchase flow
+- Add multiple products to cart
+- Apply coupon code
+- Guest checkout
+- Registered user checkout
+```
+
+---
+
+### Milestone 4: Reporting and Logging Integration (4-5 hours)
+
+**Objective**: Implement comprehensive reporting using Extent Reports and structured logging.
+
+**Tasks**:
+1. Set up ExtentReports configuration
+2. Create ExtentManager class
+3. Implement ExtentTestListener
+4. Add test steps logging to reports
+5. Capture screenshots on failure
+6. Attach screenshots to Extent Reports
+7. Configure Log4j2 with different log levels
+8. Create separate logs for each test run
+
+**Deliverables**:
+- ExtentReports integration with proper configuration
+- Screenshot utility class
+- Test listener implementation
+- HTML reports generated in test-output folder
+- Logs organized by date/time
+- Screenshots embedded in reports for failures
+
+**Success Criteria**:
+- HTML report generated after test execution
+- Report shows test name, status, duration
+- Failed tests show screenshots
+- Test steps are logged in reports
+- Logs contain INFO, DEBUG, ERROR level messages
+- Reports are visually appealing and readable
+
+---
+
+### Milestone 5: Cross-Browser and Parallel Execution (4-5 hours)
+
+**Objective**: Enable tests to run on multiple browsers in parallel.
+
+**Tasks**:
+1. Create BrowserFactory class
+2. Implement RemoteWebDriver support
+3. Create testng.xml for parallel execution
+4. Configure thread-count and parallel mode
+5. Test on Chrome, Firefox, and Edge
+6. Ensure thread safety using ThreadLocal
+7. Handle browser-specific issues
+
+**Deliverables**:
+- BrowserFactory with support for 3+ browsers
+- testng.xml configured for parallel="tests"
+- Tests execute successfully on all browsers
+- No thread interference in parallel execution
+- Browser-specific reports generated
+
+**Success Criteria**:
+- Tests run successfully on Chrome, Firefox, Edge
+- Parallel execution reduces total execution time
+- No "driver already quit" or thread safety issues
+- Each browser gets separate report section
+- Browser name visible in test logs
+
+---
+
+### Milestone 6: CI/CD Pipeline Integration (3-4 hours)
+
+**Objective**: Set up CI/CD pipeline using GitHub Actions or Jenkins.
+
+**Tasks**:
+1. Create GitHub repository for the project
+2. Push code to repository
+3. Create GitHub Actions workflow (.github/workflows/maven.yml)
+4. Configure workflow to run tests on push/PR
+5. Set up test reports artifact upload
+6. Configure browser drivers in CI environment
+7. Add build status badge to README
+
+**Deliverables**:
+- GitHub repository with complete code
+- GitHub Actions workflow file
+- Tests execute automatically on code push
+- Test reports available as artifacts
+- README with project documentation
+- Build status badge showing pass/fail
+
+**Success Criteria**:
+- CI pipeline triggers automatically
+- Tests execute in CI environment
+- Build passes with all tests green
+- Reports are accessible post-execution
+- Failed builds send notifications
+
+**GitHub Actions Workflow Template**:
+```yaml
+name: Selenium Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+      - name: Run tests
+        run: mvn clean test
+      - name: Upload reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: test-output/
+```
+
+---
+
+### Milestone 7: Docker Integration (Optional - 3-4 hours)
+
+**Objective**: Containerize tests for consistent execution across environments.
+
+**Tasks**:
+1. Create docker-compose.yml for Selenium Grid
+2. Configure Hub and Node services
+3. Update test configuration for Grid URL
+4. Test execution on Docker Grid
+5. Create Dockerfile for test application (optional)
+6. Document Docker setup in README
+
+**Deliverables**:
+- docker-compose.yml with Grid configuration
+- Updated ConfigReader to support Grid URL
+- Tests execute successfully on Docker Grid
+- Docker commands documented in README
+
+**Success Criteria**:
+- Docker containers start successfully
+- Tests connect to Grid and execute
+- Results are consistent with local execution
+- Easy setup with single command
+
+---
+
+### Final Integration Checklist
+
+Before considering the project complete, verify:
+
+**Code Quality**:
+- [ ] No hardcoded values (use config.properties)
+- [ ] No duplicate code (use utility methods)
+- [ ] Meaningful variable and method names
+- [ ] Proper exception handling
+- [ ] Comments where needed
+
+**Framework Features**:
+- [ ] Page Object Model implemented
+- [ ] Data-driven testing working
+- [ ] Cross-browser support enabled
+- [ ] Parallel execution configured
+- [ ] Reporting integrated
+- [ ] Logging configured
+- [ ] Screenshots on failure
+- [ ] CI/CD pipeline setup
+
+**Testing Coverage**:
+- [ ] Login functionality tested
+- [ ] Product search tested
+- [ ] Add to cart tested
+- [ ] Checkout flow tested
+- [ ] Positive and negative scenarios
+- [ ] Data-driven tests working
+
+**Documentation**:
+- [ ] README with setup instructions
+- [ ] Code comments where needed
+- [ ] Test execution instructions
+- [ ] Troubleshooting guide
+- [ ] Architecture diagram (optional)
+
+**Best Practices**:
+- [ ] Waits used properly (no Thread.sleep)
+- [ ] Assertions in all tests
+- [ ] Independent test cases
+- [ ] Proper test data management
+- [ ] Git commits with clear messages
+
+---
+
+### Project Submission Guidelines
+
+**GitHub Repository Structure**:
+```
+selenium-ecommerce-framework/
+├── .github/
+│   └── workflows/
+│       └── maven.yml
+├── src/
+│   ├── main/java/
+│   │   ├── pages/
+│   │   ├── utils/
+│   │   └── config/
+│   └── test/
+│       ├── java/
+│       │   └── tests/
+│       └── resources/
+│           ├── config.properties
+│           ├── log4j2.xml
+│           ├── testng.xml
+│           └── testdata/
+│               └── TestData.xlsx
+├── test-output/
+├── docker-compose.yml
+├── pom.xml
+└── README.md
+```
+
+**README Should Include**:
+1. Project overview and objectives
+2. Technologies and tools used
+3. Framework architecture
+4. Setup instructions
+5. How to run tests
+6. How to view reports
+7. CI/CD integration details
+8. Troubleshooting tips
+9. Future enhancements
+10. Contact information
+
+---
+
+### Grading Rubric (Self-Assessment)
+
+Rate your implementation (1-5 scale):
+
+**Code Organization (20%)**:
+- Proper package structure
+- Naming conventions followed
+- Code is maintainable
+
+**Framework Implementation (30%)**:
+- POM correctly implemented
+- Data-driven testing works
+- Configuration management
+- Logging and reporting
+
+**Test Coverage (20%)**:
+- Critical scenarios covered
+- Positive and negative tests
+- Data-driven tests
+- Assertions present
+
+**Best Practices (15%)**:
+- No hardcoded values
+- Proper waits usage
+- Exception handling
+- Code reusability
+
+**Documentation (10%)**:
+- README is clear
+- Comments where needed
+- Setup instructions work
+
+**Advanced Features (5%)**:
+- Cross-browser testing
+- Parallel execution
+- CI/CD integration
+- Docker integration
+
+**Total Score**: _____ / 100
+
+**Grading**:
+- 90-100: Excellent (Production-ready)
+- 80-89: Good (Minor improvements needed)
+- 70-79: Satisfactory (Several improvements needed)
+- Below 70: Needs significant work
+
+---
+
 ## 19. Key Takeaways
 
 ### 1. Framework Design

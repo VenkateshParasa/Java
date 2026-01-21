@@ -17,7 +17,9 @@
       "Bash(for file in /Users/venkateshparasa/Documents/Java/java-learning-app/src/data/assessments/selenium/week2/day*.js)",
       "Bash(__NEW_LINE_4c3b18319390c3e0__ grep -E \"^##[^#]\" /Users/venkateshparasa/Documents/Java/java-learning-app/public/content/01_Core_Courses/Selenium_Automation_Daily/week1/day04_web_elements.md)",
       "Bash(__NEW_LINE_bf2b0a6bc148ad31__ node -e \"const data = require\\(''/Users/venkateshparasa/Documents/Java/java-learning-app/src/data/assessments/selenium/week1/day4.js''\\).default; console.log\\(''Title:'', data.title\\); console.log\\(''Total Questions:'', data.sections.reduce\\(\\(sum, s\\) => sum + s.questions.length, 0\\)\\); console.log\\(''Sections:'', data.sections.map\\(s => s.title\\).join\\('', ''\\)\\)\")",
-      "Bash(__NEW_LINE_477364991dac79cc__ ls -1 /Users/venkateshparasa/Documents/Java/java-learning-app/public/content/01_Core_Courses/Selenium_Automation_Daily/week2/day*.md)"
+      "Bash(__NEW_LINE_477364991dac79cc__ ls -1 /Users/venkateshparasa/Documents/Java/java-learning-app/public/content/01_Core_Courses/Selenium_Automation_Daily/week2/day*.md)",
+      "Bash(for file in week1/day*.md)",
+      "Bash(python3:*)"
     ]
   }
 }

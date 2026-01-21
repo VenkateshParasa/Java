@@ -2782,6 +2782,211 @@ public class CanvasDrawing {
 }
 ```
 
+---
+
+## ⚠️ Common Mistakes to Avoid
+
+### 1. Forgetting to Call perform()
+**Problem**: Building an action chain but forgetting to call `.perform()` at the end.
+
+**Why It's Wrong**: The Actions class builds a chain of actions but doesn't execute them until you explicitly call `perform()`. Without it, your mouse operations simply don't happen, leading to confused debugging sessions.
+
+**Correct Approach**: Always end your action chain with `.perform()`.
+
+```java
+// ❌ WRONG: No perform() - nothing happens!
+Actions actions = new Actions(driver);
+actions.moveToElement(element);
+actions.click(); // Nothing executed yet!
+
+// ✅ CORRECT: Call perform() to execute actions
+Actions actions = new Actions(driver);
+actions.moveToElement(element)
+       .click()
+       .perform(); // Now actions are executed
+
+// ❌ WRONG: Building complex chain without perform()
+actions.moveToElement(menuItem)
+       .moveToElement(subMenuItem)
+       .click(); // Actions never execute!
+
+// ✅ CORRECT: Always finish with perform()
+actions.moveToElement(menuItem)
+       .moveToElement(subMenuItem)
+       .click()
+       .perform(); // Chain executes
+```
+
+### 2. Moving to Element Without Waiting
+**Problem**: Attempting to hover over or click elements before they're fully loaded or clickable.
+
+**Why It's Wrong**: Even if an element exists in the DOM, it might not be ready for interaction. The element could be covered by another element, still animating, or not yet in the viewport. Moving to such elements causes unpredictable failures.
+
+**Correct Approach**: Always wait for elements to be in a clickable state before performing Actions.
+
+```java
+// ❌ WRONG: Immediate move without wait
+WebElement menu = driver.findElement(By.id("menu"));
+actions.moveToElement(menu).perform(); // May fail if menu is loading
+
+// ✅ CORRECT: Wait for element to be clickable
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+WebElement menu = wait.until(ExpectedConditions.elementToBeClickable(By.id("menu")));
+actions.moveToElement(menu).perform();
+
+// ✅ BETTER: Comprehensive wait and move method
+public void hoverOverElement(By locator) {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+
+    // Scroll into view if needed
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+
+    // Wait a moment for scroll animation
+    try {
+        Thread.sleep(300);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+
+    // Now perform hover
+    actions.moveToElement(element).perform();
+}
+```
+
+### 3. Not Handling Hover Menu Timing
+**Problem**: Hovering and immediately clicking without allowing time for submenu to appear.
+
+**Why It's Wrong**: Many hover menus have animations or delays before showing submenus. Clicking too quickly results in clicking the parent menu or clicking on nothing, causing test failures.
+
+**Correct Approach**: Add appropriate waits between hover and subsequent actions.
+
+```java
+// ❌ WRONG: Immediate click after hover
+WebElement mainMenu = driver.findElement(By.id("products"));
+WebElement subMenu = driver.findElement(By.id("laptops"));
+
+actions.moveToElement(mainMenu)
+       .moveToElement(subMenu)
+       .click()
+       .perform(); // Submenu might not be visible yet!
+
+// ✅ CORRECT: Wait for submenu to be visible
+WebElement mainMenu = driver.findElement(By.id("products"));
+actions.moveToElement(mainMenu).perform();
+
+// Wait for submenu to appear
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+WebElement subMenu = wait.until(
+    ExpectedConditions.visibilityOfElementLocated(By.id("laptops"))
+);
+
+actions.moveToElement(subMenu).click().perform();
+
+// ✅ BETTER: Use pause() in action chain (Selenium 4+)
+actions.moveToElement(mainMenu)
+       .pause(Duration.ofMillis(500)) // Wait for submenu animation
+       .moveToElement(subMenu)
+       .click()
+       .perform();
+```
+
+### 4. Using Regular click() Instead of Actions click()
+**Problem**: Mixing regular WebElement.click() with Actions class operations in the same chain.
+
+**Why It's Wrong**: When you build an Actions chain, you should use Actions class methods throughout. Using WebElement.click() breaks the chain context and can cause unexpected behavior, especially with hover menus.
+
+**Correct Approach**: Use Actions class click() when working with Actions chains.
+
+```java
+// ❌ WRONG: Mixing Actions and WebElement methods
+WebElement menu = driver.findElement(By.id("menu"));
+actions.moveToElement(menu).perform();
+menu.click(); // Breaks the action context!
+
+// ✅ CORRECT: Use Actions click() method
+WebElement menu = driver.findElement(By.id("menu"));
+actions.moveToElement(menu)
+       .click()
+       .perform();
+
+// ❌ WRONG: Breaking chain by finding element again
+actions.moveToElement(driver.findElement(By.id("menu")))
+       .perform();
+driver.findElement(By.id("submenu")).click(); // Lost context!
+
+// ✅ CORRECT: Continue the Actions chain
+actions.moveToElement(driver.findElement(By.id("menu")))
+       .pause(Duration.ofMillis(300))
+       .moveToElement(driver.findElement(By.id("submenu")))
+       .click()
+       .perform();
+```
+
+### 5. Not Accounting for Element Offset Issues
+**Problem**: Assuming moveToElement() always moves to the exact center of an element.
+
+**Why It's Wrong**: `moveToElement()` moves to the center of the element by default, but sometimes you need to click on specific parts of an element (like the corner of a resizable div or a specific point in a slider). Not using offsets leads to clicking the wrong area.
+
+**Correct Approach**: Use `moveToElement(element, xOffset, yOffset)` when you need precision.
+
+```java
+// ❌ WRONG: Trying to click top-right corner but clicking center
+WebElement closeButton = driver.findElement(By.className("modal"));
+actions.moveToElement(closeButton).click().perform(); // Clicks center, not close button
+
+// ✅ CORRECT: Use offset to click specific location
+WebElement modal = driver.findElement(By.className("modal"));
+// Calculate offset to top-right corner
+int width = modal.getSize().getWidth();
+int height = modal.getSize().getHeight();
+
+actions.moveToElement(modal, width/2 - 10, -height/2 + 10)
+       .click()
+       .perform(); // Clicks near top-right corner
+
+// ✅ ALTERNATIVE: Find the actual close button element
+WebElement closeButton = driver.findElement(By.cssSelector(".modal .close-btn"));
+actions.moveToElement(closeButton).click().perform();
+```
+
+### 6. Not Releasing Mouse After Drag and Drop
+**Problem**: Using `clickAndHold()` but forgetting to release the mouse button.
+
+**Why It's Wrong**: If you use `clickAndHold()` without `release()`, the mouse button stays pressed even after the action chain completes. This can cause subsequent interactions to behave unexpectedly.
+
+**Correct Approach**: Always pair `clickAndHold()` with `release()`.
+
+```java
+// ❌ WRONG: Click and hold without release
+WebElement source = driver.findElement(By.id("draggable"));
+actions.clickAndHold(source)
+       .moveToElement(target)
+       .perform(); // Mouse still held down!
+
+// ✅ CORRECT: Always release after hold
+WebElement source = driver.findElement(By.id("draggable"));
+WebElement target = driver.findElement(By.id("droppable"));
+
+actions.clickAndHold(source)
+       .moveToElement(target)
+       .release()
+       .perform();
+
+// ✅ ALTERNATIVE: Use dragAndDrop() shortcut
+actions.dragAndDrop(source, target).perform();
+
+// ✅ BEST PRACTICE: Add pause for visual stability
+actions.clickAndHold(source)
+       .pause(Duration.ofMillis(300))
+       .moveToElement(target)
+       .pause(Duration.ofMillis(300))
+       .release()
+       .perform();
+```
+
+---
+
 ## Best Practices
 
 ### 1. Always Use Explicit Waits

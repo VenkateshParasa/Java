@@ -2730,6 +2730,580 @@ notify-slack:
 
 ---
 
+## Common Mistakes to Avoid
+
+### 1. Not Using Headless Browser Mode in CI/CD Pipelines
+
+**Problem:**
+```java
+// Running with visible browser in CI environment
+ChromeOptions options = new ChromeOptions();
+// No headless configuration
+WebDriver driver = new ChromeDriver(options);
+```
+
+**Why It's Wrong:**
+- CI/CD servers typically don't have GUI/display capabilities
+- Causes "cannot open display" errors in Linux environments
+- Wastes resources rendering browser UI unnecessarily
+- May cause tests to fail inconsistently in containerized environments
+
+**Correct Approach:**
+```java
+public class CIFriendlyDriverFactory {
+
+    public static WebDriver createDriver() {
+        ChromeOptions options = new ChromeOptions();
+
+        // Detect CI environment and configure accordingly
+        if (isRunningInCI()) {
+            // Headless mode for CI
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--window-size=1920,1080");
+
+            // Additional stability arguments for CI
+            options.addArguments("--disable-extensions");
+            options.addArguments("--disable-infobars");
+            options.addArguments("--disable-browser-side-navigation");
+        }
+
+        return new ChromeDriver(options);
+    }
+
+    private static boolean isRunningInCI() {
+        // Check common CI environment variables
+        return System.getenv("CI") != null ||
+               System.getenv("JENKINS_HOME") != null ||
+               System.getenv("GITHUB_ACTIONS") != null ||
+               System.getenv("GITLAB_CI") != null;
+    }
+}
+```
+
+---
+
+### 2. Hardcoding Environment-Specific Configuration in Code
+
+**Problem:**
+```java
+public class TestConfig {
+    // Hardcoded values that work only in local environment
+    private static final String BASE_URL = "http://localhost:8080";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/testdb";
+    private static final String CHROME_DRIVER_PATH = "/Users/myuser/drivers/chromedriver";
+
+    public static String getBaseUrl() {
+        return BASE_URL;
+    }
+}
+```
+
+**Why It's Wrong:**
+- Tests fail when running in CI/CD with different environments (staging, production URLs)
+- Different team members and CI servers have different local paths
+- Cannot run same tests across multiple environments without code changes
+- Violates the principle of environment-agnostic test design
+
+**Correct Approach:**
+```java
+public class EnvironmentConfig {
+
+    private Properties properties;
+
+    public EnvironmentConfig() {
+        properties = new Properties();
+        loadConfiguration();
+    }
+
+    private void loadConfiguration() {
+        String environment = System.getProperty("env", "local");
+        String configFile = "config-" + environment + ".properties";
+
+        try (InputStream input = getClass().getClassLoader()
+                .getResourceAsStream(configFile)) {
+            if (input == null) {
+                throw new RuntimeException("Unable to find " + configFile);
+            }
+            properties.load(input);
+
+            // Override with environment variables if present (CI priority)
+            overrideWithEnvVars();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading configuration", e);
+        }
+    }
+
+    private void overrideWithEnvVars() {
+        // Allow environment variables to override properties
+        String baseUrl = System.getenv("BASE_URL");
+        if (baseUrl != null) {
+            properties.setProperty("base.url", baseUrl);
+        }
+
+        String dbUrl = System.getenv("DB_URL");
+        if (dbUrl != null) {
+            properties.setProperty("db.url", dbUrl);
+        }
+    }
+
+    public String getBaseUrl() {
+        return properties.getProperty("base.url");
+    }
+
+    public String getDbUrl() {
+        return properties.getProperty("db.url");
+    }
+}
+
+// Usage in Jenkinsfile:
+// mvn test -Denv=staging -DBASE_URL=${STAGING_URL}
+```
+
+---
+
+### 3. Not Implementing Proper Timeout and Retry Mechanisms for CI Flakiness
+
+**Problem:**
+```java
+@Test
+public void testLogin() {
+    driver.get("https://example.com/login");
+    // Direct interaction without waiting - flaky in CI
+    driver.findElement(By.id("username")).sendKeys("testuser");
+    driver.findElement(By.id("password")).sendKeys("password");
+    driver.findElement(By.id("loginButton")).click();
+
+    // No retry logic for transient failures
+    Assert.assertTrue(driver.getCurrentUrl().contains("dashboard"));
+}
+```
+
+**Why It's Wrong:**
+- CI environments may have network latency or resource constraints
+- No handling of temporary failures (network glitches, service restarts)
+- Tests marked as failed even when they would pass on retry
+- Creates noise in CI reports with false negatives
+
+**Correct Approach:**
+```java
+public class CIOptimizedTest {
+
+    private WebDriverWait wait;
+    private static final int DEFAULT_TIMEOUT = 20; // Higher timeout for CI
+    private static final int POLL_INTERVAL = 500;
+
+    @BeforeMethod
+    public void setup() {
+        WebDriver driver = new ChromeDriver();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT));
+        wait.pollingEvery(Duration.ofMillis(POLL_INTERVAL));
+
+        // Ignore specific exceptions during polling
+        wait.ignoring(StaleElementReferenceException.class)
+            .ignoring(NoSuchElementException.class);
+    }
+
+    @Test(retryAnalyzer = RetryAnalyzer.class)
+    public void testLogin() {
+        driver.get("https://example.com/login");
+
+        // Explicit waits for all interactions
+        WebElement username = wait.until(ExpectedConditions.presenceOfElementLocated(
+            By.id("username")));
+        username.sendKeys("testuser");
+
+        WebElement password = wait.until(ExpectedConditions.presenceOfElementLocated(
+            By.id("password")));
+        password.sendKeys("password");
+
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
+            By.id("loginButton")));
+        loginButton.click();
+
+        // Wait for navigation with retry
+        wait.until(ExpectedConditions.urlContains("dashboard"));
+    }
+}
+
+// Retry Analyzer for CI flakiness
+public class RetryAnalyzer implements IRetryAnalyzer {
+
+    private int retryCount = 0;
+    private static final int MAX_RETRY_COUNT = 2;
+
+    @Override
+    public boolean retry(ITestResult result) {
+        // Only retry in CI environment, not locally
+        if (!isCI()) {
+            return false;
+        }
+
+        if (retryCount < MAX_RETRY_COUNT) {
+            retryCount++;
+            System.out.println("Retrying test: " + result.getName() +
+                             " for the " + retryCount + " time");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isCI() {
+        return System.getenv("CI") != null;
+    }
+}
+```
+
+---
+
+### 4. Ignoring Pipeline Failure Notifications and Monitoring
+
+**Problem:**
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('Test') {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+    }
+    // No post-build actions - team unaware of failures
+}
+```
+
+**Why It's Wrong:**
+- Team doesn't get immediate notification when tests fail
+- Failures go unnoticed until someone manually checks
+- No trend analysis or historical data collection
+- Cannot track flaky tests or regression patterns
+
+**Correct Approach:**
+```groovy
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '30'))
+    }
+
+    stages {
+        stage('Test') {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Publish test results
+            junit '**/target/surefire-reports/*.xml'
+
+            // Publish HTML report
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'target/surefire-reports',
+                reportFiles: 'index.html',
+                reportName: 'Test Report'
+            ])
+
+            // Archive screenshots for failed tests
+            archiveArtifacts artifacts: '**/screenshots/**/*.png',
+                            allowEmptyArchive: true
+        }
+
+        success {
+            // Notify on success (optional, or only after fixing)
+            slackSend(
+                color: 'good',
+                message: "✅ Build #${env.BUILD_NUMBER} succeeded\\nBranch: ${env.BRANCH_NAME}"
+            )
+        }
+
+        failure {
+            // Critical: Always notify on failure
+            emailext(
+                subject: "🚨 Test Failure: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                    Build failed!
+
+                    Job: ${env.JOB_NAME}
+                    Build Number: ${env.BUILD_NUMBER}
+                    Build URL: ${env.BUILD_URL}
+
+                    Check console output for details.
+                """,
+                to: '${DEFAULT_RECIPIENTS}',
+                attachLog: true
+            )
+
+            slackSend(
+                color: 'danger',
+                message: "❌ Build #${env.BUILD_NUMBER} FAILED\\n" +
+                        "Job: ${env.JOB_NAME}\\n" +
+                        "URL: ${env.BUILD_URL}console"
+            )
+        }
+
+        unstable {
+            // Notify on unstable (some tests failed)
+            slackSend(
+                color: 'warning',
+                message: "⚠️ Build #${env.BUILD_NUMBER} is UNSTABLE\\n" +
+                        "Some tests failed. Check report."
+            )
+        }
+    }
+}
+```
+
+---
+
+### 5. Not Parallelizing Tests in CI Pipeline
+
+**Problem:**
+```groovy
+pipeline {
+    stages {
+        stage('Test') {
+            steps {
+                // Sequential execution - wastes time
+                sh 'mvn test -Dsurefire.suiteXmlFiles=smoke-tests.xml'
+                sh 'mvn test -Dsurefire.suiteXmlFiles=regression-tests.xml'
+                sh 'mvn test -Dsurefire.suiteXmlFiles=api-tests.xml'
+            }
+        }
+    }
+}
+```
+
+**Why It's Wrong:**
+- Tests run sequentially, significantly increasing build time
+- CI resources (CPU cores) are underutilized
+- Slow feedback loop delays development
+- Doesn't scale as test suite grows
+
+**Correct Approach:**
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Parallel Test Execution') {
+            parallel {
+                stage('Smoke Tests') {
+                    agent {
+                        label 'test-node'
+                    }
+                    steps {
+                        sh 'mvn test -Dsurefire.suiteXmlFiles=smoke-tests.xml'
+                    }
+                    post {
+                        always {
+                            junit '**/target/surefire-reports/smoke-*.xml'
+                        }
+                    }
+                }
+
+                stage('Regression Tests') {
+                    agent {
+                        label 'test-node'
+                    }
+                    steps {
+                        sh 'mvn test -Dsurefire.suiteXmlFiles=regression-tests.xml'
+                    }
+                    post {
+                        always {
+                            junit '**/target/surefire-reports/regression-*.xml'
+                        }
+                    }
+                }
+
+                stage('API Tests') {
+                    agent {
+                        label 'test-node'
+                    }
+                    steps {
+                        sh 'mvn test -Dsurefire.suiteXmlFiles=api-tests.xml'
+                    }
+                    post {
+                        always {
+                            junit '**/target/surefire-reports/api-*.xml'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// TestNG configuration for parallel execution
+```
+
+**TestNG Suite with Parallel Configuration:**
+```xml
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="CI Parallel Suite" parallel="tests" thread-count="5">
+    <test name="Chrome Tests" parallel="methods" thread-count="3">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.LoginTests"/>
+            <class name="tests.SearchTests"/>
+        </classes>
+    </test>
+
+    <test name="Firefox Tests" parallel="methods" thread-count="2">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.LoginTests"/>
+            <class name="tests.SearchTests"/>
+        </classes>
+    </test>
+</suite>
+```
+
+---
+
+### 6. Not Managing WebDriver Binaries Properly in CI
+
+**Problem:**
+```java
+public class TestBase {
+    @BeforeMethod
+    public void setup() {
+        // Expecting chromedriver to be manually installed
+        System.setProperty("webdriver.chrome.driver",
+                          "/usr/local/bin/chromedriver");
+        driver = new ChromeDriver();
+    }
+}
+```
+
+**Why It's Wrong:**
+- Requires manual installation of drivers on CI servers
+- Driver version may not match browser version
+- Breaks when browser auto-updates
+- Different paths on different CI agents
+
+**Correct Approach:**
+```java
+// Use WebDriverManager for automatic driver management
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class CIDriverFactory {
+
+    public static WebDriver createDriver(String browserType) {
+        WebDriver driver;
+
+        switch (browserType.toLowerCase()) {
+            case "chrome":
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions chromeOptions = getChromeOptions();
+                driver = new ChromeDriver(chromeOptions);
+                break;
+
+            case "firefox":
+                WebDriverManager.firefoxdriver().setup();
+                FirefoxOptions firefoxOptions = getFirefoxOptions();
+                driver = new FirefoxDriver(firefoxOptions);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported browser: " + browserType);
+        }
+
+        return driver;
+    }
+
+    private static ChromeOptions getChromeOptions() {
+        ChromeOptions options = new ChromeOptions();
+
+        if (isCI()) {
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+
+            // Use specific Chrome version in CI for consistency
+            String chromeVersion = System.getProperty("chrome.version");
+            if (chromeVersion != null) {
+                WebDriverManager.chromedriver().browserVersion(chromeVersion).setup();
+            }
+        }
+
+        return options;
+    }
+
+    private static boolean isCI() {
+        return "true".equals(System.getenv("CI"));
+    }
+}
+```
+
+**Maven POM Configuration:**
+```xml
+<dependencies>
+    <!-- WebDriverManager for automatic driver management -->
+    <dependency>
+        <groupId>io.github.bonigarcia</groupId>
+        <artifactId>webdrivermanager</artifactId>
+        <version>5.6.3</version>
+    </dependency>
+</dependencies>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M9</version>
+            <configuration>
+                <systemPropertyVariables>
+                    <!-- Pass browser version from CI environment -->
+                    <chrome.version>${env.CHROME_VERSION}</chrome.version>
+                    <webdriver.chrome.driver></webdriver.chrome.driver>
+                </systemPropertyVariables>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+**Jenkinsfile with Driver Management:**
+```groovy
+pipeline {
+    agent {
+        docker {
+            image 'selenium/standalone-chrome:latest'
+        }
+    }
+
+    environment {
+        CHROME_VERSION = '120.0.6099.109'
+        CI = 'true'
+    }
+
+    stages {
+        stage('Test') {
+            steps {
+                sh 'mvn clean test -Dchrome.version=${CHROME_VERSION}'
+            }
+        }
+    }
+}
+```
+
+---
+
 ## Beginner-Friendly Exercises
 
 ### Exercise 1: Create Your First Jenkins Pipeline (40 minutes)

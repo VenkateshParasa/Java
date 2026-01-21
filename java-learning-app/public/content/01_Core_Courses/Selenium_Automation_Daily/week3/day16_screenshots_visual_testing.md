@@ -540,6 +540,381 @@ public class ImageComparison {
 
 ---
 
+## Common Mistakes to Avoid
+
+### 1. Not Creating Screenshot Directory Before Saving
+**Problem**: Attempting to save screenshots without first creating the destination directory.
+**Why It's Wrong**: Causes `FileNotFoundException` and test failures, screenshots are lost, and tests become unreliable.
+**Correct Approach**: Always create directory structure before saving screenshots.
+```java
+// Wrong way
+File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+FileHandler.copy(screenshot, new File("screenshots/test.png"));
+// Fails if screenshots/ doesn't exist
+
+// Correct way
+File screenshotDir = new File("screenshots");
+if (!screenshotDir.exists()) {
+    screenshotDir.mkdirs(); // Creates directory if not exists
+}
+File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+FileHandler.copy(screenshot, new File("screenshots/test.png"));
+```
+
+### 2. Overwriting Screenshots with Same Name
+**Problem**: Using static filenames without timestamps, causing screenshots to overwrite each other.
+**Why It's Wrong**: Lose historical screenshots, cannot track test execution over time, and debugging becomes difficult.
+**Correct Approach**: Include timestamp or unique identifier in screenshot filename.
+```java
+// Wrong way
+String fileName = "test_screenshot.png";
+// Every screenshot overwrites the previous one
+
+// Correct way
+String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+String fileName = "test_screenshot_" + timestamp + ".png";
+
+// Even better - include test name
+String fileName = testName + "_" + timestamp + ".png";
+```
+
+### 3. Taking Screenshots at Wrong Time
+**Problem**: Capturing screenshots before page loads completely or before elements are visible.
+**Why It's Wrong**: Screenshots show incomplete state, not useful for debugging, and may capture loading screens instead of actual content.
+**Correct Approach**: Wait for page/element to be ready before capturing screenshot.
+```java
+// Wrong way
+driver.get("https://example.com");
+takeScreenshot("homepage"); // May capture loading state
+
+// Correct way
+driver.get("https://example.com");
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.presenceOfElementLocated(By.id("mainContent")));
+takeScreenshot("homepage"); // Captures fully loaded page
+```
+
+### 4. Not Handling Screenshot Failures
+**Problem**: Screenshot code throws exceptions that are not caught, causing test failures.
+**Why It's Wrong**: Tests fail due to screenshot issues rather than actual test failures, and important test results are lost.
+**Correct Approach**: Wrap screenshot code in try-catch blocks.
+```java
+// Wrong way
+@AfterMethod
+public void afterMethod(ITestResult result) {
+    if (result.getStatus() == ITestResult.FAILURE) {
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        FileHandler.copy(screenshot, new File("screenshots/failure.png"));
+        // IOException can crash the test
+    }
+}
+
+// Correct way
+@AfterMethod
+public void afterMethod(ITestResult result) {
+    if (result.getStatus() == ITestResult.FAILURE) {
+        try {
+            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            String fileName = result.getName() + "_" +
+                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".png";
+            FileHandler.copy(screenshot, new File("screenshots/failures/" + fileName));
+            System.out.println("Screenshot saved: " + fileName);
+        } catch (IOException e) {
+            System.err.println("Failed to capture screenshot: " + e.getMessage());
+        }
+    }
+}
+```
+
+### 5. Taking Too Many Screenshots
+**Problem**: Capturing screenshots after every single action, filling up disk space unnecessarily.
+**Why It's Wrong**: Wastes storage space, slows down test execution, and makes it hard to find relevant screenshots.
+**Correct Approach**: Take screenshots only at critical points and on failures.
+```java
+// Wrong way
+driver.get("https://example.com");
+takeScreenshot("step1");
+driver.findElement(By.id("username")).sendKeys("user");
+takeScreenshot("step2");
+driver.findElement(By.id("password")).sendKeys("pass");
+takeScreenshot("step3");
+driver.findElement(By.id("login")).click();
+takeScreenshot("step4");
+// Too many screenshots!
+
+// Correct way
+driver.get("https://example.com");
+loginPage.login("user", "pass");
+// Screenshot only on failure (in @AfterMethod)
+// Or at key checkpoints
+if (importantStep) {
+    takeScreenshot("critical_checkpoint");
+}
+```
+
+### 6. Not Including Context in Screenshot Names
+**Problem**: Using generic names like "screenshot1.png" without test or step information.
+**Why It's Wrong**: Cannot identify what test or scenario the screenshot belongs to, and difficult to correlate with test failures.
+**Correct Approach**: Include test name, timestamp, and optionally step description.
+```java
+// Wrong way
+takeScreenshot("screenshot.png");
+takeScreenshot("img1.png");
+
+// Correct way
+public void takeScreenshot(String testName, String step) {
+    String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String fileName = testName + "_" + step + "_" + timestamp + ".png";
+    // Example: loginTest_afterSubmit_20260121_143022.png
+}
+
+// Usage
+takeScreenshot("loginTest", "afterSubmit");
+takeScreenshot("checkoutTest", "paymentPage");
+```
+
+---
+
+## Best Practices
+
+### 1. Create a Centralized Screenshot Utility
+**Why**: Promotes code reuse, ensures consistency across tests, and makes maintenance easier.
+**How**: Build a utility class with methods for different screenshot scenarios.
+```java
+public class ScreenshotUtils {
+    private static final String SCREENSHOT_DIR = "test-output/screenshots/";
+
+    static {
+        new File(SCREENSHOT_DIR).mkdirs();
+    }
+
+    public static String captureScreenshot(WebDriver driver, String testName) {
+        try {
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = testName + "_" + timestamp + ".png";
+            String filePath = SCREENSHOT_DIR + fileName;
+
+            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            FileHandler.copy(screenshot, new File(filePath));
+
+            return filePath;
+        } catch (IOException e) {
+            System.err.println("Screenshot capture failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static String captureFailureScreenshot(WebDriver driver, String testName) {
+        return captureScreenshot(driver, testName + "_FAILED");
+    }
+
+    public static String captureElementScreenshot(WebElement element, String elementName) {
+        try {
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = elementName + "_element_" + timestamp + ".png";
+            String filePath = SCREENSHOT_DIR + fileName;
+
+            File screenshot = element.getScreenshotAs(OutputType.FILE);
+            FileHandler.copy(screenshot, new File(filePath));
+
+            return filePath;
+        } catch (IOException e) {
+            System.err.println("Element screenshot failed: " + e.getMessage());
+            return null;
+        }
+    }
+}
+```
+
+### 2. Organize Screenshots by Date and Test Type
+**Why**: Easy to locate screenshots, prevents directory clutter, and supports long-term test execution.
+**How**: Create directory structure based on date and test category.
+```java
+public static String captureScreenshot(WebDriver driver, String testName, String category) {
+    try {
+        // Create date-based directory structure
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String timestamp = new SimpleDateFormat("HHmmss").format(new Date());
+
+        // Structure: screenshots/2026-01-21/failures/loginTest_143022.png
+        String dirPath = "screenshots/" + date + "/" + category + "/";
+        new File(dirPath).mkdirs();
+
+        String fileName = testName + "_" + timestamp + ".png";
+        String filePath = dirPath + fileName;
+
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        FileHandler.copy(screenshot, new File(filePath));
+
+        return filePath;
+    } catch (IOException e) {
+        System.err.println("Screenshot failed: " + e.getMessage());
+        return null;
+    }
+}
+
+// Usage
+captureScreenshot(driver, "loginTest", "failures");
+captureScreenshot(driver, "smokeTest", "passed");
+```
+
+### 3. Capture Screenshots on Test Failures Automatically
+**Why**: Provides visual evidence of failures, aids in debugging, and creates test execution audit trail.
+**How**: Use TestNG listeners or @AfterMethod to capture failure screenshots.
+```java
+public class BaseTest {
+    protected WebDriver driver;
+
+    @AfterMethod
+    public void tearDown(ITestResult result) {
+        // Capture screenshot on failure
+        if (result.getStatus() == ITestResult.FAILURE) {
+            String screenshotPath = ScreenshotUtils.captureFailureScreenshot(
+                driver,
+                result.getName()
+            );
+
+            // Log screenshot path
+            System.out.println("Failure screenshot: " + screenshotPath);
+
+            // Attach to report (if using reporting tool)
+            // ExtentReports, Allure, etc.
+        }
+
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+### 4. Use Different Screenshot Types for Different Purposes
+**Why**: Element screenshots are faster and more focused, full-page captures show complete context, and viewport captures are good for quick checks.
+**How**: Choose appropriate screenshot type based on what you're testing.
+```java
+// 1. Viewport screenshot (default Selenium)
+public static void captureViewport(WebDriver driver, String name) {
+    File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+    FileHandler.copy(screenshot, new File("screenshots/" + name + ".png"));
+}
+
+// 2. Element screenshot (Selenium 4+)
+public static void captureElement(WebElement element, String name) {
+    File screenshot = element.getScreenshotAs(OutputType.FILE);
+    FileHandler.copy(screenshot, new File("screenshots/" + name + ".png"));
+}
+
+// 3. Full-page screenshot (using AShot library)
+public static void captureFullPage(WebDriver driver, String name) {
+    Screenshot screenshot = new AShot()
+        .shootingStrategy(ShootingStrategies.viewportPasting(1000))
+        .takeScreenshot(driver);
+    ImageIO.write(screenshot.getImage(), "PNG", new File("screenshots/" + name + ".png"));
+}
+
+// Usage - choose based on need
+captureViewport(driver, "quick_check");        // Fast, current view
+captureElement(loginButton, "button_state");    // Specific element
+captureFullPage(driver, "complete_page");       // Entire page
+```
+
+### 5. Implement Screenshot Cleanup Strategy
+**Why**: Prevents disk space issues, keeps directories manageable, and maintains only relevant screenshots.
+**How**: Implement automated cleanup of old screenshots.
+```java
+public class ScreenshotCleanup {
+
+    public static void cleanupOldScreenshots(int daysToKeep) {
+        File screenshotDir = new File("screenshots");
+        if (!screenshotDir.exists()) return;
+
+        long cutoffTime = System.currentTimeMillis() -
+            (daysToKeep * 24L * 60 * 60 * 1000);
+
+        deleteOldFiles(screenshotDir, cutoffTime);
+    }
+
+    private static void deleteOldFiles(File directory, long cutoffTime) {
+        File[] files = directory.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                deleteOldFiles(file, cutoffTime);
+                // Delete empty directories
+                if (file.list().length == 0) {
+                    file.delete();
+                }
+            } else if (file.lastModified() < cutoffTime) {
+                file.delete();
+                System.out.println("Deleted old screenshot: " + file.getName());
+            }
+        }
+    }
+}
+
+// Run before test suite
+@BeforeSuite
+public void cleanupBeforeSuite() {
+    ScreenshotCleanup.cleanupOldScreenshots(7); // Keep last 7 days
+}
+```
+
+### 6. Add Screenshots to Test Reports
+**Why**: Makes reports more informative, provides visual test evidence, and helps stakeholders understand test results.
+**How**: Integrate screenshots with reporting framework.
+```java
+// With ExtentReports
+@AfterMethod
+public void afterMethod(ITestResult result) {
+    if (result.getStatus() == ITestResult.FAILURE) {
+        try {
+            String screenshotPath = ScreenshotUtils.captureFailureScreenshot(
+                driver, result.getName()
+            );
+
+            // Add to ExtentReports
+            ExtentTestManager.getTest().addScreenCaptureFromPath(screenshotPath);
+            ExtentTestManager.getTest().fail("Test failed - see screenshot");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// With Allure
+@Attachment(value = "Failure Screenshot", type = "image/png")
+public byte[] saveFailureScreenshot(WebDriver driver) {
+    return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+}
+```
+
+### 7. Use Base64 Screenshots for HTML Reports
+**Why**: Screenshots embedded in single HTML file, easier to share reports, and no external file dependencies.
+**How**: Convert screenshots to Base64 encoding.
+```java
+public class ScreenshotUtils {
+
+    public static String getBase64Screenshot(WebDriver driver) {
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+    }
+
+    public static void embedInReport(WebDriver driver, String testName) {
+        String base64Screenshot = getBase64Screenshot(driver);
+
+        // Create HTML with embedded image
+        String html = "<h3>" + testName + "</h3>" +
+                     "<img src='data:image/png;base64," + base64Screenshot +
+                     "' alt='Screenshot'/>";
+
+        // Add to report
+        System.out.println("Screenshot embedded in report");
+    }
+}
+```
+
+---
+
 ## 💻 Practical Exercises
 
 ### Exercise 1: Basic Screenshot
