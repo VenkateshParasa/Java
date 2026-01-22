@@ -2530,7 +2530,7 @@ public class WindowUtility {
 
 **Navigation:**
 - [← Previous: Day 2 - Selenium Locators](day02_selenium_locators.md)
-- [Next: Day 4 - Waits and Synchronization →](day04_waits_synchronization.md)
+- [Next: Day 4 - Web Elements →](day04_web_elements.md)
 - [↑ Back to Week 1 Overview](README.md)
 
 ---

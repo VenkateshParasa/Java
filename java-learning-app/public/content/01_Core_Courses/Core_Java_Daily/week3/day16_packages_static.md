@@ -1927,6 +1927,195 @@ public class LibraryApp {
 
 ---
 
+### Beginner Exercises
+
+#### Exercise 1: Simple Package Organization System
+**Difficulty:** Beginner
+**Objective:** Practice creating and organizing classes into packages.
+
+**Problem:** Create a simple package structure for a school system with Student and Teacher classes in different packages.
+
+**Requirements:**
+- Create package `com.school.students` with Student class
+- Create package `com.school.teachers` with Teacher class
+- Student class: fields (rollNumber, name, grade), public methods (display())
+- Teacher class: fields (teacherId, name, subject), public methods (display())
+- Create Main class in `com.school.main` that uses both classes
+- Demonstrate proper import statements
+
+**Example Output:**
+```
+=== Student Info ===
+Roll Number: 101
+Name: Alice
+Grade: A
+
+=== Teacher Info ===
+Teacher ID: T001
+Name: Mr. Smith
+Subject: Mathematics
+```
+
+**Hint:** Package declaration must be first line, matching directory structure.
+
+---
+
+#### Exercise 2: Static Counter Application
+**Difficulty:** Easy
+**Objective:** Practice using static variables to track object count.
+
+**Problem:** Create a Book class that tracks total number of books created using static variable.
+
+**Requirements:**
+- Create Book class with fields: bookId, title, author
+- Add static variable `totalBooks` initialized to 0
+- Increment `totalBooks` in constructor
+- Create static method `getTotalBooks()` returning count
+- Create instance method `display()` showing book details
+- Test by creating multiple Book objects
+
+**Example Output:**
+```
+Book 1: Java Programming by John Doe
+Book 2: Python Basics by Jane Smith
+Book 3: Data Structures by Bob Johnson
+Total books created: 3
+```
+
+**Hint:** Static variable shared across all instances, incremented in constructor.
+
+---
+
+#### Exercise 3: Math Utility Class with Static Methods
+**Difficulty:** Beginner
+**Objective:** Create utility class with all static methods.
+
+**Problem:** Create MathHelper utility class with common mathematical operations as static methods.
+
+**Requirements:**
+- Create MathHelper class with private constructor
+- Add static methods:
+  - `factorial(int n)` - calculates factorial
+  - `isPrime(int n)` - checks if number is prime
+  - `gcd(int a, int b)` - finds greatest common divisor
+  - `lcm(int a, int b)` - finds least common multiple
+- Private constructor prevents instantiation
+- Test all methods from main
+
+**Example Output:**
+```
+Factorial of 5: 120
+Is 17 prime? true
+GCD of 24 and 36: 12
+LCM of 4 and 6: 12
+```
+
+**Hint:** Utility classes have all static methods and private constructor.
+
+---
+
+#### Exercise 4: Student ID Generator with Static Block
+**Difficulty:** Easy
+**Objective:** Practice static block initialization for ID generation.
+
+**Problem:** Create Student class with auto-generated IDs using static variables and static block.
+
+**Requirements:**
+- Create Student class with fields: studentId, name
+- Static variable `nextId` starting from 1000
+- Static variable `schoolCode` = "SCH"
+- Static block to initialize configuration (print initialization message)
+- Constructor auto-generates ID: schoolCode + nextId (e.g., "SCH1000")
+- Increment `nextId` after each student creation
+- Static method `displayConfiguration()` showing school code and next ID
+
+**Example Output:**
+```
+Static block: Initializing Student ID system...
+Configuration set: School Code = SCH, Starting ID = 1000
+
+Student created: SCH1000 - Alice
+Student created: SCH1001 - Bob
+Student created: SCH1002 - Charlie
+
+Current Configuration:
+School Code: SCH
+Next ID: 1003
+```
+
+**Hint:** Static block executes once when class loads, before any objects created.
+
+---
+
+#### Exercise 5: Multi-Package Calculator System
+**Difficulty:** Medium
+**Objective:** Create multi-package system demonstrating package organization and static imports.
+
+**Problem:** Build calculator system with separate packages for different operation types.
+
+**Requirements:**
+- Package `com.calculator.basic`: BasicOperations class with static methods (add, subtract, multiply, divide)
+- Package `com.calculator.advanced`: AdvancedOperations class with static methods (power, sqrt, absolute)
+- Package `com.calculator.main`: Main class using operations
+- Use static import for frequently used methods
+- Handle division by zero in divide method
+- Display formatted results
+
+**Example Output:**
+```
+=== Basic Operations ===
+10 + 5 = 15
+10 - 5 = 5
+10 * 5 = 50
+10 / 5 = 2.0
+
+=== Advanced Operations ===
+2^8 = 256.0
+√16 = 4.0
+|-15| = 15.0
+```
+
+**Hint:** Use `import static com.calculator.basic.BasicOperations.*` for static import.
+
+---
+
+#### Exercise 6: Singleton Configuration Manager
+**Difficulty:** Medium
+**Objective:** Implement singleton pattern with static instance and private constructor.
+
+**Problem:** Create AppConfig singleton class for application configuration management.
+
+**Requirements:**
+- Private constructor to prevent direct instantiation
+- Private static instance variable
+- Public static `getInstance()` method returning singleton instance
+- Instance variables: appName, version, maxUsers
+- Static block initializing default values
+- Methods: `getAppName()`, `getVersion()`, `getMaxUsers()`
+- Method `displayConfig()` showing all settings
+- Demonstrate that same instance returned every time
+
+**Example Output:**
+```
+Static block: Loading default configuration...
+
+Instance 1:
+App Name: MyApp
+Version: 1.0.0
+Max Users: 100
+
+Instance 2:
+App Name: MyApp
+Version: 1.0.0
+Max Users: 100
+
+Same instance? true
+```
+
+**Hint:** Singleton ensures only one instance exists, accessed via `getInstance()`.
+
+---
+
 ## 🎓 Key Takeaways
 
 1. **Packages** organize code and prevent naming conflicts

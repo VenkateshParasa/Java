@@ -664,6 +664,422 @@ Migration assessment complete!
 
 ---
 
+### Beginner Exercises
+
+Practice your Date & Time API skills with these beginner-friendly exercises!
+
+#### Exercise 1: Birthday Calculator
+**Difficulty:** Beginner
+**Objective:** Create a program that calculates how many days until your next birthday.
+
+**Requirements:**
+- Accept user's birthday (month and day)
+- Calculate days remaining until next birthday
+- Handle if birthday already passed this year
+- Display result in a user-friendly format
+
+**Expected Output:**
+```
+Enter your birth month (1-12): 5
+Enter your birth day (1-31): 15
+
+Your next birthday is in 114 days!
+Date: May 15, 2026
+```
+
+**Hints:**
+- Use `LocalDate.now()` to get today's date
+- Use `LocalDate.of()` to create birthday date
+- Use `ChronoUnit.DAYS.between()` to calculate difference
+- If birthday has passed, add 1 year to get next birthday
+
+---
+
+#### Exercise 2: Age Calculator
+**Difficulty:** Easy
+**Objective:** Build a program that calculates someone's exact age in years, months, and days.
+
+**Requirements:**
+- Accept user's birth date (year, month, day)
+- Calculate age using Period
+- Display age breakdown (years, months, days)
+- Handle invalid dates with proper error messages
+
+**Expected Output:**
+```
+Enter birth year: 1990
+Enter birth month (1-12): 6
+Enter birth day (1-31): 15
+
+You are 35 years, 7 months, and 7 days old!
+```
+
+**Code Template:**
+```java
+import java.time.*;
+import java.util.Scanner;
+
+public class AgeCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Get birth date from user
+        // Calculate age using Period.between()
+        // Display result
+    }
+}
+```
+
+---
+
+#### Exercise 3: Meeting Scheduler
+**Difficulty:** Medium
+**Objective:** Create a simple meeting scheduler that converts meeting times between timezones.
+
+**Requirements:**
+- Schedule a meeting at specific time in one timezone
+- Convert and display time for multiple timezones
+- Use at least 3 different timezones (e.g., New York, London, Tokyo)
+- Format output with timezone abbreviations
+
+**Expected Output:**
+```
+Meeting scheduled for: 2026-01-22 14:00 America/New_York
+
+Meeting times across timezones:
+  New York:  Wed, Jan 22, 2026 at 2:00 PM EST
+  London:    Wed, Jan 22, 2026 at 7:00 PM GMT
+  Tokyo:     Thu, Jan 23, 2026 at 4:00 AM JST
+```
+
+**Hints:**
+- Use `ZonedDateTime` for timezone-aware dates
+- Use `withZoneSameInstant()` to convert between timezones
+- Use `DateTimeFormatter` for formatted output
+
+---
+
+#### Exercise 4: Time Duration Calculator
+**Difficulty:** Easy
+**Objective:** Calculate time differences and format them in human-readable format.
+
+**Requirements:**
+- Accept two times from user (start and end)
+- Calculate duration between them
+- Display in hours, minutes, seconds format
+- Handle cases where end time is before start time
+
+**Expected Output:**
+```
+Enter start time (HH:mm:ss): 09:30:00
+Enter end time (HH:mm:ss): 17:45:30
+
+Duration: 8 hours, 15 minutes, 30 seconds
+Total minutes: 495
+Total seconds: 29730
+```
+
+**Code Template:**
+```java
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+public class DurationCalculator {
+    public static void main(String[] args) {
+        // Parse time inputs
+        // Calculate Duration.between()
+        // Extract hours, minutes, seconds
+        // Display formatted output
+    }
+}
+```
+
+---
+
+#### Exercise 5: Event Countdown Timer
+**Difficulty:** Medium
+**Objective:** Build a countdown timer showing days, hours, minutes until a future event.
+
+**Requirements:**
+- Accept future event date and time
+- Calculate time remaining from current moment
+- Display countdown in days, hours, minutes format
+- Update display (simulate with multiple calculations)
+- Handle past dates with appropriate message
+
+**Expected Output:**
+```
+Enter event date (yyyy-MM-dd): 2026-12-31
+Enter event time (HH:mm): 23:59
+
+Countdown to New Year's Eve 2026:
+  343 days, 9 hours, 37 minutes remaining
+
+Time components:
+  Days: 343
+  Hours: 9
+  Minutes: 37
+  Total hours: 8241
+```
+
+**Hints:**
+- Use `LocalDateTime` for event date/time
+- Use `Duration.between()` to calculate difference
+- Extract components using `toDays()`, `toHoursPart()`, `toMinutesPart()`
+- Check if event is in past using `isBefore()`
+
+---
+
+#### Exercise 6: Date Formatter Utility
+**Difficulty:** Beginner
+**Objective:** Create a utility that formats dates in multiple styles.
+
+**Requirements:**
+- Accept a date from user
+- Display date in 5 different formats:
+  - ISO format (yyyy-MM-dd)
+  - US format (MM/dd/yyyy)
+  - European format (dd/MM/yyyy)
+  - Long format (Month dd, yyyy)
+  - Full format with day name
+- Validate user input and handle errors
+
+**Expected Output:**
+```
+Enter date (yyyy-MM-dd): 2026-01-22
+
+Formatted dates:
+  ISO Format:      2026-01-22
+  US Format:       01/22/2026
+  European Format: 22/01/2026
+  Long Format:     January 22, 2026
+  Full Format:     Wednesday, January 22, 2026
+```
+
+**Code Template:**
+```java
+import java.time.*;
+import java.time.format.*;
+
+public class DateFormatter {
+    public static void main(String[] args) {
+        // Parse input date
+        // Create multiple DateTimeFormatter patterns
+        // Format and display each style
+    }
+}
+```
+
+---
+
+### Beginner Exercises
+
+Practice your Date & Time API skills with these beginner-friendly exercises!
+
+#### Exercise 1: Birthday Calculator
+**Difficulty:** Beginner
+**Objective:** Create a program that calculates how many days until your next birthday.
+
+**Requirements:**
+- Accept user's birthday (month and day)
+- Calculate days remaining until next birthday
+- Handle if birthday already passed this year
+- Display result in a user-friendly format
+
+**Expected Output:**
+```
+Enter your birth month (1-12): 5
+Enter your birth day (1-31): 15
+
+Your next birthday is in 114 days!
+Date: May 15, 2026
+```
+
+**Hints:**
+- Use `LocalDate.now()` to get today's date
+- Use `LocalDate.of()` to create birthday date
+- Use `ChronoUnit.DAYS.between()` to calculate difference
+- If birthday has passed, add 1 year to get next birthday
+
+---
+
+#### Exercise 2: Age Calculator
+**Difficulty:** Easy
+**Objective:** Build a program that calculates someone's exact age in years, months, and days.
+
+**Requirements:**
+- Accept user's birth date (year, month, day)
+- Calculate age using Period
+- Display age breakdown (years, months, days)
+- Handle invalid dates with proper error messages
+
+**Expected Output:**
+```
+Enter birth year: 1990
+Enter birth month (1-12): 6
+Enter birth day (1-31): 15
+
+You are 35 years, 7 months, and 7 days old!
+```
+
+**Code Template:**
+```java
+import java.time.*;
+import java.util.Scanner;
+
+public class AgeCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Get birth date from user
+        // Calculate age using Period.between()
+        // Display result
+    }
+}
+```
+
+---
+
+#### Exercise 3: Meeting Scheduler
+**Difficulty:** Medium
+**Objective:** Create a simple meeting scheduler that converts meeting times between timezones.
+
+**Requirements:**
+- Schedule a meeting at specific time in one timezone
+- Convert and display time for multiple timezones
+- Use at least 3 different timezones (e.g., New York, London, Tokyo)
+- Format output with timezone abbreviations
+
+**Expected Output:**
+```
+Meeting scheduled for: 2026-01-22 14:00 America/New_York
+
+Meeting times across timezones:
+  New York:  Wed, Jan 22, 2026 at 2:00 PM EST
+  London:    Wed, Jan 22, 2026 at 7:00 PM GMT
+  Tokyo:     Thu, Jan 23, 2026 at 4:00 AM JST
+```
+
+**Hints:**
+- Use `ZonedDateTime` for timezone-aware dates
+- Use `withZoneSameInstant()` to convert between timezones
+- Use `DateTimeFormatter` for formatted output
+
+---
+
+#### Exercise 4: Time Duration Calculator
+**Difficulty:** Easy
+**Objective:** Calculate time differences and format them in human-readable format.
+
+**Requirements:**
+- Accept two times from user (start and end)
+- Calculate duration between them
+- Display in hours, minutes, seconds format
+- Handle cases where end time is before start time
+
+**Expected Output:**
+```
+Enter start time (HH:mm:ss): 09:30:00
+Enter end time (HH:mm:ss): 17:45:30
+
+Duration: 8 hours, 15 minutes, 30 seconds
+Total minutes: 495
+Total seconds: 29730
+```
+
+**Code Template:**
+```java
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+public class DurationCalculator {
+    public static void main(String[] args) {
+        // Parse time inputs
+        // Calculate Duration.between()
+        // Extract hours, minutes, seconds
+        // Display formatted output
+    }
+}
+```
+
+---
+
+#### Exercise 5: Event Countdown Timer
+**Difficulty:** Medium
+**Objective:** Build a countdown timer showing days, hours, minutes until a future event.
+
+**Requirements:**
+- Accept future event date and time
+- Calculate time remaining from current moment
+- Display countdown in days, hours, minutes format
+- Update display (simulate with multiple calculations)
+- Handle past dates with appropriate message
+
+**Expected Output:**
+```
+Enter event date (yyyy-MM-dd): 2026-12-31
+Enter event time (HH:mm): 23:59
+
+Countdown to New Year's Eve 2026:
+  343 days, 9 hours, 37 minutes remaining
+
+Time components:
+  Days: 343
+  Hours: 9
+  Minutes: 37
+  Total hours: 8241
+```
+
+**Hints:**
+- Use `LocalDateTime` for event date/time
+- Use `Duration.between()` to calculate difference
+- Extract components using `toDays()`, `toHoursPart()`, `toMinutesPart()`
+- Check if event is in past using `isBefore()`
+
+---
+
+#### Exercise 6: Date Formatter Utility
+**Difficulty:** Beginner
+**Objective:** Create a utility that formats dates in multiple styles.
+
+**Requirements:**
+- Accept a date from user
+- Display date in 5 different formats:
+  - ISO format (yyyy-MM-dd)
+  - US format (MM/dd/yyyy)
+  - European format (dd/MM/yyyy)
+  - Long format (Month dd, yyyy)
+  - Full format with day name
+- Validate user input and handle errors
+
+**Expected Output:**
+```
+Enter date (yyyy-MM-dd): 2026-01-22
+
+Formatted dates:
+  ISO Format:      2026-01-22
+  US Format:       01/22/2026
+  European Format: 22/01/2026
+  Long Format:     January 22, 2026
+  Full Format:     Wednesday, January 22, 2026
+```
+
+**Code Template:**
+```java
+import java.time.*;
+import java.time.format.*;
+
+public class DateFormatter {
+    public static void main(String[] args) {
+        // Parse input date
+        // Create multiple DateTimeFormatter patterns
+        // Format and display each style
+    }
+}
+```
+
+---
+
 ## 🔑 Key Takeaways
 
 1. **LocalDate**: Date without time

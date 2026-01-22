@@ -1,4 +1,4 @@
-# Day 34: TestNG Part 5 - Parallel Execution & Suite Configuration
+# Day 22: TestNG Part 5 - Parallel Execution & Suite Configuration
 
 ## Learning Objectives
 
@@ -2332,9 +2332,10 @@ public class LoginTest extends BaseTest {
 
 ## Navigation
 
-- **Previous:** [Day 33: TestNG Part 4](./day33_testng_part4.md)
-- **Next:** [Day 35: Page Object Model Part 1](./day35_pom_part1.md)
-- **Week 5 Home:** [Week 5 Overview](./README.md)
+- **Previous:** [Day 21: TestNG Part 4](./day21_testng_part4.md)
+- **Next:** [Day 23: Page Object Model Part 1](../week4/day23_pom_part1.md)
+- **Week 3 Home:** [Week 3 Overview](./README.md)
+- **Course Home:** [Selenium Course Overview](../README.md)
 
 ---
 

@@ -694,6 +694,90 @@ Create a test suite that runs on 3 different mobile devices.
 
 ---
 
+## Common Mistakes
+
+### 1. Testing Only on Desktop Emulation
+- **Problem**: Relying solely on Chrome DevTools mobile emulation without testing on real devices
+- **Why it's wrong**: Emulation doesn't capture device-specific issues like memory constraints, actual touch behavior, or hardware limitations
+- **Correct approach**: Use emulation for rapid testing but validate critical flows on real devices or cloud-based device farms
+
+### 2. Ignoring Touch Event Differences
+- **Problem**: Assuming mouse click events work the same as touch tap events in automated tests
+- **Why it's wrong**: Touch events have different timing, behavior, and event propagation compared to mouse events. Some elements may only respond to touch events
+- **Correct approach**: Use appropriate touch simulation methods, test for touch-specific interactions like swipe and pinch, verify touch target sizes meet minimum standards (44x44 pixels)
+
+### 3. Not Testing Different Screen Orientations
+- **Problem**: Testing only in portrait mode without considering landscape orientation
+- **Why it's wrong**: Many mobile users switch orientations, layouts may break, navigation patterns differ
+- **Correct approach**: Test both portrait and landscape orientations, verify responsive layouts adapt correctly, ensure functionality works in both modes
+
+### 4. Overlooking Mobile-Specific Form Inputs
+- **Problem**: Not verifying that correct mobile keyboards appear (numeric, email, tel) for input fields
+- **Why it's wrong**: Wrong keyboard types frustrate users and increase input errors
+- **Correct approach**: Ensure input fields have correct type attributes (type="email", type="tel"), test that appropriate mobile keyboards appear
+
+### 5. Not Handling Mobile Network Conditions
+- **Problem**: Testing only on fast WiFi connections without simulating slower mobile networks
+- **Why it's wrong**: Real mobile users often have poor connectivity (3G, 4G with weak signal), pages may timeout or behave differently
+- **Correct approach**: Use network throttling in tests, simulate 3G and 4G conditions, verify app handles slow connections gracefully
+
+### 6. Forgetting to Test Tap Target Sizes
+- **Problem**: Not validating that clickable elements are large enough for finger taps
+- **Why it's wrong**: Small tap targets (< 44x44 pixels) cause user frustration and accidental clicks
+- **Correct approach**: Implement automated checks for minimum tap target sizes, verify spacing between clickable elements, test actual tap accuracy
+
+### 7. Ignoring Viewport Meta Tag Validation
+- **Problem**: Not verifying the viewport meta tag is present and correctly configured
+- **Why it's wrong**: Missing or incorrect viewport settings cause layout issues, unintended zooming, and poor mobile experience
+- **Correct approach**: Automatically verify viewport meta tag exists with correct settings, check that initial-scale and width are properly set
+
+### 8. Not Testing Hamburger Menu Functionality
+- **Problem**: Assuming desktop navigation works on mobile without testing mobile-specific menus
+- **Why it's wrong**: Hamburger menus have different interaction patterns, may have animation issues, or JavaScript binding problems
+- **Correct approach**: Explicitly test hamburger menu opening/closing, verify menu items are accessible, test navigation from mobile menu
+
+---
+
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What is the difference between mobile web testing and mobile app testing?**
+   - A: Mobile web testing involves testing websites accessed through mobile browsers, while mobile app testing involves testing native or hybrid applications installed on mobile devices. Mobile web tests use standard Selenium WebDriver, while app tests require tools like Appium.
+
+2. **Q: How do you test responsive design in Selenium?**
+   - A: By setting different browser window sizes using `driver.manage().window().setSize(new Dimension(width, height))` and verifying that layouts adjust appropriately for each viewport size.
+
+3. **Q: What is the purpose of mobile emulation in Chrome DevTools?**
+   - A: Mobile emulation allows testing mobile-specific features like touch interactions, device metrics, user agents, and screen sizes without needing actual mobile devices, making testing faster and more cost-effective.
+
+### Intermediate Level
+
+4. **Q: How do you implement mobile device emulation in Selenium?**
+   - A: Using ChromeOptions with the `mobileEmulation` experimental option, you can specify either a device name (like "iPhone 12 Pro") or custom device metrics (width, height, pixel ratio, user agent) to emulate mobile devices.
+
+5. **Q: What are breakpoints in responsive design testing and why are they important?**
+   - A: Breakpoints are specific viewport widths where a website's layout changes to adapt to different screen sizes (typically 320px, 768px, 1024px, 1920px). Testing at these points ensures the site displays correctly across all device categories (mobile, tablet, desktop).
+
+6. **Q: How do you handle touch interactions in Selenium for mobile web testing?**
+   - A: By using JavascriptExecutor to dispatch touch events (touchstart, touchmove, touchend) or by using the Actions class with click methods. For advanced interactions, you can create custom JavaScript to simulate swipes, pinch-zoom, and tap gestures.
+
+7. **Q: What challenges do you face when testing hamburger menus on mobile devices?**
+   - A: Common challenges include: menu not visible on desktop, animations causing timing issues, click events not triggering properly on touch devices, and menu overlays blocking other elements. These require proper waits and sometimes JavaScript clicks.
+
+### Advanced Level
+
+8. **Q: How would you implement network throttling in Selenium to test mobile network conditions?**
+   - A: Using Chrome DevTools Protocol (CDP) with Selenium 4, you can emulate network conditions like 3G or 4G using `devTools.send(Network.emulateNetworkConditions())` to test page load performance under slow network conditions common on mobile devices.
+
+9. **Q: How do you create a cross-device testing strategy for mobile web applications?**
+   - A: Create a device matrix covering popular devices (iPhone SE, iPhone 12, iPad, Pixel 5, Galaxy S20), implement parallel execution for efficiency, use cloud testing platforms for real device access, combine emulation for quick feedback with real device testing for validation, and prioritize devices based on user analytics.
+
+10. **Q: How would you detect and handle mobile-specific issues like tiny tap targets or horizontal scrolling?**
+    - A: Implement utility methods to check element dimensions (minimum 44x44 pixels for tap targets), use JavascriptExecutor to compare scrollWidth vs clientWidth to detect horizontal scrolling, validate viewport meta tags, and create custom assertions to verify mobile usability standards are met.
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 43: Cross-Browser Testing](./day43_cross_browser_testing.md)

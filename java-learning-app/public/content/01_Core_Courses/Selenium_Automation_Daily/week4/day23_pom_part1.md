@@ -2297,6 +2297,52 @@ public class RegistrationPage extends BasePage {
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **What is Page Object Model (POM) and why is it used in Selenium automation?**
+   - POM is a design pattern where each web page is represented as a class containing web elements and methods. Benefits: separates test logic from page-specific code, improves maintainability (UI changes only affect page classes), promotes code reusability, makes tests more readable, and reduces code duplication. It creates an object repository for web UI elements.
+
+2. **What are the main components of a Page Object class?**
+   - A Page Object class contains: WebDriver instance, locators (By objects or @FindBy annotations), constructor initializing WebDriver and optionally PageFactory, page methods performing actions on elements, and methods returning page objects for navigation. Example: LoginPage has username/password fields, login button, and login() method returning HomePage.
+
+3. **Explain the difference between implementing POM with and without PageFactory.**
+   - **Without PageFactory**: Manually find elements using `driver.findElement(By.id("username"))`, explicit locator declarations as By objects, more control over element finding. **With PageFactory**: Use @FindBy annotations, automatic element initialization with `PageFactory.initElements(driver, this)`, lazy initialization (elements found when first accessed), cleaner code. Example: `@FindBy(id="username") private WebElement usernameField;`
+
+4. **What is the purpose of a BasePage class in POM?**
+   - BasePage contains common methods and utilities that all page classes inherit. It includes: WebDriver instance, WebDriverWait initialization, common actions (click, type, getText), wait methods (waitForElement, waitForClickable), and utility methods. All page classes extend BasePage to avoid code duplication. Example: `public class LoginPage extends BasePage`
+
+### Intermediate Level
+
+5. **How do you handle page navigation in POM? Explain with an example.**
+   - Navigation methods should return new page objects representing the destination page. Example: `public HomePage clickLogin() { loginButton.click(); return new HomePage(driver); }` This allows method chaining and maintains page flow: `HomePage homePage = loginPage.login("user", "pass");` Each navigation creates appropriate page object, making tests fluent and readable.
+
+6. **What is method chaining (fluent interface) in POM and how do you implement it?**
+   - Method chaining allows calling multiple methods in sequence. Implement by returning 'this' from methods that don't navigate: `public LoginPage enterUsername(String username) { usernameField.sendKeys(username); return this; }` Usage: `loginPage.enterUsername("user").enterPassword("pass").clickLogin();` Makes code more readable and reduces intermediate variables.
+
+7. **Explain the @FindBy annotation in PageFactory. What are the different locator strategies available?**
+   - @FindBy annotation declares web element locators in PageFactory. Strategies: `@FindBy(id="elementId")`, `@FindBy(name="elementName")`, `@FindBy(className="class")`, `@FindBy(tagName="tag")`, `@FindBy(linkText="text")`, `@FindBy(partialLinkText="partial")`, `@FindBy(xpath="xpath")`, `@FindBy(css="cssSelector")`. Example: `@FindBy(id="submit") private WebElement submitButton;` Elements are initialized by PageFactory.initElements().
+
+8. **How do you handle dynamic elements in POM? Provide strategies.**
+   - Strategies: Use dynamic XPath with String.format(): `By.xpath(String.format("//div[@id='%s']", dynamicId))`, create methods accepting parameters: `getProductByName(String name)`, use explicit waits in page methods: `wait.until(ExpectedConditions.presenceOfElementLocated(locator))`, re-find elements after DOM updates to avoid StaleElementReferenceException, and use Lists for collection of elements: `@FindBy(className="product") List<WebElement> products;`
+
+### Advanced Level
+
+9. **Design a complete POM framework architecture for an e-commerce application. Explain each layer.**
+    - **Layer Structure**: **1. Test Layer** (tests/ - Test classes with @Test methods, assertions, test data, extends BaseTest), **2. Page Layer** (pages/ - Page classes with locators and methods, BasePage with common utilities), **3. Utility Layer** (utils/ - ScreenshotUtils, WaitUtils, ExcelReader, ConfigReader), **4. Configuration** (config.properties - URLs, timeouts, browser settings), **5. Test Data** (testdata/ - Excel/JSON/CSV files, DataProvider classes), **6. Reports** (reports/ - ExtentReports, logs, screenshots). This separation ensures maintainability, scalability, and clear responsibilities.
+
+10. **Compare maintenance effort between tests written without POM vs. with POM. Provide specific scenarios.**
+    - **Without POM**: If login button ID changes, must update 50 test files. Adding new verification requires duplicating code across all tests. Common utility needs copying to multiple classes. **With POM**: Login button ID change needs update only in LoginPage class (1 file). New verification added once in page class, available to all tests. Utilities in BasePage used by all pages. Maintenance time: 50 hours without POM vs. 2 hours with POM. Code lines: 10,000 vs. 3,000. POM provides 95% maintenance reduction.
+
+11. **How do you implement wait strategies within page objects? Explain with examples covering different scenarios.**
+    - Implement waits in BasePage: `protected WebElement waitForElement(By locator) { return wait.until(ExpectedConditions.presenceOfElementLocated(locator)); }` Use in page methods: `public void clickLogin() { waitForClickable(loginButton).click(); }` For dynamic content: `public boolean waitForSuccessMessage() { try { wait.until(ExpectedConditions.visibilityOf(successMsg)); return true; } catch(TimeoutException e) { return false; }}` For AJAX: `wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingSpinner));` This encapsulates waits in page layer, keeping tests clean.
+
+12. **Explain how to handle complex scenarios like multi-step forms, dynamic tables, and modals in POM architecture.**
+    - **Multi-step forms**: Create separate page class for each step or single class with methods for each step. Return next step page object: `public Step2Page completeStep1() { fillStep1(); nextButton.click(); return new Step2Page(driver); }` **Dynamic tables**: Create TablePage with methods: `getCellValue(row, col)`, `findRowByValue(columnName, value)`, `getAllRows()`. Use List<WebElement> for rows. **Modals**: Create ModalPage or modal methods in main page: `public ProfileModal openProfileModal()`, `public ProfileModal closeModal()`. Wait for modal visibility/invisibility. Check `isModalDisplayed()` before interaction. This keeps page objects focused and testable.
+
+---
+
 ## Additional Resources
 
 - Selenium Documentation: https://www.selenium.dev/documentation/

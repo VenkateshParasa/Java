@@ -3384,10 +3384,10 @@ Implement a test for HTML5 drag and drop using JavaScript workaround.
 ---
 
 ## Navigation
-- [Previous: Day 8 - Double Click and Context Click](./day08_double_click_context_click.md)
-- [Next: Day 10 - Keyboard Actions](./day10_keyboard_actions.md)
+- [Previous: Day 8 - Actions Class](./day08_actions_class.md)
+- [Next: Day 10 - Web Tables](./day10_web_tables.md)
 - [Week 2 Overview](./README.md)
-- [Course Home](../../README.md)
+- [Course Home](../README.md)
 
 ---
 

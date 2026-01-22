@@ -2229,9 +2229,9 @@ public class LoginTest {
 
 ## Navigation
 
-- **Previous:** [Day 37: External Data Sources](./day37_external_data.md)
-- **Next:** [Day 39: Logging & Reporting Part 2 - Extent Reports](./day39_logging_reporting_part2.md)
-- **Week 6 Home:** [Week 6 Overview](./README.md)
+- **Previous:** [Day 31: External Data Sources](./day31_external_data.md)
+- **Next:** [Day 33: Logging & Reporting Part 2](./day33_logging_reporting_part2.md)
+- **Week 5 Home:** [Week 5 Overview](./README.md)
 
 ---
 

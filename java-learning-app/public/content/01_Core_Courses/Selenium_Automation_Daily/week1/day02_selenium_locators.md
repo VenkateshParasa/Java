@@ -1401,4 +1401,44 @@ public class Exercise5Solution {
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What are locators in Selenium and why are they important?**
+   - A: Locators are strategies used to identify and locate web elements on a web page. They are fundamental to Selenium automation because every interaction with a web page (clicking buttons, entering text, selecting options) requires finding elements first. Without proper locators, we cannot perform any actions on web elements.
+
+2. **Q: List all 8 basic locator strategies in Selenium.**
+   - A: The 8 basic locator strategies are: 1) ID, 2) Name, 3) Class Name, 4) Tag Name, 5) Link Text, 6) Partial Link Text, 7) CSS Selector, and 8) XPath. Each has different use cases and performance characteristics.
+
+3. **Q: What is the difference between findElement() and findElements() methods?**
+   - A: findElement() returns a single WebElement (the first match) and throws NoSuchElementException if not found, while findElements() returns a List<WebElement> containing all matching elements and returns an empty list (no exception) if no elements are found. findElements() is useful when working with multiple elements or checking if an element exists without catching exceptions.
+
+### Intermediate Level
+
+4. **Q: Why is ID considered the best locator strategy, and when should you avoid using it?**
+   - A: ID is the best locator because it's the fastest, most reliable (IDs should be unique per HTML specification), and least likely to break. However, you should avoid using it when: 1) The element doesn't have an ID attribute, 2) The ID is dynamically generated and changes on each page load, or 3) The ID is not unique on the page (violating HTML standards but sometimes happens).
+
+5. **Q: What is the difference between absolute XPath and relative XPath? Which one should be preferred and why?**
+   - A: Absolute XPath starts from the root node (html) and traverses the complete DOM path (e.g., /html/body/div[1]/form/input[1]), while relative XPath starts from any node in the DOM (e.g., //input[@id='username']). Relative XPath should always be preferred because absolute XPath is extremely brittle and breaks with any HTML structure change, making it unreliable for test automation.
+
+6. **Q: How do you locate an element that has multiple CSS classes?**
+   - A: You cannot use By.className() with multiple classes as it only accepts a single class name. Instead, use CSS Selector with dot notation: By.cssSelector(".class1.class2") or XPath with contains: By.xpath("//button[contains(@class, 'btn-primary')]"). The CSS selector approach chains classes without spaces between them.
+
+7. **Q: Explain the difference between linkText and partialLinkText locators with examples.**
+   - A: linkText requires an exact, case-sensitive match of the entire link text (e.g., By.linkText("Sign Up Today") matches only that exact text), while partialLinkText matches any substring of the link text (e.g., By.partialLinkText("Sign Up") would match "Sign Up Today", "Sign Up Now", etc.). Both only work with <a> tags (hyperlinks).
+
+### Advanced Level
+
+8. **Q: What are the characteristics of a good locator, and how do you verify if your locator is unique?**
+   - A: Good locators should be: 1) Unique (identifies exactly one element), 2) Stable (doesn't break with minor UI changes), 3) Readable (easy to understand and maintain), and 4) Fast (quick to execute). To verify uniqueness, use driver.findElements(locator).size() during development - it should return 1. You can also test in browser console using document.querySelectorAll() for CSS or $x() for XPath.
+
+9. **Q: How would you handle dynamically generated IDs in Selenium? Provide multiple approaches.**
+   - A: For dynamic IDs like "user_12345_field", use partial matching: 1) CSS with attribute selectors: By.cssSelector("[id^='user_'][id$='_field']") (starts-with and ends-with), 2) XPath with starts-with: By.xpath("//input[starts-with(@id, 'user_')]"), 3) XPath with contains: By.xpath("//input[contains(@id, '_field')]"), or 4) Use other stable attributes like data-testid, name, or class instead of relying on the dynamic ID.
+
+10. **Q: What is StaleElementReferenceException and how do you handle it in your automation framework?**
+    - A: StaleElementReferenceException occurs when an element was found in the DOM but the DOM has changed since (page refresh, AJAX update, etc.), making the reference stale. To handle it: 1) Re-locate the element after DOM changes, 2) Use explicit waits to ensure element stability, 3) Create a retry mechanism in utility methods, 4) Use Page Object Model to encapsulate element location logic, or 5) Use ExpectedConditions.refreshed() in WebDriverWait to wait for the element to be refreshed.
+
+---
+
 **Practice regularly to master locators - they are the foundation of Selenium automation!**

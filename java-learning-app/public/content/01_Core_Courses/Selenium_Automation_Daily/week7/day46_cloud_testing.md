@@ -446,6 +446,134 @@ Compare BrowserStack, Sauce Labs, and LambdaTest for your needs.
 
 ---
 
+## Common Mistakes
+
+### 1. Hardcoding Credentials in Source Code
+- **Problem**: Putting BrowserStack, Sauce Labs, or LambdaTest credentials directly in test code
+- **Why it's wrong**: Security risk, credentials get exposed in version control, difficult to rotate keys
+- **Correct approach**: Use environment variables or CI/CD secrets management, load credentials from secure configuration files excluded from version control
+
+### 2. Running All Tests on Cloud Platforms
+- **Problem**: Running entire test suite including simple unit tests on expensive cloud platforms
+- **Why it's wrong**: Wastes money, slower execution due to network latency, unnecessary for tests that don't need cross-browser validation
+- **Correct approach**: Run only cross-browser, integration, and E2E tests on cloud. Keep unit and simple tests local. Use test groups to separate
+
+### 3. Not Setting Test Names and Build Info
+- **Problem**: Running tests without setting meaningful names, build numbers, or project information
+- **Why it's wrong**: Makes debugging impossible, can't track test history, reports are meaningless, team can't identify issues
+- **Correct approach**: Always set test name, build number, project name in capabilities. Use CI build numbers and commit hashes for traceability
+
+### 4. Ignoring Parallel Execution Limits
+- **Problem**: Running more parallel tests than subscription allows or not optimizing parallel count
+- **Why it's wrong**: Tests queue unnecessarily, wasting time, or exceeding limits causing failures
+- **Correct approach**: Know your parallel execution limits, configure TestNG thread-count accordingly, monitor concurrent session usage
+
+### 5. Not Enabling Debug Features
+- **Problem**: Disabling video recording, screenshots, and network logs to save costs
+- **Why it's wrong**: When tests fail, debugging is nearly impossible without visual evidence and network information
+- **Correct approach**: Enable debug features at least for failed tests, use conditional recording, balance cost with debugging needs
+
+### 6. Missing Local Testing Setup
+- **Problem**: Not configuring local testing tunnels when testing internal/localhost applications
+- **Why it's wrong**: Cloud browsers can't access internal URLs, tests fail with connection errors
+- **Correct approach**: Use BrowserStack Local, Sauce Connect, or LambdaTest Tunnel for testing applications on internal networks
+
+### 7. Not Handling Session Timeouts
+- **Problem**: Running long tests without considering platform timeout limits
+- **Why it's wrong**: Tests get terminated mid-execution, causing false failures, wasting parallel execution slots
+- **Correct approach**: Keep tests under platform timeout limits (typically 30 minutes), split long tests, use appropriate timeout capabilities
+
+### 8. Failing to Mark Test Status
+- **Problem**: Not marking tests as passed/failed in cloud platform dashboard
+- **Why it's wrong**: All tests show as "completed" regardless of outcome, can't track pass/fail rates, reports are inaccurate
+- **Correct approach**: Use platform-specific JavaScript executors to mark test status in @AfterMethod based on ITestResult
+
+---
+
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What is cloud testing and what are its main benefits?**
+   - A: Cloud testing involves running automated tests on cloud-based infrastructure and devices. Main benefits include: access to 1000+ browser/device combinations without maintaining physical devices, instant scalability, no infrastructure maintenance, automatic screenshots and videos, integrated debugging tools, and parallel execution capabilities.
+
+2. **Q: Name three popular cloud testing platforms.**
+   - A: BrowserStack, Sauce Labs, and LambdaTest are three popular cloud testing platforms that provide access to real browsers and devices, parallel execution, and comprehensive testing features.
+
+3. **Q: How do you connect your Selenium tests to BrowserStack?**
+   - A: Use RemoteWebDriver with BrowserStack's Hub URL (https://USERNAME:ACCESS_KEY@hub-cloud.browserstack.com/wd/hub), set desired capabilities for browser, OS, and platform, and configure BrowserStack-specific capabilities like debug, video, and network logs.
+
+### Intermediate Level
+
+4. **Q: What are desired capabilities in cloud testing and why are they important?**
+   - A: Desired capabilities are key-value pairs that specify the test environment configuration (browser, version, OS, resolution, device). They're important because they tell the cloud platform exactly what environment to provision for test execution, enabling precise test environment control.
+
+5. **Q: How would you implement parallel execution on cloud platforms?**
+   - A: Use TestNG's parallel execution features (parallel="tests" or parallel="methods"), configure thread-count based on cloud subscription limits, use ThreadLocal for WebDriver instances, create a test suite XML with multiple test configurations, and leverage cloud platform's concurrent session capabilities.
+
+6. **Q: Explain the difference between browserstack.debug and browserstack.console capabilities.**
+   - A: browserstack.debug enables additional debugging features like step-by-step screenshots and visual logs in BrowserStack dashboard. browserstack.console captures browser console logs (JavaScript errors, warnings) which are displayed in the test session, helping debug client-side issues.
+
+7. **Q: How do you handle test status reporting to cloud platforms?**
+   - A: Use JavascriptExecutor to execute platform-specific commands (like "browserstack_executor") to mark tests as passed or failed, send custom test names and build identifiers, include this in test teardown methods, and integrate with TestNG listeners to automatically update status based on test results.
+
+### Advanced Level
+
+8. **Q: How would you optimize costs when using cloud testing platforms?**
+   - A: Strategies include: running only critical tests (smoke tests) on cloud while running comprehensive tests locally, using test grouping to run selective tests, implementing proper test parallelization to reduce execution time, utilizing local testing features for internal applications, monitoring concurrent session usage, and choosing the right pricing plan based on actual usage patterns.
+
+9. **Q: Compare BrowserStack, Sauce Labs, and LambdaTest in terms of features and use cases.**
+   - A: BrowserStack offers 2000+ browser/device combinations, strong real device support, and is popular for comprehensive testing. Sauce Labs provides 900+ combinations with excellent CI/CD integrations and is preferred for enterprise use. LambdaTest offers 2000+ combinations, competitive pricing, a free tier, and is good for startups and growing teams. All provide parallel testing, debugging tools, and screenshots/videos.
+
+10. **Q: How would you implement a hybrid testing strategy combining local and cloud testing?**
+    - A: Create a flexible framework that: uses configuration to switch between local and cloud execution modes, runs smoke tests on cloud for quick feedback on every commit, executes comprehensive regression tests locally overnight, leverages cloud for cross-browser testing while using local for development, implements local testing feature for internal applications on cloud platforms, and makes the decision based on test type, urgency, and available resources.
+
+---
+
+## Common Mistakes
+
+### 1. Hardcoding Credentials in Source Code
+- **Problem**: Putting BrowserStack, Sauce Labs, or LambdaTest credentials directly in test code
+- **Why it's wrong**: Security risk, credentials get exposed in version control, difficult to rotate keys
+- **Correct approach**: Use environment variables or CI/CD secrets management, load credentials from secure configuration files excluded from version control
+
+### 2. Running All Tests on Cloud Platforms
+- **Problem**: Running entire test suite including simple unit tests on expensive cloud platforms
+- **Why it's wrong**: Wastes money, slower execution due to network latency, unnecessary for tests that don't need cross-browser validation
+- **Correct approach**: Run only cross-browser, integration, and E2E tests on cloud. Keep unit and simple tests local. Use test groups to separate
+
+### 3. Not Setting Test Names and Build Info
+- **Problem**: Running tests without setting meaningful names, build numbers, or project information
+- **Why it's wrong**: Makes debugging impossible, can't track test history, reports are meaningless, team can't identify issues
+- **Correct approach**: Always set test name, build number, project name in capabilities. Use CI build numbers and commit hashes for traceability
+
+### 4. Ignoring Parallel Execution Limits
+- **Problem**: Running more parallel tests than subscription allows or not optimizing parallel count
+- **Why it's wrong**: Tests queue unnecessarily, wasting time, or exceeding limits causing failures
+- **Correct approach**: Know your parallel execution limits, configure TestNG thread-count accordingly, monitor concurrent session usage
+
+### 5. Not Enabling Debug Features
+- **Problem**: Disabling video recording, screenshots, and network logs to save costs
+- **Why it's wrong**: When tests fail, debugging is nearly impossible without visual evidence and network information
+- **Correct approach**: Enable debug features at least for failed tests, use conditional recording, balance cost with debugging needs
+
+### 6. Missing Local Testing Setup
+- **Problem**: Not configuring local testing tunnels when testing internal/localhost applications
+- **Why it's wrong**: Cloud browsers can't access internal URLs, tests fail with connection errors
+- **Correct approach**: Use BrowserStack Local, Sauce Connect, or LambdaTest Tunnel for testing applications on internal networks
+
+### 7. Not Handling Session Timeouts
+- **Problem**: Running long tests without considering platform timeout limits
+- **Why it's wrong**: Tests get terminated mid-execution, causing false failures, wasting parallel execution slots
+- **Correct approach**: Keep tests under platform timeout limits (typically 30 minutes), split long tests, use appropriate timeout capabilities
+
+### 8. Failing to Mark Test Status
+- **Problem**: Not marking tests as passed/failed in cloud platform dashboard
+- **Why it's wrong**: All tests show as "completed" regardless of outcome, can't track pass/fail rates, reports are inaccurate
+- **Correct approach**: Use platform-specific JavaScript executors to mark test status in @AfterMethod based on ITestResult
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 45: Docker & Containerization](./day45_docker_containerization.md)

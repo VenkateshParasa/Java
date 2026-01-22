@@ -2650,7 +2650,7 @@ public void safeElementInteraction(WebElement element) {
 ## Navigation
 
 - **Previous**: [Day 3: WebDriver Commands](./day03_webdriver_commands.md)
-- **Next**: [Day 5: Locator Strategies](./day05_locator_strategies.md)
+- **Next**: [Day 5: Waits](./day05_waits.md)
 - **[Back to Week 1 Overview](./README.md)**
 
 ---

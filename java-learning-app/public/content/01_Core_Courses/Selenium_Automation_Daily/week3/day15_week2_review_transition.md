@@ -1339,6 +1339,52 @@ You're ready for TestNG because you:
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **What are the main limitations of running Selenium tests without a testing framework?**
+   - No test isolation (tests run in one main method), no standardized reporting, cannot run specific tests independently, difficult to maintain, no test lifecycle management (@Before/@After), no built-in assertions, and cannot run tests in parallel. All setup and teardown must be manually coded in each test class.
+
+2. **What is TestNG and why is it preferred over the traditional main() method approach?**
+   - TestNG is a testing framework that provides structure for test automation. It offers annotations for test lifecycle (@BeforeMethod, @AfterMethod, @Test), built-in assertions, flexible test configuration via testng.xml, parallel execution, data-driven testing, test dependencies, and comprehensive HTML reports. It eliminates code duplication and makes tests more maintainable.
+
+3. **Explain the difference between @BeforeMethod and @BeforeClass annotations in TestNG.**
+   - @BeforeMethod runs before each @Test method in the class, useful for browser initialization for each test. @BeforeClass runs once before all @Test methods in the class, suitable for one-time setup like reading configuration files. Example: if you have 5 @Test methods, @BeforeMethod runs 5 times but @BeforeClass runs only once.
+
+4. **What is a Page Object Model (POM) and why will we learn it?**
+   - POM is a design pattern that creates an object repository for web UI elements. Each web page has a corresponding page class containing locators and methods. It separates test logic from page-specific code, improves maintainability (UI changes only require updating page classes), promotes reusability, and makes tests more readable. We'll learn it in Week 4.
+
+### Intermediate Level
+
+5. **How does TestNG solve the code duplication problem that exists with the main() method approach?**
+   - TestNG uses @BeforeMethod/@AfterMethod to centralize WebDriver setup and teardown. Instead of repeating `driver = new ChromeDriver(); driver.quit();` in every test, you write it once. Multiple tests inherit from BaseTest class containing common setup. Example: 10 tests need only one @BeforeMethod for driver initialization instead of 10 duplicate setups.
+
+6. **What is the difference between using System.out.println() for verification versus using Assert statements?**
+   - System.out.println() only displays messages but doesn't fail the test when conditions aren't met. Assert statements actually validate conditions and fail the test if assertions don't pass: `Assert.assertEquals(actual, expected, "Error message");` TestNG reports show pass/fail status, execution time, and failure reasons. println requires manual verification; asserts automate it.
+
+7. **Explain the concept of test configuration externalization. Why is it important?**
+   - Configuration externalization means storing test settings (URLs, browser types, timeouts) in external files (properties, JSON, XML) instead of hardcoding in test code. Benefits: easily switch between environments (dev/QA/prod), change settings without recompiling code, support multiple configurations, and enable team collaboration. Example: `driver.get(ConfigReader.getProperty("base.url"));` instead of `driver.get("https://example.com");`
+
+8. **What is the role of a BaseTest class in a test automation framework?**
+   - BaseTest is a parent class containing common setup/teardown methods that all test classes extend. It centralizes WebDriver initialization, browser configuration, implicit waits, and driver cleanup. All test classes inherit these capabilities. Example: `public class LoginTest extends BaseTest` automatically gets setUp() and tearDown() methods without duplicating code.
+
+### Advanced Level
+
+9. **Design a framework architecture for a Selenium test automation project. Explain each layer and its responsibilities.**
+   - **Test Layer**: Contains test classes with @Test methods, assertions, and test data. **Page Object Layer**: Page classes with locators and page methods, one class per page. **Utility Layer**: Helper classes (ScreenshotUtils, WaitUtils, ExcelReader). **Configuration Layer**: Properties files, ConfigReader, constants. **Reporting Layer**: ExtentReports, listeners, log4j configuration. **Data Layer**: Test data in Excel/JSON/CSV, DataProvider classes. This separation ensures maintainability, reusability, and clear responsibilities.
+
+10. **How would you implement a BrowserFactory pattern that supports multiple browsers and configurations? Provide design considerations.**
+    - Create a BrowserFactory class with a method `getDriver(String browser)` that uses switch-case to return appropriate driver: Chrome, Firefox, Edge, Safari. Each case configures browser-specific options (ChromeOptions, FirefoxOptions). Design considerations: read browser type from config file, support headless mode for CI/CD, configure timeouts centrally, handle mobile emulation, add proxy support, implement ThreadLocal for parallel execution, and provide environment-specific configurations (local vs CI).
+
+11. **Explain how you would migrate 20 existing Selenium scripts (with main methods) to a TestNG framework. What's your step-by-step approach?**
+    - **Step 1**: Analyze existing scripts to identify common patterns and reusable code. **Step 2**: Create framework structure (tests/, pages/, utils/ folders). **Step 3**: Create BaseTest class with @BeforeMethod/@AfterMethod for setup/teardown. **Step 4**: Convert one script as template: replace main() with @Test, move setup to @BeforeMethod, add assertions. **Step 5**: Create page objects for frequently used pages. **Step 6**: Convert remaining scripts using the template. **Step 7**: Create testng.xml for test organization. **Step 8**: Validate all tests run successfully. **Step 9**: Implement reporting and logging.
+
+12. **Compare the maintenance effort of 100 tests written without framework vs. with POM and TestNG. Provide specific scenarios.**
+    - **Without framework**: If login button locator changes, must update 100 test files. Browser configuration change requires modifying 100 files. Adding a new common utility means copying code to 100 places. Generating reports needs custom code in each test. **With framework**: Locator change needs update in one LoginPage class. Browser config change in one BaseTest or config file. New utility added once in utils package. Reports generated automatically by TestNG. Maintenance time: 100 hours without framework vs. 5 hours with framework for major changes.
+
+---
+
 **Congratulations on completing Week 2!** 🎉
 
 You've mastered advanced Selenium techniques and are now ready to learn professional testing frameworks. Week 3 will transform your automation scripts into a robust, maintainable test framework.

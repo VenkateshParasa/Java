@@ -2291,6 +2291,206 @@ public class TestConfigurationSystem {
 
 ---
 
+### Beginner Exercises
+
+#### Exercise 1: Throws Keyword Practice
+**Difficulty:** Beginner
+**Objective:** Practice declaring exceptions with throws keyword.
+
+**Problem:** Create a file reader utility that declares checked exceptions using throws keyword.
+
+**Requirements:**
+- Create `FileUtils` class with method `readFirstLine(String filename) throws IOException`
+- Method reads first line from file (use BufferedReader)
+- Caller must handle or declare the IOException
+- Create main method that catches the exception and displays error message
+- Test with existing and non-existing files
+
+**Example Output:**
+```
+=== Reading existing file ===
+First line: Hello World
+
+=== Reading non-existing file ===
+Error: File not found: missing.txt
+Please check the file path and try again.
+```
+
+**Hint:** `throws` keyword in method signature forces caller to handle exception.
+
+---
+
+#### Exercise 2: Checked vs Unchecked Exceptions
+**Difficulty:** Easy
+**Objective:** Understand difference between checked and unchecked exceptions.
+
+**Problem:** Create two validator classes demonstrating checked vs unchecked exceptions.
+
+**Requirements:**
+- Create `AgeValidator` with method `validateAge(int age)`
+  - Throws checked exception `InvalidAgeException` if age < 0 or age > 150
+- Create `EmailValidator` with method `validateEmail(String email)`
+  - Throws unchecked `IllegalArgumentException` if email invalid
+- Main method demonstrates:
+  - Checked exception must be caught or declared
+  - Unchecked exception optional to catch
+
+**Example Output:**
+```
+=== Age Validation (Checked) ===
+Age 25: Valid
+Age -5: Error - InvalidAgeException: Age cannot be negative: -5
+
+=== Email Validation (Unchecked) ===
+Email "test@example.com": Valid
+Email "invalid": Error - IllegalArgumentException: Email must contain @
+```
+
+**Hint:** Checked exceptions extend Exception; unchecked extend RuntimeException.
+
+---
+
+#### Exercise 3: Creating Custom Checked Exception
+**Difficulty:** Easy
+**Objective:** Practice creating custom checked exception class.
+
+**Problem:** Create custom exception for insufficient balance scenario in banking.
+
+**Requirements:**
+- Create `InsufficientBalanceException` extending Exception
+- Constructor takes: currentBalance, requestedAmount, message
+- Getter methods for balance and amount
+- Method `getShortfall()` returning difference
+- Use in `BankAccount` class `withdraw()` method
+- Demonstrate exception with detailed information
+
+**Example Output:**
+```
+=== Withdrawal Test ===
+Current Balance: $500.0
+Attempting to withdraw: $750.0
+
+Error: InsufficientBalanceException
+Message: Insufficient funds for withdrawal
+Current Balance: $500.0
+Requested Amount: $750.0
+Shortfall: $250.0
+```
+
+**Hint:** Custom exception stores additional context (balance, amount) for debugging.
+
+---
+
+#### Exercise 4: Creating Custom Unchecked Exception
+**Difficulty:** Easy
+**Objective:** Practice creating custom unchecked exception for validation errors.
+
+**Problem:** Create custom unchecked exception for product validation in inventory system.
+
+**Requirements:**
+- Create `InvalidProductException` extending RuntimeException
+- Constructor takes: productId, fieldName, errorReason
+- Getter methods for all fields
+- Use in `Product` class for validation:
+  - Product ID cannot be null or empty
+  - Price cannot be negative
+  - Quantity cannot be negative
+- No throws declaration needed (unchecked)
+
+**Example Output:**
+```
+=== Product Creation Tests ===
+Product 1: PROD-001, Price: $29.99, Quantity: 10 - Success
+
+Product 2: null, Price: $19.99, Quantity: 5
+Error: InvalidProductException
+Field: productId
+Reason: Product ID cannot be null or empty
+
+Product 3: PROD-003, Price: -10.0, Quantity: 5
+Error: InvalidProductException
+Field: price
+Reason: Price cannot be negative
+```
+
+**Hint:** Unchecked exceptions for programming errors that caller shouldn't be forced to handle.
+
+---
+
+#### Exercise 5: Exception Chaining Practice
+**Difficulty:** Medium
+**Objective:** Practice preserving exception cause through exception chaining.
+
+**Problem:** Create layered application showing exception propagation with cause preservation.
+
+**Requirements:**
+- Data layer: throws `DataAccessException` wrapping SQLException
+- Business layer: catches DataAccessException, throws `BusinessException` wrapping it
+- Presentation layer: catches BusinessException, displays full exception chain
+- Each layer adds context to exception message
+- Demonstrate using `getCause()` to access original exception
+
+**Example Output:**
+```
+=== Processing User Request ===
+[Presentation Layer] Processing user data...
+[Business Layer] Validating business rules...
+[Data Layer] Accessing database...
+[Data Layer] ERROR: Database connection failed
+
+Error at Presentation Layer:
+Exception: BusinessException
+Message: Failed to process user data
+Caused by: DataAccessException - Database operation failed
+Caused by: SQLException - Connection timeout
+
+Full Exception Chain:
+1. SQLException: Connection timeout
+2. DataAccessException: Database operation failed
+3. BusinessException: Failed to process user data
+```
+
+**Hint:** Pass original exception as cause parameter to preserve full error context.
+
+---
+
+#### Exercise 6: Multi-Exception Handling Scenario
+**Difficulty:** Medium
+**Objective:** Handle multiple exception types in comprehensive data processing system.
+
+**Requirements:**
+- Create `DataProcessor` class with method `processData(String[] data)`
+- Parse each data element (NumberFormatException)
+- Validate range 1-100 (IllegalArgumentException)
+- Store in array (ArrayIndexOutOfBoundsException)
+- Multiple catch blocks for different exceptions
+- Finally block for cleanup
+- Count successful and failed operations
+
+**Example Output:**
+```
+=== Processing Data ===
+Data: ["42", "abc", "75", "150", "88"]
+
+Processing element 0: "42" - Success (added to results)
+Processing element 1: "abc" - Failed (NumberFormatException: Invalid number format)
+Processing element 2: "75" - Success (added to results)
+Processing element 3: "150" - Failed (IllegalArgumentException: Value must be 1-100)
+Processing element 4: "88" - Success (added to results)
+
+=== Summary ===
+Total elements: 5
+Successful: 3
+Failed: 2
+Cleanup completed in finally block
+
+Valid Results: [42, 75, 88]
+```
+
+**Hint:** Use multiple catch blocks ordered specific to general, finally for cleanup.
+
+---
+
 ## 🎓 Key Takeaways
 
 1. **throws** declares exceptions a method might throw

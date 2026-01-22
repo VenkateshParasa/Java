@@ -3567,10 +3567,10 @@ public class ReportingBaseTest {
 
 ## Navigation
 
-- [Previous: Day 42 - Exception Handling & Framework Exceptions](../week6/day42_exception_handling_framework.md)
-- [Next: Day 44 - Framework Best Practices & Design Patterns](day44_framework_best_practices.md)
-- [Week 7 Overview](README.md)
-- [Course Home](../../README.md)
+- [Previous: Day 28 - Parallel Execution](day28_parallel_execution.md)
+- [Next: Day 30 - Advanced POM Patterns](../week5/day30_advanced_pom_patterns.md)
+- [Week 4 Overview](README.md)
+- [Course Home](../README.md)
 
 ---
 

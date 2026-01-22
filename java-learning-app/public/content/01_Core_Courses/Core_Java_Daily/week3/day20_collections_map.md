@@ -2370,6 +2370,333 @@ public class TestProductCatalog {
 
 ---
 
+### Beginner Exercises
+
+#### Exercise 1: HashMap Practice - Student Score Tracker
+**Difficulty:** Beginner
+**Objective:** Practice basic HashMap operations including put, get, remove, containsKey, and iteration.
+
+**Requirements:**
+- Create a HashMap to store student names (String) as keys and scores (Integer) as values
+- Add at least 5 students with their scores
+- Update a student's score using `put()`
+- Remove a student from the map
+- Check if a student exists using `containsKey()`
+- Display all students and scores using `entrySet()`
+- Find the student with the highest score
+- Calculate the average score
+
+**Expected Outcome:**
+```
+=== Student Score Tracker ===
+Adding students...
+✓ Alice: 85
+✓ Bob: 92
+✓ Charlie: 78
+✓ David: 88
+✓ Eve: 95
+
+Updating Bob's score to 90...
+
+Contains Charlie? true
+Contains Frank? false
+
+All students:
+Alice: 85
+Bob: 90
+Charlie: 78
+David: 88
+Eve: 95
+
+Removing Charlie...
+
+Highest score: Eve (95)
+Average score: 89.5
+```
+
+**Hints:**
+- Use `map.put(key, value)` to add or update entries
+- Use `Collections.max(map.entrySet(), Map.Entry.comparingByValue())` to find highest
+- Use `map.values().stream().mapToInt(Integer::intValue).average()` for average
+- Iterate with `for (Map.Entry<String, Integer> entry : map.entrySet())`
+
+---
+
+#### Exercise 2: LinkedHashMap Practice - Order History Tracker
+**Difficulty:** Beginner
+**Objective:** Understand LinkedHashMap's insertion order preservation compared to HashMap.
+
+**Requirements:**
+- Create a LinkedHashMap to store order IDs (String) and order amounts (Double)
+- Add 5 orders in a specific sequence
+- Display all orders and verify insertion order is maintained
+- Create a regular HashMap with the same data
+- Compare the iteration order between LinkedHashMap and HashMap
+- Add a new order and show it appears at the end in LinkedHashMap
+- Remove an order and add it back to demonstrate order change
+
+**Expected Outcome:**
+```
+=== Order History Tracker ===
+
+LinkedHashMap (maintains insertion order):
+Order-001: $150.50
+Order-003: $75.25
+Order-002: $200.00
+Order-005: $50.75
+Order-004: $125.00
+
+HashMap (no guaranteed order):
+Order-004: $125.00
+Order-001: $150.50
+Order-005: $50.75
+Order-002: $200.00
+Order-003: $75.25
+
+Adding new order to LinkedHashMap:
+Order-006: $300.00 (appears at end)
+
+Removing and re-adding Order-001:
+Now appears at end: Order-001: $150.50
+```
+
+**Hints:**
+- LinkedHashMap maintains insertion order automatically
+- HashMap order is unpredictable (based on hash codes)
+- Use same iteration method for both to see the difference
+- Re-adding an existing key updates value but changes position in LinkedHashMap
+
+---
+
+#### Exercise 3: TreeMap Practice - Sorted Product Catalog
+**Difficulty:** Easy
+**Objective:** Learn TreeMap's automatic sorting by keys and use TreeMap-specific methods.
+
+**Requirements:**
+- Create a TreeMap to store product names (String) as keys and prices (Double) as values
+- Add products in random order
+- Display products and verify they are sorted alphabetically
+- Use `firstKey()` and `lastKey()` to find first and last products
+- Use `headMap()` to get products before a certain name
+- Use `tailMap()` to get products after a certain name
+- Use `subMap()` to get products between two names
+- Demonstrate that TreeMap doesn't allow null keys
+
+**Expected Outcome:**
+```
+=== Sorted Product Catalog ===
+
+Adding products in random order:
+Zebra Toy, Mouse, Keyboard, Apple Phone, Book
+
+TreeMap (automatically sorted):
+Apple Phone: $999.99
+Book: $15.99
+Keyboard: $79.99
+Mouse: $25.99
+Zebra Toy: $12.50
+
+First product: Apple Phone
+Last product: Zebra Toy
+
+Products before 'Keyboard':
+Apple Phone: $999.99
+Book: $15.99
+
+Products from 'Keyboard' onwards:
+Keyboard: $79.99
+Mouse: $25.99
+Zebra Toy: $12.50
+
+Products between 'Book' and 'Mouse':
+Book: $15.99
+Keyboard: $79.99
+```
+
+**Hints:**
+- TreeMap sorts keys using natural ordering (alphabetical for Strings)
+- `headMap(key)` returns entries with keys < specified key
+- `tailMap(key)` returns entries with keys >= specified key
+- `subMap(fromKey, toKey)` returns entries between keys (inclusive from, exclusive to)
+
+---
+
+#### Exercise 4: Map Iteration Practice - Employee Directory
+**Difficulty:** Easy
+**Objective:** Practice different ways to iterate through a Map.
+
+**Requirements:**
+- Create a HashMap with employee IDs (Integer) as keys and names (String) as values
+- Add 5 employees
+- Iterate using `entrySet()` and display both ID and name
+- Iterate using `keySet()` and retrieve values with `get()`
+- Iterate using `values()` to display only names
+- Use `forEach()` method (Java 8+) with lambda
+- Compare performance/readability of different iteration methods
+
+**Expected Outcome:**
+```
+=== Employee Directory ===
+
+Employees:
+101: Alice Johnson
+102: Bob Smith
+103: Charlie Brown
+104: Diana Prince
+105: Ethan Hunt
+
+Method 1 - Using entrySet() (most efficient):
+101 → Alice Johnson
+102 → Bob Smith
+103 → Charlie Brown
+104 → Diana Prince
+105 → Ethan Hunt
+
+Method 2 - Using keySet():
+Employee 101: Alice Johnson
+Employee 102: Bob Smith
+Employee 103: Charlie Brown
+Employee 104: Diana Prince
+Employee 105: Ethan Hunt
+
+Method 3 - Using values() (names only):
+Alice Johnson
+Bob Smith
+Charlie Brown
+Diana Prince
+Ethan Hunt
+
+Method 4 - Using forEach() lambda:
+ID 101: Alice Johnson
+ID 102: Bob Smith
+ID 103: Charlie Brown
+ID 104: Diana Prince
+ID 105: Ethan Hunt
+```
+
+**Hints:**
+- `entrySet()` is most efficient when you need both keys and values
+- `keySet()` + `get()` is less efficient (two operations per entry)
+- `values()` useful when you only need values
+- `forEach((k, v) -> ...)` is cleanest syntax for Java 8+
+
+---
+
+#### Exercise 5: Collections Utility Methods Practice - Number List Operations
+**Difficulty:** Medium
+**Objective:** Practice using Collections utility class methods for sorting, searching, and manipulating lists.
+
+**Requirements:**
+- Create an ArrayList with 10 random integers
+- Use `Collections.sort()` to sort in ascending order
+- Use `Collections.sort()` with `Collections.reverseOrder()` for descending
+- Use `Collections.shuffle()` to randomize the list
+- Use `Collections.reverse()` to reverse the list
+- Use `Collections.binarySearch()` to find an element (after sorting)
+- Use `Collections.min()` and `Collections.max()` to find extremes
+- Use `Collections.frequency()` to count occurrences
+- Use `Collections.fill()` to replace all elements
+- Use `Collections.swap()` to swap two elements
+
+**Expected Outcome:**
+```
+=== Collections Utility Methods ===
+
+Original list: [5, 2, 8, 1, 9, 3, 7, 4, 6, 2]
+
+After sort (ascending): [1, 2, 2, 3, 4, 5, 6, 7, 8, 9]
+
+After sort (descending): [9, 8, 7, 6, 5, 4, 3, 2, 2, 1]
+
+After shuffle: [3, 7, 1, 5, 2, 9, 4, 8, 2, 6]
+
+After reverse: [6, 2, 8, 4, 9, 2, 5, 1, 7, 3]
+
+Binary search for 5 (after sorting): Found at index 4
+
+Min: 1
+Max: 9
+
+Frequency of 2: 2 occurrences
+
+After swap(0, 9): [3, 2, 8, 4, 9, 2, 5, 1, 7, 6]
+
+After fill with 0: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+```
+
+**Hints:**
+- `Collections.sort()` modifies the list in-place
+- `binarySearch()` only works on sorted lists
+- `reverseOrder()` returns a Comparator for reverse sorting
+- `shuffle()` uses randomness, so output varies each run
+- Most methods work on List interface, not on arrays directly
+
+---
+
+#### Exercise 6: Comparable and Comparator Practice - Book Sorting
+**Difficulty:** Medium
+**Objective:** Understand the difference between Comparable and Comparator, and practice sorting with both.
+
+**Requirements:**
+- Create a Book class with title, author, year, and price
+- Implement Comparable<Book> to sort by title (natural ordering)
+- Create a list of 5 books
+- Sort using natural ordering (Comparable)
+- Create a Comparator to sort by author name
+- Create a Comparator to sort by publication year (newest first)
+- Create a Comparator to sort by price (ascending)
+- Use `Collections.sort()` with different Comparators
+- Demonstrate sorting with lambda expressions (Java 8+)
+
+**Expected Outcome:**
+```
+=== Book Sorting Practice ===
+
+Books added:
+1984 by George Orwell (1949) - $15.99
+To Kill a Mockingbird by Harper Lee (1960) - $12.99
+The Great Gatsby by F. Scott Fitzgerald (1925) - $10.99
+Pride and Prejudice by Jane Austen (1813) - $9.99
+The Catcher in the Rye by J.D. Salinger (1951) - $14.99
+
+Sorted by Title (Natural Order - Comparable):
+1. 1984 by George Orwell (1949) - $15.99
+2. Pride and Prejudice by Jane Austen (1813) - $9.99
+3. The Catcher in the Rye by J.D. Salinger (1951) - $14.99
+4. The Great Gatsby by F. Scott Fitzgerald (1925) - $10.99
+5. To Kill a Mockingbird by Harper Lee (1960) - $12.99
+
+Sorted by Author (Comparator):
+1. Pride and Prejudice by Jane Austen (1813) - $9.99
+2. The Great Gatsby by F. Scott Fitzgerald (1925) - $10.99
+3. To Kill a Mockingbird by Harper Lee (1960) - $12.99
+4. 1984 by George Orwell (1949) - $15.99
+5. The Catcher in the Rye by J.D. Salinger (1951) - $14.99
+
+Sorted by Year (Newest First):
+1. To Kill a Mockingbird by Harper Lee (1960) - $12.99
+2. The Catcher in the Rye by J.D. Salinger (1951) - $14.99
+3. 1984 by George Orwell (1949) - $15.99
+4. The Great Gatsby by F. Scott Fitzgerald (1925) - $10.99
+5. Pride and Prejudice by Jane Austen (1813) - $9.99
+
+Sorted by Price (Ascending):
+1. Pride and Prejudice by Jane Austen (1813) - $9.99
+2. The Great Gatsby by F. Scott Fitzgerald (1925) - $10.99
+3. To Kill a Mockingbird by Harper Lee (1960) - $12.99
+4. The Catcher in the Rye by J.D. Salinger (1951) - $14.99
+5. 1984 by George Orwell (1949) - $15.99
+```
+
+**Hints:**
+- Comparable: implement `compareTo()` for one default ordering
+- Comparator: create separate Comparator objects for multiple orderings
+- Lambda syntax: `(b1, b2) -> b1.getAuthor().compareTo(b2.getAuthor())`
+- Use `Comparator.comparing()` for cleaner code: `Comparator.comparing(Book::getYear)`
+- Use `reversed()` for descending order: `Comparator.comparing(Book::getYear).reversed()`
+
+---
+
 ## 🎓 Key Takeaways
 
 1. **HashMap**: Fast, no order, allows one null key

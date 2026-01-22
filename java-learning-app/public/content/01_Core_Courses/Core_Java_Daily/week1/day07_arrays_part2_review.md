@@ -2450,6 +2450,536 @@ public class StudentGradeSystem {
 
 ---
 
+## 💡 Best Practices
+
+### 1. Choose the Right Array Type for Your Data
+
+**Practice**: Use single-dimensional arrays for lists, two-dimensional arrays for tabular data, and jagged arrays when row lengths vary. Choose the structure that best represents your data.
+
+**Why It's Important**: The right array structure makes code more intuitive, efficient, and maintainable. Using the wrong structure leads to wasted memory or complex indexing logic.
+
+**Example**:
+```java
+// ❌ Poor Practice - Using 1D array for matrix data
+public class MatrixOperations {
+    // Storing 3x3 matrix as flat array
+    int[] matrix = new int[9];  // Row-major order?Column-major order?
+
+    void setValue(int row, int col, int value) {
+        matrix[row * 3 + col] = value;  // Complex calculation needed
+    }
+
+    int getValue(int row, int col) {
+        return matrix[row * 3 + col];  // Error-prone
+    }
+}
+
+// ✅ Best Practice - Use appropriate 2D array
+public class MatrixOperations {
+    int[][] matrix = new int[3][3];  // Clear structure
+
+    void setValue(int row, int col, int value) {
+        matrix[row][col] = value;  // Intuitive
+    }
+
+    int getValue(int row, int col) {
+        return matrix[row][col];  // Self-documenting
+    }
+}
+
+// ✅ Best Practice - Jagged array for variable-length rows
+public class StudentCourses {
+    // Different students take different numbers of courses
+    String[][] studentCourses = {
+        {"Math", "Physics", "Chemistry"},      // Student 1: 3 courses
+        {"English", "History"},                 // Student 2: 2 courses
+        {"CS", "Math", "Physics", "English"}   // Student 3: 4 courses
+    };
+}
+```
+
+---
+
+### 2. Always Validate Array Bounds Before Access
+
+**Practice**: Check if an index is within valid bounds (0 to length-1) before accessing array elements. Use defensive programming techniques.
+
+**Why It's Important**: ArrayIndexOutOfBoundsException is one of the most common runtime errors. Validation prevents crashes and provides better error messages.
+
+**Example**:
+```java
+// ❌ Poor Practice - No bounds checking
+public class GradeBook {
+    int[] grades = new int[50];
+    int count = 0;
+
+    void updateGrade(int index, int newGrade) {
+        grades[index] = newGrade;  // Crashes if index >= 50!
+    }
+
+    int getGrade(int index) {
+        return grades[index];  // No safety check
+    }
+}
+
+// ✅ Best Practice - Comprehensive validation
+public class GradeBook {
+    int[] grades = new int[50];
+    int count = 0;
+
+    void updateGrade(int index, int newGrade) {
+        if (index < 0 || index >= count) {
+            System.err.println("Error: Invalid index " + index +
+                             ". Valid range: 0-" + (count - 1));
+            return;
+        }
+        if (newGrade < 0 || newGrade > 100) {
+            System.err.println("Error: Invalid grade. Must be 0-100.");
+            return;
+        }
+        grades[index] = newGrade;
+    }
+
+    int getGrade(int index) {
+        if (index < 0 || index >= count) {
+            System.err.println("Error: Invalid index " + index);
+            return -1;  // Error indicator
+        }
+        return grades[index];
+    }
+
+    boolean isValidIndex(int index) {
+        return index >= 0 && index < count;
+    }
+}
+```
+
+---
+
+### 3. Use Arrays Utility Methods Instead of Manual Loops
+
+**Practice**: Leverage `java.util.Arrays` methods like `sort()`, `binarySearch()`, `equals()`, `fill()`, and `copyOf()` instead of writing manual implementations.
+
+**Why It's Important**: Built-in methods are optimized, well-tested, and less error-prone than manual implementations. They make code more concise and readable.
+
+**Example**:
+```java
+// ❌ Poor Practice - Manual implementations
+public class ArrayOperations {
+    // Manual sorting (bubble sort)
+    void sortArray(int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    // Manual array comparison
+    boolean arraysEqual(int[] arr1, int[] arr2) {
+        if (arr1.length != arr2.length) return false;
+        for (int i = 0; i < arr1.length; i++) {
+            if (arr1[i] != arr2[i]) return false;
+        }
+        return true;
+    }
+
+    // Manual array copying
+    int[] copyArray(int[] original) {
+        int[] copy = new int[original.length];
+        for (int i = 0; i < original.length; i++) {
+            copy[i] = original[i];
+        }
+        return copy;
+    }
+}
+
+// ✅ Best Practice - Use Arrays utility methods
+import java.util.Arrays;
+
+public class ArrayOperations {
+    void sortArray(int[] arr) {
+        Arrays.sort(arr);  // Optimized quicksort/mergesort
+    }
+
+    boolean arraysEqual(int[] arr1, int[] arr2) {
+        return Arrays.equals(arr1, arr2);  // Efficient comparison
+    }
+
+    int[] copyArray(int[] original) {
+        return Arrays.copyOf(original, original.length);  // Clean, clear
+    }
+
+    // Additional useful methods
+    void fillWithValue(int[] arr, int value) {
+        Arrays.fill(arr, value);  // Fill entire array
+    }
+
+    int searchSorted(int[] arr, int key) {
+        Arrays.sort(arr);  // Must be sorted first
+        return Arrays.binarySearch(arr, key);  // Fast O(log n) search
+    }
+
+    String arrayToString(int[] arr) {
+        return Arrays.toString(arr);  // Easy debugging
+    }
+}
+```
+
+---
+
+### 4. Initialize Arrays with Meaningful Default Values
+
+**Practice**: Initialize arrays with appropriate default values rather than leaving them with language defaults (0, false, null). This prevents logic errors from unexpected values.
+
+**Why It's Important**: Explicit initialization makes intent clear, prevents bugs from relying on defaults, and makes code self-documenting.
+
+**Example**:
+```java
+// ❌ Poor Practice - Relying on default values
+public class ProductInventory {
+    int[] quantities = new int[100];  // All zeros by default
+
+    boolean isAvailable(int productId) {
+        // Problem: 0 means "not set" or "out of stock"?
+        return quantities[productId] > 0;
+    }
+}
+
+// ✅ Best Practice - Explicit initialization with meaningful values
+public class ProductInventory {
+    int[] quantities = new int[100];
+    boolean[] initialized = new boolean[100];
+
+    // Use -1 to indicate "not set"
+    ProductInventory() {
+        Arrays.fill(quantities, -1);  // Explicit "not set" marker
+    }
+
+    void setQuantity(int productId, int quantity) {
+        if (productId >= 0 && productId < quantities.length) {
+            quantities[productId] = quantity;
+            initialized[productId] = true;
+        }
+    }
+
+    boolean isAvailable(int productId) {
+        if (!initialized[productId]) {
+            return false;  // Product not set up yet
+        }
+        return quantities[productId] > 0;  // Clear logic
+    }
+
+    boolean isInitialized(int productId) {
+        return initialized[productId];
+    }
+}
+
+// Another example - customer ratings
+public class RatingSystem {
+    double[] ratings = new double[1000];
+
+    // -1.0 means "no rating yet"
+    RatingSystem() {
+        Arrays.fill(ratings, -1.0);
+    }
+
+    boolean hasRating(int customerId) {
+        return ratings[customerId] >= 0;  // Clear distinction
+    }
+}
+```
+
+---
+
+### 5. Avoid Deep Copying When Not Needed (Reference Awareness)
+
+**Practice**: Understand the difference between shallow and deep copying. Use the appropriate copy method based on whether you need independent copies or shared references.
+
+**Why It's Important**: Unnecessary deep copying wastes memory and time. Unexpected sharing of references can cause bugs when modifications affect multiple "copies".
+
+**Example**:
+```java
+// ❌ Poor Practice - Modifying reference without understanding sharing
+public class TeamManager {
+    String[] team1 = {"Alice", "Bob", "Charlie"};
+    String[] team2 = team1;  // Reference copy!
+
+    void changeTeam2() {
+        team2[0] = "David";  // This also changes team1[0]!
+    }
+}
+
+// ✅ Best Practice - Explicit copying when independence needed
+public class TeamManager {
+    String[] team1 = {"Alice", "Bob", "Charlie"};
+
+    // Method 1: Create independent copy
+    String[] createIndependentTeam() {
+        return Arrays.copyOf(team1, team1.length);
+    }
+
+    // Method 2: System.arraycopy for performance
+    String[] createTeamCopy() {
+        String[] copy = new String[team1.length];
+        System.arraycopy(team1, 0, copy, 0, team1.length);
+        return copy;
+    }
+
+    // Method 3: Clone (less preferred, returns Object[])
+    String[] cloneTeam() {
+        return team1.clone();
+    }
+}
+
+// 2D array copying - understanding depth
+public class MatrixOperations {
+    int[][] matrix = {{1, 2}, {3, 4}};
+
+    // ❌ Shallow copy - rows still shared!
+    int[][] shallowCopy() {
+        return matrix.clone();  // Only copies outer array
+    }
+
+    // ✅ Deep copy - completely independent
+    int[][] deepCopy() {
+        int[][] copy = new int[matrix.length][];
+        for (int i = 0; i < matrix.length; i++) {
+            copy[i] = matrix[i].clone();  // Copy each row
+        }
+        return copy;
+    }
+}
+```
+
+---
+
+### 6. Use Enhanced For-Loop for Read-Only Iteration
+
+**Practice**: Use enhanced for-loop (for-each) when you only need to read values. Use traditional for-loop when you need indices or need to modify elements.
+
+**Why It's Important**: Enhanced for-loop is cleaner, prevents index errors, and clearly communicates read-only intent. It's also slightly more efficient.
+
+**Example**:
+```java
+// ❌ Poor Practice - Traditional loop for simple iteration
+public class StatisticsCalculator {
+    double calculateAverage(int[] numbers) {
+        int sum = 0;
+        for (int i = 0; i < numbers.length; i++) {  // Verbose
+            sum += numbers[i];
+        }
+        return (double) sum / numbers.length;
+    }
+
+    void displayElements(String[] names) {
+        for (int i = 0; i < names.length; i++) {  // Unnecessary index
+            System.out.println(names[i]);
+        }
+    }
+}
+
+// ✅ Best Practice - Enhanced for-loop for read-only
+public class StatisticsCalculator {
+    double calculateAverage(int[] numbers) {
+        int sum = 0;
+        for (int num : numbers) {  // Clean and clear
+            sum += num;
+        }
+        return (double) sum / numbers.length;
+    }
+
+    void displayElements(String[] names) {
+        for (String name : names) {  // Intent is obvious
+            System.out.println(name);
+        }
+    }
+
+    // ✅ Use traditional loop when index is needed
+    void displayWithIndex(String[] names) {
+        for (int i = 0; i < names.length; i++) {
+            System.out.println((i + 1) + ". " + names[i]);
+        }
+    }
+
+    // ✅ Use traditional loop for modification
+    void doubleAllValues(int[] numbers) {
+        for (int i = 0; i < numbers.length; i++) {
+            numbers[i] *= 2;  // Modifying elements
+        }
+    }
+}
+```
+
+---
+
+### 7. Document Array Dimensions and Expected Size
+
+**Practice**: Document what each dimension represents in multi-dimensional arrays. Include comments about expected sizes and index meanings.
+
+**Why It's Important**: Multi-dimensional arrays can be confusing. Clear documentation prevents bugs from misunderstanding dimensions and improves code maintainability.
+
+**Example**:
+```java
+// ❌ Poor Practice - Unclear dimensions
+public class SchoolData {
+    int[][] data = new int[5][30];  // What does this represent?
+
+    void updateData(int x, int y, int value) {
+        data[x][y] = value;  // What are x and y?
+    }
+}
+
+// ✅ Best Practice - Well-documented arrays
+public class SchoolData {
+    // Attendance data: [classIndex][dayIndex]
+    // 5 classes, 30 days in month
+    // Value: 1 = present, 0 = absent, -1 = not yet recorded
+    int[][] attendance = new int[5][30];
+
+    // Class names corresponding to first dimension
+    String[] classNames = {
+        "Math 101",
+        "Science 101",
+        "English 101",
+        "History 101",
+        "PE 101"
+    };
+
+    /**
+     * Records attendance for a student
+     * @param classIndex Index of the class (0-4)
+     * @param dayOfMonth Day of the month (1-30, will be converted to 0-29)
+     * @param isPresent true if student was present
+     */
+    void recordAttendance(int classIndex, int dayOfMonth, boolean isPresent) {
+        if (classIndex < 0 || classIndex >= attendance.length) {
+            System.err.println("Invalid class index: " + classIndex);
+            return;
+        }
+
+        int dayIndex = dayOfMonth - 1;  // Convert to 0-based
+        if (dayIndex < 0 || dayIndex >= attendance[classIndex].length) {
+            System.err.println("Invalid day: " + dayOfMonth);
+            return;
+        }
+
+        attendance[classIndex][dayIndex] = isPresent ? 1 : 0;
+    }
+
+    /**
+     * Calculates attendance rate for a class
+     * @param classIndex Index of the class (0-4)
+     * @return Attendance rate as percentage (0-100)
+     */
+    double getAttendanceRate(int classIndex) {
+        if (classIndex < 0 || classIndex >= attendance.length) {
+            return -1;
+        }
+
+        int present = 0;
+        int recorded = 0;
+
+        for (int day = 0; day < attendance[classIndex].length; day++) {
+            if (attendance[classIndex][day] != -1) {
+                recorded++;
+                if (attendance[classIndex][day] == 1) {
+                    present++;
+                }
+            }
+        }
+
+        if (recorded == 0) return 0;
+        return (double) present / recorded * 100;
+    }
+}
+```
+
+---
+
+### 8. Consider ArrayList for Dynamic Size Requirements
+
+**Practice**: Use `ArrayList` instead of arrays when size may change frequently. Arrays are fixed-size; `ArrayList` grows dynamically.
+
+**Why It's Important**: Fixed-size arrays require manual resizing logic (creating new array, copying elements). `ArrayList` handles this automatically, making code simpler and less error-prone.
+
+**Example**:
+```java
+// ❌ Poor Practice - Manual array resizing
+public class StudentList {
+    String[] students = new String[10];
+    int count = 0;
+
+    void addStudent(String name) {
+        if (count >= students.length) {
+            // Manual resizing - error-prone
+            String[] newArray = new String[students.length * 2];
+            for (int i = 0; i < students.length; i++) {
+                newArray[i] = students[i];
+            }
+            students = newArray;
+        }
+        students[count++] = name;
+    }
+
+    void removeStudent(String name) {
+        // Manual removal - complex
+        int index = -1;
+        for (int i = 0; i < count; i++) {
+            if (students[i].equals(name)) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index != -1) {
+            for (int i = index; i < count - 1; i++) {
+                students[i] = students[i + 1];
+            }
+            students[--count] = null;
+        }
+    }
+}
+
+// ✅ Best Practice - Use ArrayList for dynamic needs
+import java.util.ArrayList;
+
+public class StudentList {
+    ArrayList<String> students = new ArrayList<>();
+
+    void addStudent(String name) {
+        students.add(name);  // Automatic resizing
+    }
+
+    void removeStudent(String name) {
+        students.remove(name);  // Automatic shifting
+    }
+
+    int getCount() {
+        return students.size();
+    }
+
+    String getStudent(int index) {
+        if (index >= 0 && index < students.size()) {
+            return students.get(index);
+        }
+        return null;
+    }
+}
+
+// Note: Use arrays when:
+// 1. Size is fixed and known in advance
+// 2. Need maximum performance
+// 3. Working with primitives (no boxing overhead)
+// 4. Interfacing with APIs that require arrays
+```
+
+---
+
 ## 🔑 Key Takeaways
 
 ### Week 1 Summary:

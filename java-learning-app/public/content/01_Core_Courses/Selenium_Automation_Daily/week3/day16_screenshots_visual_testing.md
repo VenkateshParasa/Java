@@ -1015,6 +1015,52 @@ Create a script that:
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **What is the TakesScreenshot interface in Selenium and how do you use it?**
+   - TakesScreenshot is an interface in Selenium that provides the capability to capture screenshots. Use it by casting WebDriver: `TakesScreenshot screenshot = (TakesScreenshot) driver;` then call `screenshot.getScreenshotAs(OutputType.FILE)` to capture. Finally, save using `FileHandler.copy(sourceFile, destinationFile);`
+
+2. **What are the different OutputType options available for screenshots in Selenium?**
+   - Three OutputType options exist: `OutputType.FILE` (returns File object for saving to disk), `OutputType.BYTES` (returns byte array for embedding in reports), and `OutputType.BASE64` (returns base64 encoded string for HTML reports). Example: `driver.getScreenshotAs(OutputType.FILE);`
+
+3. **Why is it important to take screenshots during test execution?**
+   - Screenshots provide visual evidence of test execution, help in debugging failures by showing actual state vs expected, meet compliance and audit requirements, enhance test reports with visuals, aid in communicating test results to stakeholders, and enable visual regression testing to detect UI changes.
+
+4. **How do you capture a screenshot on test failure in TestNG?**
+   - Use @AfterMethod with ITestResult parameter: Check test status with `result.getStatus() == ITestResult.FAILURE`, capture screenshot if failed, include test name in filename: `result.getName() + "_FAILED"`, and save to failures folder. This automatically captures evidence of every test failure.
+
+### Intermediate Level
+
+5. **Explain the difference between capturing a full page screenshot and viewport screenshot.**
+   - Viewport screenshot (default Selenium) captures only visible browser window area using `TakesScreenshot.getScreenshotAs()`. Full page screenshot captures entire page including scrollable content, requires AShot library or similar tools: `new AShot().shootingStrategy(ShootingStrategies.viewportPasting()).takeScreenshot(driver);` Full page is larger in size but provides complete context.
+
+6. **How do you capture screenshot of a specific element instead of the entire page?**
+   - In Selenium 4+, WebElement has getScreenshotAs() method: `File screenshot = element.getScreenshotAs(OutputType.FILE);` then save: `FileHandler.copy(screenshot, new File("path/element.png"));` Benefits: smaller file size, focuses on specific component, faster capture, and useful for component-level testing.
+
+7. **What is visual regression testing and how does it relate to screenshots?**
+   - Visual regression testing compares screenshots of same page across different versions to detect unintended visual changes (layout, colors, fonts, missing elements). Process: take baseline screenshot, make changes, take comparison screenshot, use tools (AShot, Applitools, Percy) to compare images, identify differences. Helps catch CSS issues, responsive design problems, and unintended UI changes.
+
+8. **Design a screenshot utility class. What methods should it include?**
+   - Methods needed: `takeScreenshot(driver, testName)` with timestamp, `takeFailureScreenshot(driver, testName)` for failures, `takeElementScreenshot(element, name)` for specific elements, `getScreenshotAsBase64(driver)` for reports, `createScreenshotDirectory()` for folder management. Include error handling with try-catch, timestamp generation using SimpleDateFormat, and return file path for verification.
+
+### Advanced Level
+
+9. **How would you implement an automated screenshot cleanup strategy to prevent disk space issues?**
+   - Implement `cleanupOldScreenshots(int daysToKeep)` method: Calculate cutoff time: `System.currentTimeMillis() - (days * 24 * 60 * 60 * 1000)`, iterate through screenshot directory recursively, check file lastModified date, delete files older than cutoff, remove empty directories, log deleted files. Run in @BeforeSuite or scheduled job. Consider keeping failures longer than passes.
+
+10. **Explain how to integrate screenshots with different reporting frameworks (ExtentReports, Allure, TestNG reports).**
+    - **ExtentReports**: Use `test.addScreenCaptureFromPath(screenshotPath)` or `test.fail("message").addScreenCaptureFromBase64String(base64)`. **Allure**: Use @Attachment annotation: `@Attachment(value = "Screenshot", type = "image/png") public byte[] saveScreenshot()`. **TestNG**: Implement ITestListener, override onTestFailure, capture and attach screenshots. Store screenshots in test-output folder for automatic inclusion in reports.
+
+11. **What are the best practices for organizing and naming screenshots in a large test suite?**
+    - Structure: `screenshots/YYYY-MM-DD/category/testName_timestamp.png` for date-based organization. Naming convention: Include test name, timestamp (yyyyMMdd_HHmmss), status (PASSED/FAILED), and optional step description. Example: `loginTest_afterSubmit_20260121_143022_FAILED.png`. Create subdirectories: passes/, failures/, debug/. Implement retention policy: keep failures for 30 days, passes for 7 days. Use meaningful test names that translate to readable filenames.
+
+12. **How do you handle screenshots in parallel test execution? What challenges arise and how do you solve them?**
+    - **Challenges**: Race conditions in filename generation, directory conflicts, shared resources. **Solutions**: Use ThreadLocal for WebDriver to isolate tests, include thread ID in filenames: `testName_threadId_timestamp.png`, use atomic operations for directory creation, implement synchronized blocks for file writing if needed, use thread-safe SimpleDateFormat or DateTimeFormatter. Example: `String filename = testName + "_" + Thread.currentThread().getId() + "_" + timestamp;` Ensure each thread writes to isolated folders or uses unique filenames to prevent overwrites.
+
+---
+
 ## 🧭 Navigation
 
 ### Week 3 Progress:

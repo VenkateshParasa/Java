@@ -1780,6 +1780,584 @@ public class TestMovieTicket {
 
 ---
 
+## 💡 Best Practices
+
+### 1. Follow Single Responsibility Principle (SRP) for Classes
+
+**Practice**: Each class should have one clear, well-defined purpose. A class should represent a single concept or entity, not multiple unrelated things.
+
+**Why It's Important**: Classes with a single responsibility are easier to understand, test, maintain, and reuse. When a class does too much, changes become risky and testing becomes complex.
+
+**Example**:
+```java
+// ❌ Poor Practice - Class with Multiple Responsibilities
+public class EmployeeManager {
+    String name;
+    double salary;
+
+    // Employee data management
+    void updateSalary(double newSalary) {
+        this.salary = newSalary;
+    }
+
+    // Database operations - different responsibility!
+    void saveToDatabase() {
+        // Database code...
+    }
+
+    // Email operations - another different responsibility!
+    void sendPayslipEmail() {
+        // Email code...
+    }
+
+    // Report generation - yet another responsibility!
+    void generateAnnualReport() {
+        // Report code...
+    }
+}
+
+// ✅ Best Practice - Separate Responsibilities
+public class Employee {
+    private String name;
+    private double salary;
+
+    // Only manages employee data
+    void updateSalary(double newSalary) {
+        this.salary = newSalary;
+    }
+
+    String getName() { return name; }
+    double getSalary() { return salary; }
+}
+
+public class EmployeeRepository {
+    // Handles database operations
+    void save(Employee employee) {
+        // Database code...
+    }
+
+    Employee findById(int id) {
+        // Database retrieval code...
+        return null;
+    }
+}
+
+public class EmployeeEmailService {
+    // Handles email operations
+    void sendPayslip(Employee employee) {
+        // Email code...
+    }
+}
+
+public class EmployeeReportGenerator {
+    // Handles report generation
+    void generateAnnualReport(Employee employee) {
+        // Report code...
+    }
+}
+```
+
+---
+
+### 2. Use Meaningful and Descriptive Names
+
+**Practice**: Choose class, method, and variable names that clearly communicate their purpose. Names should be self-documenting.
+
+**Why It's Important**: Good names make code readable and maintainable. Other developers (including future you) can understand what code does without extensive comments.
+
+**Example**:
+```java
+// ❌ Poor Practice - Unclear Names
+public class Data {
+    String s;
+    int n;
+    double v;
+
+    void p() {
+        System.out.println(s + " " + n);
+    }
+
+    void c() {
+        v = n * 1.5;
+    }
+}
+
+// Usage is confusing:
+Data d = new Data();
+d.s = "Item";
+d.n = 10;
+d.c();  // What does 'c' do?
+d.p();  // What does 'p' print?
+
+// ✅ Best Practice - Clear, Descriptive Names
+public class Product {
+    String productName;
+    int quantity;
+    double totalPrice;
+
+    void displayProductInfo() {
+        System.out.println(productName + " " + quantity);
+    }
+
+    void calculateTotalPrice() {
+        totalPrice = quantity * 1.5;
+    }
+}
+
+// Usage is clear:
+Product product = new Product();
+product.productName = "Item";
+product.quantity = 10;
+product.calculateTotalPrice();  // Obviously calculates price
+product.displayProductInfo();   // Obviously displays info
+```
+
+---
+
+### 3. Initialize Objects Properly - Avoid Null References
+
+**Practice**: Always initialize reference type fields to valid objects or provide setter methods with null checks. Never leave fields in an undefined state.
+
+**Why It's Important**: Uninitialized reference fields default to null, which causes NullPointerException when accessed. Proper initialization prevents runtime crashes.
+
+**Example**:
+```java
+// ❌ Poor Practice - Uninitialized References
+public class ShoppingCart {
+    List<String> items;  // Defaults to null!
+    String customerName;
+
+    void addItem(String item) {
+        items.add(item);  // NullPointerException!
+    }
+}
+
+ShoppingCart cart = new ShoppingCart();
+cart.addItem("Laptop");  // Crashes!
+
+// ✅ Best Practice - Proper Initialization
+public class ShoppingCart {
+    List<String> items;
+    String customerName;
+
+    // Option 1: Initialize at declaration
+    List<String> itemsInitialized = new ArrayList<>();
+
+    // Option 2: Initialize in a setup method
+    void initializeCart(String customer) {
+        items = new ArrayList<>();
+        customerName = customer != null ? customer : "Guest";
+    }
+
+    // Option 3: Defensive coding with null check
+    void addItem(String item) {
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+        items.add(item);
+    }
+
+    // Option 4: Use constructor (Day 9 topic)
+    ShoppingCart(String customer) {
+        this.items = new ArrayList<>();
+        this.customerName = customer != null ? customer : "Guest";
+    }
+}
+
+// Usage is safe:
+ShoppingCart cart = new ShoppingCart("John");
+cart.addItem("Laptop");  // Works safely
+```
+
+---
+
+### 4. Keep Methods Short and Focused
+
+**Practice**: Methods should do one thing and do it well. If a method is longer than 20-30 lines or does multiple tasks, break it into smaller methods.
+
+**Why It's Important**: Short, focused methods are easier to read, test, debug, and reuse. They follow the Single Responsibility Principle at the method level.
+
+**Example**:
+```java
+// ❌ Poor Practice - Long, Multi-Purpose Method
+public class OrderProcessor {
+    void processOrder(String customerName, String[] items, double[] prices) {
+        // Validation
+        if (customerName == null || customerName.isEmpty()) {
+            System.out.println("Invalid customer name");
+            return;
+        }
+        if (items.length != prices.length) {
+            System.out.println("Items and prices count mismatch");
+            return;
+        }
+
+        // Calculate total
+        double total = 0;
+        for (int i = 0; i < prices.length; i++) {
+            total += prices[i];
+        }
+
+        // Apply discount
+        double discount = 0;
+        if (total > 1000) {
+            discount = total * 0.1;
+        } else if (total > 500) {
+            discount = total * 0.05;
+        }
+        total -= discount;
+
+        // Calculate tax
+        double tax = total * 0.08;
+        total += tax;
+
+        // Display receipt
+        System.out.println("=== Order Receipt ===");
+        System.out.println("Customer: " + customerName);
+        for (int i = 0; i < items.length; i++) {
+            System.out.println(items[i] + " - $" + prices[i]);
+        }
+        System.out.println("Discount: $" + discount);
+        System.out.println("Tax: $" + tax);
+        System.out.println("Total: $" + total);
+    }
+}
+
+// ✅ Best Practice - Small, Focused Methods
+public class OrderProcessor {
+    void processOrder(String customerName, String[] items, double[] prices) {
+        if (!validateOrder(customerName, items, prices)) {
+            return;
+        }
+
+        double subtotal = calculateSubtotal(prices);
+        double discount = calculateDiscount(subtotal);
+        double tax = calculateTax(subtotal - discount);
+        double total = subtotal - discount + tax;
+
+        displayReceipt(customerName, items, prices, discount, tax, total);
+    }
+
+    boolean validateOrder(String customerName, String[] items, double[] prices) {
+        if (customerName == null || customerName.isEmpty()) {
+            System.out.println("Invalid customer name");
+            return false;
+        }
+        if (items.length != prices.length) {
+            System.out.println("Items and prices count mismatch");
+            return false;
+        }
+        return true;
+    }
+
+    double calculateSubtotal(double[] prices) {
+        double total = 0;
+        for (double price : prices) {
+            total += price;
+        }
+        return total;
+    }
+
+    double calculateDiscount(double subtotal) {
+        if (subtotal > 1000) {
+            return subtotal * 0.1;
+        } else if (subtotal > 500) {
+            return subtotal * 0.05;
+        }
+        return 0;
+    }
+
+    double calculateTax(double amount) {
+        return amount * 0.08;
+    }
+
+    void displayReceipt(String customerName, String[] items, double[] prices,
+                       double discount, double tax, double total) {
+        System.out.println("=== Order Receipt ===");
+        System.out.println("Customer: " + customerName);
+        for (int i = 0; i < items.length; i++) {
+            System.out.println(items[i] + " - $" + prices[i]);
+        }
+        System.out.println("Discount: $" + discount);
+        System.out.println("Tax: $" + tax);
+        System.out.println("Total: $" + total);
+    }
+}
+```
+
+---
+
+### 5. Use Access Modifiers Appropriately (Encapsulation Preview)
+
+**Practice**: Make fields private and provide public getter/setter methods (when needed). Don't expose internal implementation details.
+
+**Why It's Important**: Encapsulation protects data from unauthorized access and modification. It allows you to change internal implementation without breaking external code.
+
+**Example**:
+```java
+// ❌ Poor Practice - Everything Public
+public class BankAccount {
+    public String accountNumber;
+    public double balance;  // Anyone can modify!
+
+    public void displayBalance() {
+        System.out.println("Balance: $" + balance);
+    }
+}
+
+// Dangerous usage:
+BankAccount account = new BankAccount();
+account.balance = 1000000;  // Unauthorized modification!
+account.balance = -500;     // Invalid negative balance!
+
+// ✅ Best Practice - Encapsulation with Private Fields
+public class BankAccount {
+    private String accountNumber;
+    private double balance;  // Protected from direct access
+
+    // Controlled access through methods
+    public double getBalance() {
+        return balance;
+    }
+
+    // Validation in setter
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: $" + amount);
+        } else {
+            System.out.println("Invalid deposit amount!");
+        }
+    }
+
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+            return true;
+        } else {
+            System.out.println("Invalid withdrawal!");
+            return false;
+        }
+    }
+
+    public void displayBalance() {
+        System.out.println("Balance: $" + balance);
+    }
+}
+
+// Safe usage:
+BankAccount account = new BankAccount();
+account.deposit(1000);     // Controlled, validated
+account.withdraw(200);     // Controlled, validated
+// account.balance = -500;  // Compilation error! Cannot access private field
+```
+
+---
+
+### 6. Avoid Magic Numbers - Use Named Constants
+
+**Practice**: Replace hard-coded numeric values with named constants (final variables). Give meaningful names to special values.
+
+**Why It's Important**: Named constants make code self-documenting, easier to maintain, and prevent errors. Changing a value only requires updating one place.
+
+**Example**:
+```java
+// ❌ Poor Practice - Magic Numbers
+public class Circle {
+    double radius;
+
+    double calculateArea() {
+        return 3.14159 * radius * radius;  // What is 3.14159?
+    }
+
+    double calculateCircumference() {
+        return 2 * 3.14159 * radius;  // Duplicated magic number!
+    }
+
+    boolean isLarge() {
+        return radius > 10;  // Why 10? What does it represent?
+    }
+}
+
+// ✅ Best Practice - Named Constants
+public class Circle {
+    private static final double PI = 3.14159;
+    private static final double LARGE_RADIUS_THRESHOLD = 10.0;
+
+    private double radius;
+
+    double calculateArea() {
+        return PI * radius * radius;  // Clear meaning
+    }
+
+    double calculateCircumference() {
+        return 2 * PI * radius;  // Consistent value
+    }
+
+    boolean isLarge() {
+        return radius > LARGE_RADIUS_THRESHOLD;  // Self-documenting
+    }
+}
+
+// Another example with multiple constants:
+public class TaxCalculator {
+    private static final double STANDARD_TAX_RATE = 0.08;
+    private static final double LUXURY_TAX_RATE = 0.15;
+    private static final double LUXURY_THRESHOLD = 1000.0;
+    private static final double TAX_EXEMPT_LIMIT = 50.0;
+
+    double calculateTax(double amount) {
+        if (amount <= TAX_EXEMPT_LIMIT) {
+            return 0;
+        } else if (amount > LUXURY_THRESHOLD) {
+            return amount * LUXURY_TAX_RATE;
+        } else {
+            return amount * STANDARD_TAX_RATE;
+        }
+    }
+}
+```
+
+---
+
+### 7. Create Objects with Valid State
+
+**Practice**: Ensure objects are created in a valid, usable state. Don't create "half-initialized" objects that require multiple setter calls before use.
+
+**Why It's Important**: Objects should be ready to use immediately after creation. This prevents bugs from using objects in an invalid state.
+
+**Example**:
+```java
+// ❌ Poor Practice - Half-Initialized Object
+public class User {
+    String username;
+    String email;
+    String password;
+
+    void setUsername(String username) {
+        this.username = username;
+    }
+
+    void setEmail(String email) {
+        this.email = email;
+    }
+
+    void setPassword(String password) {
+        this.password = password;
+    }
+
+    boolean login() {
+        // What if username, email, or password is null?
+        return password.equals("secret123");  // NullPointerException risk!
+    }
+}
+
+// Dangerous usage:
+User user = new User();
+user.login();  // Crashes! Fields are null
+
+// ✅ Best Practice - Fully Initialized Object (Preview of Constructors)
+public class User {
+    String username;
+    String email;
+    String password;
+
+    // Factory method or setup method to ensure valid state
+    static User createUser(String username, String email, String password) {
+        if (username == null || email == null || password == null) {
+            throw new IllegalArgumentException("All fields are required");
+        }
+
+        User user = new User();
+        user.username = username;
+        user.email = email;
+        user.password = password;
+        return user;
+    }
+
+    boolean login(String inputPassword) {
+        // Safe - fields are guaranteed to be non-null
+        return password.equals(inputPassword);
+    }
+}
+
+// Safe usage:
+User user = User.createUser("john", "john@example.com", "secret123");
+user.login("password");  // Safe to use immediately
+```
+
+---
+
+### 8. Design for Testability
+
+**Practice**: Write classes and methods that are easy to test. Avoid dependencies on external resources (files, databases, network) in core logic.
+
+**Why It's Important**: Testable code is more reliable and easier to maintain. It encourages better design through separation of concerns.
+
+**Example**:
+```java
+// ❌ Poor Practice - Hard to Test
+public class ReportGenerator {
+    void generateReport() {
+        // Tightly coupled to file system
+        BufferedReader reader = new BufferedReader(new FileReader("data.txt"));
+
+        // Tightly coupled to system output
+        System.out.println("Report Header");
+
+        // Complex logic mixed with I/O
+        // How do you test this without actual files?
+    }
+}
+
+// ✅ Best Practice - Testable Design
+public class ReportGenerator {
+    // Core logic separated from I/O
+    String formatReportData(List<String> data) {
+        StringBuilder report = new StringBuilder();
+        report.append("Report Header\n");
+
+        for (String line : data) {
+            report.append("- ").append(line).append("\n");
+        }
+
+        return report.toString();
+    }
+
+    // I/O operations separate
+    List<String> readDataFromFile(String filename) throws IOException {
+        List<String> data = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            data.add(line);
+        }
+        reader.close();
+        return data;
+    }
+
+    void printReport(String report) {
+        System.out.println(report);
+    }
+
+    // Orchestration method
+    void generateReport(String filename) throws IOException {
+        List<String> data = readDataFromFile(filename);
+        String report = formatReportData(data);
+        printReport(report);
+    }
+}
+
+// Easy to test:
+ReportGenerator generator = new ReportGenerator();
+List<String> testData = Arrays.asList("Item1", "Item2");
+String report = generator.formatReportData(testData);
+// Assert that report contains expected content
+```
+
+---
+
 ## 🔑 Key Takeaways
 
 1. **OOP Four Pillars**: Encapsulation, Inheritance, Polymorphism, Abstraction

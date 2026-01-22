@@ -1047,4 +1047,44 @@ public class KeyboardHelper {
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What is the Keys class in Selenium and what is its purpose?**
+   - A: The Keys class in Selenium provides constants for special keyboard keys like Enter, Tab, Escape, Arrow keys, and modifier keys (Ctrl, Shift, Alt). Its purpose is to simulate keyboard inputs that cannot be sent as regular text, enabling automation of keyboard interactions such as form navigation, shortcuts, and special key presses.
+
+2. **Q: How do you press the Enter key on an element in Selenium?**
+   - A: You can press the Enter key using element.sendKeys(Keys.ENTER). For example: searchBox.sendKeys("Selenium"); searchBox.sendKeys(Keys.ENTER); This types text in the search box and submits the form by pressing Enter.
+
+3. **Q: What is the difference between using Keys.CONTROL and Keys.COMMAND?**
+   - A: Keys.CONTROL is the Ctrl key used on Windows and Linux systems for keyboard shortcuts (Ctrl+C, Ctrl+V), while Keys.COMMAND is the Command (⌘) key used on Mac systems for the same purpose. Mac users use Command+C instead of Ctrl+C for copying.
+
+### Intermediate Level
+
+4. **Q: How do you perform keyboard shortcuts like Ctrl+A (Select All) in Selenium?**
+   - A: There are two ways: 1) Simple way: element.sendKeys(Keys.CONTROL + "a"); 2) Using Actions class: actions.keyDown(Keys.CONTROL).sendKeys("a").keyUp(Keys.CONTROL).perform(); The second approach is more reliable for complex combinations as it explicitly presses and releases modifier keys.
+
+5. **Q: How can you navigate through a form using only the Tab key?**
+   - A: Use sendKeys(Keys.TAB) to move to the next field, then use driver.switchTo().activeElement() to interact with the focused element. Example: firstField.sendKeys("John"); firstField.sendKeys(Keys.TAB); driver.switchTo().activeElement().sendKeys("Doe"); This allows keyboard-only navigation through form fields.
+
+6. **Q: Explain how to handle copy-paste operations using keyboard shortcuts in Selenium.**
+   - A: To copy: 1) Select the text with element.sendKeys(Keys.CONTROL + "a"), 2) Copy with element.sendKeys(Keys.CONTROL + "c"). To paste: 1) Click target field, 2) Paste with targetField.sendKeys(Keys.CONTROL + "v"). This simulates the standard Ctrl+A, Ctrl+C, Ctrl+V workflow.
+
+7. **Q: What is the purpose of driver.switchTo().activeElement() in keyboard operations?**
+   - A: This method returns the currently focused element in the DOM. It's useful after pressing Tab to interact with the next field without explicitly locating it. For example, after pressing Tab, you can use driver.switchTo().activeElement().sendKeys("text") to type in the newly focused field.
+
+### Advanced Level
+
+8. **Q: How do you create an OS-aware keyboard helper that works on both Windows and Mac?**
+   - A: Create a utility method that detects the operating system and returns the appropriate modifier key: String os = System.getProperty("os.name").toLowerCase(); Keys modifierKey = os.contains("mac") ? Keys.COMMAND : Keys.CONTROL; Then use this modifierKey in shortcuts: element.sendKeys(modifierKey + "c") for copy. This ensures cross-platform compatibility.
+
+9. **Q: Why is it important to use keyUp() after keyDown() when using the Actions class for modifier keys?**
+   - A: If you don't call keyUp() after keyDown(), the modifier key remains pressed, causing unexpected behavior in subsequent actions. For example, actions.keyDown(Keys.CONTROL).sendKeys("c").perform() without keyUp(Keys.CONTROL) leaves Ctrl pressed, so the next sendKeys would also be treated as a Ctrl combination. Always pair keyDown() with keyUp() to release the key properly.
+
+10. **Q: How would you test keyboard accessibility of a web application using Selenium?**
+    - A: Implement a test that navigates the entire application using only keyboard: 1) Use Tab to move through all interactive elements, 2) Verify each element receives focus (check with activeElement), 3) Use Enter/Space to activate buttons, 4) Use Arrow keys for dropdowns/menus, 5) Use Escape to close modals, 6) Verify no keyboard traps exist (can navigate both forward and backward). Example: Create a helper method that tabs through all fields and validates focus order matches expected sequence.
+
+---
+
 **Next Lesson:**

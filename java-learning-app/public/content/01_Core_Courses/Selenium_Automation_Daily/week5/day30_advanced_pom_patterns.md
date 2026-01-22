@@ -4639,11 +4639,9 @@ public class E2EShoppingTest extends BaseTest {
 
 ## Navigation
 
-## Navigation
-
-- **Previous:** [Day 35: POM Part 1](../week5/day35_pom_part1.md)
-- **Next:** [Day 37: External Data Sources](./day37_external_data.md)
-- **Week 6 Home:** [Week 6 Overview](./README.md)
+- **Previous:** [Day 29: Cross-Browser Testing](../week4/day29_cross_browser_testing.md)
+- **Next:** [Day 31: External Data Sources](./day31_external_data.md)
+- **Week 5 Home:** [Week 5 Overview](./README.md)
 
 ---
 

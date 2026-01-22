@@ -4325,8 +4325,8 @@ Scenario: Customer adds products to cart
 
 ## Navigation
 
-- **Previous:** [Day 44: Cross-Browser Testing](../week7/day44_cross_browser_testing.md)
-- **Next:** [Day 46: API Testing with REST Assured](../week7/day46_api_testing_rest_assured.md)
+- **Previous:** [Day 37: CI/CD Integration](day37_ci_cd_integration.md)
+- **Next:** [Day 39: API Testing Integration](day39_api_testing_integration.md)
 - **Week 7 Home:** [Week 7 Overview](./README.md)
 
 ---

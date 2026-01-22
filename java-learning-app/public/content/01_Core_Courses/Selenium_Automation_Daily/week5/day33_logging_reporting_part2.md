@@ -3077,8 +3077,8 @@ public static void logInfo(String message) {
 
 ## Navigation
 
-- **Previous:** [Day 38: Logging & Reporting Part 1](./day38_logging_reporting_part1.md)
-- **Next:** [Day 40: Configuration Management](./day40_configuration_management.md)
+- **Previous:** [Day 32: Logging & Reporting Part 1](./day32_logging_reporting_part1.md)
+- **Next:** [Day 34: Configuration Management](./day34_configuration_management.md)
 - **Week 6 Home:** [Week 6 Overview](./README.md)
 
 ---

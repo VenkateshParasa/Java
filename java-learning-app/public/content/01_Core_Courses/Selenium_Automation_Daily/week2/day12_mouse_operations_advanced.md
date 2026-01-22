@@ -1020,4 +1020,52 @@ WebElement menu = driver.findElement(By.id("menu"));
 actions.moveToElement(menu).perform();
 // After DOM change
 menu = driver.findElement(By.id("menu"));  // Re-find
-actions.click(menu).perform();
+actions.click(menu).perform();```
+
+---
+
+## 9. Interview Questions
+
+### Basic Level
+
+1. **What is the purpose of the `contextClick()` method in Selenium Actions class?**
+   - `contextClick()` is used to perform a right-click (context menu click) operation on a web element. It simulates the right-click action that users perform to access context menus on web pages.
+
+2. **How do you perform a hover action on multiple nested menu levels?**
+   - Use `moveToElement()` multiple times in sequence for each menu level, with appropriate pauses between actions to allow menus to appear. Each hover should be followed by `perform()` or chained together with a final `perform()`.
+
+3. **What is the difference between `clickAndHold()` and regular `click()` in Actions class?**
+   - `click()` performs a complete click and release immediately, while `clickAndHold()` presses and holds the mouse button without releasing it, which is useful for drag operations, drawing, or selecting ranges.
+
+### Intermediate Level
+
+4. **How do you handle a three-level nested dropdown menu using Actions class?**
+   - Hover over the first level menu, wait for it to appear, then hover over the second level submenu, wait again, then hover over the third level and click the final item. Use `moveToElement()` for each level with appropriate waits between actions.
+
+5. **Explain the `moveByOffset()` method and when would you use it?**
+   - `moveByOffset(xOffset, yOffset)` moves the mouse from its current position by the specified pixel offsets. It's used for precise mouse positioning, drawing operations, clicking at specific coordinates, or interacting with canvas elements.
+
+6. **What is the difference between `dragAndDrop()` and using `clickAndHold()` with `moveToElement()` and `release()`?**
+   - `dragAndDrop()` is a single method for simple drag-and-drop between two elements. Using `clickAndHold()`, `moveToElement()`, and `release()` provides more control and is necessary for HTML5 drag-and-drop, custom animations, or when you need pauses during the drag operation.
+
+7. **How do you perform click and hold to select multiple items in a list?**
+   - Use `clickAndHold()` on the first item, then `moveToElement()` to the last item while holding, and finally `release()`. This simulates the user behavior of selecting a range of items.
+
+### Advanced Level
+
+8. **How would you automate drawing a shape (like a square) on an HTML5 canvas using mouse actions?**
+   - Use `clickAndHold()` on the canvas, then chain multiple `moveByOffset()` calls to draw each side of the square (e.g., right, down, left, up), and finally `release()`. Calculate pixel offsets for each direction to form the complete shape.
+
+9. **What are the challenges when automating context menus, and how do you handle dynamic context menus that load options based on the element clicked?**
+   - Challenges include timing issues (menu takes time to appear), dynamic options that change based on context, and JavaScript-based menus. Handle by using explicit waits after `contextClick()`, verifying menu visibility before selecting options, and handling cases where expected options might not appear.
+
+10. **How do you handle nested mega menus with delayed loading and animations, and what best practices ensure stable automation?**
+    - Add explicit waits using `WebDriverWait` after each hover action, use `pause()` method in Actions chains for animation delays, verify menu visibility before proceeding to next level, implement retry logic for unstable menu interactions, and use JavaScript to check animation completion states. Best practice: avoid hardcoded `Thread.sleep()` and use conditional waits based on element visibility.
+
+---
+
+## Navigation
+
+**Previous:** [Day 11: Keyboard Operations](day11_keyboard_operations.md)  
+**Next:** [Day 13: JavaScript Executor](day13_javascript_executor.md)  
+**Week 2 Home:** [Week 2 Overview](README.md)

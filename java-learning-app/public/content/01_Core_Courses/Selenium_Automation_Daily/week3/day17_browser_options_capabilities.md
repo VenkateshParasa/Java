@@ -1210,6 +1210,52 @@ Before moving to Day 18, ensure you can:
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **What are Browser Options in Selenium and why are they important?**
+   - Browser Options (ChromeOptions, FirefoxOptions, EdgeOptions) allow customization of browser behavior before launching. They're important for: running tests in headless mode for CI/CD, setting window size for consistency, disabling notifications and popups, configuring downloads, setting proxies, and managing SSL certificates. They make tests flexible and environment-independent.
+
+2. **How do you run Chrome browser in headless mode and why would you use it?**
+   - Create ChromeOptions and add headless argument: `ChromeOptions options = new ChromeOptions(); options.addArguments("--headless"); options.addArguments("--disable-gpu"); WebDriver driver = new ChromeDriver(options);` Use headless mode for: CI/CD pipelines (no display), faster execution (no UI rendering), server environments, parallel execution, and resource-constrained systems.
+
+3. **What is the difference between ChromeOptions and DesiredCapabilities?**
+   - ChromeOptions is browser-specific, modern (Selenium 4+), type-safe, and recommended approach: `ChromeOptions options = new ChromeOptions();` DesiredCapabilities is legacy, deprecated in Selenium 4, generic for all browsers, and less type-safe. Always use browser-specific Options classes in new projects.
+
+4. **How do you set a custom download directory in Chrome using ChromeOptions?**
+   - Use setExperimentalOption with preferences map: `Map<String, Object> prefs = new HashMap<>(); prefs.put("download.default_directory", "/path/to/downloads"); prefs.put("download.prompt_for_download", false); options.setExperimentalOption("prefs", prefs);` This prevents download prompts and saves files to specified location.
+
+### Intermediate Level
+
+5. **Explain the Browser Factory pattern. How would you implement it to support multiple browsers?**
+   - Browser Factory pattern creates a centralized method returning WebDriver based on browser type. Implementation: `public static WebDriver getDriver(String browser)` with switch-case for chrome/firefox/edge. Each case creates browser-specific options and returns appropriate driver. Benefits: easy browser switching, centralized configuration, DRY principle, supports multiple environments, and enables cross-browser testing.
+
+6. **What are the essential arguments you should include when running Chrome in headless mode for CI/CD?**
+   - Essential arguments: `--headless` (run without UI), `--disable-gpu` (disable GPU acceleration), `--no-sandbox` (bypass OS security for Docker/CI), `--disable-dev-shm-usage` (overcome limited resources), `--window-size=1920,1080` (set viewport size). These prevent common headless mode issues and ensure stable execution in CI/CD environments.
+
+7. **How do you handle SSL certificate errors in Selenium tests?**
+   - Use `options.setAcceptInsecureCerts(true);` or add Chrome arguments: `options.addArguments("--ignore-certificate-errors"); options.addArguments("--ignore-ssl-errors");` Useful for testing environments with self-signed certificates. Note: Only use in test environments, never in production validation.
+
+8. **Explain mobile emulation in Chrome. How do you emulate specific devices?**
+   - Use mobileEmulation experimental option: `Map<String, String> mobileEmulation = new HashMap<>(); mobileEmulation.put("deviceName", "iPhone 12 Pro"); options.setExperimentalOption("mobileEmulation", mobileEmulation);` This simulates device viewport, user agent, and touch events. Useful for testing responsive design without actual mobile devices.
+
+### Advanced Level
+
+9. **Design a comprehensive BrowserFactory that supports multiple environments (local, CI, debug) with different configurations for each.**
+    - Implement `getDriverForEnvironment(String browser)` that reads environment from System.getProperty("env"). For **local**: maximize window, visible browser. For **CI**: headless, no-sandbox, disable-dev-shm-usage, fixed window size. For **debug**: maximize, auto-open DevTools, slower execution. Each method returns configured WebDriver. Use ConfigReader for external configuration, support browser-specific options, and implement ThreadLocal for parallel execution.
+
+10. **How do you configure Chrome to automatically handle file downloads and verify download completion in tests?**
+    - Configure download path with prompt disabled: `prefs.put("download.default_directory", downloadPath); prefs.put("download.prompt_for_download", false); prefs.put("safebrowsing.enabled", false);` For verification: implement polling mechanism checking file existence with timeout, wait for .crdownload file to disappear, verify file size is non-zero. Example: `while (!file.exists() && System.currentTimeMillis() < timeout) Thread.sleep(500);` Handle partial downloads and cleanup.
+
+11. **Explain how to configure proxy settings in Selenium. What are the different proxy types and when would you use each?**
+    - Create Proxy object: `Proxy proxy = new Proxy(); proxy.setHttpProxy("host:port"); proxy.setSslProxy("host:port");` then `options.setProxy(proxy);` Proxy types: **HTTP Proxy** (web traffic), **SOCKS Proxy** (all traffic types), **PAC URL** (automatic configuration), **Auto-detect** (system proxy). Use cases: corporate network requirements, geographic testing, security testing, traffic analysis, and bandwidth testing.
+
+12. **How do you implement a robust browser configuration system that reads settings from external files and supports different browsers, environments, and parallel execution?**
+    - Create **ConfigReader** class reading from properties file: browser type, headless mode, window size, timeouts, download path, proxy settings. Implement **BrowserFactory** using ConfigReader for dynamic configuration. Use **ThreadLocal<WebDriver>** for thread-safe parallel execution: `private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();` Create environment-specific config files: config-local.properties, config-ci.properties. Load correct config based on -Denv=ci parameter. Implement builder pattern for complex configurations: `BrowserConfig.builder().browser("chrome").headless(true).build();` This provides flexibility, maintainability, and scalability.
+
+---
+
 **🎉 Congratulations on completing Day 17!**
 
 You now know how to customize browser behavior using options and capabilities. Tomorrow, we'll start learning TestNG, the powerful testing framework for Selenium!

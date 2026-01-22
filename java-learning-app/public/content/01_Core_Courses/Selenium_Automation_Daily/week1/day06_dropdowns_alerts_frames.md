@@ -3173,8 +3173,8 @@ try {
 
 ## Navigation
 
-- **Previous**: [Day 5: Advanced Locators and XPath](./day05_advanced_locators_xpath.md)
-- **Next**: [Day 7: Waits in Selenium](./day07_waits_in_selenium.md)
+- **Previous**: [Day 5: Waits](./day05_waits.md)
+- **Next**: [Day 7: Framework Setup & Review](./day07_framework_setup_review.md)
 - **Course Home**: [Selenium Automation Daily](../README.md)
 
 ---

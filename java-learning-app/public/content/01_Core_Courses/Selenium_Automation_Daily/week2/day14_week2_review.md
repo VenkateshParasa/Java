@@ -866,6 +866,52 @@ Test your knowledge:
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **What is the Actions class in Selenium and when is it used?**
+   - Actions class is used for performing complex user interactions like mouse hover, drag-and-drop, right-click, double-click, and keyboard operations. It's needed when standard WebDriver methods are insufficient for simulating real user behavior with advanced gestures.
+
+2. **How do you perform a mouse hover operation using Actions class?**
+   - Create Actions object: `Actions actions = new Actions(driver);` then use `actions.moveToElement(element).perform();` Remember to call `perform()` to execute the action chain.
+
+3. **What is the purpose of calling `perform()` method in Actions class?**
+   - The `perform()` method executes all the actions that have been built in the action chain. Without calling `perform()`, the actions are only stored but not executed. It's mandatory to call `perform()` at the end of any Actions chain.
+
+4. **How do you handle web tables in Selenium? Explain the basic approach.**
+   - Use `findElements()` to get all rows: `List<WebElement> rows = driver.findElements(By.xpath("//table//tr"));` then iterate through rows and cells using nested loops. Access specific cells using XPath: `//tr[2]/td[3]` for row 2, column 3.
+
+### Intermediate Level
+
+5. **Explain the difference between `dragAndDrop()` and `clickAndHold()` methods in Actions class.**
+   - `dragAndDrop(source, target)` is a single method that combines multiple actions to move an element from source to target in one call. `clickAndHold()` only presses and holds the mouse button, allowing more granular control: `clickAndHold(source).moveToElement(target).release().perform()` is useful for HTML5 drag-and-drop with custom timing.
+
+6. **How do you execute JavaScript code in Selenium and why would you need it?**
+   - Cast WebDriver to JavascriptExecutor: `JavascriptExecutor js = (JavascriptExecutor) driver;` then use `js.executeScript("JavaScript code", element);` Needed when: standard Selenium fails, interacting with hidden elements, scrolling operations, or accessing DOM properties directly.
+
+7. **What is the difference between implicitWait and explicit waits? Which one should you prefer?**
+   - Implicit wait applies globally to all elements for a specified duration: `driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));` Explicit wait (WebDriverWait) waits for specific conditions on specific elements. Prefer explicit waits as they're more specific, avoid unnecessary waiting, and provide better control over waiting conditions.
+
+8. **How do you handle a dynamic web table where rows change frequently?**
+   - Use dynamic XPath with contains() or find elements by content: `//tr[td[contains(text(),'searchValue')]]` instead of fixed row indices. Always re-find elements after table updates to avoid StaleElementReferenceException. Use explicit waits to ensure table is loaded before interaction.
+
+### Advanced Level
+
+9. **Explain how to automate a multi-level nested menu (3+ levels) using Actions class. What are the common challenges?**
+   - Use action chaining with pauses: `actions.moveToElement(level1).pause(Duration.ofMillis(500)).moveToElement(level2).pause(Duration.ofMillis(300)).moveToElement(level3).click().perform();` Challenges include: timing issues (menus closing too fast), elements not in view, JavaScript-based menus requiring different handling, and dynamic menu loading requiring waits.
+
+10. **When should you use JavascriptExecutor instead of standard Selenium WebDriver methods, and what are the trade-offs?**
+    - Use JavascriptExecutor when: elements are hidden (display:none), standard click fails due to overlay, need to scroll to specific coordinates, accessing DOM properties directly, or bypassing element interactability checks. Trade-offs: doesn't simulate real user behavior, bypasses browser security, may not trigger all event handlers, and tests become less reliable as they don't validate actual user experience.
+
+11. **How do you handle infinite scroll pages in automation? Explain your approach with JavaScript Executor.**
+    - Track initial scroll height: `Long lastHeight = (Long) js.executeScript("return document.body.scrollHeight");` Scroll to bottom: `js.executeScript("window.scrollTo(0, document.body.scrollHeight);")` Wait for content load, get new height, compare with previous height, repeat until no change. Add explicit waits between scrolls and handle timeout scenarios for error handling.
+
+12. **Explain the complete approach to extract and validate data from a dynamic table with sorting and filtering capabilities.**
+    - First, apply filters/sorting and wait for table refresh. Store expected data in a data structure. Use dynamic locators to find all rows: `List<WebElement> rows = driver.findElements(By.xpath("//table//tr"));` Extract each cell's data iterating through rows and columns. Validate extracted data against expected data. Handle StaleElementReferenceException by re-finding elements after table updates. Use explicit waits to confirm table is stable before extraction, and consider pagination if table is paginated.
+
+---
+
 ## 🎉 Congratulations!
 
 You've completed Week 2 of Selenium Automation! You now have advanced skills in:

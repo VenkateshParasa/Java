@@ -506,10 +506,53 @@ Modify the first script to:
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What is Selenium and what is it used for?**
+   - A: Selenium is an open-source automation testing framework used to automate web browsers. It allows testers to write scripts in various programming languages (Java, Python, C#, etc.) to control web browsers and perform automated testing of web applications.
+
+2. **Q: What are the main components of the Selenium suite?**
+   - A: The Selenium suite consists of three main components:
+     - Selenium WebDriver: For browser automation programmatically
+     - Selenium IDE: A record and playback tool (browser extension)
+     - Selenium Grid: For running tests in parallel across multiple machines
+
+3. **Q: What is the difference between close() and quit() methods in Selenium?**
+   - A: close() closes only the current browser window, while quit() closes all browser windows and ends the WebDriver session completely. quit() should always be used in the finally block for proper cleanup.
+
+### Intermediate Level
+
+4. **Q: Why should we use WebDriverManager instead of manually setting driver paths?**
+   - A: WebDriverManager automatically downloads and manages browser drivers, eliminating the need for manual driver downloads and hardcoded paths. This makes tests more portable, maintainable, and prevents issues when browser versions update.
+
+5. **Q: What are the advantages of Selenium over other testing tools?**
+   - A: Key advantages include: open-source (free), supports multiple programming languages, works with all major browsers, integrates easily with testing frameworks (TestNG, JUnit), supports parallel execution, and has a large community support.
+
+6. **Q: When should you NOT use Selenium for testing?**
+   - A: Selenium is not suitable for: desktop application testing, mobile app testing (use Appium instead), image/CAPTCHA verification, performance/load testing (use JMeter instead), and testing non-web applications.
+
+7. **Q: What is the WebDriver interface and why is it important?**
+   - A: WebDriver is an interface that defines a contract for browser automation. It provides a common API for different browser implementations (ChromeDriver, FirefoxDriver, EdgeDriver). This allows you to easily switch between browsers by changing only the driver instantiation.
+
+### Advanced Level
+
+8. **Q: Explain the importance of try-finally blocks in Selenium automation and what happens if you don't use them.**
+   - A: Try-finally blocks ensure that browser cleanup (driver.quit()) always executes, even if an exception occurs during test execution. Without them, failed tests leave browser instances running in the background, consuming system resources and eventually causing memory issues or system crashes. The finally block guarantees cleanup code runs regardless of success or failure.
+
+9. **Q: How does WebDriver communicate with the browser, and what role does the browser driver play?**
+   - A: WebDriver communicates with browsers through a client-server architecture. When you execute WebDriver commands, they are sent as HTTP requests to the browser driver (chromedriver, geckodriver, etc.). The browser driver acts as a bridge, translating these commands into native browser operations and returning responses back to WebDriver. This architecture allows language-independent browser automation.
+
+10. **Q: What are the potential issues with maximizing the browser window, and how would you handle responsive testing?**
+    - A: While maximizing ensures elements are visible, it doesn't test responsive behavior at different viewport sizes. For responsive testing, you should: set specific window dimensions using setSize(), test at multiple breakpoints (mobile, tablet, desktop), verify element visibility and layout at each size, and consider using tools like Selenium Grid for parallel testing across different screen sizes.
+
+---
+
 ## 🧭 Navigation
 
 - **Previous**: [Course Introduction](../README.md)
-- **Next**: [Day 2: Locators - Finding Elements](day02_locators_basics.md)
+- **Next**: [Day 2: Locators - Finding Elements](day02_selenium_locators.md)
 - **Week Overview**: [Week 1 Overview](README.md)
 
 ---

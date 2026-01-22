@@ -1,4 +1,4 @@
-# Day 32: TestNG Part 3 - Groups, Dependencies & Priorities
+# Day 20: TestNG Part 3 - Groups, Dependencies & Priorities
 
 ## Learning Objectives
 
@@ -2085,9 +2085,10 @@ public class CrossBrowserTest extends BaseTest {
 
 ## Navigation
 
-- **Previous:** [Day 31: TestNG Part 2 - Parameters & Data Providers](./day31_testng_part2.md)
-- **Next:** [Day 33: TestNG Part 4 - Listeners & Reporting](./day33_testng_part4.md)
-- **Week 5 Home:** [Week 5 Overview](./README.md)
+- **Previous:** [Day 19: TestNG Part 2 - Parameters & Data Providers](./day19_testng_part2.md)
+- **Next:** [Day 21: TestNG Part 4 - Listeners & Reporting](./day21_testng_part4.md)
+- **Week 3 Home:** [Week 3 Overview](./README.md)
+- **Course Home:** [Selenium Course Overview](../README.md)
 
 ---
 

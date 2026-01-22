@@ -3357,7 +3357,7 @@ Recovery successful: true
 
 ## Navigation
 
-- [Previous: Day 41 - Utility Classes & Helper Methods](day41_utility_classes.md)
-- [Next: Day 43 - Framework Integration & CI/CD](day43_framework_integration_cicd.md)
-- [Week 6 Overview](README.md)
-- [Course Home](../../README.md)
+- [Previous: Day 35 - Utility Classes & Helper Methods](day35_utility_classes.md)
+- [Next: Day 37 - CI/CD Integration](../week6/day37_ci_cd_integration.md)
+- [Week 5 Overview](README.md)
+- [Course Home](../README.md)

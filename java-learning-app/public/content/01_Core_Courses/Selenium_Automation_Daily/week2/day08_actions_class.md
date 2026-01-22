@@ -4180,10 +4180,10 @@ Now that you've mastered the Actions class, you're ready to move on to:
 
 ## Navigation
 
-- [← Previous: Day 7 - Waits in Selenium](../week1/day07_waits_in_selenium.md)
-- [Next: Day 9 - Handling Alerts and Popups →](./day09_alerts_and_popups.md)
+- [← Previous: Day 7 - Framework Setup & Review](../week1/day07_framework_setup_review.md)
+- [Next: Day 9 - Drag & Drop, Sliders →](./day09_drag_drop_sliders.md)
 - [↑ Back to Week 2 Overview](./README.md)
-- [⌂ Course Home](../../README.md)
+- [⌂ Course Home](../README.md)
 
 ---
 

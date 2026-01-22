@@ -709,6 +709,90 @@ Integrate visual tests in your CI/CD pipeline.
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What is visual regression testing and why is it important?**
+   - A: Visual regression testing detects unintended visual changes in UI by comparing screenshots of the current application state with baseline images. It's important because it catches CSS bugs, layout issues, cross-browser rendering differences, and responsive design problems that functional tests might miss.
+
+2. **Q: What are the main tools used for visual regression testing in Selenium?**
+   - A: Main tools include Ashot (for screenshot capture and comparison), Percy (cloud-based visual testing), Applitools Eyes (AI-powered visual testing), and Selenium IDE with visual testing plugins. Each offers different approaches to capturing and comparing visual states.
+
+3. **Q: What is a baseline image in visual testing?**
+   - A: A baseline image is the reference screenshot that represents the correct, expected appearance of the application. All subsequent test runs compare current screenshots against this baseline to detect visual changes. Baselines must be updated when intentional design changes are made.
+
+### Intermediate Level
+
+4. **Q: How do you handle dynamic content (timestamps, ads, animations) in visual regression tests?**
+   - A: Use ignore regions to exclude dynamic elements from comparison, apply CSS to hide/remove dynamic content using percyCSS or similar options, wait for animations to complete before capturing, use visual testing tools' built-in dynamic content handling, and create stable test data to minimize variability.
+
+5. **Q: Explain the difference between pixel-based and AI-powered visual testing.**
+   - A: Pixel-based testing compares images pixel-by-pixel, flagging any difference (very strict, prone to false positives from minor rendering differences). AI-powered testing (like Applitools) uses machine learning to understand visual context, ignoring insignificant differences like anti-aliasing or font rendering variations while catching meaningful visual bugs.
+
+6. **Q: How would you implement visual testing for responsive design across multiple viewports?**
+   - A: Use Percy's widths parameter or Applitools' layout breakpoints feature to capture screenshots at multiple resolutions (375px, 768px, 1280px), create a test matrix covering key breakpoints, verify layout changes at each size, and use tools that support responsive testing to automate multi-viewport captures in a single test run.
+
+7. **Q: What is the purpose of match levels in Applitools Eyes?**
+   - A: Match levels determine how strict the visual comparison is: Strict (exact pixel match), Content (ignores colors, checks layout and text), Layout (checks structure ignoring content and style), and Exact (pixel-perfect including scrollbars). Different match levels help balance between catching real issues and avoiding false positives.
+
+### Advanced Level
+
+8. **Q: How do you implement a visual testing strategy in a CI/CD pipeline?**
+   - A: Integrate visual testing tools into the pipeline, capture baseline images during initial setup, run visual tests on every pull request, configure the pipeline to fail builds on visual regressions, implement approval workflows for intentional changes, use parallel execution for faster feedback, store baselines in version control or cloud services, and create reports accessible to the team.
+
+9. **Q: How would you handle cross-browser visual testing challenges like font rendering differences?**
+   - A: Use AI-powered tools that account for browser rendering variations, implement browser-specific baselines when necessary, configure ignore regions for browser-specific elements, wait for font loading using document.fonts.ready, use web fonts consistently across browsers, and set appropriate match levels that account for minor rendering differences while catching real issues.
+
+10. **Q: Describe a strategy for maintaining and updating visual baselines in a large project.**
+    - A: Implement version control for baselines tied to application versions, establish a review process for baseline updates requiring approval from designers/QA, automate baseline updates for approved changes using CI/CD, use branching strategies where feature branches have separate baselines, implement automated cleanup of old baselines, document changes with reasons in commit messages, and use tools that provide batch baseline updating capabilities for large-scale changes.
+
+---
+
+## Common Mistakes
+
+### 1. Not Creating Stable Baselines
+- **Problem**: Creating baseline screenshots when page has animations, loading spinners, or dynamic content
+- **Why it's wrong**: Every subsequent test run shows differences, causing false positives and making visual testing unreliable
+- **Correct approach**: Wait for all animations to complete, hide or mock dynamic content, ensure fonts and images are fully loaded before capturing baselines
+
+### 2. Comparing Screenshots Pixel-by-Pixel
+- **Problem**: Using strict pixel-perfect comparison without any tolerance for minor rendering differences
+- **Why it's wrong**: Different browsers, OS versions, and font rendering cause insignificant pixel differences, leading to excessive false positives
+- **Correct approach**: Use tools with intelligent comparison (Applitools AI), set appropriate match levels (Layout vs Strict), configure acceptable difference thresholds
+
+### 3. Not Ignoring Dynamic Regions
+- **Problem**: Including timestamps, advertisements, analytics IDs, and user-specific content in visual comparisons
+- **Why it's wrong**: These elements change on every test run, causing constant false failures
+- **Correct approach**: Use ignore regions for dynamic content, hide elements with CSS, or replace dynamic content with static placeholders
+
+### 4. Taking Screenshots Before Page is Stable
+- **Problem**: Capturing screenshots immediately after page load without waiting for all resources
+- **Why it's wrong**: Lazy-loaded images, web fonts, and AJAX content may not be rendered, causing inconsistent screenshots
+- **Correct approach**: Wait for document.fonts.ready, check for loading spinners, wait for critical images to load, verify layout height is stable
+
+### 5. Not Managing Baseline Versions
+- **Problem**: Overwriting baselines without version control or approval process
+- **Why it's wrong**: Unintended changes get accepted as new baselines, loses history of visual changes, no rollback capability
+- **Correct approach**: Version baselines with meaningful tags (v1.0.0), require approval for baseline updates, document why baselines changed
+
+### 6. Testing at Only One Viewport Size
+- **Problem**: Capturing visual tests at only desktop resolution without testing responsive breakpoints
+- **Why it's wrong**: Mobile and tablet views may have completely different layouts that break without being detected
+- **Correct approach**: Test at multiple viewport sizes (mobile, tablet, desktop), verify major breakpoints, use tools that support multi-viewport testing
+
+### 7. Skipping Full-Page Screenshots
+- **Problem**: Only capturing viewport screenshots instead of full-page scrolling screenshots
+- **Why it's wrong**: Content below the fold is never tested, footer issues go undetected, long pages may have layout problems
+- **Correct approach**: Use full-page screenshot strategies (Ashot with viewport pasting), test scrolling behavior, capture entire page content
+
+### 8. Not Handling Browser-Specific Rendering
+- **Problem**: Creating baselines in Chrome and comparing against Firefox or Safari screenshots
+- **Why it's wrong**: Different browsers render fonts, spacing, and CSS differently, causing massive false positives
+- **Correct approach**: Maintain separate baselines per browser, use cross-browser visual testing tools, or focus on layout-level comparison instead of pixel-perfect
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 46: Cloud Testing Platforms](./day46_cloud_testing.md)

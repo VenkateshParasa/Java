@@ -2345,9 +2345,9 @@ This allows flexibility to override any configuration at runtime while maintaini
 
 ## Navigation
 
-- **Previous:** [Day 39: Logging & Reporting Part 2](./day39_logging_reporting_part2.md)
-- **Next:** [Day 41: Utility Classes & Helpers](./day41_utility_classes.md)
-- **Week 6 Home:** [Week 6 Overview](./README.md)
+- **Previous:** [Day 33: Logging & Reporting Part 2](./day33_logging_reporting_part2.md)
+- **Next:** [Day 35: Utility Classes](./day35_utility_classes.md)
+- **Week 5 Home:** [Week 5 Overview](./README.md)
 
 ---
 

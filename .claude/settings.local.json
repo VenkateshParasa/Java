@@ -19,7 +19,10 @@
       "Bash(__NEW_LINE_bf2b0a6bc148ad31__ node -e \"const data = require\\(''/Users/venkateshparasa/Documents/Java/java-learning-app/src/data/assessments/selenium/week1/day4.js''\\).default; console.log\\(''Title:'', data.title\\); console.log\\(''Total Questions:'', data.sections.reduce\\(\\(sum, s\\) => sum + s.questions.length, 0\\)\\); console.log\\(''Sections:'', data.sections.map\\(s => s.title\\).join\\('', ''\\)\\)\")",
       "Bash(__NEW_LINE_477364991dac79cc__ ls -1 /Users/venkateshparasa/Documents/Java/java-learning-app/public/content/01_Core_Courses/Selenium_Automation_Daily/week2/day*.md)",
       "Bash(for file in week1/day*.md)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(for file in day41 day42 day44 day45 day46 day47 day48)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(grep:*)"
     ]
   }
 }

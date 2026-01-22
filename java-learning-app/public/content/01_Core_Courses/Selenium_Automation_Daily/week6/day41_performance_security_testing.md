@@ -5884,10 +5884,10 @@ public class Exercise6_SSLCertificateValidation {
 
 ## Navigation
 
-- [Previous: Day 47 - Database Testing](day47_database_testing.md)
-- [Next: Day 49 - Capstone Project](day49_capstone_project.md)
-- [Week 7 Overview](README.md)
-- [Course Home](../../README.md)
+- [Previous: Day 40 - Database Testing](day40_database_testing.md)
+- [Next: Day 42 - Framework Best Practices](day42_framework_best_practices.md)
+- [Week 6 Overview](README.md)
+- [Course Home](../README.md)
 
 ---
 

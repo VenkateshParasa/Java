@@ -3660,9 +3660,9 @@ public class CompleteDataDrivenTest {
 
 ## Navigation
 
-- **Previous:** [Day 36: Page Object Model Part 2](./day36_pom_part2.md)
-- **Next:** [Day 38: Logging & Reporting Part 1](./day38_logging_reporting_part1.md)
-- **Week 6 Home:** [Week 6 Overview](./README.md)
+- **Previous:** [Day 30: Advanced POM Patterns](./day30_advanced_pom_patterns.md)
+- **Next:** [Day 32: Logging & Reporting Part 1](./day32_logging_reporting_part1.md)
+- **Week 5 Home:** [Week 5 Overview](./README.md)
 
 ---
 

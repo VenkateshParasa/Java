@@ -1,4 +1,4 @@
-# Day 30: TestNG Part 1 - Introduction & Annotations
+# Day 18: TestNG Part 1 - Introduction & Annotations
 
 ## Learning Objectives
 
@@ -1616,9 +1616,10 @@ Test C - Priority 3
 
 ## Navigation
 
-- **Previous:** [Day 29: Screenshots & Browser Options](./day29_screenshots_browser_options.md)
-- **Next:** [Day 31: TestNG Part 2](./day31_testng_part2.md)
-- **Week 5 Home:** [Week 5 Overview](./README.md)
+- **Previous:** [Day 17: Browser Options & Capabilities](./day17_browser_options_capabilities.md)
+- **Next:** [Day 19: TestNG Part 2](./day19_testng_part2.md)
+- **Week 3 Home:** [Week 3 Overview](./README.md)
+- **Course Home:** [Selenium Course Overview](../README.md)
 
 ---
 

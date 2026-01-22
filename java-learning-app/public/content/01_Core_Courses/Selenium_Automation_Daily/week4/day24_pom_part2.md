@@ -3966,9 +3966,9 @@ public class RefactoredCheckoutTest extends BaseTest {
 
 ## Navigation
 
-- **Previous:** [Day 35: POM Part 1](../week5/day35_pom_part1.md)
-- **Next:** [Day 37: External Data Sources](./day37_external_data.md)
-- **Week 6 Home:** [Week 6 Overview](./README.md)
+- **Previous:** [Day 23: POM Part 1](./day23_pom_part1.md)
+- **Next:** [Day 25: Properties Files](./day25_properties_files.md)
+- **Week 4 Home:** [Week 4 Overview](./README.md)
 
 ---
 

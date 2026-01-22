@@ -1049,4 +1049,453 @@ if (elementNotClickable) {
 - Handling scenarios where standard Selenium fails
 - Performance optimization
 
-### Remember
+### Remember- JavaScript execution is powerful but should be last resort
+- Always prefer standard Selenium methods when possible
+- Use JavascriptExecutor for workarounds and special cases
+- Test JavaScript code in browser console first
+
+---
+
+## 11. Interview Questions
+
+### Basic Level
+
+1. **What is JavascriptExecutor in Selenium and when is it used?**
+   - JavascriptExecutor is an interface that enables execution of JavaScript code within the browser through Selenium WebDriver. It's used when standard Selenium methods fail, for interacting with hidden elements, performing scrolling operations, or executing custom JavaScript.
+
+2. **How do you execute JavaScript code in Selenium?**
+   - Cast the WebDriver instance to JavascriptExecutor: `JavascriptExecutor js = (JavascriptExecutor) driver;` then use `js.executeScript("JavaScript code here");` to execute JavaScript.
+
+3. **What is the difference between `executeScript()` and `executeAsyncScript()` methods?**
+   - `executeScript()` executes JavaScript synchronously and waits for the script to complete before returning. `executeAsyncScript()` executes JavaScript asynchronously and is used for scripts that require callbacks or async operations.
+
+### Intermediate Level
+
+4. **How do you pass WebElement parameters to JavaScript code in Selenium?**
+   - Use `arguments[0]`, `arguments[1]`, etc. to reference WebElement parameters passed to executeScript. Example: `js.executeScript("arguments[0].click();", element);` where element is the WebElement passed as a parameter.
+
+5. **Explain different scrolling techniques using JavascriptExecutor.**
+   - Scroll to bottom: `js.executeScript("window.scrollTo(0, document.body.scrollHeight);")`, scroll to element: `js.executeScript("arguments[0].scrollIntoView(true);", element)`, scroll by pixels: `js.executeScript("window.scrollBy(0, 500);")`, smooth scroll: `js.executeScript("window.scrollTo({top: 500, behavior: 'smooth'});")`.
+
+6. **How do you interact with hidden elements using JavascriptExecutor?**
+   - Use JavascriptExecutor to click hidden elements: `js.executeScript("arguments[0].click();", hiddenElement);` or make element visible: `js.executeScript("arguments[0].style.display='block';", hiddenElement);` then interact normally.
+
+7. **What return types can executeScript() return and how do you handle them?**
+   - Returns Object that needs to be cast to appropriate type: String, Long, Boolean, WebElement, or List. Example: `String title = (String) js.executeScript("return document.title;");` or `Long height = (Long) js.executeScript("return document.body.scrollHeight;");`.
+
+### Advanced Level
+
+8. **How would you implement infinite scroll automation using JavascriptExecutor?**
+   - Track scroll height, scroll to bottom, wait for content to load, check new scroll height, repeat until no new content. Use: `Long lastHeight = (Long) js.executeScript("return document.body.scrollHeight");` scroll down, wait, check if height changed to detect end of content.
+
+9. **What are the limitations of using JavascriptExecutor, and when should you avoid it?**
+   - Limitations: bypasses browser security, doesn't simulate real user behavior, may not trigger all event handlers, can be brittle with dynamic pages. Avoid when standard Selenium methods work, for security-sensitive actions, or when you need to validate actual user interactions. Use only as fallback or for specific scenarios like hidden elements.
+
+10. **How do you handle complex JavaScript scenarios like AJAX completion, page load status, or custom event triggering using JavascriptExecutor?**
+    - Check page load: `js.executeScript("return document.readyState").toString().equals("complete")`, wait for AJAX: `js.executeScript("return jQuery.active == 0")` (if jQuery is present), trigger events: `js.executeScript("arguments[0].dispatchEvent(new Event('change'));", element)`, check element properties: `js.executeScript("return arguments[0].getAttribute('value');", element)`. Combine with explicit waits for robust synchronization.
+
+---
+
+## 11. Interview Questions
+
+### Basic Level
+
+**1. What is JavascriptExecutor in Selenium and when should you use it?**
+
+**Answer:** JavascriptExecutor is an interface in Selenium that enables the execution of JavaScript code within the browser context. It should be used when standard Selenium methods fail or are insufficient, such as:
+- Interacting with hidden elements that standard Selenium can't access
+- Performing scrolling operations
+- Clicking elements that are not clickable via standard click()
+- Manipulating DOM elements directly
+- Handling AJAX-heavy applications
+- Getting page-level information that's not easily accessible via Selenium
+
+Example usage:
+```java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+js.executeScript("arguments[0].click();", element);
+```
+
+**2. How do you cast WebDriver to JavascriptExecutor?**
+
+**Answer:** You cast WebDriver to JavascriptExecutor using explicit type casting:
+```java
+WebDriver driver = new ChromeDriver();
+JavascriptExecutor js = (JavascriptExecutor) driver;
+```
+This casting is necessary because JavascriptExecutor is an interface that WebDriver implements, but you need to cast to access its specific methods like `executeScript()` and `executeAsyncScript()`.
+
+**3. What is the difference between executeScript() and executeAsyncScript() methods?**
+
+**Answer:**
+- **executeScript()**: Executes JavaScript synchronously. The script runs and completes before returning control to Selenium. It waits for the script to finish execution.
+```java
+String title = (String) js.executeScript("return document.title;");
+```
+
+- **executeAsyncScript()**: Executes JavaScript asynchronously. Used for scripts that require callbacks or perform asynchronous operations like AJAX calls. The script must call a callback function to signal completion.
+```java
+js.executeAsyncScript("var callback = arguments[arguments.length - 1];" +
+                      "setTimeout(function() { callback('Done'); }, 3000);");
+```
+
+**4. What does arguments[0] represent in JavascriptExecutor scripts?**
+
+**Answer:** `arguments[0]` represents the first WebElement parameter passed to the executeScript() method. When you pass WebElement objects as additional parameters to executeScript(), they are accessible in the JavaScript code through the arguments array (arguments[0], arguments[1], etc.).
+
+Example:
+```java
+WebElement button = driver.findElement(By.id("submitBtn"));
+js.executeScript("arguments[0].click();", button);
+// Here arguments[0] refers to the button element
+```
+
+### Intermediate Level
+
+**5. How do you scroll to a specific element using JavascriptExecutor?**
+
+**Answer:** There are multiple ways to scroll to an element:
+
+**Method 1: scrollIntoView()**
+```java
+WebElement element = driver.findElement(By.id("footer"));
+js.executeScript("arguments[0].scrollIntoView(true);", element);
+```
+
+**Method 2: Scroll by coordinates**
+```java
+WebElement element = driver.findElement(By.id("element"));
+int y = element.getLocation().getY();
+js.executeScript("window.scrollTo(0, " + y + ");");
+```
+
+**Method 3: Smooth scrolling**
+```java
+js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+```
+
+The `scrollIntoView(true)` scrolls to align element at the top, while `scrollIntoView(false)` aligns at the bottom.
+
+**6. Explain how to click a hidden element using JavascriptExecutor.**
+
+**Answer:** Hidden elements cannot be clicked using standard Selenium click() method because Selenium simulates real user actions. JavascriptExecutor bypasses this by executing JavaScript directly on the DOM:
+
+```java
+WebElement hiddenElement = driver.findElement(By.id("hiddenButton"));
+
+// Standard click fails:
+// hiddenElement.click(); // Throws ElementNotInteractableException
+
+// JavaScript click works:
+JavascriptExecutor js = (JavascriptExecutor) driver;
+js.executeScript("arguments[0].click();", hiddenElement);
+```
+
+This works because JavaScript doesn't care about element visibility—it directly triggers the click event on the DOM element. However, use this only when necessary as it doesn't simulate real user behavior.
+
+**7. How do you get and set element attributes using JavascriptExecutor?**
+
+**Answer:**
+
+**Getting attributes:**
+```java
+WebElement element = driver.findElement(By.id("inputField"));
+String value = (String) js.executeScript("return arguments[0].getAttribute('value');", element);
+String className = (String) js.executeScript("return arguments[0].className;", element);
+```
+
+**Setting attributes:**
+```java
+// Set value
+js.executeScript("arguments[0].setAttribute('value', 'New Value');", element);
+
+// Set style
+js.executeScript("arguments[0].style.border='3px solid red';", element);
+
+// Make element readonly
+js.executeScript("arguments[0].setAttribute('readonly', 'true');", element);
+
+// Remove attribute
+js.executeScript("arguments[0].removeAttribute('disabled');", element);
+```
+
+**8. What return types can executeScript() return and how do you handle them?**
+
+**Answer:** executeScript() returns Object type that needs to be cast to the appropriate type:
+
+**Common return types:**
+```java
+// String
+String title = (String) js.executeScript("return document.title;");
+
+// Long (for numbers)
+Long height = (Long) js.executeScript("return document.body.scrollHeight;");
+
+// Boolean
+Boolean isDisplayed = (Boolean) js.executeScript("return arguments[0].style.display != 'none';", element);
+
+// WebElement
+WebElement body = (WebElement) js.executeScript("return document.body;");
+
+// List (for multiple elements)
+List<WebElement> links = (List<WebElement>) js.executeScript(
+    "return document.getElementsByTagName('a');"
+);
+
+// ArrayList for custom data
+ArrayList<String> data = (ArrayList<String>) js.executeScript(
+    "var arr = [];" +
+    "var elements = document.querySelectorAll('.item');" +
+    "for(var i=0; i<elements.length; i++) {" +
+    "  arr.push(elements[i].textContent);" +
+    "}" +
+    "return arr;"
+);
+```
+
+### Advanced Level
+
+**9. How do you handle page load and AJAX completion using JavascriptExecutor?**
+
+**Answer:**
+
+**Check page load status:**
+```java
+public boolean isPageLoaded() {
+    String pageState = js.executeScript("return document.readyState").toString();
+    return pageState.equals("complete");
+}
+
+// Wait for page load
+public void waitForPageLoad() {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    wait.until(driver -> js.executeScript("return document.readyState").equals("complete"));
+}
+```
+
+**Wait for AJAX (with jQuery):**
+```java
+public void waitForAjax() {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    wait.until(driver -> {
+        Boolean ajaxComplete = (Boolean) js.executeScript("return jQuery.active == 0");
+        return ajaxComplete;
+    });
+}
+```
+
+**Wait for AJAX (without jQuery):**
+```java
+public void waitForAjaxWithoutJQuery() {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    wait.until(driver -> {
+        Boolean ajaxComplete = (Boolean) js.executeScript(
+            "var xhr = new XMLHttpRequest();" +
+            "return xhr.readyState == 4 || xhr.readyState == 0;"
+        );
+        return ajaxComplete;
+    });
+}
+```
+
+**10. What are the limitations and risks of using JavascriptExecutor?**
+
+**Answer:**
+
+**Limitations:**
+1. **Bypasses Security**: JavaScript execution can bypass browser security measures
+2. **No Real User Simulation**: Doesn't simulate actual user interactions (mouse movement, focus, etc.)
+3. **Event Handlers**: May not trigger all event listeners that normal clicks would
+4. **Browser Compatibility**: JavaScript behavior may vary across browsers
+5. **Stale Elements**: Still susceptible to StaleElementReferenceException
+6. **No Visual Feedback**: Can't verify if action is visually possible
+
+**Risks:**
+1. **False Positives**: Tests may pass even when real users can't interact with elements
+2. **Maintenance**: Hard to debug when JavaScript fails
+3. **Brittleness**: More prone to breaking with page structure changes
+4. **Performance**: Can be slower for complex operations
+
+**Best Practices:**
+```java
+// Bad - Using JavaScript as first choice
+js.executeScript("arguments[0].click();", element);
+
+// Good - Use standard Selenium first, JavaScript as fallback
+try {
+    element.click();
+} catch (ElementNotInteractableException e) {
+    js.executeScript("arguments[0].click();", element);
+}
+```
+
+**11. How do you implement infinite scroll automation using JavascriptExecutor?**
+
+**Answer:**
+
+**Basic infinite scroll implementation:**
+```java
+public void scrollInfinitely(int maxScrolls) throws InterruptedException {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    Long lastHeight = (Long) js.executeScript("return document.body.scrollHeight");
+    int scrollCount = 0;
+
+    while (scrollCount < maxScrolls) {
+        // Scroll to bottom
+        js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+
+        // Wait for new content to load
+        Thread.sleep(2000);
+
+        // Calculate new scroll height
+        Long newHeight = (Long) js.executeScript("return document.body.scrollHeight");
+
+        // Check if reached actual bottom (no new content)
+        if (newHeight.equals(lastHeight)) {
+            System.out.println("Reached bottom - no more content");
+            break;
+        }
+
+        lastHeight = newHeight;
+        scrollCount++;
+        System.out.println("Scroll " + scrollCount + " completed. Height: " + newHeight);
+    }
+}
+```
+
+**Advanced implementation with explicit waits:**
+```java
+public void scrollWithExplicitWait() {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+    Long lastHeight = (Long) js.executeScript("return document.body.scrollHeight");
+
+    while (true) {
+        // Scroll to bottom
+        js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+
+        // Wait for height to change
+        try {
+            wait.until(driver -> {
+                Long currentHeight = (Long) js.executeScript("return document.body.scrollHeight");
+                return !currentHeight.equals(lastHeight);
+            });
+
+            lastHeight = (Long) js.executeScript("return document.body.scrollHeight");
+
+        } catch (TimeoutException e) {
+            // No new content loaded, reached bottom
+            break;
+        }
+    }
+}
+```
+
+**12. How do you execute complex JavaScript scenarios like form validation and event triggering?**
+
+**Answer:**
+
+**Form Validation:**
+```java
+public boolean validateForm() {
+    String script =
+        "var form = arguments[0];" +
+        "var isValid = true;" +
+        "var inputs = form.querySelectorAll('input[required]');" +
+        "inputs.forEach(function(input) {" +
+        "    if (input.value.trim() === '') {" +
+        "        isValid = false;" +
+        "    }" +
+        "});" +
+        "return isValid;";
+
+    WebElement form = driver.findElement(By.id("myForm"));
+    return (Boolean) js.executeScript(script, form);
+}
+```
+
+**Trigger Custom Events:**
+```java
+public void triggerChangeEvent(WebElement element) {
+    // Trigger 'change' event
+    js.executeScript(
+        "var event = new Event('change', { bubbles: true });" +
+        "arguments[0].dispatchEvent(event);",
+        element
+    );
+}
+
+public void triggerKeyPress(WebElement element, int keyCode) {
+    // Trigger keypress event
+    js.executeScript(
+        "var event = new KeyboardEvent('keypress', {" +
+        "    keyCode: arguments[1]," +
+        "    which: arguments[1]," +
+        "    bubbles: true" +
+        "});" +
+        "arguments[0].dispatchEvent(event);",
+        element, keyCode
+    );
+}
+```
+
+**Get Computed Styles:**
+```java
+public String getComputedStyle(WebElement element, String property) {
+    String script =
+        "return window.getComputedStyle(arguments[0]).getPropertyValue(arguments[1]);";
+    return (String) js.executeScript(script, element, property);
+}
+
+// Usage
+String color = getComputedStyle(element, "background-color");
+String fontSize = getComputedStyle(element, "font-size");
+```
+
+**Complex DOM Manipulation:**
+```java
+public List<String> extractTableData() {
+    String script =
+        "var table = arguments[0];" +
+        "var data = [];" +
+        "var rows = table.querySelectorAll('tbody tr');" +
+        "rows.forEach(function(row) {" +
+        "    var rowData = [];" +
+        "    var cells = row.querySelectorAll('td');" +
+        "    cells.forEach(function(cell) {" +
+        "        rowData.push(cell.textContent.trim());" +
+        "    });" +
+        "    data.push(rowData.join('|'));" +
+        "});" +
+        "return data;";
+
+    WebElement table = driver.findElement(By.id("dataTable"));
+    return (List<String>) js.executeScript(script, table);
+}
+```
+
+**Check Element Visibility:**
+```java
+public boolean isElementVisibleInViewport(WebElement element) {
+    String script =
+        "var elem = arguments[0];" +
+        "var rect = elem.getBoundingClientRect();" +
+        "return (" +
+        "    rect.top >= 0 &&" +
+        "    rect.left >= 0 &&" +
+        "    rect.bottom <= window.innerHeight &&" +
+        "    rect.right <= window.innerWidth" +
+        ");";
+
+    return (Boolean) js.executeScript(script, element);
+}
+```
+
+---
+
+## Navigation
+
+**Previous:** [Day 12: Advanced Mouse Operations](day12_mouse_operations_advanced.md)
+**Next:** [Day 14: Week 2 Review](day14_week2_review.md)
+**Week 2 Home:** [Week 2 Overview](README.md)

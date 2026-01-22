@@ -1,4 +1,4 @@
-# Day 31: TestNG Part 2 - Parameters & Data Providers
+# Day 19: TestNG Part 2 - Parameters & Data Providers
 
 ## Learning Objectives
 
@@ -1480,9 +1480,10 @@ public class ExcelDataTest {
 
 ## Navigation
 
-- **Previous:** [Day 30: TestNG Part 1](./day30_testng_part1.md)
-- **Next:** [Day 32: TestNG Part 3](./day32_testng_part3.md)
-- **Week 5 Home:** [Week 5 Overview](./README.md)
+- **Previous:** [Day 18: TestNG Part 1](./day18_testng_part1.md)
+- **Next:** [Day 20: TestNG Part 3](./day20_testng_part3.md)
+- **Week 3 Home:** [Week 3 Overview](./README.md)
+- **Course Home:** [Selenium Course Overview](../README.md)
 
 ---
 

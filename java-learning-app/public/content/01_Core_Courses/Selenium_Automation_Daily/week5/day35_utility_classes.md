@@ -2289,10 +2289,130 @@ public void testCompleteUtilityFramework() {
 
 ---
 
+## Best Practices
+
+### 1. Utility Class Design
+- **Single Responsibility**: Each utility class should have one clear purpose
+- **Static Methods**: Use static methods for stateless operations
+- **Thread Safety**: Ensure utilities are thread-safe for parallel execution
+- **Error Handling**: Include robust error handling with meaningful messages
+
+### 2. Wait Strategy
+- **Prefer Explicit Waits**: More reliable than implicit waits
+- **Custom Wait Conditions**: Create reusable wait conditions
+- **Reasonable Timeouts**: Balance between reliability and execution speed
+- **Fail Fast**: Don't wait unnecessarily when elements won't appear
+
+### 3. Screenshot Management
+- **Consistent Naming**: Use timestamps and test names in filenames
+- **Storage Organization**: Organize screenshots by test run/date
+- **Selective Capture**: Only capture screenshots on failures or key checkpoints
+- **Cleanup Strategy**: Implement automatic cleanup of old screenshots
+
+### 4. Element Interactions
+- **Scroll Before Click**: Ensure elements are in viewport
+- **Wait Before Action**: Always wait for elements to be ready
+- **Handle Stale Elements**: Retry on StaleElementReferenceException
+- **Verify Actions**: Check results after performing actions
+
+### 5. Browser Management
+- **Maximize on Start**: Ensure consistent viewport
+- **Clear Cookies**: Between tests for isolation
+- **Set Timeouts**: Configure appropriate timeouts
+- **Proper Cleanup**: Always quit driver in finally/teardown
+
+### 6. Code Organization
+- **Package Structure**: Group related utilities together
+- **Documentation**: JavaDoc for all public methods
+- **Examples**: Provide usage examples in comments
+- **Versioning**: Track utility class versions for framework updates
+
+### 7. Performance Optimization
+- **Lazy Loading**: Only initialize what's needed
+- **Caching**: Cache frequently used elements/data
+- **Batch Operations**: Combine multiple actions when possible
+- **Resource Management**: Properly close/release resources
+
+### 8. Maintainability
+- **Consistent Naming**: Follow naming conventions across all utilities
+- **Deprecation**: Mark and communicate deprecated methods
+- **Backward Compatibility**: Consider when updating utilities
+- **Testing**: Unit test utility methods when possible
+
+---
+
+## Best Practices
+
+### 1. Utility Class Design
+- **Final Classes**: Always declare utility classes as final to prevent inheritance
+- **Private Constructor**: Include a private constructor that throws UnsupportedOperationException
+- **Static Methods Only**: All utility methods should be static since they don't require instance state
+- **No Instance Variables**: Utility classes should be stateless and contain no instance variables
+- **Single Responsibility**: Each utility class should focus on one domain (Browser, Wait, Element, etc.)
+- **Clear Naming**: Use descriptive class and method names that clearly indicate their purpose
+
+### 2. Method Design
+- **Method Overloading**: Provide multiple method signatures for flexibility (with/without timeout parameters)
+- **Sensible Defaults**: Use default values for optional parameters to reduce code duplication
+- **Return Values**: Return appropriate types - WebElement for element methods, boolean for verification methods
+- **Null Safety**: Handle null parameters gracefully with validation and meaningful error messages
+- **Exception Handling**: Wrap checked exceptions in runtime exceptions with clear error messages
+- **Documentation**: Add JavaDoc comments explaining parameters, return values, and usage examples
+
+### 3. Wait Strategies
+- **Prefer Explicit Waits**: Use WebDriverWait over implicit waits for better control and reliability
+- **Reasonable Timeouts**: Set timeouts based on application needs (typically 10-30 seconds)
+- **Consistent Wait Times**: Use constants for timeout values to maintain consistency across the framework
+- **Ignore Appropriate Exceptions**: In fluent waits, ignore NoSuchElementException and StaleElementReferenceException
+- **Custom Wait Conditions**: Create reusable custom ExpectedConditions for complex scenarios
+- **Avoid Thread.sleep**: Never use Thread.sleep in production code; only explicit/fluent waits
+
+### 4. Error Handling
+- **Meaningful Messages**: Provide descriptive error messages that help diagnose issues quickly
+- **Log Before Throwing**: Log error details before throwing exceptions for better debugging
+- **Handle Stale Elements**: Implement retry logic for StaleElementReferenceException in element utilities
+- **Timeout Information**: Include expected vs actual conditions in timeout error messages
+- **Stack Traces**: Preserve original exception stack traces when wrapping exceptions
+- **Fail Fast**: Don't wait unnecessarily when an operation will clearly fail
+
+### 5. Performance Optimization
+- **Minimize Wait Times**: Use the shortest reasonable timeout values to reduce test execution time
+- **Avoid Redundant Waits**: Don't wait for elements that are already in the desired state
+- **Cache Selectors**: Store frequently used By locators as constants to avoid repeated object creation
+- **Batch Operations**: Combine multiple operations when possible to reduce network round trips
+- **Lazy Loading**: Only initialize resources when actually needed, not in advance
+- **Resource Cleanup**: Properly close/release resources like database connections and file handles
+
+### 6. Code Organization
+- **Package Structure**: Group related utilities in appropriate packages (utils.browser, utils.wait, utils.element)
+- **Dependency Management**: Keep utility classes independent; avoid circular dependencies
+- **Common Base**: Consider a BaseUtils class for shared functionality across multiple utility classes
+- **Separation of Concerns**: Don't mix different domains in one utility class (e.g., no database operations in BrowserUtils)
+- **Version Control**: Tag utility class versions when making breaking changes
+- **Backward Compatibility**: Deprecate methods before removing them; provide migration paths
+
+### 7. Testing and Validation
+- **Unit Tests**: Write unit tests for utility methods to ensure reliability
+- **Integration Tests**: Test utilities with actual WebDriver to verify behavior
+- **Edge Cases**: Test null inputs, empty strings, invalid parameters, and boundary conditions
+- **Performance Tests**: Measure and optimize slow utility methods
+- **Cross-Browser Testing**: Verify utilities work consistently across different browsers
+- **Documentation Testing**: Ensure code examples in documentation actually work
+
+### 8. Maintainability
+- **Consistent Patterns**: Use the same patterns across all utility classes for consistency
+- **Avoid God Classes**: Don't create massive utility classes with 100+ methods; split into focused classes
+- **Refactor Regularly**: Continuously improve and refactor utilities based on usage patterns
+- **Usage Examples**: Provide clear examples in JavaDoc showing how to use complex utilities
+- **Change Log**: Document significant changes to utility methods in comments or documentation
+- **Code Reviews**: Have utility class changes reviewed by team members for quality assurance
+
+---
+
 ## Navigation
 
-- **Previous:** [Day 40: Configuration Management](./day40_configuration_management.md)
-- **Next:** [Day 42: Exception Handling Framework](./day42_exception_handling_framework.md)
+- **Previous:** [Day 34: Configuration Management](./day34_configuration_management.md)
+- **Next:** [Day 36: Exception Handling](./day36_exception_handling.md)
 - **Week 6 Home:** [Week 6 Overview](./README.md)
 
 ---

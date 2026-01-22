@@ -938,6 +938,50 @@ Write comprehensive documentation for your framework.
 
 ---
 
+## Common Mistakes
+
+### 1. Violating Single Responsibility Principle
+- **Problem**: Creating test classes that handle multiple responsibilities like driver management, test data creation, and test execution
+- **Why it's wrong**: Makes tests hard to maintain, debug, and reuse. Changes in one area affect unrelated tests
+- **Correct approach**: Separate concerns into distinct classes - BaseTest for setup, Page Objects for UI interactions, Data Providers for test data, and Test classes solely for test logic
+
+### 2. Creating God Classes with Too Many Methods
+- **Problem**: Building utility or helper classes with 50+ unrelated methods covering everything from file operations to database queries
+- **Why it's wrong**: Violates SRP, makes code difficult to navigate, increases coupling, and makes testing harder
+- **Correct approach**: Create focused utility classes by category (FileUtils, DatabaseUtils, DateUtils, etc.) with clear, single purposes
+
+### 3. Hardcoding Values Instead of Using Configuration
+- **Problem**: Embedding URLs, timeouts, credentials, and paths directly in test code
+- **Why it's wrong**: Makes tests environment-specific, requires code changes for different setups, poses security risks
+- **Correct approach**: Externalize all configuration to properties files, use ConfigReader singleton, and leverage environment variables for sensitive data
+
+### 4. Not Following Consistent Naming Conventions
+- **Problem**: Mixing naming styles (camelCase, snake_case, PascalCase) randomly across the codebase
+- **Why it's wrong**: Reduces code readability, makes collaboration difficult, looks unprofessional
+- **Correct approach**: Follow Java conventions consistently - PascalCase for classes, camelCase for methods/variables, UPPER_SNAKE_CASE for constants
+
+### 5. Overusing or Misusing Design Patterns
+- **Problem**: Forcing design patterns where they don't fit or using patterns without understanding them
+- **Why it's wrong**: Adds unnecessary complexity, makes code harder to understand, reduces performance
+- **Correct approach**: Use patterns only when they solve a specific problem. Understand the pattern's intent before implementing it
+
+### 6. Ignoring Code Documentation
+- **Problem**: Writing code without JavaDoc comments, inline comments, or README documentation
+- **Why it's wrong**: New team members struggle to understand the framework, maintenance becomes difficult, knowledge is lost when team members leave
+- **Correct approach**: Document all public APIs with JavaDoc, add inline comments for complex logic, maintain comprehensive README with setup and usage instructions
+
+### 7. Creating Tight Coupling Between Components
+- **Problem**: Direct instantiation of concrete classes instead of depending on interfaces or abstractions
+- **Why it's wrong**: Makes code rigid, difficult to test, and impossible to swap implementations
+- **Correct approach**: Follow Dependency Inversion Principle - depend on interfaces, use factory patterns, inject dependencies
+
+### 8. Not Optimizing for Performance
+- **Problem**: Using Thread.sleep everywhere, running tests sequentially, starting fresh browser for every test
+- **Why it's wrong**: Tests run slowly, CI/CD pipelines take hours, developer productivity suffers
+- **Correct approach**: Use explicit waits, enable parallel execution, reuse browser sessions when appropriate, group tests by speed
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 41: Performance & Security Testing](./day41_performance_security_testing.md)

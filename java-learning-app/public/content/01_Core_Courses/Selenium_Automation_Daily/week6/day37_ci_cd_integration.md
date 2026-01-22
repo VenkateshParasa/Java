@@ -4331,7 +4331,7 @@ const fs = require('fs');
 
 ## Navigation
 
-- [Previous: Day 43 - Cross-Browser Testing](day43_cross_browser_testing.md)
-- [Next: Day 45 - Capstone Project](day45_capstone_project.md)
-- [Week 7 Overview](README.md)
-- [Course Home](../../README.md)
+- [Previous: Day 36 - Exception Handling](../week5/day36_exception_handling.md)
+- [Next: Day 38 - BDD with Cucumber](day38_bdd_cucumber.md)
+- [Week 6 Overview](README.md)
+- [Course Home](../README.md)

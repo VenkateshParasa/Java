@@ -2492,6 +2492,322 @@ public class TestDataPipeline {
 
 ---
 
+### Beginner Exercises
+
+#### Exercise 1: Generic Box Class - Type Parameter Basics
+**Difficulty:** Beginner
+**Objective:** Create your first generic class and understand type parameters.
+
+**Requirements:**
+- Create a generic `Box<T>` class with a private field `content` of type T
+- Add a `set(T content)` method to store a value
+- Add a `get()` method returning T to retrieve the value
+- Add an `isEmpty()` method to check if content is null
+- Create boxes for different types: String, Integer, Double
+- Demonstrate type safety by trying to add wrong type (should not compile)
+- Show that no casting is needed when retrieving values
+
+**Expected Outcome:**
+```
+=== Generic Box Demo ===
+
+Creating String box:
+Box<String> stringBox = new Box<>();
+Setting value: "Hello"
+Getting value: Hello (type: String)
+No casting needed!
+
+Creating Integer box:
+Box<Integer> intBox = new Box<>();
+Setting value: 42
+Getting value: 42 (type: Integer)
+No casting needed!
+
+Type Safety Demo:
+stringBox.set("Valid");  ✓ Compiles
+// stringBox.set(123);  ✗ Won't compile - type mismatch!
+
+isEmpty check:
+Empty box: true
+After setting value: false
+```
+
+**Hints:**
+- Generic class syntax: `public class Box<T> { ... }`
+- Use T as the type for fields, parameters, and return types
+- Type parameter T is replaced with actual type at compile time
+- No casting needed: `String s = stringBox.get();` (not `(String)stringBox.get()`)
+
+---
+
+#### Exercise 2: Generic Pair Class - Multiple Type Parameters
+**Difficulty:** Beginner
+**Objective:** Work with multiple type parameters in a generic class.
+
+**Requirements:**
+- Create a generic `Pair<K, V>` class with two type parameters
+- Add fields for `key` of type K and `value` of type V
+- Add constructor `Pair(K key, V value)`
+- Add `getKey()` and `getValue()` methods
+- Add `setKey(K key)` and `setValue(V value)` methods
+- Override `toString()` to display as "key = value"
+- Create pairs with different type combinations:
+  - String key, Integer value
+  - Integer key, String value
+  - String key, String value
+- Demonstrate swapping keys and values
+
+**Expected Outcome:**
+```
+=== Generic Pair Demo ===
+
+Creating different pair types:
+Pair<String, Integer>: name = 25
+Pair<Integer, String>: 101 = Alice
+Pair<String, String>: country = USA
+
+Multiple type parameters:
+K = String, V = Integer
+K = Integer, V = String
+
+Modifying pair:
+Before: age = 25
+After setKey: years = 25
+After setValue: years = 30
+
+Type inference (Diamond Operator):
+Pair<String, Integer> pair = new Pair<>("score", 95);
+No need to repeat types on right side!
+```
+
+**Hints:**
+- Multiple type parameters: `class Pair<K, V> { ... }`
+- Common naming: K for Key, V for Value, T for Type, E for Element
+- Diamond operator `<>` infers types from left side (Java 7+)
+- Both type parameters can be the same type or different types
+
+---
+
+#### Exercise 3: Generic Method Practice - Array Utilities
+**Difficulty:** Easy
+**Objective:** Create and use generic methods with type inference.
+
+**Requirements:**
+- Create a generic method `<T> void printArray(T[] array)` that prints array elements
+- Create `<T> T getFirst(T[] array)` returning first element or null if empty
+- Create `<T> T getLast(T[] array)` returning last element
+- Create `<T> boolean contains(T[] array, T element)` checking if element exists
+- Create `<T> int indexOf(T[] array, T element)` returning index or -1
+- Test with Integer[], String[], Double[] arrays
+- Demonstrate type inference: compiler infers T from arguments
+
+**Expected Outcome:**
+```
+=== Generic Method Demo ===
+
+Integer Array: [1, 2, 3, 4, 5]
+Printing array:
+1 2 3 4 5
+
+First element: 1
+Last element: 5
+Contains 3? true
+Contains 10? false
+Index of 3: 2
+Index of 10: -1
+
+String Array: ["apple", "banana", "cherry"]
+Printing array:
+apple banana cherry
+
+First element: apple
+Last element: cherry
+
+Type Inference:
+printArray(intArray);    → T inferred as Integer
+printArray(strArray);    → T inferred as String
+No need to specify: <Integer>printArray(intArray)
+```
+
+**Hints:**
+- Generic method syntax: `public static <T> void methodName(T param)`
+- Type parameter `<T>` declared before return type
+- Compiler infers T from method arguments automatically
+- Use `equals()` for comparison, not `==`
+
+---
+
+#### Exercise 4: Bounded Type Parameters - Number Calculator
+**Difficulty:** Easy
+**Objective:** Understand bounded type parameters with `extends` keyword.
+
+**Requirements:**
+- Create `<T extends Number> double sum(T num1, T num2)` adding two numbers
+- Create `<T extends Number> double average(T... numbers)` calculating average
+- Create `<T extends Number> T max(T num1, T num2)` returning larger number
+- Use `doubleValue()` method available in Number class
+- Demonstrate that method only accepts Number or its subclasses
+- Try calling with String (should not compile)
+- Test with Integer, Double, Float, Long
+
+**Expected Outcome:**
+```
+=== Bounded Type Parameter Demo ===
+
+Number Calculator (T extends Number):
+
+Sum of integers:
+sum(10, 20) = 30.0
+
+Sum of doubles:
+sum(10.5, 20.7) = 31.2
+
+Average of integers:
+average(10, 20, 30, 40) = 25.0
+
+Max comparison:
+max(15, 25) = 25
+max(10.5, 8.3) = 10.5
+
+Type Safety:
+sum(10, 20)    ✓ Compiles (Integer extends Number)
+sum(10.5, 20.7) ✓ Compiles (Double extends Number)
+// sum("Hello", "World") ✗ Won't compile (String doesn't extend Number)
+
+Accessing Number methods:
+T extends Number allows calling:
+- doubleValue()
+- intValue()
+- floatValue()
+```
+
+**Hints:**
+- Bounded type: `<T extends Number>` restricts T to Number subclasses
+- Can call Number methods: `num.doubleValue()`, `num.intValue()`
+- Use `extends` keyword for both classes and interfaces
+- Varargs: `T... numbers` accepts variable number of arguments
+
+---
+
+#### Exercise 5: Wildcards Practice - Collection Printer
+**Difficulty:** Medium
+**Objective:** Understand wildcards (`?`, `? extends`, `? super`) for flexible generic methods.
+
+**Requirements:**
+- Create `printList(List<?> list)` accepting any type of list
+- Create `sumNumbers(List<? extends Number> list)` accepting Number subtypes
+- Create `addIntegers(List<? super Integer> list)` accepting Integer supertypes
+- Demonstrate unbounded wildcard `<?>` for read-only operations
+- Demonstrate upper bound `<? extends T>` for reading from collection
+- Demonstrate lower bound `<? super T>` for writing to collection
+- Show PECS principle: Producer Extends, Consumer Super
+
+**Expected Outcome:**
+```
+=== Wildcard Demo ===
+
+Unbounded Wildcard (List<?>):
+printList() can accept any list type:
+  List<Integer>: [1, 2, 3]
+  List<String>: [A, B, C]
+  List<Double>: [1.5, 2.5]
+
+Upper Bounded Wildcard (List<? extends Number>):
+sumNumbers() accepts Number and subclasses:
+  List<Integer> sum: 6
+  List<Double> sum: 4.0
+  // Cannot add to list - unknown specific type
+  // list.add(10);  ✗ Won't compile
+
+Lower Bounded Wildcard (List<? super Integer>):
+addIntegers() accepts Integer and superclasses:
+  Adding to List<Integer>: ✓
+  Adding to List<Number>: ✓
+  Adding to List<Object>: ✓
+  // Cannot read as Integer - might be Number or Object
+  // Integer num = list.get(0);  ✗ Won't compile (returns Object)
+
+PECS Principle:
+Producer Extends: <? extends T> for reading (covariance)
+Consumer Super: <? super T> for writing (contravariance)
+```
+
+**Hints:**
+- Unbounded `<?>`: read as Object, can't add anything except null
+- Upper bound `<? extends T>`: read as T, can't add (unknown subtype)
+- Lower bound `<? super T>`: add T, read as Object (unknown supertype)
+- PECS: Producer (reading) uses extends, Consumer (writing) uses super
+
+---
+
+#### Exercise 6: Generic Stack Implementation - Practical Application
+**Difficulty:** Medium
+**Objective:** Build a complete generic data structure combining learned concepts.
+
+**Requirements:**
+- Create generic `Stack<E>` class using ArrayList<E> internally
+- Implement `push(E item)` adding element to top
+- Implement `pop()` returning and removing top element (throw exception if empty)
+- Implement `peek()` viewing top element without removing
+- Add `isEmpty()` and `size()` methods
+- Add `clear()` removing all elements
+- Create `EmptyStackException` custom exception
+- Test with different types: Integer, String, custom objects
+- Demonstrate type safety throughout operations
+
+**Expected Outcome:**
+```
+=== Generic Stack Implementation ===
+
+Stack<Integer> intStack = new Stack<>();
+
+Push operations:
+push(10) → Stack: [10]
+push(20) → Stack: [10, 20]
+push(30) → Stack: [10, 20, 30]
+Size: 3
+
+Peek operation:
+peek() = 30 (stack unchanged)
+Stack: [10, 20, 30]
+
+Pop operations:
+pop() = 30 → Stack: [10, 20]
+pop() = 20 → Stack: [10]
+Size: 1
+
+Stack<String> stringStack = new Stack<>();
+
+Push strings:
+push("Java") → Stack: [Java]
+push("Generics") → Stack: [Java, Generics]
+
+Type Safety:
+String str = stringStack.pop();  → "Generics"
+No casting needed!
+// intStack.push("Hello");  ✗ Won't compile
+
+Empty stack exception:
+Stack<Double> emptyStack = new Stack<>();
+emptyStack.pop()  → EmptyStackException: Stack is empty
+
+Custom objects:
+Stack<Person> personStack = new Stack<>();
+push(Person[name=Alice, age=30])
+pop() = Person[name=Alice, age=30]
+Generics work with any type!
+```
+
+**Hints:**
+- Use `ArrayList<E>` for internal storage
+- Generic class: `public class Stack<E> { ... }`
+- Throw exception instead of returning null for empty stack
+- Type parameter E (Element) is convention for collections
+- All public methods use E for type safety
+- Same Stack class works for any type without code changes
+
+---
+
 ## 🎓 Key Takeaways
 
 1. **Generics** provide type safety at compile time

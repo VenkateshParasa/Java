@@ -705,6 +705,90 @@ Integrate Docker-based tests into a CI/CD pipeline.
 
 ---
 
+## Common Mistakes
+
+### 1. Not Setting Shared Memory Size
+- **Problem**: Running Chrome containers without increasing shared memory (--shm-size)
+- **Why it's wrong**: Chrome crashes with "session deleted because of page crash" errors due to insufficient /dev/shm space
+- **Correct approach**: Always set --shm-size="2g" when running Chrome containers, or use --disable-dev-shm-usage flag
+
+### 2. Using 'latest' Tag in Production
+- **Problem**: Using selenium/standalone-chrome:latest in production pipelines
+- **Why it's wrong**: The 'latest' tag can change unexpectedly, breaking tests when new versions are released. Makes debugging difficult when issues arise
+- **Correct approach**: Pin to specific versions (selenium/standalone-chrome:4.15.0), update versions intentionally after testing
+
+### 3. Not Configuring Docker Networks Properly
+- **Problem**: Running test containers and Selenium Grid on different networks or using default network
+- **Why it's wrong**: Containers can't communicate, tests fail with connection errors, hard to debug network issues
+- **Correct approach**: Create custom bridge networks, ensure all containers join the same network, use service names for DNS resolution
+
+### 4. Ignoring Container Resource Limits
+- **Problem**: Running containers without CPU and memory limits, allowing unlimited resource consumption
+- **Why it's wrong**: Containers can consume all host resources, affecting other services, causing unpredictable performance
+- **Correct approach**: Set appropriate resource limits in docker-compose (memory: 2G, cpus: '1.0'), monitor container resource usage
+
+### 5. Not Handling Test Artifacts Properly
+- **Problem**: Storing test results, screenshots, and logs inside containers that get deleted
+- **Why it's wrong**: Losing test evidence, can't debug failures, no historical data for analysis
+- **Correct approach**: Use Docker volumes to persist test artifacts to host, mount specific directories for screenshots and reports
+
+### 6. Running Tests Before Grid is Ready
+- **Problem**: Starting test execution immediately after docker-compose up without waiting for Selenium Grid
+- **Why it's wrong**: Tests fail with connection refused errors, requires manual retries, wastes CI/CD time
+- **Correct approach**: Implement health checks in docker-compose, add wait-for-it scripts, or poll Grid status endpoint before running tests
+
+### 7. Not Cleaning Up Containers and Volumes
+- **Problem**: Repeatedly running docker-compose up without cleaning old containers and volumes
+- **Why it's wrong**: Consumes disk space, old containers interfere with new ones, port conflicts occur
+- **Correct approach**: Use docker-compose down -v to remove volumes, implement cleanup in CI/CD, regularly prune unused resources
+
+### 8. Hardcoding Hub URL in Test Code
+- **Problem**: Hardcoding http://localhost:4444/wd/hub in test code instead of making it configurable
+- **Why it's wrong**: Tests don't work in Docker network (localhost != selenium-hub), not flexible for different environments
+- **Correct approach**: Use environment variables for Hub URL, configure based on execution context (local vs Docker vs CI/CD)
+
+---
+
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What is Docker and why is it used in test automation?**
+   - A: Docker is a containerization platform that packages applications and their dependencies into isolated containers. In test automation, it provides consistent test environments, easy setup/teardown, parallel execution capabilities, and eliminates "works on my machine" problems.
+
+2. **Q: What is the difference between a Docker image and a Docker container?**
+   - A: A Docker image is a read-only template containing the application and its dependencies, like a blueprint. A Docker container is a running instance of an image, like an actual building constructed from the blueprint. Multiple containers can be created from the same image.
+
+3. **Q: What is Selenium Grid and how does Docker help with it?**
+   - A: Selenium Grid is a tool for running tests in parallel across multiple machines and browsers. Docker simplifies Grid setup by providing pre-built containers for Hub and browser nodes that can be started with simple commands, eliminating manual installation and configuration.
+
+### Intermediate Level
+
+4. **Q: How do you configure Selenium tests to run on Docker Grid?**
+   - A: Use RemoteWebDriver instead of local WebDriver, point to the Grid Hub URL (http://localhost:4444/wd/hub), set desired capabilities for browser choice, and configure network connectivity between test container and Grid containers using docker-compose networks.
+
+5. **Q: Explain the purpose of docker-compose.yml in Selenium Grid setup.**
+   - A: docker-compose.yml defines all Grid services (Hub and browser nodes) in one configuration file, specifies their relationships and dependencies, configures environment variables, sets up networking between services, manages resource allocation, and allows starting/stopping the entire Grid with single commands.
+
+6. **Q: What is the purpose of shm_size in Docker Selenium containers?**
+   - A: shm_size (shared memory size) prevents browser crashes in Docker containers. Browsers use /dev/shm for temporary files and shared memory. The default 64MB is too small, causing crashes. Setting shm_size to 2GB provides adequate space for browser operations.
+
+7. **Q: How would you scale Selenium Grid nodes using Docker?**
+   - A: Using docker-compose with the `--scale` flag (e.g., `docker-compose up -d --scale chrome=3`), or by defining `replicas` in the deploy section of docker-compose.yml. This creates multiple instances of browser nodes for increased parallel test capacity.
+
+### Advanced Level
+
+8. **Q: How do you create a custom Docker image for your test automation framework?**
+   - A: Create a Dockerfile that: uses a base image with Java and Maven, sets working directory, copies pom.xml and source code, downloads dependencies, configures environment variables, exposes necessary ports, and defines the command to execute tests. Build with `docker build` and run with appropriate network and volume configurations.
+
+9. **Q: Explain multi-stage Docker builds and their benefits for test automation.**
+   - A: Multi-stage builds use multiple FROM statements in a Dockerfile, where each stage can serve a different purpose (build, test, runtime). Benefits include: smaller final image size (only runtime dependencies), separate build and test environments, better security (build tools not in production image), and faster subsequent builds with caching.
+
+10. **Q: How would you integrate Docker-based Selenium Grid with a CI/CD pipeline?**
+    - A: In the CI pipeline: install Docker and docker-compose, start Grid using `docker-compose up -d`, wait for Grid readiness using health checks or polling the status endpoint, run tests pointing to Grid URL, capture test results and artifacts, stop Grid with `docker-compose down`, and clean up volumes. Use environment variables to configure Grid URL and browser choices dynamically.
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 44: Mobile Web Testing](./day44_mobile_web_testing.md)

@@ -1,4 +1,4 @@
-# Day 33: TestNG Part 4 - Listeners & Reports
+# Day 21: TestNG Part 4 - Listeners & Reports
 
 ## Learning Objectives
 
@@ -1818,9 +1818,10 @@ public class ExtentReportListener implements ITestListener {
 
 ## Navigation
 
-- **Previous:** [Day 32: TestNG Part 3](./day32_testng_part3.md)
-- **Next:** [Day 34: TestNG Part 5](./day34_testng_part5.md)
-- **Week 5 Home:** [Week 5 Overview](./README.md)
+- **Previous:** [Day 20: TestNG Part 3](./day20_testng_part3.md)
+- **Next:** [Day 22: TestNG Part 5](./day22_testng_part5.md)
+- **Week 3 Home:** [Week 3 Overview](./README.md)
+- **Course Home:** [Selenium Course Overview](../README.md)
 
 ---
 

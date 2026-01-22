@@ -2023,6 +2023,218 @@ public class TestInventoryManagement {
 
 ---
 
+### Beginner Exercises
+
+#### Exercise 1: ArrayList Practice - Student Grade Manager
+**Difficulty:** Beginner
+
+**Objective:** Practice basic ArrayList operations including add, remove, get, set, and iteration.
+
+**Requirements:**
+- Create an ArrayList to store student grades (Integer)
+- Add 5 grades to the list: 85, 92, 78, 95, 88
+- Display all grades using a for-each loop
+- Calculate and display the average grade
+- Find and display the highest grade using a loop
+- Remove the lowest grade from the list
+- Update the second grade to 90
+- Display the final list
+
+**Expected Outcome:**
+```
+Original Grades: [85, 92, 78, 95, 88]
+Average Grade: 87.6
+Highest Grade: 95
+Lowest Grade: 78
+After Removing Lowest: [85, 92, 95, 88]
+After Updating Second Grade: [85, 90, 95, 88]
+```
+
+**Hints:**
+- Use `Collections.max()` and `Collections.min()` to find highest/lowest
+- Use `list.set(index, value)` to update an element
+- Use `list.remove(Object)` to remove by value
+
+---
+
+#### Exercise 2: LinkedList Practice - Browser History
+**Difficulty:** Beginner
+
+**Objective:** Understand LinkedList operations and practice using it as a queue/deque.
+
+**Requirements:**
+- Create a LinkedList to simulate browser history
+- Add these URLs in order: "google.com", "facebook.com", "twitter.com"
+- Add a new URL at the beginning: "home.com"
+- Add a new URL at the end: "linkedin.com"
+- Display the first URL (current page) without removing it
+- Display the last URL without removing it
+- Go back by removing the current page (first element)
+- Display the new current page
+- Display all pages in history order
+
+**Expected Outcome:**
+```
+Browser History: [home.com, google.com, facebook.com, twitter.com, linkedin.com]
+Current Page: home.com
+Last Page: linkedin.com
+Going back...
+New Current Page: google.com
+Final History: [google.com, facebook.com, twitter.com, linkedin.com]
+```
+
+**Hints:**
+- Use `addFirst()` and `addLast()` for beginning/end operations
+- Use `getFirst()` and `getLast()` to view without removing
+- Use `removeFirst()` to simulate going back
+
+---
+
+#### Exercise 3: HashSet Practice - Remove Duplicate Numbers
+**Difficulty:** Easy
+
+**Objective:** Practice HashSet to remove duplicates and understand Set properties.
+
+**Requirements:**
+- Create an ArrayList with duplicate numbers: [5, 2, 8, 2, 9, 5, 3, 8, 1]
+- Display the original list
+- Convert the ArrayList to a HashSet to remove duplicates
+- Display the HashSet (notice the order)
+- Convert back to ArrayList
+- Sort the ArrayList using Collections.sort()
+- Display the final sorted list without duplicates
+
+**Expected Outcome:**
+```
+Original List: [5, 2, 8, 2, 9, 5, 3, 8, 1]
+Original Size: 9
+HashSet (duplicates removed): [1, 2, 3, 5, 8, 9]
+HashSet Size: 6
+Sorted List: [1, 2, 3, 5, 8, 9]
+Duplicates removed: 3
+```
+
+**Hints:**
+- Use `new HashSet<>(list)` to convert list to set
+- Use `new ArrayList<>(set)` to convert set back to list
+- Use `Collections.sort()` to sort the list
+
+---
+
+#### Exercise 4: LinkedHashSet Practice - Unique Words Tracker
+**Difficulty:** Easy
+
+**Objective:** Use LinkedHashSet to maintain unique elements in insertion order.
+
+**Requirements:**
+- Create a String: "Java is fun Java is powerful Java is everywhere"
+- Split the string into words
+- Store words in a LinkedHashSet to keep unique words in order
+- Display the unique words in insertion order
+- Display the count of unique words
+- Check if "Java" exists in the set
+- Remove the word "is" from the set
+- Display the final unique words
+
+**Expected Outcome:**
+```
+Original Text: Java is fun Java is powerful Java is everywhere
+All Words: [Java, is, fun, Java, is, powerful, Java, is, everywhere]
+Unique Words (insertion order): [Java, is, fun, powerful, everywhere]
+Count of Unique Words: 5
+Contains 'Java': true
+After Removing 'is': [Java, fun, powerful, everywhere]
+Final Count: 4
+```
+
+**Hints:**
+- Use `split(" ")` to split the string
+- Use LinkedHashSet to maintain insertion order
+- Use `contains()` to check existence
+- Use `remove()` to remove an element
+
+---
+
+#### Exercise 5: TreeSet Practice - Sorted Integer Operations
+**Difficulty:** Medium
+
+**Objective:** Practice TreeSet operations and understand automatic sorting.
+
+**Requirements:**
+- Create a TreeSet of Integer
+- Add numbers in random order: 50, 20, 80, 10, 90, 30, 70, 40
+- Display the TreeSet (notice automatic sorting)
+- Display the first (smallest) and last (largest) elements
+- Display all elements less than 50 using headSet()
+- Display all elements from 40 onwards using tailSet()
+- Display elements between 30 and 70 using subSet()
+- Remove all elements less than 40
+- Display the final TreeSet
+
+**Expected Outcome:**
+```
+Original TreeSet: [10, 20, 30, 40, 50, 70, 80, 90]
+First Element: 10
+Last Element: 90
+Elements < 50: [10, 20, 30, 40]
+Elements >= 40: [40, 50, 70, 80, 90]
+Elements between 30 and 70: [30, 40, 50]
+After Removing < 40: [40, 50, 70, 80, 90]
+```
+
+**Hints:**
+- TreeSet automatically sorts elements
+- Use `first()` and `last()` for extremes
+- Use `headSet(value)` for elements < value
+- Use `tailSet(value)` for elements >= value
+- Use `subSet(from, to)` for range [from, to)
+- Use `removeIf()` or create subSet and clear
+
+---
+
+#### Exercise 6: List vs Set Comparison - Student Registration
+**Difficulty:** Medium
+
+**Objective:** Understand when to use List vs Set through a practical example.
+
+**Requirements:**
+- Create a scenario where students register for a course
+- Use ArrayList to track all registration attempts (allows duplicates)
+- Use HashSet to track unique students registered
+- Add these registration attempts: "Alice", "Bob", "Alice", "Charlie", "Bob", "David"
+- Display all registration attempts (ArrayList)
+- Display unique registered students (HashSet)
+- Show how many duplicate registrations were attempted
+- Check if "Alice" is registered using both collections
+- Display performance note about HashSet.contains() vs ArrayList.contains()
+
+**Expected Outcome:**
+```
+=== Student Registration System ===
+
+All Registration Attempts (ArrayList): [Alice, Bob, Alice, Charlie, Bob, David]
+Total Attempts: 6
+
+Unique Students Registered (HashSet): [Alice, Bob, Charlie, David]
+Total Unique Students: 4
+
+Duplicate Registrations: 2
+
+Checking if Alice is registered:
+- Using ArrayList.contains(): true (O(n) - checks each element)
+- Using HashSet.contains(): true (O(1) - hash table lookup)
+
+HashSet is faster for membership testing!
+```
+
+**Hints:**
+- Compare ArrayList size vs HashSet size to find duplicates
+- `contains()` works on both List and Set
+- HashSet uses hashing for O(1) lookup
+- ArrayList requires O(n) linear search
+
+---
+
 ## 🎓 Key Takeaways
 
 1. **ArrayList**: Fast random access, slow insertion/deletion

@@ -1613,6 +1613,201 @@ public class TestBankingSystem {
 
 ---
 
+### Beginner Exercises
+
+#### Exercise 1: Basic Try-Catch Practice
+**Difficulty:** Beginner
+**Objective:** Practice basic exception handling with try-catch blocks.
+
+**Problem:** Create a program that safely performs different operations that might throw exceptions.
+
+**Requirements:**
+- Create method `safeDivide(int a, int b)` handling ArithmeticException
+- Create method `safeArrayAccess(int[] arr, int index)` handling ArrayIndexOutOfBoundsException
+- Create method `parseInteger(String str)` handling NumberFormatException
+- Each method should catch exception, print error message, return default value
+- Test all methods with valid and invalid inputs
+
+**Example Output:**
+```
+=== Safe Division ===
+10 / 2 = 5
+10 / 0 = Error: Cannot divide by zero. Result: 0
+
+=== Safe Array Access ===
+Array[2] = 30
+Array[10] = Error: Invalid index. Result: -1
+
+=== Parse Integer ===
+"123" = 123
+"abc" = Error: Invalid number format. Result: 0
+```
+
+**Hint:** Use try-catch around risky operations, return default on exception.
+
+---
+
+#### Exercise 2: Multiple Catch Blocks
+**Difficulty:** Easy
+**Objective:** Practice handling multiple exception types with separate catch blocks.
+
+**Problem:** Create a calculator that handles different types of exceptions separately.
+
+**Requirements:**
+- Create `Calculator` class with method `calculate(String operation, String num1, String num2)`
+- Parse strings to integers (may throw NumberFormatException)
+- Perform operation: add, subtract, multiply, divide (may throw ArithmeticException)
+- Handle each exception type with specific error message
+- Return result or error message
+
+**Example Output:**
+```
+calculate("add", "10", "5") = 15
+calculate("divide", "10", "0") = Error: Division by zero
+calculate("add", "10", "abc") = Error: Invalid number format
+calculate("multiply", "5", "3") = 15
+```
+
+**Hint:** Use multiple catch blocks ordered from specific to general exceptions.
+
+---
+
+#### Exercise 3: Finally Block Resource Cleanup
+**Difficulty:** Easy
+**Objective:** Practice using finally block for cleanup operations.
+
+**Problem:** Create a program that opens a "resource" (simulated) and ensures it's closed in finally block.
+
+**Requirements:**
+- Create `Resource` class with methods `open()` and `close()`
+- Create method `processResource(boolean shouldFail)` that:
+  - Opens resource
+  - Processes it (throws exception if shouldFail is true)
+  - Closes resource in finally block
+- Print messages showing when resource opens, processes, closes
+- Test with both success and failure scenarios
+
+**Example Output:**
+```
+=== Test 1: Success Scenario ===
+Opening resource...
+Processing resource...
+Finally: Closing resource...
+Process completed successfully
+
+=== Test 2: Failure Scenario ===
+Opening resource...
+Processing resource...
+Error occurred: Simulated processing failure
+Finally: Closing resource...
+Process failed but resource cleaned up
+```
+
+**Hint:** Finally block executes whether exception occurs or not.
+
+---
+
+#### Exercise 4: Try-With-Resources Practice
+**Difficulty:** Medium
+**Objective:** Practice automatic resource management with try-with-resources.
+
+**Problem:** Create custom AutoCloseable resource and use try-with-resources for automatic cleanup.
+
+**Requirements:**
+- Create `DatabaseConnection` class implementing AutoCloseable
+- Fields: connectionId, connected (boolean)
+- Constructor opens connection, `close()` closes it
+- Method `executeQuery(String query)` simulates query execution
+- Use try-with-resources to ensure connection always closed
+- Test with successful and failed queries
+
+**Example Output:**
+```
+=== Test 1: Successful Query ===
+Opening connection: CONN-001
+Executing query: SELECT * FROM users
+Query successful
+Closing connection: CONN-001
+
+=== Test 2: Failed Query ===
+Opening connection: CONN-002
+Executing query: INVALID SQL
+Error: Query execution failed
+Closing connection: CONN-002 (auto-closed despite error)
+```
+
+**Hint:** Try-with-resources automatically calls `close()` on AutoCloseable resources.
+
+---
+
+#### Exercise 5: Exception Message Formatting
+**Difficulty:** Beginner
+**Objective:** Practice creating meaningful exception messages with context.
+
+**Problem:** Create a program that throws exceptions with detailed, informative messages.
+
+**Requirements:**
+- Create `BankAccount` class with field `balance`
+- Method `withdraw(double amount)` that throws exception if:
+  - Amount is negative (IllegalArgumentException with details)
+  - Amount exceeds balance (custom InsufficientFundsException with balance and amount)
+- Method `deposit(double amount)` throws exception if amount negative
+- Exception messages include relevant values for debugging
+
+**Example Output:**
+```
+=== Test 1: Negative Withdrawal ===
+Error: Withdrawal amount must be positive. Received: -50.0
+
+=== Test 2: Insufficient Funds ===
+Error: Insufficient funds.
+Balance: $100.0
+Requested: $150.0
+Shortfall: $50.0
+
+=== Test 3: Successful Transaction ===
+Deposited: $50.0
+New Balance: $150.0
+Withdrawn: $75.0
+Final Balance: $75.0
+```
+
+**Hint:** Include actual values in exception messages for easier debugging.
+
+---
+
+#### Exercise 6: Nested Try-Catch Blocks
+**Difficulty:** Medium
+**Objective:** Practice using nested try-catch for complex error handling scenarios.
+
+**Problem:** Create a file processor that handles exceptions at different levels.
+
+**Requirements:**
+- Outer try-catch handles FileNotFoundException
+- Inner try-catch handles ParseException during line processing
+- Continue processing remaining lines even if one line fails
+- Count successful and failed lines
+- Display summary at end
+
+**Example Output:**
+```
+=== Processing File ===
+Processing line 1: "123" - Success
+Processing line 2: "456" - Success
+Processing line 3: "abc" - Failed: Invalid number format
+Processing line 4: "789" - Success
+Processing line 5: "xyz" - Failed: Invalid number format
+
+=== Summary ===
+Total lines: 5
+Successful: 3
+Failed: 2
+```
+
+**Hint:** Inner try-catch handles line errors, outer try-catch handles file errors.
+
+---
+
 ## 🎓 Key Takeaways
 
 1. **Exceptions** disrupt normal program flow

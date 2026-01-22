@@ -3066,10 +3066,10 @@ public class CrossBrowserReportListener implements ITestListener {
 
 ## Navigation
 
-- [Previous: Day 42 - Exception Handling & Framework Exceptions](../week6/day42_exception_handling_framework.md)
-- [Next: Day 44 - Framework Best Practices & Design Patterns](day44_framework_best_practices.md)
+- [Previous: Day 42 - Framework Best Practices](../week6/day42_framework_best_practices.md)
+- [Next: Day 44 - Mobile Web Testing](day44_mobile_web_testing.md)
 - [Week 7 Overview](README.md)
-- [Course Home](../../README.md)
+- [Course Home](../README.md)
 
 ---
 

@@ -756,6 +756,364 @@ public class CourseSchedule {
 
 ---
 
+## ⚠️ Common Mistakes
+
+### 1. Installation and Setup Errors
+
+#### ❌ Wrong - Not Setting JAVA_HOME Environment Variable:
+**Problem:** Installing JDK but forgetting to set JAVA_HOME and PATH variables.
+
+```bash
+# After installation, trying to run:
+javac HelloWorld.java
+# Error: 'javac' is not recognized as an internal or external command
+```
+
+**Why it's wrong:** Without proper environment variables, the system cannot find Java tools even though JDK is installed.
+
+#### ✅ Right:
+```bash
+# Windows: Set environment variables
+JAVA_HOME=C:\Program Files\Java\jdk-17
+PATH=%JAVA_HOME%\bin;%PATH%
+
+# Linux/Mac: Add to ~/.bashrc or ~/.zshrc
+export JAVA_HOME=/path/to/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Verify installation
+java -version
+javac -version
+```
+
+**💡 Tip:** Always verify installation with both `java -version` and `javac -version` commands.
+
+---
+
+#### ❌ Wrong - Using JRE Instead of JDK:
+**Problem:** Installing only Java Runtime Environment (JRE) for development.
+
+```bash
+# Trying to compile with only JRE installed
+javac HelloWorld.java
+# Error: 'javac' command not found
+```
+
+**Why it's wrong:** JRE only contains runtime components to run Java programs, not development tools like the compiler.
+
+#### ✅ Right:
+```
+Download and install JDK (Java Development Kit):
+- JDK includes JRE + development tools (javac, debugger, etc.)
+- For development: Always install JDK
+- For running apps only: JRE is sufficient
+```
+
+**💡 Tip:** JDK = JRE + Development Tools. Always install JDK for programming.
+
+---
+
+### 2. File Naming Issues
+
+#### ❌ Wrong - Class Name Doesn't Match Filename:
+```java
+// File saved as: Hello.java
+public class HelloWorld {  // Class name doesn't match!
+    public static void main(String[] args) {
+        System.out.println("Hello");
+    }
+}
+```
+
+**Compilation Error:**
+```
+Hello.java:1: error: class HelloWorld is public, should be declared in a file named HelloWorld.java
+```
+
+**Why it's wrong:** Java requires public class name to exactly match the filename.
+
+#### ✅ Right:
+```java
+// File saved as: HelloWorld.java
+public class HelloWorld {  // Matches filename exactly
+    public static void main(String[] args) {
+        System.out.println("Hello");
+    }
+}
+```
+
+**💡 Tip:** Filename must be ClassName.java (case-sensitive, exact match).
+
+---
+
+#### ❌ Wrong - Incorrect File Extension:
+```
+Saving file as: HelloWorld.txt
+or: HelloWorld.java.txt (Windows hiding extensions)
+```
+
+**Problem:** File won't compile because it's not recognized as Java source.
+
+#### ✅ Right:
+```
+1. Enable "Show file extensions" in Windows Explorer
+2. Save as: HelloWorld.java
+3. Ensure no hidden extensions: verify in command line with 'dir' or 'ls -la'
+```
+
+**💡 Tip:** Always verify the actual file extension, especially on Windows.
+
+---
+
+### 3. Syntax Errors
+
+#### ❌ Wrong - Missing Semicolon:
+```java
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Hello")  // Missing semicolon!
+    }
+}
+```
+
+**Compilation Error:**
+```
+Test.java:3: error: ';' expected
+```
+
+**Why it's wrong:** Every statement in Java must end with a semicolon.
+
+#### ✅ Right:
+```java
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Hello");  // Semicolon added
+    }
+}
+```
+
+**💡 Tip:** Semicolons are required at the end of every statement (not after method or class declarations).
+
+---
+
+#### ❌ Wrong - Incorrect Case Sensitivity:
+```java
+public class Test {
+    public static void Main(String[] args) {  // Capital 'M'!
+        System.out.Println("Hello");  // Capital 'P'!
+    }
+}
+```
+
+**Runtime Error:** Program compiles but doesn't run (no entry point found).
+
+**Why it's wrong:** Java is case-sensitive. The entry point must be exactly `main`, and println is lowercase.
+
+#### ✅ Right:
+```java
+public class Test {
+    public static void main(String[] args) {  // Lowercase 'main'
+        System.out.println("Hello");  // Lowercase 'println'
+    }
+}
+```
+
+**💡 Tip:** Java is case-sensitive: `main ≠ Main`, `println ≠ Println`, `String ≠ string`.
+
+---
+
+### 4. Compilation and Execution Mistakes
+
+#### ❌ Wrong - Including .class Extension When Running:
+```bash
+javac HelloWorld.java  # Correct compilation
+java HelloWorld.class  # WRONG!
+```
+
+**Error:**
+```
+Error: Could not find or load main class HelloWorld.class
+```
+
+**Why it's wrong:** The `java` command expects the class name, not the filename.
+
+#### ✅ Right:
+```bash
+javac HelloWorld.java  # Compile (creates HelloWorld.class)
+java HelloWorld        # Run (no .class extension)
+```
+
+**💡 Tip:** Compile with .java extension, run without any extension (just class name).
+
+---
+
+#### ❌ Wrong - Wrong Compilation/Execution Order:
+```bash
+java HelloWorld  # Trying to run before compiling
+```
+
+**Error:**
+```
+Error: Could not find or load main class HelloWorld
+```
+
+**Why it's wrong:** Must compile (.java → .class) before executing.
+
+#### ✅ Right:
+```bash
+# Step 1: Compile first
+javac HelloWorld.java  # Creates HelloWorld.class
+
+# Step 2: Then execute
+java HelloWorld        # Runs the bytecode
+```
+
+**💡 Tip:** Always compile (javac) before running (java).
+
+---
+
+### 5. main Method Signature Errors
+
+#### ❌ Wrong - Incorrect main Method Signature:
+```java
+public class Test {
+    // Missing 'static'
+    public void main(String[] args) {
+        System.out.println("Hello");
+    }
+}
+```
+
+**Runtime Error:** Program compiles but doesn't run.
+```
+Error: Main method is not static in class Test
+```
+
+**Why it's wrong:** The main method must be `public static void main(String[] args)` exactly.
+
+#### ✅ Right:
+```java
+public class Test {
+    public static void main(String[] args) {  // All keywords required
+        System.out.println("Hello");
+    }
+}
+```
+
+**Required signature components:**
+- `public`: accessible from anywhere
+- `static`: can be called without creating object
+- `void`: doesn't return value
+- `main`: exact method name
+- `String[] args`: command-line arguments parameter
+
+**💡 Tip:** Memorize the exact signature: `public static void main(String[] args)`.
+
+---
+
+### 6. String and Output Errors
+
+#### ❌ Wrong - Using Single Quotes for Strings:
+```java
+public class Test {
+    public static void main(String[] args) {
+        System.out.println('Hello');  // Single quotes!
+    }
+}
+```
+
+**Compilation Error:**
+```
+error: unclosed character literal
+```
+
+**Why it's wrong:** Single quotes are for single characters only; strings require double quotes.
+
+#### ✅ Right:
+```java
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Hello");  // Double quotes for strings
+        System.out.println('H');      // Single quote for single character
+    }
+}
+```
+
+**💡 Tip:** Use double quotes `""` for strings, single quotes `''` for characters.
+
+---
+
+#### ❌ Wrong - Forgetting Escape Sequences:
+```java
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Path: C:\Users\Documents");  // Wrong!
+    }
+}
+```
+
+**Output:**
+```
+Path: C:UsersDocuments  (backslashes interpreted as escape characters)
+```
+
+**Why it's wrong:** Backslash `\` is an escape character; single backslash causes issues.
+
+#### ✅ Right:
+```java
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Path: C:\\Users\\Documents");  // Double backslash
+        System.out.println("Quote: He said \"Hello\"");     // Escaped quotes
+    }
+}
+```
+
+**Common escape sequences:**
+- `\\` - Backslash
+- `\"` - Double quote
+- `\n` - Newline
+- `\t` - Tab
+
+**💡 Tip:** Use `\\` for file paths and `\"` for quotes inside strings.
+
+---
+
+### 7. IDE and Tool Confusion
+
+#### ❌ Wrong - Mixing IDE and Command Line Compilation:
+**Problem:** Creating project in IDE, then trying to compile individual files with command line in wrong directory.
+
+```bash
+# In wrong directory
+cd C:\Projects
+javac HelloWorld.java
+# Error: cannot find file
+```
+
+**Why it's wrong:** IDE organizes files in specific folder structures (src, bin, out); simple command line compilation expects flat structure.
+
+#### ✅ Right:
+```bash
+# Option 1: Use IDE's build system (recommended for IDE projects)
+Click IDE's "Build" or "Run" button
+
+# Option 2: Navigate to correct source directory for command line
+cd C:\Projects\MyProject\src
+javac HelloWorld.java
+java HelloWorld
+
+# Option 3: Use IDE's terminal with proper working directory
+```
+
+**💡 Tip:** When using an IDE, let it handle compilation. For command line, ensure you're in the directory containing your .java file.
+
+---
+
+This completes the Common Mistakes section for Day 1! The section covers 8 major categories of mistakes beginners make when starting with Java, including setup issues, file naming, syntax errors, compilation problems, main method signature errors, string/output issues, and IDE confusion. Each mistake includes a clear problem statement, explanation, and correct approach with examples.
+
+---
+
 ## 📖 Additional Resources
 
 ### Official Documentation:

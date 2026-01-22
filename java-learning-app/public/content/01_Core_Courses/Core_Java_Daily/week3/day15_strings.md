@@ -1095,6 +1095,164 @@ public class EmailValidator {
 
 ---
 
+### Beginner Exercises
+
+#### Exercise 1: String Reversal Using Multiple Methods
+**Difficulty:** Beginner
+**Objective:** Practice string manipulation by reversing strings using different approaches.
+
+**Problem:** Write a program that reverses a string using three different methods:
+1. Using StringBuilder's reverse() method
+2. Using character array and swapping
+3. Using recursion
+
+**Requirements:**
+- Create method `reverseWithStringBuilder(String str)`
+- Create method `reverseWithCharArray(String str)`
+- Create method `reverseRecursively(String str)`
+- Test all methods with same input strings
+- Compare and display results
+
+**Example Output:**
+```
+Input: "Hello World"
+StringBuilder reverse: dlroW olleH
+CharArray reverse: dlroW olleH
+Recursive reverse: dlroW olleH
+```
+
+**Hint:** For recursion, base case is empty string; recursive case takes last character + reverse of remaining string.
+
+---
+
+#### Exercise 2: Word Frequency Counter
+**Difficulty:** Easy
+**Objective:** Count frequency of each word in a sentence.
+
+**Problem:** Write a program that counts how many times each word appears in a sentence (case-insensitive).
+
+**Requirements:**
+- Accept a sentence as input
+- Split sentence into words using `split()`
+- Convert words to lowercase for case-insensitive comparison
+- Use HashMap to store word frequencies
+- Display words and their counts
+
+**Example Output:**
+```
+Input: "Java is fun and Java is powerful"
+Word Frequencies:
+java: 2
+is: 2
+fun: 1
+and: 1
+powerful: 1
+```
+
+**Hint:** Use `split("\\s+")` to split by spaces, `toLowerCase()` for case-insensitive comparison.
+
+---
+
+#### Exercise 3: String Compression
+**Difficulty:** Medium
+**Objective:** Implement basic string compression using character counts.
+
+**Problem:** Write a program that compresses a string by replacing repeated characters with the character followed by count.
+
+**Requirements:**
+- Create method `compress(String str)`
+- If compressed string is not shorter than original, return original
+- Count consecutive repeated characters
+- Return compressed string
+
+**Example Output:**
+```
+Input: "aabcccccaaa"
+Output: "a2b1c5a3"
+
+Input: "abcd"
+Output: "abcd" (original shorter)
+```
+
+**Hint:** Use StringBuilder, iterate through string, count consecutive same characters.
+
+---
+
+#### Exercise 4: Anagram Checker
+**Difficulty:** Easy
+**Objective:** Check if two strings are anagrams of each other.
+
+**Problem:** Write a program that checks if two strings are anagrams (contain same characters in different order).
+
+**Requirements:**
+- Create method `isAnagram(String str1, String str2)`
+- Ignore spaces and case
+- Return true if anagrams, false otherwise
+- Two approaches: sorting characters or character frequency count
+
+**Example Output:**
+```
+Input: "listen" and "silent"
+Output: true (are anagrams)
+
+Input: "hello" and "world"
+Output: false (not anagrams)
+```
+
+**Hint:** Sort characters and compare, or use character frequency arrays.
+
+---
+
+#### Exercise 5: Remove Duplicate Characters
+**Difficulty:** Easy
+**Objective:** Remove duplicate characters from a string while preserving order.
+
+**Problem:** Write a program that removes duplicate characters from a string, keeping only first occurrence.
+
+**Requirements:**
+- Create method `removeDuplicates(String str)`
+- Maintain original order of characters
+- Keep only first occurrence of each character
+- Use StringBuilder for efficiency
+
+**Example Output:**
+```
+Input: "programming"
+Output: "progamin" (removed duplicate 'm' and 'g')
+
+Input: "hello"
+Output: "helo" (removed duplicate 'l')
+```
+
+**Hint:** Use HashSet to track seen characters, StringBuilder to build result.
+
+---
+
+#### Exercise 6: Longest Word Finder
+**Difficulty:** Beginner
+**Objective:** Find the longest word in a sentence.
+
+**Problem:** Write a program that finds and displays the longest word in a sentence. If multiple words have same maximum length, display the first one.
+
+**Requirements:**
+- Create method `findLongestWord(String sentence)`
+- Split sentence into words
+- Find word with maximum length
+- Handle ties by returning first longest word
+
+**Example Output:**
+```
+Input: "The quick brown fox jumps over the lazy dog"
+Output: "quick" (5 letters) or "brown" or "jumps"
+
+Input: "Java programming is interesting"
+Output: "programming" (11 letters)
+```
+
+**Hint:** Use `split()` to get words array, iterate and track longest word.
+
+---
+
 ## 🔑 Key Takeaways
 
 1. **String Immutability**: Strings cannot be changed once created

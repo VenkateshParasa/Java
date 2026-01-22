@@ -730,6 +730,90 @@ Enhance test reports with screenshots and logs.
 
 ---
 
+## Interview Questions
+
+### Basic Level
+
+1. **Q: What are flaky tests and why are they problematic?**
+   - A: Flaky tests are tests that sometimes pass and sometimes fail without any code changes. They're problematic because they erode trust in the test suite, waste developer time investigating false failures, mask real issues, and make it difficult to determine if a build is truly stable.
+
+2. **Q: What is the difference between implicit and explicit waits, and which should be preferred?**
+   - A: Implicit waits set a global timeout for finding elements throughout the test, while explicit waits wait for specific conditions on specific elements. Explicit waits should be preferred because they're more precise, provide better error messages, don't cause unnecessary delays, and make test intentions clearer.
+
+3. **Q: Why should you avoid using Thread.sleep() in Selenium tests?**
+   - A: Thread.sleep() causes fixed delays regardless of page state, makes tests slower by always waiting the full time, doesn't guarantee the element will be ready, makes tests brittle to performance changes, and provides no meaningful error information when things go wrong. Explicit waits are superior.
+
+### Intermediate Level
+
+4. **Q: How do you identify flaky tests in your test suite?**
+   - A: Run tests multiple times using TestNG's invocationCount feature, track test results over time in a database or reporting tool, monitor test execution history in CI/CD logs, use successPercentage to define flakiness threshold, analyze patterns of pass/fail across different environments, and implement automated flaky test detection tools.
+
+5. **Q: Explain test isolation and why it's important.**
+   - A: Test isolation means each test is independent and doesn't rely on other tests' execution or state. It's important because it allows tests to run in any order, enables parallel execution, makes debugging easier (test failures are localized), prevents cascading failures, and ensures consistent results regardless of execution order.
+
+6. **Q: How would you optimize slow tests in a test suite?**
+   - A: Identify slowest tests using reporting tools, optimize wait times (reduce unnecessary waits), implement parallel execution, use browser reuse patterns for test suites, optimize page object locators, minimize navigation between pages, use test grouping to run only necessary tests, and consider splitting long tests into focused smaller tests.
+
+7. **Q: What is the purpose of a RetryAnalyzer in TestNG?**
+   - A: RetryAnalyzer automatically reruns failed tests a specified number of times before marking them as failed. It helps handle genuinely flaky tests caused by external factors (network, timing), provides more confidence in test results, and prevents builds from failing due to temporary issues while logging retry attempts for investigation.
+
+### Advanced Level
+
+8. **Q: How would you implement a comprehensive test maintenance strategy for a large test suite?**
+   - A: Implement weekly reviews to fix flaky tests immediately, establish coding standards and conduct code reviews, use static analysis tools, track test metrics (execution time, pass rates, flakiness), refactor duplicated code regularly, update dependencies periodically, document complex test logic, implement proper logging and debugging capabilities, create utility classes for common operations, and establish ownership of test modules within the team.
+
+9. **Q: Describe your approach to handling asynchronous operations in modern web applications.**
+   - A: Use explicit waits for specific conditions, implement framework-specific waits for Ajax/Angular/React (check jQuery.active, Angular testabilities, React rendering state), create custom wait conditions for complex scenarios, handle dynamic DOM updates by re-finding elements, implement retry mechanisms for intermittent failures, and use DevTools Protocol to monitor network activity and wait for requests to complete.
+
+10. **Q: How would you design and implement a test health monitoring dashboard?**
+    - A: Collect metrics using TestNG listeners (execution time, pass/fail status, retry counts, errors), store data in a time-series database, track key metrics (test execution duration trends, flaky test identification, failure rate by module, browser-specific issues, environment-specific problems), visualize data using dashboards (Grafana, Kibana), set up alerts for deteriorating metrics, provide test ownership information, and include actionable insights like top failing tests and slowest tests requiring optimization.
+
+---
+
+## Common Mistakes
+
+### 1. Using Thread.sleep for Waits
+- **Problem**: Adding fixed Thread.sleep(5000) delays throughout test code
+- **Why it's wrong**: Makes tests unnecessarily slow (always waits full duration), unreliable (may not be enough time), and is the primary cause of flaky tests
+- **Correct approach**: Use WebDriverWait with ExpectedConditions, implement custom wait conditions, use FluentWait with polling intervals
+
+### 2. Ignoring Flaky Tests
+- **Problem**: Marking flaky tests as @Ignore or accepting intermittent failures as normal
+- **Why it's wrong**: Flaky tests erode trust in test suite, hide real issues, waste developer time investigating false failures
+- **Correct approach**: Fix flaky tests immediately by identifying root cause (timing, data, environment), improve waits, ensure test isolation
+
+### 3. Not Implementing Test Isolation
+- **Problem**: Tests depend on execution order, share data, or don't clean up after themselves
+- **Why it's wrong**: Tests fail when run in isolation or different order, parallel execution is impossible, debugging is extremely difficult
+- **Correct approach**: Each test should create its own data, clean up after execution, not depend on other tests, use unique identifiers
+
+### 4. Creating Slow, Monolithic Tests
+- **Problem**: Writing 10-minute end-to-end tests that test everything in one test method
+- **Why it's wrong**: Long execution times, hard to debug when failing, single point of failure, makes CI/CD pipelines slow
+- **Correct approach**: Break into smaller focused tests, use test groups (smoke, regression), optimize with parallel execution, reuse browser sessions when safe
+
+### 5. Not Removing Duplicate Code
+- **Problem**: Copy-pasting test code instead of extracting reusable methods or using page objects
+- **Why it's wrong**: Maintenance nightmare (change in UI requires updating 50 places), inconsistent implementations, harder to understand
+- **Correct approach**: Follow DRY principle, use page objects, create utility methods, extract common test steps into helper methods
+
+### 6. Poor Test Data Management
+- **Problem**: Using same hardcoded test data across all tests, no data cleanup, testing in production database
+- **Why it's wrong**: Tests interfere with each other, data conflicts cause failures, risk of corrupting production data
+- **Correct approach**: Generate unique test data per test, use data builders/factories, clean up data in @AfterMethod, use separate test database
+
+### 7. Missing Test Health Monitoring
+- **Problem**: Not tracking test execution metrics, failure rates, or execution times over time
+- **Why it's wrong**: Can't identify deteriorating tests, don't notice increasing execution time, flaky tests go undetected
+- **Correct approach**: Implement test listeners to collect metrics, track pass/fail rates over time, alert on high failure rates, monitor execution time trends
+
+### 8. Inadequate Error Reporting
+- **Problem**: Test failures only show "AssertionError" without screenshots, logs, or context
+- **Why it's wrong**: Debugging requires running tests locally, wastes developer time, CI/CD failures are mysterious
+- **Correct approach**: Capture screenshots on failure, save browser logs, record video (if possible), include page source, add detailed assertion messages
+
+---
+
 ## Navigation
 
 - **Previous:** [Day 47: Visual Regression Testing](./day47_visual_regression.md)

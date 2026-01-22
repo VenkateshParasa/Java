@@ -3699,7 +3699,10 @@ public void validateTableLoadTime(WebDriver driver, By tableLocator) {
 
 ## Navigation
 
-[← Previous: Day 9](/content/selenium/week2/day9) | [Next: Day 11 →](/content/selenium/week2/day11)
+- [← Previous: Day 9 - Drag & Drop, Sliders](./day09_drag_drop_sliders.md)
+- [Next: Day 11 - Keyboard Operations →](./day11_keyboard_operations.md)
+- [Week 2 Overview](./README.md)
+- [Course Home](../README.md)
 
 ---
 

@@ -306,7 +306,385 @@ public class StudentManagementSystem {
 
 ---
 
-## 💻 Practical Exercises
+## 💻 Beginner Exercises
+
+### Exercise 1: Student Grade Book System
+**Difficulty:** Beginner
+**Objective:** Create a simple grade book system to practice OOP and collections.
+
+**Requirements:**
+- Create a Student class with name, ID, and list of grades
+- Implement methods to add grades, calculate average, and check if passing
+- Store multiple students in an ArrayList
+- Provide menu for: add student, add grade, view student, view all students
+- Display results in formatted output
+
+**Expected Output:**
+```
+=== Grade Book System ===
+1. Add Student
+2. Add Grade to Student
+3. View Student
+4. View All Students
+5. Exit
+
+Enter choice: 1
+Enter student name: Alice
+Enter student ID: S001
+Student added successfully!
+
+Enter choice: 2
+Enter student ID: S001
+Enter grade: 85
+Grade added successfully!
+
+Enter choice: 3
+Enter student ID: S001
+
+Student Details:
+ID: S001
+Name: Alice
+Grades: [85.0, 90.0, 88.0]
+Average: 87.67
+Status: Passing
+```
+
+**Hints:**
+- Use ArrayList<Student> to store students
+- Use ArrayList<Double> for grades within Student class
+- Implement proper encapsulation with private fields
+- Use Scanner for user input
+
+---
+
+### Exercise 2: Simple Bank Account Manager
+**Difficulty:** Easy
+**Objective:** Build a bank account system demonstrating OOP principles.
+
+**Requirements:**
+- Create Account class with account number, holder name, balance
+- Implement deposit and withdraw methods with validation
+- Create multiple account types: Savings (interest), Checking (overdraft)
+- Use HashMap to store accounts by account number
+- Handle exceptions for invalid operations (negative amount, insufficient funds)
+
+**Expected Output:**
+```
+=== Bank Account Manager ===
+1. Create Account
+2. Deposit
+3. Withdraw
+4. Check Balance
+5. Exit
+
+Enter choice: 1
+Select type (1-Savings, 2-Checking): 1
+Enter account number: ACC001
+Enter holder name: John Doe
+Enter initial deposit: 1000.00
+Savings Account created successfully!
+
+Enter choice: 2
+Enter account number: ACC001
+Enter amount: 500.00
+Deposit successful! New balance: $1,500.00
+
+Enter choice: 3
+Enter account number: ACC001
+Enter amount: 2000.00
+Error: Insufficient funds! Available: $1,500.00
+```
+
+**Code Template:**
+```java
+abstract class Account {
+    protected String accountNumber;
+    protected String holderName;
+    protected double balance;
+
+    public abstract boolean withdraw(double amount);
+    public void deposit(double amount) {
+        // Implement deposit logic
+    }
+}
+
+class SavingsAccount extends Account {
+    private static final double INTEREST_RATE = 0.03;
+
+    @Override
+    public boolean withdraw(double amount) {
+        // Implement withdrawal with no overdraft
+    }
+}
+
+class CheckingAccount extends Account {
+    private static final double OVERDRAFT_LIMIT = 500.0;
+
+    @Override
+    public boolean withdraw(double amount) {
+        // Implement withdrawal with overdraft
+    }
+}
+```
+
+---
+
+### Exercise 3: Contact Management System
+**Difficulty:** Medium
+**Objective:** Create a contact manager using collections and file I/O.
+
+**Requirements:**
+- Create Contact class with name, phone, email
+- Store contacts in ArrayList
+- Implement add, delete, search, update operations
+- Save contacts to file using serialization
+- Load contacts from file on startup
+- Validate phone and email formats
+
+**Expected Output:**
+```
+=== Contact Manager ===
+Loading contacts from file...
+3 contacts loaded successfully!
+
+1. Add Contact
+2. View All Contacts
+3. Search Contact
+4. Delete Contact
+5. Save and Exit
+
+Enter choice: 1
+Enter name: Alice Johnson
+Enter phone: 555-1234
+Enter email: alice@email.com
+Contact added successfully!
+
+Enter choice: 3
+Enter search term: alice
+Found 1 contact(s):
+  Name: Alice Johnson
+  Phone: 555-1234
+  Email: alice@email.com
+
+Enter choice: 5
+Saving 4 contacts...
+Data saved successfully!
+```
+
+**Hints:**
+- Implement Serializable in Contact class
+- Use try-with-resources for file operations
+- Validate email with regex: `.*@.*\\..*`
+- Use ArrayList methods like add(), remove(), contains()
+
+---
+
+### Exercise 4: To-Do List Application
+**Difficulty:** Beginner
+**Objective:** Build a task manager using modern Java features.
+
+**Requirements:**
+- Create Task class with description, priority, status, due date
+- Use LocalDate for due dates
+- Store tasks in ArrayList
+- Filter tasks by status (pending/completed) using streams
+- Sort tasks by priority or due date
+- Mark tasks as complete
+
+**Expected Output:**
+```
+=== To-Do List Manager ===
+1. Add Task
+2. View All Tasks
+3. View Pending Tasks
+4. View Completed Tasks
+5. Mark Task Complete
+6. Exit
+
+Enter choice: 1
+Enter task description: Complete Java homework
+Enter priority (1-High, 2-Medium, 3-Low): 1
+Enter due date (yyyy-MM-dd): 2026-01-25
+Task added successfully!
+
+Enter choice: 3
+Pending Tasks (sorted by priority):
+  [HIGH] Complete Java homework - Due: 2026-01-25
+  [MEDIUM] Buy groceries - Due: 2026-01-24
+  [LOW] Clean room - Due: 2026-01-26
+
+Enter choice: 5
+Enter task number to complete: 1
+Task marked as complete!
+```
+
+**Code Template:**
+```java
+enum Priority { HIGH, MEDIUM, LOW }
+enum Status { PENDING, COMPLETED }
+
+class Task {
+    private String description;
+    private Priority priority;
+    private Status status;
+    private LocalDate dueDate;
+
+    // Constructor and methods
+}
+
+class TodoList {
+    private List<Task> tasks = new ArrayList<>();
+
+    public List<Task> getPendingTasks() {
+        return tasks.stream()
+            .filter(t -> t.getStatus() == Status.PENDING)
+            .collect(Collectors.toList());
+    }
+}
+```
+
+---
+
+### Exercise 5: Simple Quiz Application
+**Difficulty:** Medium
+**Objective:** Create an interactive quiz using OOP and exception handling.
+
+**Requirements:**
+- Create Question class with question text, options, correct answer
+- Store questions in ArrayList
+- Display questions one by one to user
+- Track score and time taken
+- Handle invalid input with exceptions
+- Show results at the end with percentage
+
+**Expected Output:**
+```
+=== Java Quiz Application ===
+Loading quiz...
+10 questions loaded!
+
+Question 1/10:
+What is the size of int in Java?
+A) 2 bytes
+B) 4 bytes
+C) 8 bytes
+D) 16 bytes
+
+Your answer: B
+Correct!
+
+Question 2/10:
+Which keyword is used for inheritance?
+A) implements
+B) extends
+C) inherits
+D) super
+
+Your answer: B
+Correct!
+
+...
+
+Quiz Complete!
+Time taken: 2 minutes 34 seconds
+Score: 8/10 (80%)
+Grade: B
+
+Results breakdown:
+  Correct: 8
+  Wrong: 2
+  Skipped: 0
+```
+
+**Hints:**
+- Use Duration to track time
+- Use streams to calculate score
+- Validate answer input (A-D only)
+- Use enum for options
+
+---
+
+### Exercise 6: Library Book Checkout System (Mini Capstone)
+**Difficulty:** Medium
+**Objective:** Combine all learned concepts in a comprehensive project.
+
+**Requirements:**
+- Create Book class with title, author, ISBN, available status
+- Create Member class with name, ID, borrowed books list
+- Implement checkout and return operations
+- Track due dates (14 days from checkout) using LocalDate
+- Calculate late fees for overdue books
+- Save/load data using serialization
+- Use HashMap for O(1) book lookup by ISBN
+- Use streams for reports (available books, overdue books)
+
+**Expected Output:**
+```
+=== Library Management System ===
+
+1. Add Book
+2. Register Member
+3. Checkout Book
+4. Return Book
+5. View Available Books
+6. View Overdue Books
+7. Exit
+
+Enter choice: 3
+Enter member ID: M001
+Enter book ISBN: ISBN-123
+Checkout successful!
+Due date: 2026-02-05
+
+Enter choice: 4
+Enter member ID: M001
+Enter book ISBN: ISBN-123
+Enter return date (yyyy-MM-dd): 2026-02-10
+Book returned 5 days late.
+Late fee: $2.50
+
+Enter choice: 6
+Overdue Books Report:
+  Member: John Doe (M002)
+  Book: Java Programming
+  Due: 2026-01-20
+  Days overdue: 2
+  Late fee: $1.00
+
+Total overdue books: 1
+Total late fees: $1.00
+```
+
+**Features to implement:**
+- Book availability tracking
+- Multiple books per member
+- Due date calculation
+- Late fee calculation ($0.50 per day)
+- Search books by title/author
+- Generate reports using streams
+- Data persistence with files
+- Input validation and error handling
+
+**Architecture:**
+```
+Model Layer:
+  - Book
+  - Member
+  - Transaction
+
+Service Layer:
+  - LibraryService (business logic)
+
+Repository Layer:
+  - LibraryRepository (data access)
+
+UI Layer:
+  - LibraryUI (user interface)
+```
+
+---
+
+## 💻 Advanced Practical Exercises
 
 ### Exercise 1: Library Management System with Concurrent Operations
 
