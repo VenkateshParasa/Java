@@ -7,7 +7,6 @@
 ## 📋 Table of Contents
 - [Learning Objectives](#learning-objectives)
 - [Topics Covered](#topics-covered)
-- [Detailed Content](#detailed-content)
 - [Practical Exercises](#practical-exercises)
 - [Key Takeaways](#key-takeaways)
 - [Common Mistakes](#common-mistakes)

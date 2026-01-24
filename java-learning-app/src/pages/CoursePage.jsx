@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -13,10 +13,12 @@ import './CoursePage.css';
 
 function CoursePage({ course: courseProp }) {
   const { week, day } = useParams();
+  const location = useLocation();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const contentRef = useRef(null);
   
   // Determine course from prop or default to 'java'
   const course = courseProp || 'java';
@@ -120,6 +122,23 @@ function CoursePage({ course: courseProp }) {
     loadContent();
   }, [week, day, course]);
 
+  // Handle hash navigation for deeplinks
+  useEffect(() => {
+    if (!loading && location.hash) {
+      // Small delay to ensure content is rendered
+      setTimeout(() => {
+        const id = location.hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } else if (!loading) {
+      // Scroll to top when no hash
+      window.scrollTo(0, 0);
+    }
+  }, [loading, location.hash]);
+
   // Check if day is manually completed
   useEffect(() => {
     const progress = getProgress();
@@ -176,6 +195,7 @@ function CoursePage({ course: courseProp }) {
       text = removeHeadingIds(text);
       
       setContent(text);
+      console.log('Content loaded, length:', text.length, 'First 200 chars:', text.substring(0, 200));
 
       // Mark course as viewed for progress tracking
       markCourseViewed(day);
@@ -363,13 +383,62 @@ function CoursePage({ course: courseProp }) {
         </button>
       </div>
 
-      <div className="course-content markdown-body">
+      <div className="course-content markdown-body" ref={contentRef}>
+        {console.log('Rendering ReactMarkdown with content length:', content.length)}
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            h2({ node, children, ...props }) {
-              // Track when we enter "Practical Exercises" section
+            input({ node, ...props }) {
+              // Hide checkboxes - don't render them at all
+              if (props.type === 'checkbox') {
+                return null;
+              }
+              return <input {...props} />;
+            },
+            li({ node, children, className, ...props }) {
+              // Check if this is a task list item (contains checkbox)
+              const isTaskItem = node?.children?.some(
+                child => child.type === 'element' && child.tagName === 'input' && child.properties?.type === 'checkbox'
+              );
+              
+              if (isTaskItem) {
+                // Convert task list item to regular list item (remove checkbox, keep text)
+                // Filter out the checkbox input from children
+                const filteredChildren = Array.isArray(children)
+                  ? children.filter(child => {
+                      // Remove checkbox inputs
+                      if (child?.type?.name === 'input') return false;
+                      return true;
+                    })
+                  : children;
+                
+                return (
+                  <li className={className} {...props}>
+                    {filteredChildren}
+                  </li>
+                );
+              }
+              
+              return <li className={className} {...props}>{children}</li>;
+            },
+            h1({ node, children, ...props }) {
+              // Generate ID from heading text for anchor links
               const text = String(children);
+              const id = text
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+              return <h1 id={id} {...props}>{children}</h1>;
+            },
+            h2({ node, children, ...props }) {
+              // Generate ID from heading text for anchor links
+              const text = String(children);
+              const id = text
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+              
+              // Track when we enter "Practical Exercises" section
               // Only set flag for the MAIN "Practical Exercises" section with emoji
               if ((text.includes('💻') && text.includes('Practical Exercises')) ||
                   text === 'Practical Exercises') {
@@ -382,7 +451,25 @@ function CoursePage({ course: courseProp }) {
                   window.__inExercisesSection = false;
                 }
               }
-              return <h2 {...props}>{children}</h2>;
+              return <h2 id={id} {...props}>{children}</h2>;
+            },
+            h3({ node, children, ...props }) {
+              // Generate ID from heading text for anchor links
+              const text = String(children);
+              const id = text
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+              return <h3 id={id} {...props}>{children}</h3>;
+            },
+            h4({ node, children, ...props }) {
+              // Generate ID from heading text for anchor links
+              const text = String(children);
+              const id = text
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+              return <h4 id={id} {...props}>{children}</h4>;
             },
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
@@ -424,6 +511,27 @@ function CoursePage({ course: courseProp }) {
               );
             },
             a({ node, children, href, ...props }) {
+              // Handle hash links (anchor links within the same page)
+              if (href && href.startsWith('#')) {
+                return (
+                  <a
+                    href={href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const id = href.replace('#', '');
+                      const element = document.getElementById(id);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // Update URL hash without triggering navigation
+                        window.history.pushState(null, '', href);
+                      }
+                    }}
+                    {...props}
+                  >
+                    {children}
+                  </a>
+                );
+              }
               // Handle internal links
               if (href && href.startsWith('/')) {
                 return <Link to={href} {...props}>{children}</Link>;

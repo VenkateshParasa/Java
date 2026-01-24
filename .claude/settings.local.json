@@ -22,7 +22,11 @@
       "Bash(python3:*)",
       "Bash(for file in day41 day42 day44 day45 day46 day47 day48)",
       "Bash(do echo \"=== $file ===\")",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(awk:*)",
+      "Bash(for i in {1..6})",
+      "Bash(do sleep 20)",
+      "Bash(echo:*)"
     ]
   }
 }
