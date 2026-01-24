@@ -26,7 +26,8 @@
       "Bash(awk:*)",
       "Bash(for i in {1..6})",
       "Bash(do sleep 20)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(git add:*)"
     ]
   }
 }
