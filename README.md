@@ -1,9 +1,10 @@
 # Complete Java & Selenium Automation Learning Path
 
 **Last Updated:** January 2026
-**Status:** Core Java 100% Complete | Selenium 67% Complete
-**Total Content:** 75,000+ lines of detailed learning material
-**Total Exercises:** 220+ hands-on coding exercises
+**Status:** ✅ 100% Complete (Core Java + Selenium + Deep Dives)
+**Total Content:** 89,631+ lines of detailed learning material
+**Total Exercises:** 253+ hands-on coding exercises
+**Project Structure:** ✨ Optimized and Professional
 
 ---
 
@@ -26,22 +27,22 @@ This repository contains a complete, beginner-friendly curriculum designed to ta
 
 ### For Complete Beginners (Never Coded Before)
 
-1. **Start Here:** [README_START_HERE.md](00_Getting_Started/README_START_HERE.md)
-2. **Read:** [Quick Start Guide](00_Getting_Started/Quick_Start_Guide.md)
-3. **Begin:** Week 1 - Days 1-7 in [Beginner Exercises](03_BEGINNER_FRIENDLY_Exercises/)
-4. **Track Progress:** Use [Progress Tracker](00_Getting_Started/Progress_Tracker.md)
+1. **Start Here:** [Getting Started Guide](docs/getting-started/README.md)
+2. **Read:** [Quick Start](docs/getting-started/quick-start.md)
+3. **Begin:** Week 1 - Days 1-7 in [Java Exercises](docs/exercises/java-core/)
+4. **Track Progress:** Use [Progress Tracker](docs/getting-started/progress-tracker.md)
 
 ### For Programmers New to Java
 
-1. **Start Here:** [Core Java Course](01_Core_Courses/Java_Core_Fundamentals_30Day_Course.md)
-2. **Practice:** [Detailed Topics with Exercises](02_Detailed_Topics/Detailed_Topics_Core_Java_With_Exercises.md)
-3. **Test Yourself:** [Daily Assessments](04_Assessments/Daily_Assessments_Core_Java.md)
+1. **Start Here:** [Core Java Course](docs/courses/java-core/course-overview.md)
+2. **Practice:** [Java Exercises with Solutions](docs/exercises/java-core/complete-exercises.md)
+3. **Test Yourself:** [Daily Assessments](docs/assessments/java-core-assessments.md)
 
 ### For Java Developers Learning Selenium
 
-1. **Jump to:** [Selenium Course](01_Core_Courses/Selenium/)
-2. **Practice:** [Selenium Exercises](03_BEGINNER_FRIENDLY_Exercises/Selenium/)
-3. **Test Yourself:** [Selenium Assessments](04_Assessments/Daily_Assessments_Selenium_Automation.md)
+1. **Jump to:** [Selenium Course](docs/courses/selenium-automation/course-overview.md)
+2. **Practice:** [Selenium Exercises](docs/exercises/selenium/)
+3. **Test Yourself:** [Selenium Assessments](docs/assessments/selenium-assessments.md)
 
 ---
 
@@ -131,52 +132,47 @@ This repository contains a complete, beginner-friendly curriculum designed to ta
 
 ---
 
-## Project Directory Structure
+## 📁 Project Directory Structure (Optimized)
 
 ```
 Java/
-├── 00_Getting_Started/          # Start here for navigation
-│   ├── README_START_HERE.md     # Main entry point
-│   ├── Quick_Start_Guide.md     # Getting started guide
-│   ├── Progress_Tracker.md      # Track your progress
-│   ├── Master_Index.md          # Complete file index
-│   └── FOLDER_STRUCTURE_GUIDE.md
 │
-├── 01_Core_Courses/             # Main course content
-│   ├── Core_Java_Daily/         # 30-day Java course (daily lessons)
-│   └── Selenium_Daily/          # 45-day Selenium course (daily lessons)
+├── README.md                    # 👈 You are here
 │
-├── 02_Detailed_Topics/          # Deep dive materials
-│   ├── Detailed_Topics_Core_Java.md
-│   ├── Detailed_Topics_Core_Java_With_Exercises.md
-│   ├── Detailed_Topics_Selenium_Automation.md
-│   ├── Detailed_Topics_Selenium_With_Exercises.md
-│   ├── DEEP_DIVE_OOP_Concepts.md
-│   └── DEEP_DIVE_Exception_Handling.md
+├── 📚 docs/                     # All Learning Content
+│   ├── getting-started/         # Quick start guides
+│   ├── courses/                 # Main courses (Java 30d + Selenium 45d)
+│   │   ├── java-core/
+│   │   └── selenium-automation/
+│   ├── exercises/               # Hands-on practice
+│   │   ├── java-core/
+│   │   └── selenium/
+│   ├── deep-dives/              # 8 advanced topic guides
+│   ├── assessments/             # Tests and quizzes
+│   └── reference/               # Reference materials
 │
-├── 03_BEGINNER_FRIENDLY_Exercises/  # Hands-on practice
-│   ├── Core_Java/               # Weekly Java exercises
-│   │   ├── Week1_Days01-07_Setup_and_Basics.md
-│   │   ├── Week2_Days08-14_Methods_and_OOP.md
-│   │   ├── Week3_Days15-21_Advanced_OOP.md
-│   │   ├── Week4_Days22-28_Essential_Features.md
-│   │   └── Week5_Days29-30_Advanced_Topics.md
-│   └── Selenium/                # Weekly Selenium exercises
-│       ├── Week1_Days01-07_Java_Fundamentals.md
-│       ├── Week2_Days08-14_Advanced_Java.md
-│       ├── Week3_Days15-21_Selenium_Basics.md
-│       ├── Week4_Days22-28_Intermediate_Selenium.md
-│       ├── Week5_Days29-35_Advanced_Selenium.md
-│       ├── Week6_Days36-42_Framework_Basics.md
-│       └── Week7_Days43-49_Advanced_Project.md
+├── 🔧 project/                  # Project Management
+│   ├── planning/                # Planning documents
+│   ├── tracking/                # Progress trackers
+│   ├── reports/                 # Status reports
+│   └── tools/                   # Development tools
 │
-├── 04_Assessments/              # Daily testing materials
-│   ├── Daily_Assessments_Core_Java.md
-│   ├── Daily_Assessments_Selenium_Automation.md
-│   └── Answer_Keys_and_Scoring_Guide.md
+├── 📦 archive/                  # Historical Files
+│   ├── backups/                 # Backup files
+│   ├── deprecated/              # Old versions
+│   └── selenium-archived/       # Archived Selenium files
 │
-└── 05_Archive/                  # Archived versions
+└── 🌐 apps/                     # Applications
+    ├── web/                     # Java learning web app
+    └── spaced-repetition/       # Spaced repetition system
 ```
+
+**New Structure Benefits:**
+- ✅ Clean root (only README.md)
+- ✅ Clear separation: learning vs management
+- ✅ Consistent kebab-case naming
+- ✅ Professional organization
+- ✅ Easy navigation
 
 ---
 
@@ -490,17 +486,19 @@ A: You'll have: 1) Strong Java fundamentals, 2) Complete Selenium expertise, 3) 
 
 ### Recent Updates (January 2026)
 
-**Latest:**
-- Integrated 13,445 lines of Selenium content (Days 24-30, 36-37)
-- Added 11 comprehensive exercises for intermediate Selenium
-- Selenium progress: 47% → 67% complete
-- Total project now 87% complete
+**Latest (Jan 26):**
+- ✨ **Project Structure Optimized:** Implemented professional folder structure
+- 🎯 Reduced root from 40+ files to 1 (README.md only)
+- 📁 All content organized: docs/, project/, archive/, apps/
+- ✅ Consistent kebab-case naming throughout
+- 📚 Created comprehensive README files for all directories
+- 🚀 Professional, scalable, and maintainable structure
 
 **Previous:**
-- Completed all 30 days of Core Java (Days 22-30 added)
-- Added 60+ exercises for advanced Java topics
-- Core Java 100% complete with 140+ exercises
-- Added 16,368 lines of advanced Java content
+- ✅ Completed ALL 45 Selenium days (100%)
+- ✅ Created 6 Deep Dive documents (15,171 lines)
+- ✅ Completed all 30 Core Java days (100%)
+- ✅ Total: 89,631+ lines, 253+ exercises
 
 ---
 
