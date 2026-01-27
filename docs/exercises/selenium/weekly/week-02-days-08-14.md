@@ -1,5 +1,4 @@
-
-# Week 2: Advanced Java for Selenium - Beginner-Friendly Exercises
+# Selenium Automation - Week 2: Advanced Java (Days 8-14)
 
 ## Day 8: Collections Framework
 
@@ -74,6 +73,27 @@ public class ArrayListTestData {
 \```
 ```
 
+**Common Mistakes:**
+1. ❌ **Using ArrayList without interface declaration**: Less flexible code
+   - Why: Coupling to concrete implementation reduces flexibility
+   - Fix: Use List<String> instead of ArrayList<String> for declaration
+
+2. ❌ **Not checking if list is empty before operations**: NullPointerException or errors
+   - Why: Operations on empty lists can cause unexpected behavior
+   - Fix: Use isEmpty() or check size() before operations like get()
+
+3. ❌ **Using get() without bounds checking**: IndexOutOfBoundsException
+   - Why: Accessing invalid index throws runtime exception
+   - Fix: Always verify index < list.size() before using get(index)
+
+4. ❌ **Modifying list during iteration**: ConcurrentModificationException
+   - Why: Removing elements while iterating causes exception
+   - Fix: Use Iterator.remove() or create new list for modifications
+
+5. ❌ **Using contains() for complex objects without equals()**: Always returns false
+   - Why: Default equals() compares references, not content
+   - Fix: Override equals() and hashCode() for custom objects
+
 ### Exercise 2: HashMap for Configuration Management
 
 ```exercise
@@ -145,6 +165,23 @@ public class HashMapConfiguration {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Using HashMap without interface declaration**: Tight coupling to implementation
+   - Why: Reduces flexibility to change to other Map implementations
+   - Fix: Use Map<String, String> instead of HashMap<String, String>
+
+2. ❌ **Not checking if key exists before get()**: Returns null unexpectedly
+   - Why: get() returns null if key doesn't exist
+   - Fix: Use containsKey() before get() or use getOrDefault()
+
+3. ❌ **Forgetting that HashMap doesn't maintain insertion order**: Unexpected order
+   - Why: HashMap doesn't guarantee any specific order
+   - Fix: Use LinkedHashMap to maintain insertion order
+
+4. ❌ **Using wrong loop for iteration**: Only getting keys or values
+   - Why: keySet() gives only keys, values() gives only values
+   - Fix: Use entrySet() to get both key-value pairs efficiently
 
 ---
 
@@ -226,6 +263,27 @@ public class ExceptionHandlingExample {
 \```
 ```
 
+**Common Mistakes:**
+1. ❌ **Catching generic Exception instead of specific exceptions**: Hiding real errors
+   - Why: Catches all exceptions including ones you don't expect
+   - Fix: Catch specific exceptions like NoSuchElementException first, generic Exception last
+
+2. ❌ **Not using finally block for cleanup**: Resources not released on exception
+   - Why: Code after exception doesn't execute without finally
+   - Fix: Always use finally block for driver.quit() and resource cleanup
+
+3. ❌ **Swallowing exceptions without logging**: Silent failures hard to debug
+   - Why: Empty catch blocks hide errors completely
+   - Fix: Always log exception message or stack trace
+
+4. ❌ **Using e.printStackTrace() in production**: Poor error handling
+   - Why: Stack traces clutter output and don't fail tests properly
+   - Fix: Use proper logging framework and re-throw or fail test explicitly
+
+5. ❌ **Not checking for null before driver.quit()**: NullPointerException in finally
+   - Why: If driver initialization fails, driver is null
+   - Fix: Always check if (driver != null) before quit()
+
 ### Exercise 4: Custom Exception for Test Validation
 
 ```exercise
@@ -303,6 +361,23 @@ public class CustomExceptionTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not extending Exception or RuntimeException**: Class is not throwable
+   - Why: Custom exception must extend Exception or one of its subclasses
+   - Fix: Extend Exception for checked exceptions or RuntimeException for unchecked
+
+2. ❌ **Forgetting to call super(message)**: Exception message is null
+   - Why: Parent constructor must be called to set message
+   - Fix: Always call super(message) in your custom exception constructor
+
+3. ❌ **Not using throws clause**: Compilation error with checked exceptions
+   - Why: Checked exceptions must be declared in method signature
+   - Fix: Add throws CustomException to method that throws it
+
+4. ❌ **Creating too many custom exceptions**: Code becomes cluttered
+   - Why: Excessive custom exceptions make code hard to maintain
+   - Fix: Only create custom exceptions when you need specific handling logic
 
 ---
 
@@ -408,12 +483,12 @@ public class ReadTestDataFile {
             e.printStackTrace();
         }
     }
-    
+
     private static void createTestDataFile(String filePath) {
         try {
             java.io.File file = new java.io.File(filePath);
             file.getParentFile().mkdirs();
-            
+
             java.io.FileWriter writer = new java.io.FileWriter(file);
             writer.write("# Test Data File - Format: username,password,expectedResult\n");
             writer.write("student,Password123,success\n");
@@ -421,7 +496,7 @@ public class ReadTestDataFile {
             writer.write("invaliduser,wrongpass,failure\n");
             writer.write("testuser,Test@123,success\n");
             writer.close();
-            
+
             System.out.println("✓ Test data file created: " + filePath + "\n");
         } catch (IOException e) {
             System.out.println("Error creating file: " + e.getMessage());
@@ -431,6 +506,27 @@ public class ReadTestDataFile {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not using try-with-resources**: File handles not closed properly
+   - Why: Manual close() calls can be missed if exception occurs
+   - Fix: Use try (BufferedReader reader = new BufferedReader(...)) for auto-close
+
+2. ❌ **Not handling FileNotFoundException**: Program crashes if file missing
+   - Why: File might not exist at specified path
+   - Fix: Catch FileNotFoundException or create file if it doesn't exist
+
+3. ❌ **Not skipping empty lines or comments**: Parsing errors on non-data lines
+   - Why: Empty lines and comments cause split() issues
+   - Fix: Check line.trim().isEmpty() and line.startsWith("#")
+
+4. ❌ **Not validating split results**: ArrayIndexOutOfBoundsException
+   - Why: Malformed lines don't have expected number of parts
+   - Fix: Check parts.length before accessing array elements
+
+5. ❌ **Using wrong file path separator**: Platform-specific path issues
+   - Why: Hardcoded \ or / may not work on all OS
+   - Fix: Use File.separator or forward slashes (works on all platforms)
 
 ### Exercise 6: Write Test Results to File
 
@@ -518,7 +614,7 @@ public class WriteTestResults {
             writer.write("Test Execution Summary\n");
             writer.write("Total Tests: 3 | Passed: 2 | Failed: 1\n");
             writer.write("=".repeat(70) + "\n\n");
-            
+
             System.out.println("\n✓ Test results logged to: " + LOG_FILE);
         } catch (IOException e) {
             System.out.println("Error writing summary: " + e.getMessage());
@@ -528,6 +624,23 @@ public class WriteTestResults {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Using FileWriter without append mode**: Overwrites previous logs
+   - Why: FileWriter(filename) overwrites, FileWriter(filename, true) appends
+   - Fix: Always use FileWriter(filename, true) for log files
+
+2. ❌ **Not creating parent directories**: FileNotFoundException
+   - Why: Parent directory may not exist
+   - Fix: Call file.getParentFile().mkdirs() before writing
+
+3. ❌ **Not formatting timestamps consistently**: Hard to parse logs
+   - Why: Different timestamp formats cause confusion
+   - Fix: Use SimpleDateFormat with consistent pattern like "yyyy-MM-dd HH:mm:ss"
+
+4. ❌ **Not flushing writer before close**: Data lost in buffer
+   - Why: Buffered data not written to file
+   - Fix: Use try-with-resources or call flush() explicitly
 
 ---
 
@@ -669,6 +782,27 @@ public class LoginPageTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not storing locators as constants**: Locators scattered throughout methods
+   - Why: Changes to UI require updates in multiple places
+   - Fix: Define locators as private final By variables at class level
+
+2. ❌ **Making driver public**: Breaking encapsulation
+   - Why: External classes can manipulate driver directly
+   - Fix: Keep driver private, provide methods for all actions
+
+3. ❌ **Not returning 'this' for method chaining**: Verbose test code
+   - Why: Cannot chain method calls fluently
+   - Fix: Return 'this' from action methods for fluent interface
+
+4. ❌ **Including assertions in page objects**: Mixing concerns
+   - Why: Page objects should only interact with UI, not verify
+   - Fix: Return data/state, let test classes handle assertions
+
+5. ❌ **Not using constructor to initialize driver**: NullPointerException
+   - Why: Methods try to use null driver reference
+   - Fix: Always initialize driver in constructor
 
 ### Exercise 8: Inheritance with Base Page Class
 
@@ -820,6 +954,23 @@ public class InheritanceTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not calling super(driver) in child constructor**: Driver not initialized
+   - Why: Parent constructor must be explicitly called in Java
+   - Fix: Always call super(driver) as first statement in child constructor
+
+2. ❌ **Making BasePage members private instead of protected**: Child classes cannot access
+   - Why: Private members are not inherited
+   - Fix: Use protected for members that child classes need
+
+3. ❌ **Duplicating common methods in child classes**: Code duplication
+   - Why: Not leveraging inheritance properly
+   - Fix: Put all common methods in BasePage, override only when needed
+
+4. ❌ **Not using @Override annotation**: Missing override mistakes
+   - Why: Typos in method name don't cause errors without @Override
+   - Fix: Always use @Override when overriding parent methods
 
 ---
 
@@ -989,6 +1140,27 @@ public class EncapsulationTest {
 \```
 ```
 
+**Common Mistakes:**
+1. ❌ **Making fields public**: Breaking encapsulation completely
+   - Why: Direct field access bypasses validation and control
+   - Fix: Always make fields private, provide public getters/setters
+
+2. ❌ **Not validating data in setters**: Invalid data stored
+   - Why: Setters should enforce business rules and constraints
+   - Fix: Add validation logic in all setters, throw exceptions for invalid data
+
+3. ❌ **Using getter/setter naming convention incorrectly**: IDE and frameworks fail
+   - Why: Tools expect getFieldName() and setFieldName() pattern
+   - Fix: Follow JavaBeans naming convention: get/set + capitalized field name
+
+4. ❌ **Providing setters for fields that shouldn't change**: Breaking immutability
+   - Why: Some fields should only be set once (in constructor)
+   - Fix: Remove setter for immutable fields, or make field final
+
+5. ❌ **Not using 'this' keyword in setters**: Parameter shadows field
+   - Why: Ambiguity between parameter and field names
+   - Fix: Use this.fieldName = fieldName to distinguish
+
 ### Exercise 10: Static Members and Utility Class
 
 ```exercise
@@ -1137,6 +1309,23 @@ public class StaticMethodsTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not making utility class constructor private**: Class can be instantiated
+   - Why: Utility classes should never be instantiated
+   - Fix: Add private constructor that throws UnsupportedOperationException
+
+2. ❌ **Making utility methods non-static**: Requires object creation
+   - Why: Utility methods should be called on class, not instance
+   - Fix: Always make utility methods static
+
+3. ❌ **Not making static fields final**: Values can be changed
+   - Why: Constants should be immutable
+   - Fix: Declare static fields as static final for constants
+
+4. ❌ **Accessing static members through instance**: Confusing code
+   - Why: Static members belong to class, not instance
+   - Fix: Always use ClassName.methodName(), not object.methodName()
 
 ---
 
@@ -1293,7 +1482,7 @@ public class MethodOverloadingTest {
             actions.waitFor(submitButton, "clickable");  // Wait for specific condition
             
             System.out.println("\n✓ Method overloading demonstrated successfully!");
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1304,6 +1493,23 @@ public class MethodOverloadingTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Creating ambiguous overloaded methods**: Compilation error
+   - Why: Compiler cannot determine which method to call
+   - Fix: Ensure each overloaded version has distinct parameter types/count
+
+2. ❌ **Changing only return type**: Not valid overloading
+   - Why: Return type alone doesn't distinguish methods
+   - Fix: Change parameters (type, number, or order), not just return type
+
+3. ❌ **Not considering type promotion**: Wrong method called
+   - Why: Java automatically promotes types (int → long → float → double)
+   - Fix: Be aware of type promotion when designing overloaded methods
+
+4. ❌ **Overloading vs Overriding confusion**: Conceptual error
+   - Why: Overloading is compile-time, overriding is runtime
+   - Fix: Overloading = same name, different params; Overriding = same signature, different class
 
 ### Exercise 12: Interface Implementation
 
@@ -1510,7 +1716,7 @@ public class InterfaceTest {
             
             reporter.generateSummary(3, 1, 1, 1);
         }
-        
+
         System.out.println("\n✓ Reports generated using all implementations!");
         System.out.println("✓ Interface polymorphism demonstrated successfully!");
     }
@@ -1518,6 +1724,27 @@ public class InterfaceTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not implementing all interface methods**: Compilation error
+   - Why: All interface methods must be implemented in concrete class
+   - Fix: Implement every method declared in interface, or make class abstract
+
+2. ❌ **Forgetting @Override annotation**: Missing implementation mistakes
+   - Why: Typos in method signature don't cause errors without @Override
+   - Fix: Always use @Override when implementing interface methods
+
+3. ❌ **Making interface methods private in implementation**: Weaker access modifier
+   - Why: Interface methods are implicitly public
+   - Fix: Make all implementations public (or use default access if appropriate)
+
+4. ❌ **Adding implementation details to interface**: Violating interface contract
+   - Why: Interfaces should only define behavior, not implement it
+   - Fix: Keep interfaces as contracts, put implementation in classes
+
+5. ❌ **Not using interface type for references**: Missing polymorphism benefits
+   - Why: Cannot swap implementations easily
+   - Fix: Use interface type for variable declaration: TestReporter reporter = new ConsoleReporter()
 
 ---
 
@@ -1778,6 +2005,27 @@ public class LoginTest extends BaseTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not organizing code into packages**: Classes in default package
+   - Why: Difficult to manage and organize as project grows
+   - Fix: Create logical package structure (config, utils, pages, tests, reporting)
+
+2. ❌ **Tight coupling between components**: Hard to modify or test
+   - Why: Direct dependencies make code inflexible
+   - Fix: Use interfaces and dependency injection for loose coupling
+
+3. ❌ **Not using design patterns**: Reinventing the wheel
+   - Why: Common problems have proven solutions
+   - Fix: Apply Page Object Model, Factory, Singleton patterns where appropriate
+
+4. ❌ **Missing exception handling**: Framework crashes on errors
+   - Why: Unhandled exceptions stop test execution
+   - Fix: Add try-catch blocks and proper error recovery mechanisms
+
+5. ❌ **Not making framework configurable**: Hardcoded values everywhere
+   - Why: Changes require code modifications
+   - Fix: Use configuration files (properties, JSON, YAML) for settings
 
 ---
 

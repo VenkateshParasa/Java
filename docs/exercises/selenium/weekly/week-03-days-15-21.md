@@ -1,5 +1,4 @@
-
-# Week 3: Selenium Basics - Beginner-Friendly Exercises
+# Selenium Automation - Week 3: Selenium Basics (Days 15-21)
 
 ## Day 15: Advanced Locators & XPath
 
@@ -24,6 +23,28 @@ hints:
 - preceding-sibling:: selects siblings before current node
 - ancestor:: selects all ancestors
 - descendant:: selects all descendants
+**Common Mistakes:**
+1. ❌ **Using Wrong Axis Direction**: Using `following-sibling` when you need `preceding-sibling` or vice versa.
+   - Why: XPath axes are directional, and mixing them up returns no results or wrong elements.
+   - Fix: Understand the DOM tree structure. `following-sibling` finds siblings after the current node, `preceding-sibling` finds siblings before it.
+   - Example: If you want the previous element, use `preceding-sibling::input[1]` not `following-sibling`.
+
+2. ❌ **Forgetting to Switch Back to Default Content**: Staying in parent or child frame context after switching.
+   - Why: Not returning to proper context causes "element not found" errors.
+   - Fix: Always use `driver.switchTo().defaultContent()` or `parentFrame()` to navigate back.
+
+3. ❌ **Using Absolute Index with Axes**: Using hardcoded indexes like `ancestor::*[5]` which breaks if DOM changes.
+   - Why: DOM structure changes frequently in web applications.
+   - Fix: Use element attributes or tag names instead: `ancestor::div[@class='container']`.
+
+4. ❌ **Confusing `descendant` with `child`**: Using `child::` when you need elements at any level below.
+   - Why: `child::` only selects immediate children, `descendant::` selects all nested elements.
+   - Fix: Use `descendant::` for any level, `child::` only for direct children.
+
+5. ❌ **Not Using Specific Axis for Performance**: Using `//` (descendant-or-self) everywhere instead of specific axes.
+   - Why: Slower performance as it searches entire DOM tree.
+   - Fix: Use specific axes like `parent::`, `following-sibling::` for faster, more targeted searches.
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -133,6 +154,29 @@ hints:
 - text()='value' for exact text
 - Use 'and' to combine conditions
 - Use 'or' for alternative conditions
+
+**Common Mistakes:**
+1. ❌ **Using `contains()` with Full Text**: Using `contains(@id, 'my-text-id')` instead of partial match.
+   - Why: Defeats the purpose of `contains()` which is for partial matching.
+   - Fix: Use `contains(@id, 'text')` for partial match, or use `@id='my-text-id'` for exact match.
+   - Example: `contains(@class, 'btn')` finds all elements with 'btn' in class name.
+
+2. ❌ **Incorrect `text()` Syntax**: Using `text()=Submit` without quotes or `contains(text(), Submit)` without quotes.
+   - Why: XPath requires quotes around string values.
+   - Fix: Always use quotes: `text()='Submit'` or `contains(text(), 'Submit')`.
+
+3. ❌ **Forgetting Spaces in Text**: Not accounting for leading/trailing spaces in text matching.
+   - Why: HTML often has extra whitespace that causes exact matches to fail.
+   - Fix: Use `contains()` or `normalize-space()`: `contains(normalize-space(text()), 'Submit')`.
+
+4. ❌ **Wrong Boolean Operator Syntax**: Using `&&` or `||` instead of `and`/`or`.
+   - Why: XPath uses `and`/`or`, not Java operators.
+   - Fix: Use `and` not `&&`, use `or` not `||`: `[@type='text' and @class='form-control']`.
+
+5. ❌ **Case Sensitivity Issues**: Not considering that XPath is case-sensitive by default.
+   - Why: `text()='submit'` won't match `Submit`.
+   - Fix: Use `translate()` for case-insensitive matching or ensure exact case match.
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -267,6 +311,28 @@ hints:
 - Use driver.switchTo().window(handle) to switch
 - Store original window handle before opening new window
 - Use Set<String> for window handles
+
+**Common Mistakes:**
+1. ❌ **Not Storing Original Window Handle**: Forgetting to save `driver.getWindowHandle()` before opening new window.
+   - Why: Cannot switch back to original window without its handle.
+   - Fix: Always store: `String mainWindow = driver.getWindowHandle();` before opening new windows.
+
+2. ❌ **Using `driver.close()` Instead of Switching First**: Closing window without switching to it first.
+   - Why: Closes current window instead of target window.
+   - Fix: Switch to window first, then close: `driver.switchTo().window(handle); driver.close();`.
+
+3. ❌ **Not Checking Window Count**: Assuming new window opened immediately without verification.
+   - Why: Window may take time to open, causing switch to fail.
+   - Fix: Wait for window count to increase: `wait.until(numberOfWindowsToBe(2));`.
+
+4. ❌ **Forgetting to Switch Back After Closing**: Staying in closed window context after `driver.close()`.
+   - Why: Driver context points to closed window, causing errors.
+   - Fix: Always switch back after closing: `driver.close(); driver.switchTo().window(mainWindow);`.
+
+5. ❌ **Mixing Windows and Tabs**: Treating windows and tabs differently in code.
+   - Why: In Selenium, windows and tabs are handled identically via window handles.
+   - Fix: Use same approach for both: `driver.getWindowHandles()` works for tabs and windows.
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -371,6 +437,28 @@ hints:
 - driver.switchTo().window(handle) works for tabs too
 - Store tab handles in order for easy access
 - Close tabs using driver.close()
+
+**Common Mistakes:**
+1. ❌ **Not Updating Tab List After Closing**: Using old ArrayList after closing a tab.
+   - Why: ArrayList becomes stale, indexes no longer match actual tabs.
+   - Fix: Refresh list after closing: `tabs = new ArrayList<>(driver.getWindowHandles());`.
+
+2. ❌ **Using Wrong Index After Tab Close**: Assuming tab positions remain same after closing a tab.
+   - Why: Closing tab shifts indexes of remaining tabs.
+   - Fix: Get last tab with `tabs.get(tabs.size() - 1)` or refresh list.
+
+3. ❌ **Using `driver.quit()` Instead of `driver.close()`**: Calling quit() when you want to close one tab.
+   - Why: `quit()` closes ALL tabs/windows, `close()` closes only current one.
+   - Fix: Use `driver.close()` for single tab, `driver.quit()` to end session.
+
+4. ❌ **Not Waiting for New Tab to Load**: Switching to new tab immediately after opening.
+   - Why: Tab may not be fully initialized, causing stale handle errors.
+   - Fix: Add small wait or check tab count: `Thread.sleep(1000);` or use explicit wait.
+
+5. ❌ **Opening Too Many Tabs**: Opening unlimited tabs in loops without cleanup.
+   - Why: Browser becomes slow, memory issues, test failures.
+   - Fix: Close unused tabs promptly, limit simultaneous open tabs to 3-5.
+
 solution:
 ```java
 import org.openqa.selenium.JavascriptExecutor;
@@ -503,6 +591,28 @@ hints:
 - Use driver.switchTo().parentFrame() for nested frames
 - Find iFrame element first, then switch to it
 - Cannot interact with iFrame elements without switching
+
+**Common Mistakes:**
+1. ❌ **Trying to Interact Without Switching**: Attempting to click elements inside iframe without switching to it first.
+   - Why: By default, driver is in main page context, cannot see iframe content.
+   - Fix: Always switch first: `driver.switchTo().frame(iframeElement);` then interact.
+
+2. ❌ **Forgetting to Switch Back**: Not using `defaultContent()` after iframe operations.
+   - Why: Driver remains in iframe context, cannot find main page elements.
+   - Fix: Always return to default: `driver.switchTo().defaultContent();`.
+
+3. ❌ **Using Wrong Switch Method**: Mixing up `frame()`, `parentFrame()`, and `defaultContent()`.
+   - Why: Each serves different purpose - frame enters, parentFrame goes up one level, defaultContent returns to top.
+   - Fix: Use `defaultContent()` to return to main page, `parentFrame()` only for nested iframes.
+
+4. ❌ **Using Index Without Verification**: Switching to frame by index without checking if frame exists.
+   - Why: If page structure changes, index may be wrong, causing errors.
+   - Fix: Prefer name/id or WebElement: `driver.switchTo().frame("frameName")`.
+
+5. ❌ **Not Waiting for iFrame to Load**: Switching to iframe immediately after page load.
+   - Why: iFrame may not be rendered yet, causing NoSuchFrameException.
+   - Fix: Wait for iframe: `wait.until(frameToBeAvailableAndSwitchToIt(By.id("iframe1")));`.
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -637,6 +747,28 @@ hints:
 - Pass WebElement as argument
 - Use "arguments[0]" to reference element
 - Return values using "return" in script
+
+**Common Mistakes:**
+1. ❌ **Forgetting to Cast Driver**: Not casting WebDriver to JavascriptExecutor.
+   - Why: WebDriver interface doesn't have executeScript() method.
+   - Fix: Cast first: `JavascriptExecutor js = (JavascriptExecutor) driver;`.
+
+2. ❌ **Missing "return" in Script**: Trying to get value without "return" keyword in JavaScript.
+   - Why: JavaScript functions must return value explicitly.
+   - Fix: Use `return`: `js.executeScript("return document.title;")` not `js.executeScript("document.title;")`.
+
+3. ❌ **Wrong Argument Index**: Using `arguments[1]` when only one element is passed.
+   - Why: Arguments are zero-indexed, first element is `arguments[0]`.
+   - Fix: Match index to parameter order: `executeScript("script", element)` uses `arguments[0]`.
+
+4. ❌ **Not Handling Alerts After JavaScript Alert**: Creating alert without dismissing it.
+   - Why: Alert blocks further automation until handled.
+   - Fix: Always handle alerts: `driver.switchTo().alert().accept();` after creating one.
+
+5. ❌ **Overusing JavaScript Instead of Selenium Methods**: Using JS for everything instead of native Selenium.
+   - Why: JavaScript bypasses real user interaction, may hide bugs, harder to maintain.
+   - Fix: Use JavaScript only when Selenium fails (hidden elements, scrolling, etc.).
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -805,6 +937,28 @@ hints:
 - Use contextClick() for right-click
 - Use dragAndDrop() for drag-drop
 - Use build().perform() to execute
+
+**Common Mistakes:**
+1. ❌ **Forgetting `.perform()`**: Building actions without calling perform() to execute them.
+   - Why: Actions are not executed until perform() is called.
+   - Fix: Always end with `.perform()`: `actions.moveToElement(element).perform();`.
+
+2. ❌ **Using `.build().perform()` Unnecessarily**: Calling build() for single actions.
+   - Why: Single actions don't need build(), only chained actions do.
+   - Fix: Use `.perform()` for single action, `.build().perform()` for chains.
+
+3. ❌ **Not Releasing After Click and Hold**: Calling `clickAndHold()` without `release()`.
+   - Why: Element remains in held state, affecting subsequent actions.
+   - Fix: Always release: `actions.clickAndHold(element).perform(); actions.release().perform();`.
+
+4. ❌ **Moving to Invisible Element**: Trying to hover over element that's not visible or scrolled out of view.
+   - Why: Cannot interact with elements not in viewport.
+   - Fix: Scroll element into view first using JavaScriptExecutor before hover.
+
+5. ❌ **Using Wrong Drag Method**: Confusing `dragAndDrop()` with `dragAndDropBy()`.
+   - Why: `dragAndDrop()` takes target element, `dragAndDropBy()` takes x,y coordinates.
+   - Fix: Use `dragAndDrop(source, target)` for elements, `dragAndDropBy(source, x, y)` for offsets.
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -927,6 +1081,28 @@ hints:
 - Use keyUp() to release modifier key
 - Use Keys enum for special keys
 - Chain actions for combinations
+
+**Common Mistakes:**
+1. ❌ **Not Releasing Modifier Keys**: Pressing Ctrl/Shift with `keyDown()` but forgetting `keyUp()`.
+   - Why: Modifier key remains pressed, affecting all subsequent actions.
+   - Fix: Always pair keyDown with keyUp: `keyDown(Keys.CONTROL).sendKeys("a").keyUp(Keys.CONTROL)`.
+
+2. ❌ **Using String Instead of Keys Enum**: Typing "ENTER" as string instead of Keys.ENTER.
+   - Why: Selenium won't recognize string as special key, types literal text.
+   - Fix: Use Keys enum: `sendKeys(Keys.ENTER)` not `sendKeys("ENTER")`.
+
+3. ❌ **Wrong Modifier Key for OS**: Using `Keys.CONTROL` on Mac instead of `Keys.COMMAND`.
+   - Why: Mac uses Command key for shortcuts, not Control.
+   - Fix: Use `Keys.COMMAND` for Mac, `Keys.CONTROL` for Windows/Linux, or detect OS programmatically.
+
+4. ❌ **Chaining Keys Without Actions Class**: Trying to do Ctrl+A using element.sendKeys(Keys.CONTROL + "a").
+   - Why: May not work reliably for all key combinations.
+   - Fix: Use Actions class for modifier combinations: `actions.keyDown(Keys.CONTROL).sendKeys("a").keyUp(Keys.CONTROL).perform();`.
+
+5. ❌ **Not Clicking Element Before Sending Keys**: Sending keys without focusing element first.
+   - Why: Keys may go to wrong element or be ignored.
+   - Fix: Click or focus element first: `actions.click(element).sendKeys("text").perform();`.
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -1090,6 +1266,28 @@ hints:
 - Use FileUtils.copyFile() to save
 - Create directories with mkdirs()
 - Use SimpleDateFormat for timestamps
+
+**Common Mistakes:**
+1. ❌ **Not Casting to TakesScreenshot**: Trying to call getScreenshotAs() directly on WebDriver.
+   - Why: WebDriver interface doesn't have screenshot methods.
+   - Fix: Cast first: `TakesScreenshot ts = (TakesScreenshot) driver;`.
+
+2. ❌ **Not Creating Parent Directories**: Saving screenshot to path where directory doesn't exist.
+   - Why: FileUtils.copyFile() fails if parent directories don't exist.
+   - Fix: Create directories: `destFile.getParentFile().mkdirs();` before copyFile().
+
+3. ❌ **Overwriting Screenshots**: Using same filename without timestamp.
+   - Why: New screenshots overwrite old ones, losing test evidence.
+   - Fix: Add timestamp to filename: `"screenshot_" + timestamp + ".png"`.
+
+4. ❌ **Taking Screenshot of Wrong Element**: Capturing entire page when you want specific element.
+   - Why: Not using element's getScreenshotAs() method.
+   - Fix: For element: `element.getScreenshotAs(OutputType.FILE)`, for page: `((TakesScreenshot)driver).getScreenshotAs()`.
+
+5. ❌ **Not Handling Screenshot Exceptions**: Letting screenshot failures crash the test.
+   - Why: Screenshot is for evidence, shouldn't fail the actual test.
+   - Fix: Wrap in try-catch: `try { takeScreenshot(); } catch (Exception e) { log error }`.
+
 solution:
 ```java
 import org.openqa.selenium.By;
@@ -1237,6 +1435,28 @@ hints:
 - Handle exceptions gracefully
 - Take screenshots for evidence
 - Use Actions class for complex interactions
+
+**Common Mistakes:**
+1. ❌ **Not Initializing Wait/Actions Objects**: Creating WebDriverWait or Actions inside methods instead of once.
+   - Why: Creates unnecessary objects, inefficient, harder to maintain.
+   - Fix: Initialize once as class variables: `wait = new WebDriverWait(driver, Duration.ofSeconds(10));`.
+
+2. ❌ **Hard-Coded Waits Everywhere**: Using Thread.sleep() excessively instead of explicit waits.
+   - Why: Makes tests slower, unreliable, and harder to maintain.
+   - Fix: Use `WebDriverWait`: `wait.until(ExpectedConditions.elementToBeClickable(element))`.
+
+3. ❌ **Not Taking Screenshot on Failure**: Only taking success screenshots, missing failure evidence.
+   - Why: When test fails, you need screenshot to debug what went wrong.
+   - Fix: Add screenshot in catch blocks: `catch (Exception e) { takeScreenshot("failure"); }`.
+
+4. ❌ **Not Creating Reusable Methods**: Repeating same code (screenshots, highlights, scrolls) in multiple places.
+   - Why: Harder to maintain, violates DRY principle, more chances for bugs.
+   - Fix: Create utility methods once, reuse: `takeScreenshot()`, `highlightElement()`, `scrollToElement()`.
+
+5. ❌ **Not Cleaning Up Resources**: Forgetting `driver.quit()` in finally block.
+   - Why: Browser remains open, consumes memory, affects subsequent tests.
+   - Fix: Always use finally: `finally { if (driver != null) driver.quit(); }`.
+
 solution:
 ```java
 import org.openqa.selenium.*;

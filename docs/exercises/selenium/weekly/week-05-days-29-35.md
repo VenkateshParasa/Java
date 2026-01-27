@@ -1,3 +1,489 @@
+# SELENIUM WEBDRIVER - Week 5: TestNG & Advanced Techniques (Days 29-35)
+
+## 📋 Week 5 Overview
+
+This week covers TestNG framework fundamentals and advanced Selenium techniques essential for professional automation:
+
+**Days Covered:**
+- **Days 29-30:** TestNG XML Configuration & Advanced Page Object Model (✅ **COMPLETE**)
+- **Days 31-35:** JavaScript Executor, Waits & Screenshots (✅ **COMPLETE**)
+
+**What You'll Master:**
+- TestNG XML configuration and test organization
+- Advanced Page Object Model patterns
+- JavaScript Executor for complex interactions
+- Implicit, Explicit, and Fluent Wait strategies
+- Screenshot capture and management
+- Professional test automation techniques
+
+**Current Status:** All days complete with 35 comprehensive exercises
+
+---
+
+
+# Week 5: TestNG & POM Advanced - Beginner-Friendly Exercises
+
+## Day 29: TestNG XML Configuration
+
+### Exercise 1: Create TestNG XML Suite
+
+```exercise
+title: Configure Test Suite Using testng.xml
+description: Learn to create and configure TestNG XML files for test execution control.
+requirements:
+- Create testng.xml file
+- Define test suite
+- Include/exclude test classes
+- Set parameters
+- Configure parallel execution
+testcases:
+- input: "Run tests using testng.xml"
+  output: "Should execute configured tests"
+hints:
+- Create testng.xml in project root
+- Use <suite> tag for suite definition
+- Use <test> tag for test groups
+- Use <classes> to include test classes
+- Use <parameter> for passing values
+solution:
+```xml
+<!-- testng.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Complete Test Suite" verbose="1">
+    
+    <!-- Suite-level parameters -->
+    <parameter name="browser" value="chrome"/>
+    <parameter name="baseUrl" value="https://www.saucedemo.com"/>
+    
+    <!-- Smoke Test -->
+    <test name="Smoke Tests" preserve-order="true">
+        <parameter name="environment" value="QA"/>
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="testValidLogin"/>
+                </methods>
+            </class>
+            <class name="tests.HomePageTest"/>
+        </classes>
+    </test>
+    
+    <!-- Regression Test -->
+    <test name="Regression Tests">
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.ProductTest"/>
+            <class name="tests.CartTest"/>
+            <class name="tests.CheckoutTest"/>
+        </classes>
+    </test>
+    
+    <!-- Parallel Execution -->
+    <test name="Parallel Tests" parallel="methods" thread-count="3">
+        <classes>
+            <class name="tests.SearchTest"/>
+        </classes>
+    </test>
+    
+</suite>
+```
+
+```java
+// Example test class using parameters
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+import org.testng.Assert;
+
+public class ParameterizedTest {
+    
+    @Parameters({"browser", "baseUrl"})
+    @Test
+    public void testWithParameters(String browser, String baseUrl) {
+        System.out.println("Browser: " + browser);
+        System.out.println("Base URL: " + baseUrl);
+        
+        Assert.assertNotNull(browser);
+        Assert.assertNotNull(baseUrl);
+        System.out.println("✓ Parameters received successfully");
+    }
+}
+```
+\```
+```
+
+**Common Mistakes:**
+1. ❌ **Wrong XML Structure**: Incorrect nesting of suite, test, and classes tags
+   - Why: TestNG requires specific XML schema; wrong structure causes parsing errors
+   - Fix: Follow correct order: `<suite>` → `<test>` → `<classes>` → `<class>`
+
+2. ❌ **Not Including DTD Declaration**: Missing `<!DOCTYPE>` declaration at top of XML
+   - Why: TestNG requires DTD to validate XML structure
+   - Fix: Always include: `<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">`
+
+3. ❌ **Incorrect Class Names**: Using simple class names instead of fully qualified names
+   - Why: TestNG needs complete package path to locate classes
+   - Fix: Use full path: `<class name="com.automation.tests.LoginTest"/>`
+
+4. ❌ **Not Configuring Test Dependencies**: Running tests without proper order/grouping
+   - Why: Some tests may depend on others completing first
+   - Fix: Use `preserve-order="true"` or configure dependencies properly
+
+5. ❌ **Hardcoding Values Instead of Parameters**: Not leveraging TestNG parameters feature
+   - Why: Reduces reusability; same suite can't run with different data
+   - Fix: Use `<parameter>` tags: `<parameter name="browser" value="chrome"/>`
+
+
+
+### Exercise 2: TestNG Groups and Dependencies
+
+```exercise
+title: Organize Tests Using Groups
+description: Learn to group tests and create dependencies between test groups.
+requirements:
+- Create test groups (smoke, regression, sanity)
+- Use @Test(groups = {})
+- Include/exclude groups in XML
+- Create group dependencies
+- Run specific groups
+testcases:
+- input: "Run tests by groups"
+  output: "Should execute only specified groups"
+hints:
+- Use groups attribute in @Test
+- Multiple groups: groups = {"smoke", "regression"}
+- Use dependsOnGroups for group dependencies
+- Configure groups in testng.xml
+- Use <groups> tag in XML
+solution:
+```java
+import org.testng.annotations.Test;
+import org.testng.Assert;
+
+public class GroupedTests {
+    
+    @Test(groups = {"smoke", "login"})
+    public void testQuickLogin() {
+        System.out.println("Running: Quick Login Test (Smoke)");
+        Assert.assertTrue(true);
+        System.out.println("✓ Smoke test passed");
+    }
+    
+    @Test(groups = {"regression", "login"})
+    public void testDetailedLogin() {
+        System.out.println("Running: Detailed Login Test (Regression)");
+        Assert.assertTrue(true);
+        System.out.println("✓ Regression test passed");
+    }
+    
+    @Test(groups = {"smoke", "search"})
+    public void testQuickSearch() {
+        System.out.println("Running: Quick Search Test (Smoke)");
+        Assert.assertTrue(true);
+        System.out.println("✓ Smoke test passed");
+    }
+    
+    @Test(groups = {"regression", "search"}, dependsOnGroups = {"login"})
+    public void testAdvancedSearch() {
+        System.out.println("Running: Advanced Search Test (Regression)");
+        System.out.println("  Depends on: login group");
+        Assert.assertTrue(true);
+        System.out.println("✓ Regression test passed");
+    }
+    
+    @Test(groups = {"sanity"})
+    public void testCriticalPath() {
+        System.out.println("Running: Critical Path Test (Sanity)");
+        Assert.assertTrue(true);
+        System.out.println("✓ Sanity test passed");
+    }
+}
+```
+
+```xml
+<!-- testng-groups.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Grouped Test Suite">
+    
+    <!-- Run only smoke tests -->
+    <test name="Smoke Test Suite">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="GroupedTests"/>
+        </classes>
+    </test>
+    
+    <!-- Run regression excluding smoke -->
+    <test name="Regression Test Suite">
+        <groups>
+            <run>
+                <include name="regression"/>
+                <exclude name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="GroupedTests"/>
+        </classes>
+    </test>
+    
+</suite>
+```
+\```
+```
+
+
+**Common Mistakes:**
+1. ❌ **Not Defining Groups**: Forgetting to add `groups` attribute to test methods
+   - Why: Tests won't be included in group execution
+   - Fix: Add annotation: `@Test(groups = {"smoke", "regression"})`
+
+2. ❌ **Circular Dependencies**: Creating dependency loops between groups
+   - Why: TestNG cannot resolve execution order; tests won't run
+   - Fix: Ensure dependencies are linear: A→B→C, not A→B→A
+
+3. ❌ **Wrong dependsOnGroups Syntax**: Using incorrect attribute name
+   - Why: TestNG won't recognize the dependency
+   - Fix: Use exact syntax: `@Test(dependsOnGroups = {"groupName"})`
+
+4. ❌ **Not Including Groups in XML**: Defining groups in code but not configuring in XML
+   - Why: Groups won't execute when running via XML
+   - Fix: Add `<groups><run><include>` in testng.xml
+
+5. ❌ **Mixing Methods and Groups Dependencies**: Using both dependsOnMethods and dependsOnGroups
+   - Why: Can create complex dependency chains that are hard to debug
+   - Fix: Prefer one approach for cleaner test organization
+
+
+---
+
+## Day 30: Advanced Page Object Model
+
+### Exercise 3: Page Factory with Lazy Initialization
+
+```exercise
+title: Implement Advanced POM with Page Factory
+description: Create sophisticated page objects using Page Factory and lazy initialization.
+requirements:
+- Use @FindBy with different strategies
+- Implement @CacheLookup
+- Create page factory methods
+- Use @FindAll and @FindBys
+- Implement fluent interface
+testcases:
+- input: "Use advanced POM features"
+  output: "Should efficiently locate and interact with elements"
+hints:
+- @FindBy(how = How.ID, using = "elementId")
+- @CacheLookup for static elements
+- @FindAll for OR condition
+- @FindBys for AND condition (chaining)
+- Return 'this' for method chaining
+solution:
+```java
+// AdvancedLoginPage.java
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.*;
+import java.util.List;
+
+public class AdvancedLoginPage {
+    private WebDriver driver;
+    
+    // Simple @FindBy
+    @FindBy(id = "user-name")
+    @CacheLookup
+    private WebElement usernameField;
+    
+    // Using How enum
+    @FindBy(how = How.ID, using = "password")
+    private WebElement passwordField;
+    
+    // Using CSS
+    @FindBy(css = "#login-button")
+    private WebElement loginButton;
+    
+    // @FindAll - OR condition (finds first match)
+    @FindAll({
+        @FindBy(id = "error"),
+        @FindBy(className = "error-message"),
+        @FindBy(xpath = "//div[@class='error']")
+    })
+    private WebElement errorMessage;
+    
+    // @FindBys - AND condition (chaining)
+    @FindBys({
+        @FindBy(className = "form-group"),
+        @FindBy(tagName = "input")
+    })
+    private List<WebElement> formInputs;
+    
+    // List of elements
+    @FindBy(className = "login-option")
+    private List<WebElement> loginOptions;
+    
+    // Constructor with PageFactory
+    public AdvancedLoginPage(WebDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+    
+    // Fluent interface methods
+    public AdvancedLoginPage enterUsername(String username) {
+        usernameField.clear();
+        usernameField.sendKeys(username);
+        System.out.println("✓ Username entered: " + username);
+        return this;
+    }
+    
+    public AdvancedLoginPage enterPassword(String password) {
+        passwordField.clear();
+        passwordField.sendKeys(password);
+        System.out.println("✓ Password entered");
+        return this;
+    }
+    
+    public AdvancedLoginPage clickLogin() {
+        loginButton.click();
+        System.out.println("✓ Login button clicked");
+        return this;
+    }
+    
+    // Verification methods
+    public boolean isErrorDisplayed() {
+        try {
+            return errorMessage.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    public String getErrorText() {
+        return errorMessage.getText();
+    }
+    
+    public int getFormInputCount() {
+        return formInputs.size();
+    }
+    
+    public int getLoginOptionsCount() {
+        return loginOptions.size();
+    }
+    
+    // Complete login action
+    public void performLogin(String username, String password) {
+        enterUsername(username)
+            .enterPassword(password)
+            .clickLogin();
+    }
+}
+
+// Test class
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+public class AdvancedPOMTest {
+    private WebDriver driver;
+    private AdvancedLoginPage loginPage;
+    
+    @BeforeMethod
+    public void setUp() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.get("https://www.saucedemo.com");
+        loginPage = new AdvancedLoginPage(driver);
+    }
+    
+    @Test
+    public void testFluentInterface() {
+        System.out.println("\nTest: Fluent Interface");
+        
+        loginPage.enterUsername("standard_user")
+                .enterPassword("secret_sauce")
+                .clickLogin();
+        
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        Assert.assertTrue(driver.getCurrentUrl().contains("inventory"));
+        System.out.println("✓ Fluent interface test passed");
+    }
+    
+    @Test
+    public void testErrorHandling() {
+        System.out.println("\nTest: Error Handling");
+        
+        loginPage.performLogin("invalid_user", "wrong_pass");
+        
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        Assert.assertTrue(loginPage.isErrorDisplayed());
+        System.out.println("✓ Error displayed: " + loginPage.getErrorText());
+    }
+    
+    @Test
+    public void testElementCounts() {
+        System.out.println("\nTest: Element Counts");
+        
+        int inputCount = loginPage.getFormInputCount();
+        System.out.println("Form inputs found: " + inputCount);
+        Assert.assertTrue(inputCount > 0);
+        
+        System.out.println("✓ Element count test passed");
+    }
+    
+    @AfterMethod
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+\```
+```
+
+
+**Common Mistakes:**
+1. ❌ **Forgetting @FindBy Annotation**: Declaring WebElements without @FindBy
+   - Why: Page Factory won't initialize elements; NullPointerException occurs
+   - Fix: Always annotate: `@FindBy(id="username") private WebElement usernameField;`
+
+2. ❌ **Not Calling initElements()**: Creating page object without initialization
+   - Why: Elements remain null; first interaction throws NullPointerException
+   - Fix: Always call: `PageFactory.initElements(driver, this);` in constructor
+
+3. ❌ **Using Public Element Fields**: Declaring WebElements as public
+   - Why: Breaks encapsulation; violates Page Object Model principles
+   - Fix: Make elements private, expose through methods
+
+4. ❌ **Storing Stale Element References**: Caching elements that may become stale
+   - Why: Page Factory handles staleness automatically only on re-access
+   - Fix: Let Page Factory re-initialize elements by always accessing through @FindBy
+
+5. ❌ **Complex Locators in @FindBy**: Using complicated expressions that are hard to maintain
+   - Why: Reduces readability and maintainability
+   - Fix: Keep locators simple; extract complex logic to methods
+
+
+---
+
+
+---
+
 # Days 31-35: JavaScript Executor, Waits & Screenshots - Beginner-Friendly Exercises
 
 **Course:** Selenium Automation - 45 Day Course
@@ -1699,6 +2185,29 @@ Solution: Use Selenium Waits!
 ### Challenge Task:
 Create a demo showing the time difference between Thread.sleep(10000) and a proper wait when element appears after 2 seconds.
 
+
+**Common Mistakes:**
+1. ❌ **Confusing Implicit Wait with Explicit Wait**: Using both types together
+   - Why: Can cause unexpected behavior and longer wait times (they add up)
+   - Fix: Choose one strategy: prefer explicit waits for better control
+
+2. ❌ **Not Understanding Scope**: Thinking implicit wait applies to specific elements
+   - Why: Implicit wait is global for entire driver session
+   - Fix: Set once after driver initialization, affects all findElement() calls
+
+3. ❌ **Setting Implicit Wait Multiple Times**: Changing implicit wait value throughout test
+   - Why: Creates confusion about actual wait time; unpredictable behavior
+   - Fix: Set once at driver creation, keep consistent throughout session
+
+4. ❌ **Using Zero Timeout**: Setting implicit wait to 0 without understanding effect
+   - Why: Makes tests fail immediately if element not present
+   - Fix: Use reasonable timeout (10-15 seconds) or remove implicit wait entirely
+
+5. ❌ **Expecting Implicit Wait to Solve All Timing Issues**: Relying solely on implicit wait
+   - Why: Implicit wait only helps with findElement(), not other conditions
+   - Fix: Use explicit waits for complex conditions (visibility, clickability, etc.)
+
+
 ---
 
 ## Exercise 2: Implementing Implicit Wait (20 minutes)
@@ -2585,6 +3094,29 @@ Create a test for a multi-step registration form where:
 4. Submit and wait for confirmation
 Use only implicit wait (no Thread.sleep).
 
+
+**Common Mistakes:**
+1. ❌ **Using Implicit Wait for AJAX Elements**: Expecting it to wait for asynchronous loads
+   - Why: Implicit wait doesn't know about AJAX; element might be in DOM but not loaded
+   - Fix: Use explicit wait with custom conditions for AJAX elements
+
+2. ❌ **Not Handling Dynamic Element IDs**: Using implicit wait with changing locators
+   - Why: Implicit wait can't help if locator itself is wrong
+   - Fix: Fix locators first, then apply appropriate waits
+
+3. ❌ **Ignoring StaleElementReferenceException**: Thinking implicit wait prevents staleness
+   - Why: Implicit wait doesn't re-locate elements that become stale
+   - Fix: Catch and handle StaleElementReferenceException, re-locate element
+
+4. ❌ **Using Implicit Wait with Negative Tests**: Testing for element absence
+   - Why: Will always wait full timeout duration when element doesn't exist
+   - Fix: For negative tests, use explicit wait with shorter timeout or different strategy
+
+5. ❌ **Not Adjusting Wait for Different Environments**: Same timeout for local and CI
+   - Why: CI environments may be slower; local tests may be faster
+   - Fix: Consider environment-specific timeouts through configuration
+
+
 ---
 
 ## Exercise 5: Best Practices and Troubleshooting (20 minutes)
@@ -2914,6 +3446,29 @@ Create a test that demonstrates:
 3. Performance impact of multiple failed lookups
 4. Proper use of findElements for optional elements
 Compare execution times with and without implicit wait.
+
+
+**Common Mistakes:**
+1. ❌ **Not Choosing Between Implicit and Explicit**: Using both inconsistently
+   - Why: Leads to unpredictable behavior and debugging difficulties
+   - Fix: Standardize on explicit waits for better control and clarity
+
+2. ❌ **No Team Agreement on Wait Strategy**: Each developer using different approaches
+   - Why: Inconsistent test behavior; hard to maintain
+   - Fix: Document and enforce team-wide wait strategy
+
+3. ❌ **Not Logging Wait-Related Failures**: No information about why element wasn't found
+   - Why: Hard to debug timeout issues without context
+   - Fix: Add logging before findElement() calls to capture timing issues
+
+4. ❌ **Ignoring Wait Impact on Test Execution Time**: Not measuring test duration
+   - Why: Long waits significantly slow down test suites
+   - Fix: Monitor test execution times; optimize waits
+
+5. ❌ **Not Having Fallback Strategy**: Only using one wait mechanism
+   - Why: Some scenarios might need different wait approaches
+   - Fix: Have both implicit and explicit wait strategies available, use appropriately
+
 
 ---
 
@@ -4439,6 +4994,29 @@ Create custom conditions for:
 3. Wait for multiple elements to have same text
 4. Wait for CSS property value to change
 
+
+**Common Mistakes:**
+1. ❌ **Not Understanding ExpectedCondition Interface**: Creating custom conditions incorrectly
+   - Why: Must implement apply() method with correct signature
+   - Fix: Use correct lambda or method reference syntax: `(WebDriver d) -> { return condition; }`
+
+2. ❌ **Returning Null Instead of False**: Custom condition returns null when not met
+   - Why: ExpectedConditions treat null as "condition not met" but should return boolean
+   - Fix: Return explicit boolean: `return element.isDisplayed()` not just `element.isDisplayed()`
+
+3. ❌ **Creating Overly Complex Custom Conditions**: Mixing multiple unrelated checks
+   - Why: Hard to debug and understand; defeats purpose of clear conditions
+   - Fix: Keep custom conditions focused on single logical check
+
+4. ❌ **Not Handling Exceptions in Custom Conditions**: Letting exceptions propagate
+   - Why: Exception in condition causes wait to fail; should be handled gracefully
+   - Fix: Catch exceptions and return false: `try { ... } catch(Exception e) { return false; }`
+
+5. ❌ **Forgetting to Import Function Interface**: For Selenium 4+ custom conditions
+   - Why: Lambda expressions need proper functional interface
+   - Fix: Understand ExpectedCondition<T> is a functional interface
+
+
 ---
 
 ## Exercise 5: Explicit Wait Framework (30 minutes)
@@ -4985,6 +5563,29 @@ Extend the framework with:
 2. Methods that retry on specific exceptions
 3. Methods for waiting with logging
 4. Methods for parallel waits
+
+
+**Common Mistakes:**
+1. ❌ **Not Centralizing Wait Logic**: Duplicating wait code across test classes
+   - Why: Maintenance nightmare; changes need to be made in multiple places
+   - Fix: Create reusable wait utility class with common wait methods
+
+2. ❌ **Hardcoding Timeouts**: Using magic numbers for wait durations
+   - Why: Inconsistent timeouts; hard to change globally
+   - Fix: Define timeout constants: `private static final int DEFAULT_TIMEOUT = 10;`
+
+3. ❌ **Not Providing Meaningful Wait Names**: Generic method names like waitForElement()
+   - Why: Unclear what condition is being waited for
+   - Fix: Use descriptive names: waitForElementToBeVisible(), waitForElementToBeClickable()
+
+4. ❌ **Missing Error Messages**: Default TimeoutException messages not helpful
+   - Why: Hard to debug which wait failed and why
+   - Fix: Add custom messages: `wait.withMessage("Failed to find login button")`
+
+5. ❌ **Not Making Framework Configurable**: Fixed timeouts that can't be changed easily
+   - Why: Different environments may need different timeouts
+   - Fix: Read timeouts from configuration file or environment variables
+
 
 ---
 
@@ -5627,6 +6228,29 @@ Test element that appears after exactly 5 seconds with:
 2. Polling every 5.1s (should miss it)
 Document the results.
 
+
+**Common Mistakes:**
+1. ❌ **Setting Polling Too High**: Using very long polling intervals like 5 seconds
+   - Why: Misses quick state changes; waits unnecessarily long
+   - Fix: Use short polling: 100-500ms typically
+
+2. ❌ **Setting Polling Too Low**: Using polling like 10ms
+   - Why: Excessive checking puts load on system; no real benefit
+   - Fix: Balance between responsiveness and efficiency; 100-500ms is good range
+
+3. ❌ **Not Understanding Polling vs Timeout**: Confusing these two concepts
+   - Why: Timeout is maximum wait time; polling is check interval
+   - Fix: Timeout should be much larger than polling interval
+
+4. ❌ **Using Same Polling for All Scenarios**: Not adjusting based on expected behavior
+   - Why: Fast-changing elements need faster polling; slow loads need less frequent checks
+   - Fix: Adjust polling based on scenario: animations (100ms), page loads (500ms)
+
+5. ❌ **Not Monitoring Polling Impact**: Not checking how many times condition is checked
+   - Why: Excessive polling can slow down tests or cause issues
+   - Fix: Add logging to count polling iterations, optimize if needed
+
+
 ---
 
 [Due to length, continuing in next append...]
@@ -5862,6 +6486,29 @@ With exception ignoring:
 
 ### Challenge Task:
 Create a wait that handles a page where elements are constantly being removed and re-added, ignoring both NoSuchElementException and StaleElementReferenceException.
+
+
+**Common Mistakes:**
+1. ❌ **Not Ignoring Common Exceptions**: Every exception breaks the wait
+   - Why: Transient exceptions like StaleElementReferenceException should be ignored
+   - Fix: Ignore exceptions: `.ignoring(NoSuchElementException.class, StaleElementReferenceException.class)`
+
+2. ❌ **Ignoring Too Many Exceptions**: Masking real problems
+   - Why: Important exceptions get swallowed; failures go unnoticed
+   - Fix: Only ignore exceptions that are expected during wait period
+
+3. ❌ **Not Understanding Exception Behavior**: Thinking ignored exceptions stop the wait
+   - Why: Ignored exceptions are caught and wait continues; only timeout stops wait
+   - Fix: Understand ignored exceptions allow wait to keep trying
+
+4. ❌ **Forgetting to Import Exception Classes**: Using class names without imports
+   - Why: Compilation error if exception classes not imported
+   - Fix: Import needed exceptions: `import org.openqa.selenium.NoSuchElementException;`
+
+5. ❌ **Not Logging Ignored Exceptions**: No visibility into what's being caught
+   - Why: Hard to debug if too many exceptions are occurring
+   - Fix: Consider logging ignored exceptions in custom until() condition
+
 
 ---
 
@@ -6147,6 +6794,29 @@ Create a custom fluent condition that waits for:
 3. A submit button to be enabled
 All conditions must be met simultaneously.
 
+
+**Common Mistakes:**
+1. ❌ **Complex Until Conditions Without Error Handling**: Custom conditions throw unhandled exceptions
+   - Why: Exceptions in until() condition break the wait
+   - Fix: Wrap condition logic in try-catch, return false on exception
+
+2. ❌ **Not Returning Proper Types**: Until condition returns wrong type
+   - Why: FluentWait.until() expects Function<WebDriver, T> where T is return type
+   - Fix: Ensure condition returns appropriate type (Boolean, WebElement, etc.)
+
+3. ❌ **Creating Non-Reusable Conditions**: One-off conditions for each test
+   - Why: Defeats purpose of custom conditions; code duplication
+   - Fix: Create reusable condition methods that accept parameters
+
+4. ❌ **Not Testing Custom Conditions**: Assuming custom logic always works
+   - Why: Bugs in custom conditions affect multiple tests
+   - Fix: Unit test custom wait conditions separately
+
+5. ❌ **Overly Complex Condition Logic**: Too many checks in single until() condition
+   - Why: Hard to debug which part of condition is failing
+   - Fix: Break into smaller, testable conditions; chain them if needed
+
+
 ---
 
 ## Exercise 5: Comparing All Wait Types (30 minutes)
@@ -6350,6 +7020,29 @@ Best Practice: Use Explicit Wait as default, Fluent for special cases
 ### Challenge Task:
 Create a test that uses all three wait types in a single script, each for its optimal use case.
 
+
+**Common Mistakes:**
+1. ❌ **Always Using FluentWait**: Using FluentWait even when WebDriverWait is sufficient
+   - Why: Adds unnecessary complexity; WebDriverWait is simpler for most cases
+   - Fix: Use FluentWait only when you need custom polling or exception handling
+
+2. ❌ **Mixing Wait Types Inconsistently**: Different waits in same test without reason
+   - Why: Inconsistent code style; harder to maintain
+   - Fix: Standardize on one approach unless specific need for different wait type
+
+3. ❌ **Not Understanding Implicit Wait Conflicts**: Using implicit wait with Fluent/Explicit waits
+   - Why: They can interfere with each other; total wait time is sum of both
+   - Fix: Choose one strategy; prefer explicit/fluent waits over implicit
+
+4. ❌ **Not Documenting Wait Choice**: No comment explaining why specific wait type was chosen
+   - Why: Future developers won't understand the reasoning
+   - Fix: Add comments explaining wait type selection rationale
+
+5. ❌ **Performance Ignorance**: Not considering wait impact on test execution time
+   - Why: Multiple long waits significantly slow down test suite
+   - Fix: Monitor and optimize wait times; use shortest effective timeout
+
+
 ---
 
 ## Day 34 Summary
@@ -6514,6 +7207,29 @@ BASE64 output: iVBORw0KGgoAAAANSUhEUgAABaAAAASwCAIAAAC8VkNbAAA...
 - [ ] Timestamped filename created
 
 **Note:** Day 35 exercises 2-5 covering Element Screenshots, Screenshot on Failure, Screenshot Management Framework, and Best Practices have been created with full working code examples, expected outputs, and comprehensive documentation. The file is now complete with all Days 31-35 fully covered.
+
+
+**Common Mistakes:**
+1. ❌ **Not Casting Driver to TakesScreenshot**: Using driver reference directly
+   - Why: WebDriver interface doesn't have getScreenshotAs() method
+   - Fix: Cast first: `TakesScreenshot ts = (TakesScreenshot) driver;`
+
+2. ❌ **Wrong Import for OutputType**: Importing wrong OutputType class
+   - Why: Multiple classes named OutputType exist in different packages
+   - Fix: Use correct import: `import org.openqa.selenium.OutputType;`
+
+3. ❌ **Not Creating Target Directory**: Saving screenshot to non-existent folder
+   - Why: FileNotFoundException when directory doesn't exist
+   - Fix: Create directory first: `new File("screenshots").mkdirs();`
+
+4. ❌ **Hardcoding File Paths**: Using absolute paths in code
+   - Why: Paths won't work on different machines/OS
+   - Fix: Use relative paths or get path from configuration
+
+5. ❌ **Not Handling Screenshot Failures**: Assuming screenshot capture always succeeds
+   - Why: Can fail due to browser state, permissions, or disk issues
+   - Fix: Wrap in try-catch to prevent test failure if screenshot fails
+
 
 ---
 
@@ -7953,6 +8669,29 @@ public class ProductionScreenshotManager {
 ✅ **Optimize performance**: Use byte arrays for temporary screenshots  
 ✅ **Integrate with CI/CD**: Upload artifacts for remote execution  
 ✅ **Capture context**: Include error logs, page source, browser logs  
+
+
+**Common Mistakes:**
+1. ❌ **Taking Screenshots Too Frequently**: Screenshot after every action
+   - Why: Slows down tests significantly; fills up disk space
+   - Fix: Take screenshots only on failures or at key checkpoints
+
+2. ❌ **Not Compressing Screenshots**: Storing full-size PNG files
+   - Why: Large files consume excessive storage
+   - Fix: Compress images or use JPEG for non-critical screenshots
+
+3. ❌ **No Screenshot Retention Policy**: Keeping all screenshots forever
+   - Why: Storage costs and clutter increase over time
+   - Fix: Define retention policy: keep failures for 30 days, successes for 7 days
+
+4. ❌ **Not Embedding Screenshots in Reports**: Screenshots separate from test reports
+   - Why: Have to cross-reference; not convenient for analysis
+   - Fix: Use reporting tools that embed screenshots (Extent Reports, Allure)
+
+5. ❌ **Capturing Screenshots Too Late**: Taking screenshot after driver.quit()
+   - Why: Browser is closed; can't capture screenshot
+   - Fix: Ensure screenshot capture happens before quitting driver, in test listener or finally block
+
 
 ---
 

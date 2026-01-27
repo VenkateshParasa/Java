@@ -1,5 +1,4 @@
-
-# Week 1: Selenium Fundamentals - Beginner-Friendly Exercises
+# Selenium Automation - Week 1: Java Essentials (Days 1-7)
 
 ## Day 1: Selenium Introduction & Setup
 
@@ -31,22 +30,22 @@ public class FirstSeleniumTest {
     public static void main(String[] args) {
         // Initialize ChromeDriver
         WebDriver driver = new ChromeDriver();
-        
+
         try {
             // Navigate to Google
             driver.get("https://www.google.com");
-            
+
             // Get and print page title
             String pageTitle = driver.getTitle();
             System.out.println("Page Title: " + pageTitle);
-            
+
             // Verify title contains "Google"
             if (pageTitle.contains("Google")) {
                 System.out.println("✓ Test Passed: Title contains Google");
             } else {
                 System.out.println("✗ Test Failed: Title doesn't contain Google");
             }
-            
+
         } finally {
             // Close browser
             driver.quit();
@@ -57,6 +56,27 @@ public class FirstSeleniumTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Forgetting to call driver.quit()**: Leaving browser instances running
+   - Why: Resources are not released, causing memory leaks
+   - Fix: Always use try-finally block and call quit() in finally
+
+2. ❌ **Using driver.close() instead of driver.quit()**: Only closes current window
+   - Why: close() doesn't terminate the driver session completely
+   - Fix: Use quit() to close all windows and end the session
+
+3. ❌ **Missing ChromeDriver setup**: WebDriver executable not in PATH
+   - Why: System cannot find the ChromeDriver binary
+   - Fix: Ensure ChromeDriver is in system PATH or use WebDriverManager
+
+4. ❌ **Not importing correct packages**: Import errors
+   - Why: Missing import statements for WebDriver and ChromeDriver
+   - Fix: Import org.openqa.selenium.WebDriver and org.openqa.selenium.chrome.ChromeDriver
+
+5. ❌ **Using concrete class instead of interface**: WebDriver driver = new ChromeDriver()
+   - Why: Best practice is to use interface reference for flexibility
+   - Fix: Declare as WebDriver driver = new ChromeDriver() (already correct in solution)
 
 ### Exercise 2: Browser Navigation
 
@@ -112,7 +132,7 @@ public class BrowserNavigation {
             // Refresh page
             driver.navigate().refresh();
             System.out.println("5. After refresh: " + driver.getCurrentUrl());
-            
+
         } finally {
             driver.quit();
         }
@@ -121,6 +141,23 @@ public class BrowserNavigation {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Using Thread.sleep() for synchronization**: Hardcoded waits are unreliable
+   - Why: Tests become slower and can still fail if page loads slowly
+   - Fix: Use WebDriverWait with ExpectedConditions (covered in Day 5)
+
+2. ❌ **Not handling InterruptedException**: Thread.sleep() requires exception handling
+   - Why: Compiler error if not caught or declared
+   - Fix: Add throws InterruptedException to method signature or use try-catch
+
+3. ❌ **Confusing driver.get() and driver.navigate().to()**: Both navigate but have differences
+   - Why: get() waits for page load, navigate().to() provides navigation history
+   - Fix: Use get() for initial navigation, navigate() for browser actions
+
+4. ❌ **Not waiting between navigation commands**: Commands execute too fast
+   - Why: Page may not fully load before next command
+   - Fix: Add appropriate waits between navigation steps
 
 ---
 
@@ -174,7 +211,7 @@ public class LocatorPractice {
             
             // Verify all found the same element
             System.out.println("\nAll three locators found the search box successfully!");
-            
+
         } finally {
             driver.quit();
         }
@@ -183,6 +220,27 @@ public class LocatorPractice {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Using incorrect locator syntax**: XPath or CSS errors
+   - Why: Incorrect syntax leads to NoSuchElementException
+   - Fix: Use browser DevTools to verify and test locators before using
+
+2. ❌ **Not importing By class**: Compilation error
+   - Why: Missing import org.openqa.selenium.By
+   - Fix: Import the By class at the top of your file
+
+3. ❌ **Using findElements() instead of findElement()**: Returns list instead of single element
+   - Why: findElements() returns List<WebElement>, not WebElement
+   - Fix: Use findElement() for single elements, findElements() for multiple
+
+4. ❌ **Hardcoding locators throughout code**: Difficult maintenance
+   - Why: Changes to UI require updates in multiple places
+   - Fix: Store locators as constants or use Page Object Model
+
+5. ❌ **Using dynamic IDs or classes**: Locators break when attributes change
+   - Why: Dynamic attributes change on each page load
+   - Fix: Use stable attributes or XPath/CSS with contains() or starts-with()
 
 ### Exercise 4: Count and Iterate Through Elements
 
@@ -242,7 +300,7 @@ public class CountLinks {
                     System.out.println("   URL: " + href);
                 }
             }
-            
+
         } finally {
             driver.quit();
         }
@@ -251,6 +309,23 @@ public class CountLinks {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not checking list size before accessing elements**: ArrayIndexOutOfBoundsException
+   - Why: Accessing index beyond list size causes runtime error
+   - Fix: Use Math.min(5, list.size()) or check size before accessing
+
+2. ❌ **Not handling empty link text**: Printing blank lines
+   - Why: Many links have no visible text (icons, images)
+   - Fix: Check if getText() is empty and handle accordingly
+
+3. ❌ **Using size instead of size()**: Compilation error
+   - Why: size is a method, not a property in Java
+   - Fix: Always use parentheses: list.size()
+
+4. ❌ **Forgetting to import List interface**: Cannot resolve symbol
+   - Why: Missing import java.util.List
+   - Fix: Import java.util.List at the top of file
 
 ---
 
@@ -315,7 +390,7 @@ public class WindowManagement {
             // Get current position
             Point currentPosition = driver.manage().window().getPosition();
             System.out.println("Current position: (" + currentPosition.getX() + ", " + currentPosition.getY() + ")");
-            
+
         } finally {
             driver.quit();
         }
@@ -324,6 +399,23 @@ public class WindowManagement {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not importing Dimension and Point classes**: Compilation errors
+   - Why: Missing imports from org.openqa.selenium package
+   - Fix: Import org.openqa.selenium.Dimension and org.openqa.selenium.Point
+
+2. ❌ **Setting window size before maximizing**: Maximize overrides custom size
+   - Why: maximize() sets window to screen size, ignoring previous setSize()
+   - Fix: Set custom size after maximize, or don't use both
+
+3. ❌ **Using negative coordinates for position**: Window moves off-screen
+   - Why: Negative x or y values may not be valid on all platforms
+   - Fix: Use positive coordinates within screen bounds
+
+4. ❌ **Not waiting after window operations**: Commands execute too fast to see
+   - Why: Window changes happen instantly in code but need visual confirmation
+   - Fix: Add Thread.sleep() for demonstration purposes
 
 ### Exercise 6: Take Screenshots
 
@@ -389,7 +481,7 @@ public class ScreenshotExample {
             
             System.out.println("✓ Screenshot saved successfully!");
             System.out.println("File path: " + destFile.getAbsolutePath());
-            
+
         } finally {
             driver.quit();
         }
@@ -398,6 +490,27 @@ public class ScreenshotExample {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not casting driver to TakesScreenshot**: ClassCastException or compilation error
+   - Why: WebDriver interface doesn't have screenshot method
+   - Fix: Cast to TakesScreenshot: (TakesScreenshot) driver
+
+2. ❌ **Forgetting to create parent directory**: FileNotFoundException
+   - Why: screenshots/ directory doesn't exist
+   - Fix: Call destFile.getParentFile().mkdirs() before saving
+
+3. ❌ **Not importing Apache Commons IO**: NoClassDefFoundError
+   - Why: FileUtils.copyFile() requires commons-io dependency
+   - Fix: Add commons-io to your project dependencies
+
+4. ❌ **Missing try-catch for IOException**: Compilation error
+   - Why: FileUtils.copyFile() throws IOException
+   - Fix: Add throws Exception to method or wrap in try-catch
+
+5. ❌ **Overwriting screenshots with same name**: Previous screenshots lost
+   - Why: Not using timestamp or unique identifier in filename
+   - Fix: Include timestamp in filename as shown in solution
 
 ---
 
@@ -467,7 +580,7 @@ public class FormInteraction {
             } else {
                 System.out.println("✗ Login failed");
             }
-            
+
         } finally {
             driver.quit();
         }
@@ -476,6 +589,27 @@ public class FormInteraction {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not clearing input fields before entering text**: Old text remains
+   - Why: sendKeys() appends text, doesn't replace it
+   - Fix: Always call clear() before sendKeys()
+
+2. ❌ **Using click() on disabled elements**: ElementNotInteractableException
+   - Why: Disabled elements cannot be clicked
+   - Fix: Check isEnabled() before clicking
+
+3. ❌ **Not waiting for page to load after form submission**: Using stale data
+   - Why: Page navigation takes time
+   - Fix: Add explicit wait or check for URL change
+
+4. ❌ **Accessing stale element after page refresh**: StaleElementReferenceException
+   - Why: Element reference becomes invalid after DOM changes
+   - Fix: Re-find elements after page changes
+
+5. ❌ **Using getAttribute("text") instead of getText()**: Returns null
+   - Why: "text" is not an HTML attribute
+   - Fix: Use getText() for visible text, getAttribute("value") for input values
 
 ### Exercise 8: Element State Verification
 
@@ -545,7 +679,7 @@ public class ElementStateCheck {
                 submitBtn.click();
                 System.out.println("✓ Submit button clicked successfully");
             }
-            
+
         } finally {
             driver.quit();
         }
@@ -554,6 +688,23 @@ public class ElementStateCheck {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Skipping state verification before interaction**: Tests fail intermittently
+   - Why: Interacting with non-visible or disabled elements causes exceptions
+   - Fix: Always check isDisplayed() and isEnabled() before interaction
+
+2. ❌ **Using isSelected() on non-form elements**: Always returns false
+   - Why: isSelected() only works for checkboxes, radio buttons, and options
+   - Fix: Only use isSelected() for appropriate element types
+
+3. ❌ **Not handling NoSuchElementException**: Test crashes when element not found
+   - Why: Missing elements cause uncaught exceptions
+   - Fix: Use try-catch or explicit waits to handle missing elements
+
+4. ❌ **Confusing isDisplayed() with isEnabled()**: Different meanings
+   - Why: Displayed means visible, enabled means interactable
+   - Fix: Check both conditions for reliable interaction
 
 ---
 
@@ -632,7 +783,7 @@ public class ExplicitWaitExample {
                 )
             );
             System.out.println("Success message: " + successMsg.getText());
-            
+
         } finally {
             driver.quit();
         }
@@ -641,6 +792,27 @@ public class ExplicitWaitExample {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Using Thread.sleep() instead of WebDriverWait**: Tests are slow and unreliable
+   - Why: Fixed waits are inflexible and can cause timeouts or unnecessary delays
+   - Fix: Always use explicit waits with ExpectedConditions
+
+2. ❌ **Not importing Duration class**: Compilation error with Duration.ofSeconds()
+   - Why: Missing import java.time.Duration
+   - Fix: Import java.time.Duration (not org.openqa.selenium.support.ui.Duration)
+
+3. ❌ **Using deprecated timeout constructor**: Compilation warning
+   - Why: Old constructor new WebDriverWait(driver, 10) is deprecated
+   - Fix: Use new WebDriverWait(driver, Duration.ofSeconds(10))
+
+4. ❌ **Not handling TimeoutException**: Test crashes when element not found within timeout
+   - Why: wait.until() throws TimeoutException if condition not met
+   - Fix: Wrap in try-catch or let it propagate to fail the test
+
+5. ❌ **Chaining waits inefficiently**: Multiple wait objects created
+   - Why: Creating new WebDriverWait for each operation is inefficient
+   - Fix: Create one wait instance and reuse it
 
 ### Exercise 10: Handle Loading Spinners
 
@@ -698,11 +870,11 @@ public class LoadingSpinnerWait {
             );
             
             System.out.println("✓ Success message visible: " + successMsg.getText());
-            
+
             // Demonstrate waiting for element to be invisible
             // (In real scenario, this would be a loading spinner)
             System.out.println("✓ All loading indicators cleared");
-            
+
         } finally {
             driver.quit();
         }
@@ -711,6 +883,23 @@ public class LoadingSpinnerWait {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Using invisibilityOfElementLocated on elements that never exist**: Wait times out
+   - Why: Condition expects element to exist first, then become invisible
+   - Fix: Ensure element exists before waiting for invisibility, or catch TimeoutException
+
+2. ❌ **Not waiting long enough for spinners**: Insufficient timeout
+   - Why: Some operations take longer than default timeout
+   - Fix: Increase timeout for slow operations: Duration.ofSeconds(30)
+
+3. ❌ **Waiting for visibility after invisibility check**: Logic error
+   - Why: Once invisible, element cannot become visible in same flow
+   - Fix: Understand the page flow and wait sequence properly
+
+4. ❌ **Not handling spinners that appear/disappear quickly**: Missing the transition
+   - Why: Spinner may already be gone before wait starts
+   - Fix: Use presenceOfElementLocated first, then invisibility
 
 ---
 
@@ -782,9 +971,9 @@ public class DropdownExample {
             
             // Select by index (0-based)
             dropdown.selectByIndex(2);
-            System.out.println("✓ Selected by index 2: " + 
+            System.out.println("✓ Selected by index 2: " +
                 dropdown.getFirstSelectedOption().getText());
-            
+
         } finally {
             driver.quit();
         }
@@ -793,6 +982,27 @@ public class DropdownExample {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not importing Select class**: Compilation error
+   - Why: Missing import org.openqa.selenium.support.ui.Select
+   - Fix: Import the Select class at the top of file
+
+2. ❌ **Using Select on non-<select> elements**: NotSelectElementException
+   - Why: Select class only works with HTML <select> tags
+   - Fix: Verify element is a <select> before creating Select object
+
+3. ❌ **Confusing selectByValue() parameter**: Selecting wrong option
+   - Why: selectByValue() uses the value attribute, not visible text
+   - Fix: Use selectByVisibleText() for visible text, selectByValue() for value attribute
+
+4. ❌ **Using wrong index**: IndexOutOfBoundsException
+   - Why: Index is 0-based and must be within range
+   - Fix: Check getOptions().size() before selecting by index
+
+5. ❌ **Not checking if dropdown is multi-select**: Incorrect handling
+   - Why: Multi-select dropdowns behave differently
+   - Fix: Use isMultiple() to check, then use deselectAll() if needed
 
 ### Exercise 12: Handle Alerts
 
@@ -872,7 +1082,7 @@ public class AlertHandling {
             promptAlert.sendKeys("Selenium Test");
             promptAlert.accept();
             System.out.println("✓ Prompt filled and accepted");
-            
+
         } finally {
             driver.quit();
         }
@@ -881,6 +1091,27 @@ public class AlertHandling {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not switching to alert before interacting**: NoAlertPresentException
+   - Why: Must switch context to alert using driver.switchTo().alert()
+   - Fix: Always switch to alert before calling getText(), accept(), or dismiss()
+
+2. ❌ **Not waiting for alert to appear**: NoAlertPresentException
+   - Why: Alert may take time to display after triggering action
+   - Fix: Use WebDriverWait with ExpectedConditions.alertIsPresent()
+
+3. ❌ **Forgetting to handle UnhandledAlertException**: Test stops unexpectedly
+   - Why: Unhandled alerts block further automation
+   - Fix: Always accept or dismiss alerts before proceeding
+
+4. ❌ **Using sendKeys() on simple alerts**: ElementNotInteractableException
+   - Why: Only prompt alerts accept text input
+   - Fix: Only use sendKeys() with prompt alerts, not simple or confirm alerts
+
+5. ❌ **Not importing Alert interface**: Compilation error
+   - Why: Missing import org.openqa.selenium.Alert
+   - Fix: Import the Alert interface at the top of file
 
 ---
 
@@ -991,6 +1222,27 @@ public class SampleTest extends BaseTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not using ThreadLocal for parallel execution**: Tests interfere with each other
+   - Why: Shared driver instance causes conflicts in parallel test runs
+   - Fix: Use ThreadLocal<WebDriver> to maintain separate instances per thread
+
+2. ❌ **Forgetting @BeforeMethod and @AfterMethod annotations**: Setup/teardown not executed
+   - Why: TestNG doesn't recognize methods without proper annotations
+   - Fix: Always annotate setup/teardown methods correctly
+
+3. ❌ **Not making driver protected**: Child classes cannot access driver
+   - Why: Private members are not accessible to subclasses
+   - Fix: Use protected access modifier for members used by child classes
+
+4. ❌ **Not removing ThreadLocal value**: Memory leaks in long-running test suites
+   - Why: ThreadLocal values persist after test completion
+   - Fix: Call driver.remove() in tearDown to clean up
+
+5. ❌ **Initializing driver in constructor instead of @BeforeMethod**: Timing issues
+   - Why: Constructor runs before TestNG setup, causing lifecycle problems
+   - Fix: Always initialize driver in @BeforeMethod, not constructor
 
 ### Exercise 14: Complete End-to-End Test
 
@@ -1162,6 +1414,27 @@ public class CompleteLoginTest extends BaseTest {
 ```
 \```
 ```
+
+**Common Mistakes:**
+1. ❌ **Not using explicit waits consistently**: Flaky tests with timing issues
+   - Why: Implicit waits or no waits cause intermittent failures
+   - Fix: Use WebDriverWait with ExpectedConditions for every element interaction
+
+2. ❌ **Missing assertions**: Tests pass even when functionality fails
+   - Why: Without assertions, tests only verify code runs without errors
+   - Fix: Use Assert.assertTrue(), Assert.assertEquals() to validate expected behavior
+
+3. ❌ **Not using test priorities**: Tests run in random order
+   - Why: TestNG runs tests alphabetically by default
+   - Fix: Use @Test(priority = n) to control execution order
+
+4. ❌ **Hardcoding test data in test methods**: Difficult to maintain
+   - Why: Changing test data requires code changes
+   - Fix: Use data providers or external files for test data
+
+5. ❌ **Not taking screenshots on failure**: Hard to debug failed tests
+   - Why: No visual evidence of failure state
+   - Fix: Implement @AfterMethod to capture screenshot on test failure
 
 ---
 
