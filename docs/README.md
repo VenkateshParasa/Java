@@ -2,6 +2,8 @@
 
 This directory contains all student-facing learning materials for the Java and Selenium automation course.
 
+> **📌 Important:** Course content is maintained in the web application and synchronized to this documentation directory. The web application (`apps/web/public/content/`) is the source of truth for all course materials. See [`CONTENT_DUPLICATION_ANALYSIS.md`](CONTENT_DUPLICATION_ANALYSIS.md) for details.
+
 ## Directory Structure
 
 ```
@@ -20,8 +22,8 @@ docs/
 Start here: [Getting Started Guide](getting-started/README.md)
 
 ### 📚 Core Courses
-- [Java Core Fundamentals (30 Days)](courses/java-core/course-overview.md)
-- [Selenium Automation (45 Days)](courses/selenium-automation/course-overview.md)
+- [Java Core Fundamentals (30 Days)](courses/java-core/README.md) - ✅ Synchronized
+- [Selenium Automation (45 Days)](courses/selenium-automation/README.md) - ✅ Synchronized
 
 ### 💪 Practice Exercises
 - [Java Exercises](exercises/java-core/complete-exercises.md)
@@ -68,10 +70,28 @@ Advanced topics for deeper understanding:
 ## Course Statistics
 
 - **Total Days:** 75 (30 Java + 45 Selenium)
-- **Total Exercises:** 220+
-- **Total Content:** 89,000+ lines
+- **Total Exercises:** 253+ (Java Core) + additional Selenium exercises
+- **Total Content:** 89,631+ lines
 - **Deep Dive Docs:** 8 comprehensive guides
 - **Completion Status:** 100% ✅
+- **Sync Status:** ✅ Fully synchronized with web application (Jan 26, 2026)
+
+## Content Management
+
+### Source of Truth
+All course content is maintained in the web application first:
+- **Web App Location:** `apps/web/public/content/01_Core_Courses/`
+- **Documentation Copy:** `docs/courses/`
+- **Sync Process:** Automated synchronization from web app to docs
+
+### Making Updates
+1. Update content in the web application
+2. Run sync script to update documentation
+3. Verify synchronization with comparison tools
+
+For detailed information, see:
+- [`CONTENT_DUPLICATION_ANALYSIS.md`](CONTENT_DUPLICATION_ANALYSIS.md) - Content sync analysis
+- [`OPTIMAL_FOLDER_STRUCTURE_PLAN.md`](../OPTIMAL_FOLDER_STRUCTURE_PLAN.md) - Project structure
 
 ## Support
 
@@ -81,4 +101,5 @@ For progress tracking, use the [Progress Tracker](getting-started/progress-track
 
 ---
 
-*Last Updated: January 2026*
+*Last Updated: January 26, 2026*
+*Content Version: 2.0 (Synchronized with Web App)*

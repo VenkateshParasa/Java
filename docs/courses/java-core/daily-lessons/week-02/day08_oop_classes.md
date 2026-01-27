@@ -375,8 +375,36 @@ public class Main {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Create Car Class
-Create a Car class with properties and methods.
 
+**📝 Problem Statement:**
+Design a Car class that models a real car with properties like brand, model, year, color, and speed. The car should support operations like starting, accelerating, braking, and displaying car information.
+
+**Requirements:**
+- Create instance variables for brand, model, year, color, and speed
+- Implement a `start()` method that initializes speed to 0
+- Implement an `accelerate(int increment)` method to increase speed
+- Implement a `brake(int decrement)` method to decrease speed (minimum 0)
+- Implement a `displayInfo()` method to show all car details
+- Test with at least one car object
+
+**Sample Test Cases:**
+```
+Input: Car("Toyota", "Camry", 2023, "Red"), start(), accelerate(50), accelerate(30), brake(20)
+Expected Output:
+Toyota Camry is starting...
+Speed increased to 50 km/h
+Speed increased to 80 km/h
+Speed decreased to 60 km/h
+
+=== Car Information ===
+Brand: Toyota
+Model: Camry
+Year: 2023
+Color: Red
+Current Speed: 60 km/h
+```
+
+**Solution:**
 ```java
 public class Car {
     // Fields
@@ -385,26 +413,26 @@ public class Car {
     int year;
     String color;
     int speed;
-    
+
     // Method to start car
     void start() {
         System.out.println(brand + " " + model + " is starting...");
         speed = 0;
     }
-    
+
     // Method to accelerate
     void accelerate(int increment) {
         speed += increment;
         System.out.println("Speed increased to " + speed + " km/h");
     }
-    
+
     // Method to brake
     void brake(int decrement) {
         speed -= decrement;
         if (speed < 0) speed = 0;
         System.out.println("Speed decreased to " + speed + " km/h");
     }
-    
+
     // Method to display info
     void displayInfo() {
         System.out.println("\n=== Car Information ===");
@@ -423,7 +451,7 @@ public class TestCar {
         myCar.model = "Camry";
         myCar.year = 2023;
         myCar.color = "Red";
-        
+
         myCar.start();
         myCar.accelerate(50);
         myCar.accelerate(30);
@@ -433,11 +461,57 @@ public class TestCar {
 }
 ```
 
+**💡 Tips:**
+- Use the `new` keyword to create objects
+- Access object members using dot (.) operator
+- Implement validation to prevent negative speed in brake method
+- Each object has its own copy of instance variables
+- Methods define the behavior of objects
+
 ---
 
-### Exercise 2: Create Student Class
-Create a Student class with grades calculation.
+### Exercise 2: Student Grade Calculator
 
+**📝 Problem Statement:**
+Create a Student class that stores student information and calculates grades based on marks in three subjects (Math, Science, English). The class should calculate total marks, percentage, and assign letter grades.
+
+**Requirements:**
+- Create fields for name, rollNumber, and marks in three subjects
+- Implement `inputDetails()` method to set all student data
+- Implement `calculateTotal()` method returning sum of all marks
+- Implement `calculatePercentage()` method returning average marks
+- Implement `getGrade()` method that returns letter grade (A+: ≥90, A: ≥80, B: ≥70, C: ≥60, F: <60)
+- Implement `displayReport()` method showing complete report card
+- Test with multiple student objects
+
+**Sample Test Cases:**
+```
+Input: Student("Alice", 101, 85, 90, 88)
+Expected Output:
+=== Student Report Card ===
+Name: Alice
+Roll Number: 101
+Math: 85
+Science: 90
+English: 88
+Total: 263/300
+Percentage: 87.67%
+Grade: A
+
+Input: Student("Bob", 102, 75, 80, 78)
+Expected Output:
+=== Student Report Card ===
+Name: Bob
+Roll Number: 102
+Math: 75
+Science: 80
+English: 78
+Total: 233/300
+Percentage: 77.67%
+Grade: B
+```
+
+**Solution:**
 ```java
 public class Student {
     String name;
@@ -445,7 +519,7 @@ public class Student {
     int mathMarks;
     int scienceMarks;
     int englishMarks;
-    
+
     void inputDetails(String n, int roll, int math, int science, int english) {
         name = n;
         rollNumber = roll;
@@ -453,15 +527,15 @@ public class Student {
         scienceMarks = science;
         englishMarks = english;
     }
-    
+
     int calculateTotal() {
         return mathMarks + scienceMarks + englishMarks;
     }
-    
+
     double calculatePercentage() {
         return (calculateTotal() / 3.0);
     }
-    
+
     String getGrade() {
         double percentage = calculatePercentage();
         if (percentage >= 90) return "A+";
@@ -470,7 +544,7 @@ public class Student {
         else if (percentage >= 60) return "C";
         else return "F";
     }
-    
+
     void displayReport() {
         System.out.println("\n=== Student Report Card ===");
         System.out.println("Name: " + name);
@@ -489,7 +563,7 @@ public class TestStudent {
         Student student1 = new Student();
         student1.inputDetails("Alice", 101, 85, 90, 88);
         student1.displayReport();
-        
+
         Student student2 = new Student();
         student2.inputDetails("Bob", 102, 75, 80, 78);
         student2.displayReport();
@@ -497,24 +571,64 @@ public class TestStudent {
 }
 ```
 
+**💡 Tips:**
+- Use `double` for percentage calculations to avoid integer division
+- Methods can call other methods within the same class
+- Use `String.format("%.2f", value)` for two decimal places
+- Chain if-else statements for grade calculation
+- Each student object maintains independent data
+
 ---
 
-### Exercise 3: Create BankAccount Class
-Create a BankAccount class with deposit and withdrawal.
+### Exercise 3: Bank Account Management
 
+**📝 Problem Statement:**
+Design a BankAccount class that simulates a bank account with operations like creating account, depositing money, withdrawing money, and checking balance. The class should validate all transactions.
+
+**Requirements:**
+- Create fields for accountNumber, accountHolder, and balance
+- Implement `createAccount()` method to initialize account details
+- Implement `deposit(double amount)` method with validation (amount > 0)
+- Implement `withdraw(double amount)` method with validation (amount > 0 and amount <= balance)
+- Implement `checkBalance()` method to display current balance
+- Implement `displayAccountInfo()` method showing all account details
+- Test with successful and failed transactions
+
+**Sample Test Cases:**
+```
+Input: BankAccount("ACC001", "John Doe", 1000.0), deposit(500), withdraw(200), withdraw(2000)
+Expected Output:
+Account created successfully!
+
+=== Account Information ===
+Account Number: ACC001
+Account Holder: John Doe
+Balance: $1000.0
+
+Deposited: $500.0
+New Balance: $1500.0
+
+Withdrawn: $200.0
+New Balance: $1300.0
+
+Insufficient funds!
+Current Balance: $1300.0
+```
+
+**Solution:**
 ```java
 public class BankAccount {
     String accountNumber;
     String accountHolder;
     double balance;
-    
+
     void createAccount(String accNum, String holder, double initialBalance) {
         accountNumber = accNum;
         accountHolder = holder;
         balance = initialBalance;
         System.out.println("Account created successfully!");
     }
-    
+
     void deposit(double amount) {
         if (amount > 0) {
             balance += amount;
@@ -524,7 +638,7 @@ public class BankAccount {
             System.out.println("Invalid deposit amount!");
         }
     }
-    
+
     void withdraw(double amount) {
         if (amount > 0 && amount <= balance) {
             balance -= amount;
@@ -536,11 +650,11 @@ public class BankAccount {
             System.out.println("Invalid withdrawal amount!");
         }
     }
-    
+
     void checkBalance() {
         System.out.println("Current Balance: $" + balance);
     }
-    
+
     void displayAccountInfo() {
         System.out.println("\n=== Account Information ===");
         System.out.println("Account Number: " + accountNumber);
@@ -553,7 +667,7 @@ public class TestBankAccount {
     public static void main(String[] args) {
         BankAccount account = new BankAccount();
         account.createAccount("ACC001", "John Doe", 1000.0);
-        
+
         account.displayAccountInfo();
         account.deposit(500);
         account.withdraw(200);
@@ -563,11 +677,53 @@ public class TestBankAccount {
 }
 ```
 
+**💡 Tips:**
+- Always validate input before performing operations
+- Use if-else chains for multiple validation conditions
+- Display meaningful error messages for failed transactions
+- Update balance only after validation passes
+- Use double for currency to handle decimal amounts
+
 ---
 
-### Exercise 4: Create Book Class
-Create a Book class for a library system.
+### Exercise 4: Library Book Management
 
+**📝 Problem Statement:**
+Create a Book class for a library system that tracks book details and availability status. The class should support borrowing and returning books.
+
+**Requirements:**
+- Create fields for title, author, isbn, price, pages, and isAvailable
+- Implement `setBookDetails()` method to initialize all book information
+- Implement `borrowBook()` method that sets isAvailable to false if book is available
+- Implement `returnBook()` method that sets isAvailable to true
+- Implement `displayBookInfo()` method showing all book details and status
+- Test borrowing and returning operations
+
+**Sample Test Cases:**
+```
+Input: Book("Java Programming", "James Gosling", "978-0134685991", 45.99, 500)
+       borrowBook(), displayInfo(), returnBook(), displayInfo()
+Expected Output:
+=== Book Information ===
+Title: Java Programming
+Author: James Gosling
+ISBN: 978-0134685991
+Price: $45.99
+Pages: 500
+Status: Available
+
+Book 'Java Programming' has been borrowed.
+
+=== Book Information ===
+Status: Borrowed
+
+Book 'Java Programming' has been returned.
+
+=== Book Information ===
+Status: Available
+```
+
+**Solution:**
 ```java
 public class Book {
     String title;
@@ -576,7 +732,7 @@ public class Book {
     double price;
     int pages;
     boolean isAvailable;
-    
+
     void setBookDetails(String t, String a, String i, double p, int pg) {
         title = t;
         author = a;
@@ -585,7 +741,7 @@ public class Book {
         pages = pg;
         isAvailable = true;
     }
-    
+
     void borrowBook() {
         if (isAvailable) {
             isAvailable = false;
@@ -594,12 +750,12 @@ public class Book {
             System.out.println("Book '" + title + "' is not available.");
         }
     }
-    
+
     void returnBook() {
         isAvailable = true;
         System.out.println("Book '" + title + "' has been returned.");
     }
-    
+
     void displayBookInfo() {
         System.out.println("\n=== Book Information ===");
         System.out.println("Title: " + title);
@@ -614,9 +770,9 @@ public class Book {
 public class TestBook {
     public static void main(String[] args) {
         Book book1 = new Book();
-        book1.setBookDetails("Java Programming", "James Gosling", 
+        book1.setBookDetails("Java Programming", "James Gosling",
                             "978-0134685991", 45.99, 500);
-        
+
         book1.displayBookInfo();
         book1.borrowBook();
         book1.displayBookInfo();
@@ -626,33 +782,73 @@ public class TestBook {
 }
 ```
 
+**💡 Tips:**
+- Use boolean fields for true/false states
+- Ternary operator (? :) provides compact conditional formatting
+- Check availability before allowing borrow operation
+- Return operation should always succeed (assuming valid book)
+- Initialize isAvailable to true when setting book details
+
 ---
 
-### Exercise 5: Create Rectangle Class
-Create a Rectangle class with area and perimeter calculations.
+### Exercise 5: Rectangle Geometry Calculator
 
+**📝 Problem Statement:**
+Create a Rectangle class that performs geometric calculations including area, perimeter, and checking if the rectangle is actually a square.
+
+**Requirements:**
+- Create fields for length and width
+- Implement `setDimensions(double length, double width)` method
+- Implement `calculateArea()` method returning length × width
+- Implement `calculatePerimeter()` method returning 2 × (length + width)
+- Implement `isSquare()` method returning true if length equals width
+- Implement `displayInfo()` method showing all calculations
+- Test with both rectangle and square dimensions
+
+**Sample Test Cases:**
+```
+Input: Rectangle(10, 5)
+Expected Output:
+=== Rectangle Information ===
+Length: 10.0
+Width: 5.0
+Area: 50.0
+Perimeter: 30.0
+Is Square: No
+
+Input: Rectangle(7, 7)
+Expected Output:
+=== Rectangle Information ===
+Length: 7.0
+Width: 7.0
+Area: 49.0
+Perimeter: 28.0
+Is Square: Yes
+```
+
+**Solution:**
 ```java
 public class Rectangle {
     double length;
     double width;
-    
+
     void setDimensions(double l, double w) {
         length = l;
         width = w;
     }
-    
+
     double calculateArea() {
         return length * width;
     }
-    
+
     double calculatePerimeter() {
         return 2 * (length + width);
     }
-    
+
     boolean isSquare() {
         return length == width;
     }
-    
+
     void displayInfo() {
         System.out.println("\n=== Rectangle Information ===");
         System.out.println("Length: " + length);
@@ -668,7 +864,7 @@ public class TestRectangle {
         Rectangle rect1 = new Rectangle();
         rect1.setDimensions(10, 5);
         rect1.displayInfo();
-        
+
         Rectangle rect2 = new Rectangle();
         rect2.setDimensions(7, 7);
         rect2.displayInfo();
@@ -676,11 +872,56 @@ public class TestRectangle {
 }
 ```
 
+**💡 Tips:**
+- Use double for dimensions to support decimal measurements
+- Methods can return values for calculations
+- Boolean methods typically start with "is" (isSquare, isEmpty, etc.)
+- Comparison with == works for primitive types
+- Formula for perimeter: 2(l + w) or 2l + 2w
+
 ---
 
-### Exercise 6: Create Employee Class
-Create an Employee class with salary calculations.
+### Exercise 6: Employee Salary Management
 
+**📝 Problem Statement:**
+Design an Employee class that manages employee information and calculates total salary including base salary and bonus.
+
+**Requirements:**
+- Create fields for name, employeeId, department, baseSalary, and bonus
+- Implement `setEmployeeDetails()` method to initialize employee data
+- Implement `giveBonus(double bonusAmount)` method to set bonus
+- Implement `calculateTotalSalary()` method returning base salary + bonus
+- Implement `displayEmployeeInfo()` method showing all details
+- Test with multiple employees receiving different bonuses
+
+**Sample Test Cases:**
+```
+Input: Employee("Alice Johnson", 1001, "IT", 50000), giveBonus(5000)
+Expected Output:
+Bonus of $5000.0 given to Alice Johnson
+
+=== Employee Information ===
+Name: Alice Johnson
+Employee ID: 1001
+Department: IT
+Base Salary: $50000.0
+Bonus: $5000.0
+Total Salary: $55000.0
+
+Input: Employee("Bob Smith", 1002, "HR", 45000), giveBonus(3000)
+Expected Output:
+Bonus of $3000.0 given to Bob Smith
+
+=== Employee Information ===
+Name: Bob Smith
+Employee ID: 1002
+Department: HR
+Base Salary: $45000.0
+Bonus: $3000.0
+Total Salary: $48000.0
+```
+
+**Solution:**
 ```java
 public class Employee {
     String name;
@@ -688,7 +929,7 @@ public class Employee {
     String department;
     double baseSalary;
     double bonus;
-    
+
     void setEmployeeDetails(String n, int id, String dept, double salary) {
         name = n;
         employeeId = id;
@@ -696,16 +937,16 @@ public class Employee {
         baseSalary = salary;
         bonus = 0;
     }
-    
+
     void giveBonus(double bonusAmount) {
         bonus = bonusAmount;
         System.out.println("Bonus of $" + bonusAmount + " given to " + name);
     }
-    
+
     double calculateTotalSalary() {
         return baseSalary + bonus;
     }
-    
+
     void displayEmployeeInfo() {
         System.out.println("\n=== Employee Information ===");
         System.out.println("Name: " + name);
@@ -723,7 +964,7 @@ public class TestEmployee {
         emp1.setEmployeeDetails("Alice Johnson", 1001, "IT", 50000);
         emp1.giveBonus(5000);
         emp1.displayEmployeeInfo();
-        
+
         Employee emp2 = new Employee();
         emp2.setEmployeeDetails("Bob Smith", 1002, "HR", 45000);
         emp2.giveBonus(3000);
@@ -732,32 +973,70 @@ public class TestEmployee {
 }
 ```
 
+**💡 Tips:**
+- Initialize bonus to 0 when setting employee details
+- Methods can return calculated values without storing them
+- Use descriptive method names like giveBonus, calculateTotalSalary
+- Each employee object maintains independent salary information
+- Consider adding validation for negative salaries or bonuses
+
 ---
 
-### Exercise 7: Create Circle Class
-Create a Circle class with geometric calculations.
+### Exercise 7: Circle Geometry Calculator
 
+**📝 Problem Statement:**
+Create a Circle class that performs geometric calculations for circles including area, circumference, and diameter.
+
+**Requirements:**
+- Create field for radius and constant PI = 3.14159
+- Implement `setRadius(double r)` method to set the radius
+- Implement `calculateArea()` method returning π × r²
+- Implement `calculateCircumference()` method returning 2 × π × r
+- Implement `calculateDiameter()` method returning 2 × r
+- Implement `displayInfo()` method with formatted output (2 decimal places)
+- Test with different radius values
+
+**Sample Test Cases:**
+```
+Input: Circle(radius = 5.0)
+Expected Output:
+=== Circle Information ===
+Radius: 5.0
+Diameter: 10.0
+Area: 78.54
+Circumference: 31.42
+
+Input: Circle(radius = 10.0)
+Expected Output:
+=== Circle Information ===
+Radius: 10.0
+Diameter: 20.0
+Area: 314.16
+Circumference: 62.83
+```
+
+**Solution:**
 ```java
 public class Circle {
     double radius;
     final double PI = 3.14159;
-    
+
     void setRadius(double r) {
         radius = r;
     }
-    
+
     double calculateArea() {
         return PI * radius * radius;
     }
-    
+
     double calculateCircumference() {
         return 2 * PI * radius;
     }
-    
+
     double calculateDiameter() {
         return 2 * radius;
     }
-    
+
     void displayInfo() {
         System.out.println("\n=== Circle Information ===");
         System.out.println("Radius: " + radius);
@@ -772,7 +1051,7 @@ public class TestCircle {
         Circle circle1 = new Circle();
         circle1.setRadius(5.0);
         circle1.displayInfo();
-        
+
         Circle circle2 = new Circle();
         circle2.setRadius(10.0);
         circle2.displayInfo();
@@ -780,11 +1059,54 @@ public class TestCircle {
 }
 ```
 
+**💡 Tips:**
+- Use `final` keyword for constants like PI
+- Formula for area: π × r × r (not r²)
+- Formula for circumference: 2 × π × r
+- Use String.format("%.2f", value) for consistent decimal formatting
+- Each circle object has its own radius value
+
 ---
 
-### Exercise 8: Create Product Class
-Create a Product class for inventory management.
+### Exercise 8: Product Inventory Management
 
+**📝 Problem Statement:**
+Design a Product class for inventory management that tracks product details, manages stock levels, handles sales, and calculates inventory value.
+
+**Requirements:**
+- Create fields for productId, productName, price, quantity, and category
+- Implement `addProduct()` method to initialize all product details
+- Implement `updateStock(int qty)` method to add to current quantity
+- Implement `sellProduct(int qty)` method with stock validation
+- Implement `calculateInventoryValue()` method returning price × quantity
+- Implement `displayProductInfo()` method showing all details
+- Test stock updates and sales with sufficient/insufficient stock
+
+**Sample Test Cases:**
+```
+Input: Product("P001", "Laptop", 999.99, 50, "Electronics")
+       sellProduct(5), updateStock(10)
+Expected Output:
+=== Product Information ===
+Product ID: P001
+Name: Laptop
+Price: $999.99
+Quantity: 50
+Category: Electronics
+Inventory Value: $49999.5
+
+Sold 5 units
+Total: $4999.95
+Remaining stock: 45
+
+Stock updated. New quantity: 55
+
+=== Product Information ===
+Quantity: 55
+Inventory Value: $54999.45
+```
+
+**Solution:**
 ```java
 public class Product {
     String productId;
@@ -792,7 +1114,7 @@ public class Product {
     double price;
     int quantity;
     String category;
-    
+
     void addProduct(String id, String name, double p, int qty, String cat) {
         productId = id;
         productName = name;
@@ -800,12 +1122,12 @@ public class Product {
         quantity = qty;
         category = cat;
     }
-    
+
     void updateStock(int qty) {
         quantity += qty;
         System.out.println("Stock updated. New quantity: " + quantity);
     }
-    
+
     void sellProduct(int qty) {
         if (qty <= quantity) {
             quantity -= qty;
@@ -817,11 +1139,11 @@ public class Product {
             System.out.println("Insufficient stock!");
         }
     }
-    
+
     double calculateInventoryValue() {
         return price * quantity;
     }
-    
+
     void displayProductInfo() {
         System.out.println("\n=== Product Information ===");
         System.out.println("Product ID: " + productId);
@@ -837,7 +1159,7 @@ public class TestProduct {
     public static void main(String[] args) {
         Product product = new Product();
         product.addProduct("P001", "Laptop", 999.99, 50, "Electronics");
-        
+
         product.displayProductInfo();
         product.sellProduct(5);
         product.updateStock(10);
@@ -846,27 +1168,69 @@ public class TestProduct {
 }
 ```
 
+**💡 Tips:**
+- Validate stock before allowing sales
+- Calculate total price in sellProduct method
+- Use += for stock updates (can handle additions)
+- Inventory value changes dynamically with quantity
+- Consider adding methods to update price or product details
+
 ---
 
-### Exercise 9: Create Temperature Class
-Create a Temperature class with conversion methods.
+### Exercise 9: Temperature Converter
 
+**📝 Problem Statement:**
+Create a Temperature class that converts Celsius to Fahrenheit and Kelvin, displaying all three temperature scales.
+
+**Requirements:**
+- Create field for celsius temperature
+- Implement `setCelsius(double c)` method to set temperature
+- Implement `toFahrenheit()` method returning (C × 9/5) + 32
+- Implement `toKelvin()` method returning C + 273.15
+- Implement `displayAllFormats()` method showing all three scales with proper symbols
+- Test with standard temperatures (0°C, 25°C, 100°C)
+
+**Sample Test Cases:**
+```
+Input: Temperature(celsius = 25)
+Expected Output:
+=== Temperature Conversions ===
+Celsius: 25.0°C
+Fahrenheit: 77.00°F
+Kelvin: 298.15K
+
+Input: Temperature(celsius = 0)
+Expected Output:
+=== Temperature Conversions ===
+Celsius: 0.0°C
+Fahrenheit: 32.00°F
+Kelvin: 273.15K
+
+Input: Temperature(celsius = 100)
+Expected Output:
+=== Temperature Conversions ===
+Celsius: 100.0°C
+Fahrenheit: 212.00°F
+Kelvin: 373.15K
+```
+
+**Solution:**
 ```java
 public class Temperature {
     double celsius;
-    
+
     void setCelsius(double c) {
         celsius = c;
     }
-    
+
     double toFahrenheit() {
         return (celsius * 9.0 / 5.0) + 32;
     }
-    
+
     double toKelvin() {
         return celsius + 273.15;
     }
-    
+
     void displayAllFormats() {
         System.out.println("\n=== Temperature Conversions ===");
         System.out.println("Celsius: " + celsius + "°C");
@@ -880,11 +1244,11 @@ public class TestTemperature {
         Temperature temp1 = new Temperature();
         temp1.setCelsius(25);
         temp1.displayAllFormats();
-        
+
         Temperature temp2 = new Temperature();
         temp2.setCelsius(0);
         temp2.displayAllFormats();
-        
+
         Temperature temp3 = new Temperature();
         temp3.setCelsius(100);
         temp3.displayAllFormats();
@@ -892,24 +1256,61 @@ public class TestTemperature {
 }
 ```
 
+**💡 Tips:**
+- Formula for Celsius to Fahrenheit: (C × 9/5) + 32
+- Formula for Celsius to Kelvin: C + 273.15
+- Use 9.0 and 5.0 (not 9 and 5) to ensure floating-point division
+- Format temperatures with 2 decimal places for consistency
+- Kelvin cannot be negative (absolute zero is 0K = -273.15°C)
+
 ---
 
-### Exercise 10: Create Time Class
-Create a Time class to represent and manipulate time.
+### Exercise 10: Time Clock
 
+**📝 Problem Statement:**
+Create a Time class that represents time in hours, minutes, and seconds. The class should normalize time values (e.g., 90 minutes becomes 1 hour 30 minutes) and support time arithmetic.
+
+**Requirements:**
+- Create fields for hours, minutes, and seconds
+- Implement `setTime(int h, int m, int s)` method with normalization
+- Implement `normalize()` method to convert excess seconds/minutes to higher units
+- Implement `addSeconds(int s)`, `addMinutes(int m)`, `addHours(int h)` methods
+- Implement `toSeconds()` method returning total seconds
+- Implement `displayTime()` method with HH:MM:SS format
+- Test time arithmetic with overflow handling
+
+**Sample Test Cases:**
+```
+Input: Time(10, 30, 45), addSeconds(30), addMinutes(45), addHours(5)
+Expected Output:
+=== Current Time ===
+Time: 10:30:45
+Total seconds: 37845
+
+After adding 30 seconds:
+10:31:15
+
+After adding 45 minutes:
+11:16:15
+
+After adding 5 hours:
+16:16:15
+```
+
+**Solution:**
 ```java
 public class Time {
     int hours;
     int minutes;
     int seconds;
-    
+
     void setTime(int h, int m, int s) {
         hours = h;
         minutes = m;
         seconds = s;
         normalize();
     }
-    
+
     void normalize() {
         if (seconds >= 60) {
             minutes += seconds / 60;
@@ -923,30 +1324,30 @@ public class Time {
             hours = hours % 24;
         }
     }
-    
+
     void addSeconds(int s) {
         seconds += s;
         normalize();
     }
-    
+
     void addMinutes(int m) {
         minutes += m;
         normalize();
     }
-    
+
     void addHours(int h) {
         hours += h;
         normalize();
     }
-    
+
     int toSeconds() {
         return hours * 3600 + minutes * 60 + seconds;
     }
-    
+
     void displayTime() {
         System.out.printf("%02d:%02d:%02d\n", hours, minutes, seconds);
     }
-    
+
     void displayTimeWithLabel() {
         System.out.println("\n=== Current Time ===");
         System.out.printf("Time: %02d:%02d:%02d\n", hours, minutes, seconds);
@@ -959,20 +1360,1000 @@ public class TestTime {
         Time time1 = new Time();
         time1.setTime(10, 30, 45);
         time1.displayTimeWithLabel();
-        
+
         time1.addSeconds(30);
         System.out.println("\nAfter adding 30 seconds:");
         time1.displayTime();
-        
+
         time1.addMinutes(45);
         System.out.println("After adding 45 minutes:");
         time1.displayTime();
-        
+
         time1.addHours(5);
         System.out.println("After adding 5 hours:");
         time1.displayTime();
     }
 }
+```
+
+**💡 Tips:**
+- Normalize time after any modification
+- Use integer division (/) and modulus (%) for conversion
+- 60 seconds = 1 minute, 60 minutes = 1 hour, 24 hours = 1 day
+- Use printf with %02d for zero-padded two-digit formatting
+- Call normalize() in all add methods
+
+---
+
+### Exercise 11: Mobile Phone Simulator
+
+**📝 Problem Statement:**
+Design a Phone class that simulates a mobile phone with battery management, calling, and messaging features.
+
+**Requirements:**
+- Create fields for phoneNumber, brand, batteryLevel (0-100), isOn
+- Implement `turnOn()` and `turnOff()` methods
+- Implement `makeCall(String number)` that consumes 5% battery per call
+- Implement `sendMessage(String number, String message)` that consumes 2% battery per message
+- Implement `chargeBattery(int percent)` to increase battery (max 100%)
+- Implement `displayPhoneInfo()` showing all phone details
+- Handle low battery warnings (below 10%) and dead battery (0%)
+
+**Sample Test Cases:**
+```
+Input: Phone("9876543210", "Samsung", 100), turnOn(), makeCall("1234567890"), sendMessage("1111222233", "Hello")
+Expected Output:
+Phone turned on.
+
+=== Phone Information ===
+Phone Number: 9876543210
+Brand: Samsung
+Battery Level: 100%
+Status: ON
+
+Calling 1234567890...
+Call ended. Battery: 95%
+
+Sending message to 1111222233: "Hello"
+Message sent. Battery: 93%
+
+Input: Phone with battery = 8%, makeCall()
+Expected Output:
+Warning: Low battery! 8% remaining
+Calling 1234567890...
+Call ended. Battery: 3%
+```
+
+**Solution:**
+```java
+public class Phone {
+    String phoneNumber;
+    String brand;
+    int batteryLevel;
+    boolean isOn;
+
+    void setPhoneDetails(String number, String b, int battery) {
+        phoneNumber = number;
+        brand = b;
+        batteryLevel = battery;
+        isOn = false;
+    }
+
+    void turnOn() {
+        if (batteryLevel > 0) {
+            isOn = true;
+            System.out.println("Phone turned on.");
+        } else {
+            System.out.println("Battery dead! Please charge the phone.");
+        }
+    }
+
+    void turnOff() {
+        isOn = false;
+        System.out.println("Phone turned off.");
+    }
+
+    void makeCall(String number) {
+        if (!isOn) {
+            System.out.println("Phone is off. Turn it on first.");
+            return;
+        }
+
+        if (batteryLevel < 10) {
+            System.out.println("Warning: Low battery! " + batteryLevel + "% remaining");
+        }
+
+        if (batteryLevel >= 5) {
+            System.out.println("Calling " + number + "...");
+            batteryLevel -= 5;
+            System.out.println("Call ended. Battery: " + batteryLevel + "%");
+        } else {
+            System.out.println("Battery too low to make call!");
+        }
+    }
+
+    void sendMessage(String number, String message) {
+        if (!isOn) {
+            System.out.println("Phone is off. Turn it on first.");
+            return;
+        }
+
+        if (batteryLevel >= 2) {
+            System.out.println("Sending message to " + number + ": \"" + message + "\"");
+            batteryLevel -= 2;
+            System.out.println("Message sent. Battery: " + batteryLevel + "%");
+        } else {
+            System.out.println("Battery too low to send message!");
+        }
+    }
+
+    void chargeBattery(int percent) {
+        batteryLevel += percent;
+        if (batteryLevel > 100) {
+            batteryLevel = 100;
+        }
+        System.out.println("Battery charged to " + batteryLevel + "%");
+    }
+
+    void displayPhoneInfo() {
+        System.out.println("\n=== Phone Information ===");
+        System.out.println("Phone Number: " + phoneNumber);
+        System.out.println("Brand: " + brand);
+        System.out.println("Battery Level: " + batteryLevel + "%");
+        System.out.println("Status: " + (isOn ? "ON" : "OFF"));
+    }
+}
+
+public class TestPhone {
+    public static void main(String[] args) {
+        Phone myPhone = new Phone();
+        myPhone.setPhoneDetails("9876543210", "Samsung", 100);
+
+        myPhone.turnOn();
+        myPhone.displayPhoneInfo();
+
+        myPhone.makeCall("1234567890");
+        myPhone.sendMessage("1111222233", "Hello");
+        myPhone.displayPhoneInfo();
+
+        // Test low battery
+        myPhone.batteryLevel = 8;
+        myPhone.makeCall("9999888877");
+
+        myPhone.chargeBattery(50);
+        myPhone.displayPhoneInfo();
+    }
+}
+```
+
+**💡 Tips:**
+- Check if phone is on before allowing operations
+- Validate battery level before each action
+- Use early return pattern for validation failures
+- Implement warning system for low battery
+- Cap battery at 100% during charging
+
+---
+
+### Exercise 12: Date Manager
+
+**📝 Problem Statement:**
+Create a Date class that represents a calendar date with validation and provides methods to display the date in different formats.
+
+**Requirements:**
+- Create fields for day, month, year
+- Implement `setDate(int d, int m, int y)` with validation (1-31 days, 1-12 months, year > 0)
+- Implement `isValidDate()` method checking date validity
+- Implement `displayDate()` showing date in DD/MM/YYYY format
+- Implement `displayDateInWords()` showing date like "15 January 2024"
+- Implement `isLeapYear()` method for leap year checking
+- Test with valid and invalid dates
+
+**Sample Test Cases:**
+```
+Input: Date(15, 1, 2024)
+Expected Output:
+Date set successfully.
+Date: 15/01/2024
+Date in words: 15 January 2024
+2024 is a leap year: true
+
+Input: Date(31, 2, 2023)
+Expected Output:
+Invalid date! February cannot have 31 days.
+
+Input: Date(29, 2, 2024)
+Expected Output:
+Date set successfully.
+Date: 29/02/2024
+Date in words: 29 February 2024
+2024 is a leap year: true
+```
+
+**Solution:**
+```java
+public class Date {
+    int day;
+    int month;
+    int year;
+
+    void setDate(int d, int m, int y) {
+        if (isValidDate(d, m, y)) {
+            day = d;
+            month = m;
+            year = y;
+            System.out.println("Date set successfully.");
+        } else {
+            System.out.println("Invalid date!");
+        }
+    }
+
+    boolean isValidDate(int d, int m, int y) {
+        if (y < 1 || m < 1 || m > 12 || d < 1) {
+            return false;
+        }
+
+        int[] daysInMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+        // Adjust for leap year
+        if (isLeapYear(y)) {
+            daysInMonth[1] = 29;
+        }
+
+        return d <= daysInMonth[m - 1];
+    }
+
+    boolean isLeapYear() {
+        return isLeapYear(year);
+    }
+
+    boolean isLeapYear(int y) {
+        return (y % 4 == 0 && y % 100 != 0) || (y % 400 == 0);
+    }
+
+    void displayDate() {
+        System.out.printf("Date: %02d/%02d/%04d\n", day, month, year);
+    }
+
+    void displayDateInWords() {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                               "July", "August", "September", "October", "November", "December"};
+        System.out.println("Date in words: " + day + " " + monthNames[month - 1] + " " + year);
+    }
+}
+
+public class TestDate {
+    public static void main(String[] args) {
+        Date date1 = new Date();
+        date1.setDate(15, 1, 2024);
+        date1.displayDate();
+        date1.displayDateInWords();
+        System.out.println(date1.year + " is a leap year: " + date1.isLeapYear());
+
+        System.out.println();
+
+        Date date2 = new Date();
+        date2.setDate(31, 2, 2023);  // Invalid
+
+        System.out.println();
+
+        Date date3 = new Date();
+        date3.setDate(29, 2, 2024);  // Valid leap year
+        date3.displayDate();
+        date3.displayDateInWords();
+        System.out.println(date3.year + " is a leap year: " + date3.isLeapYear());
+    }
+}
+```
+
+**💡 Tips:**
+- Leap year: divisible by 4, except century years (must be divisible by 400)
+- Days in months: 31, 28/29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+- Use array for month names and days per month
+- Validate date before setting values
+- Method overloading: isLeapYear() and isLeapYear(int y)
+
+---
+
+### Exercise 13: Movie Ticket Booking
+
+**📝 Problem Statement:**
+Design a MovieTicket class for a cinema booking system that manages ticket details, pricing, and seat availability.
+
+**Requirements:**
+- Create fields for movieName, seatNumber, ticketPrice, isBooked, showTime
+- Implement `createTicket(String movie, String seat, double price, String time)` method
+- Implement `bookTicket()` method that marks ticket as booked if available
+- Implement `cancelTicket()` method that cancels booking
+- Implement `applyDiscount(double percentage)` method for price discounts
+- Implement `displayTicketInfo()` showing all ticket details
+- Test booking, canceling, and discount scenarios
+
+**Sample Test Cases:**
+```
+Input: MovieTicket("Avatar 2", "A15", 250.0, "7:00 PM"), bookTicket(), applyDiscount(20)
+Expected Output:
+Ticket created successfully!
+
+=== Movie Ticket ===
+Movie: Avatar 2
+Seat: A15
+Price: ₹250.0
+Show Time: 7:00 PM
+Status: Available
+
+Ticket booked successfully!
+
+Discount applied: 20.0%
+New Price: ₹200.0
+
+=== Movie Ticket ===
+Status: Booked
+Price: ₹200.0
+
+Input: bookTicket() on already booked ticket
+Expected Output:
+Ticket already booked!
+```
+
+**Solution:**
+```java
+public class MovieTicket {
+    String movieName;
+    String seatNumber;
+    double ticketPrice;
+    boolean isBooked;
+    String showTime;
+
+    void createTicket(String movie, String seat, double price, String time) {
+        movieName = movie;
+        seatNumber = seat;
+        ticketPrice = price;
+        isBooked = false;
+        showTime = time;
+        System.out.println("Ticket created successfully!");
+    }
+
+    void bookTicket() {
+        if (!isBooked) {
+            isBooked = true;
+            System.out.println("Ticket booked successfully!");
+        } else {
+            System.out.println("Ticket already booked!");
+        }
+    }
+
+    void cancelTicket() {
+        if (isBooked) {
+            isBooked = false;
+            System.out.println("Ticket cancelled successfully!");
+        } else {
+            System.out.println("Ticket is not booked yet!");
+        }
+    }
+
+    void applyDiscount(double percentage) {
+        if (percentage > 0 && percentage <= 100) {
+            double discount = ticketPrice * (percentage / 100.0);
+            ticketPrice -= discount;
+            System.out.println("Discount applied: " + percentage + "%");
+            System.out.println("New Price: ₹" + ticketPrice);
+        } else {
+            System.out.println("Invalid discount percentage!");
+        }
+    }
+
+    void displayTicketInfo() {
+        System.out.println("\n=== Movie Ticket ===");
+        System.out.println("Movie: " + movieName);
+        System.out.println("Seat: " + seatNumber);
+        System.out.println("Price: ₹" + ticketPrice);
+        System.out.println("Show Time: " + showTime);
+        System.out.println("Status: " + (isBooked ? "Booked" : "Available"));
+    }
+}
+
+public class TestMovieTicket {
+    public static void main(String[] args) {
+        MovieTicket ticket1 = new MovieTicket();
+        ticket1.createTicket("Avatar 2", "A15", 250.0, "7:00 PM");
+        ticket1.displayTicketInfo();
+
+        ticket1.bookTicket();
+        ticket1.applyDiscount(20);
+        ticket1.displayTicketInfo();
+
+        ticket1.bookTicket();  // Try booking again
+
+        ticket1.cancelTicket();
+        ticket1.displayTicketInfo();
+    }
+}
+```
+
+**💡 Tips:**
+- Check booking status before allowing operations
+- Validate discount percentage (0-100 range)
+- Calculate discount amount before subtracting from price
+- Use boolean field to track booking status
+- Provide meaningful feedback for each operation
+
+---
+
+## 💡 Best Practices
+
+### 1. Follow Single Responsibility Principle (SRP) for Classes
+
+**Practice**: Each class should have one clear, well-defined purpose. A class should represent a single concept or entity, not multiple unrelated things.
+
+**Why It's Important**: Classes with a single responsibility are easier to understand, test, maintain, and reuse. When a class does too much, changes become risky and testing becomes complex.
+
+**Example**:
+```java
+// ❌ Poor Practice - Class with Multiple Responsibilities
+public class EmployeeManager {
+    String name;
+    double salary;
+
+    // Employee data management
+    void updateSalary(double newSalary) {
+        this.salary = newSalary;
+    }
+
+    // Database operations - different responsibility!
+    void saveToDatabase() {
+        // Database code...
+    }
+
+    // Email operations - another different responsibility!
+    void sendPayslipEmail() {
+        // Email code...
+    }
+
+    // Report generation - yet another responsibility!
+    void generateAnnualReport() {
+        // Report code...
+    }
+}
+
+// ✅ Best Practice - Separate Responsibilities
+public class Employee {
+    private String name;
+    private double salary;
+
+    // Only manages employee data
+    void updateSalary(double newSalary) {
+        this.salary = newSalary;
+    }
+
+    String getName() { return name; }
+    double getSalary() { return salary; }
+}
+
+public class EmployeeRepository {
+    // Handles database operations
+    void save(Employee employee) {
+        // Database code...
+    }
+
+    Employee findById(int id) {
+        // Database retrieval code...
+        return null;
+    }
+}
+
+public class EmployeeEmailService {
+    // Handles email operations
+    void sendPayslip(Employee employee) {
+        // Email code...
+    }
+}
+
+public class EmployeeReportGenerator {
+    // Handles report generation
+    void generateAnnualReport(Employee employee) {
+        // Report code...
+    }
+}
+```
+
+---
+
+### 2. Use Meaningful and Descriptive Names
+
+**Practice**: Choose class, method, and variable names that clearly communicate their purpose. Names should be self-documenting.
+
+**Why It's Important**: Good names make code readable and maintainable. Other developers (including future you) can understand what code does without extensive comments.
+
+**Example**:
+```java
+// ❌ Poor Practice - Unclear Names
+public class Data {
+    String s;
+    int n;
+    double v;
+
+    void p() {
+        System.out.println(s + " " + n);
+    }
+
+    void c() {
+        v = n * 1.5;
+    }
+}
+
+// Usage is confusing:
+Data d = new Data();
+d.s = "Item";
+d.n = 10;
+d.c();  // What does 'c' do?
+d.p();  // What does 'p' print?
+
+// ✅ Best Practice - Clear, Descriptive Names
+public class Product {
+    String productName;
+    int quantity;
+    double totalPrice;
+
+    void displayProductInfo() {
+        System.out.println(productName + " " + quantity);
+    }
+
+    void calculateTotalPrice() {
+        totalPrice = quantity * 1.5;
+    }
+}
+
+// Usage is clear:
+Product product = new Product();
+product.productName = "Item";
+product.quantity = 10;
+product.calculateTotalPrice();  // Obviously calculates price
+product.displayProductInfo();   // Obviously displays info
+```
+
+---
+
+### 3. Initialize Objects Properly - Avoid Null References
+
+**Practice**: Always initialize reference type fields to valid objects or provide setter methods with null checks. Never leave fields in an undefined state.
+
+**Why It's Important**: Uninitialized reference fields default to null, which causes NullPointerException when accessed. Proper initialization prevents runtime crashes.
+
+**Example**:
+```java
+// ❌ Poor Practice - Uninitialized References
+public class ShoppingCart {
+    List<String> items;  // Defaults to null!
+    String customerName;
+
+    void addItem(String item) {
+        items.add(item);  // NullPointerException!
+    }
+}
+
+ShoppingCart cart = new ShoppingCart();
+cart.addItem("Laptop");  // Crashes!
+
+// ✅ Best Practice - Proper Initialization
+public class ShoppingCart {
+    List<String> items;
+    String customerName;
+
+    // Option 1: Initialize at declaration
+    List<String> itemsInitialized = new ArrayList<>();
+
+    // Option 2: Initialize in a setup method
+    void initializeCart(String customer) {
+        items = new ArrayList<>();
+        customerName = customer != null ? customer : "Guest";
+    }
+
+    // Option 3: Defensive coding with null check
+    void addItem(String item) {
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+        items.add(item);
+    }
+
+    // Option 4: Use constructor (Day 9 topic)
+    ShoppingCart(String customer) {
+        this.items = new ArrayList<>();
+        this.customerName = customer != null ? customer : "Guest";
+    }
+}
+
+// Usage is safe:
+ShoppingCart cart = new ShoppingCart("John");
+cart.addItem("Laptop");  // Works safely
+```
+
+---
+
+### 4. Keep Methods Short and Focused
+
+**Practice**: Methods should do one thing and do it well. If a method is longer than 20-30 lines or does multiple tasks, break it into smaller methods.
+
+**Why It's Important**: Short, focused methods are easier to read, test, debug, and reuse. They follow the Single Responsibility Principle at the method level.
+
+**Example**:
+```java
+// ❌ Poor Practice - Long, Multi-Purpose Method
+public class OrderProcessor {
+    void processOrder(String customerName, String[] items, double[] prices) {
+        // Validation
+        if (customerName == null || customerName.isEmpty()) {
+            System.out.println("Invalid customer name");
+            return;
+        }
+        if (items.length != prices.length) {
+            System.out.println("Items and prices count mismatch");
+            return;
+        }
+
+        // Calculate total
+        double total = 0;
+        for (int i = 0; i < prices.length; i++) {
+            total += prices[i];
+        }
+
+        // Apply discount
+        double discount = 0;
+        if (total > 1000) {
+            discount = total * 0.1;
+        } else if (total > 500) {
+            discount = total * 0.05;
+        }
+        total -= discount;
+
+        // Calculate tax
+        double tax = total * 0.08;
+        total += tax;
+
+        // Display receipt
+        System.out.println("=== Order Receipt ===");
+        System.out.println("Customer: " + customerName);
+        for (int i = 0; i < items.length; i++) {
+            System.out.println(items[i] + " - $" + prices[i]);
+        }
+        System.out.println("Discount: $" + discount);
+        System.out.println("Tax: $" + tax);
+        System.out.println("Total: $" + total);
+    }
+}
+
+// ✅ Best Practice - Small, Focused Methods
+public class OrderProcessor {
+    void processOrder(String customerName, String[] items, double[] prices) {
+        if (!validateOrder(customerName, items, prices)) {
+            return;
+        }
+
+        double subtotal = calculateSubtotal(prices);
+        double discount = calculateDiscount(subtotal);
+        double tax = calculateTax(subtotal - discount);
+        double total = subtotal - discount + tax;
+
+        displayReceipt(customerName, items, prices, discount, tax, total);
+    }
+
+    boolean validateOrder(String customerName, String[] items, double[] prices) {
+        if (customerName == null || customerName.isEmpty()) {
+            System.out.println("Invalid customer name");
+            return false;
+        }
+        if (items.length != prices.length) {
+            System.out.println("Items and prices count mismatch");
+            return false;
+        }
+        return true;
+    }
+
+    double calculateSubtotal(double[] prices) {
+        double total = 0;
+        for (double price : prices) {
+            total += price;
+        }
+        return total;
+    }
+
+    double calculateDiscount(double subtotal) {
+        if (subtotal > 1000) {
+            return subtotal * 0.1;
+        } else if (subtotal > 500) {
+            return subtotal * 0.05;
+        }
+        return 0;
+    }
+
+    double calculateTax(double amount) {
+        return amount * 0.08;
+    }
+
+    void displayReceipt(String customerName, String[] items, double[] prices,
+                       double discount, double tax, double total) {
+        System.out.println("=== Order Receipt ===");
+        System.out.println("Customer: " + customerName);
+        for (int i = 0; i < items.length; i++) {
+            System.out.println(items[i] + " - $" + prices[i]);
+        }
+        System.out.println("Discount: $" + discount);
+        System.out.println("Tax: $" + tax);
+        System.out.println("Total: $" + total);
+    }
+}
+```
+
+---
+
+### 5. Use Access Modifiers Appropriately (Encapsulation Preview)
+
+**Practice**: Make fields private and provide public getter/setter methods (when needed). Don't expose internal implementation details.
+
+**Why It's Important**: Encapsulation protects data from unauthorized access and modification. It allows you to change internal implementation without breaking external code.
+
+**Example**:
+```java
+// ❌ Poor Practice - Everything Public
+public class BankAccount {
+    public String accountNumber;
+    public double balance;  // Anyone can modify!
+
+    public void displayBalance() {
+        System.out.println("Balance: $" + balance);
+    }
+}
+
+// Dangerous usage:
+BankAccount account = new BankAccount();
+account.balance = 1000000;  // Unauthorized modification!
+account.balance = -500;     // Invalid negative balance!
+
+// ✅ Best Practice - Encapsulation with Private Fields
+public class BankAccount {
+    private String accountNumber;
+    private double balance;  // Protected from direct access
+
+    // Controlled access through methods
+    public double getBalance() {
+        return balance;
+    }
+
+    // Validation in setter
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: $" + amount);
+        } else {
+            System.out.println("Invalid deposit amount!");
+        }
+    }
+
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+            return true;
+        } else {
+            System.out.println("Invalid withdrawal!");
+            return false;
+        }
+    }
+
+    public void displayBalance() {
+        System.out.println("Balance: $" + balance);
+    }
+}
+
+// Safe usage:
+BankAccount account = new BankAccount();
+account.deposit(1000);     // Controlled, validated
+account.withdraw(200);     // Controlled, validated
+// account.balance = -500;  // Compilation error! Cannot access private field
+```
+
+---
+
+### 6. Avoid Magic Numbers - Use Named Constants
+
+**Practice**: Replace hard-coded numeric values with named constants (final variables). Give meaningful names to special values.
+
+**Why It's Important**: Named constants make code self-documenting, easier to maintain, and prevent errors. Changing a value only requires updating one place.
+
+**Example**:
+```java
+// ❌ Poor Practice - Magic Numbers
+public class Circle {
+    double radius;
+
+    double calculateArea() {
+        return 3.14159 * radius * radius;  // What is 3.14159?
+    }
+
+    double calculateCircumference() {
+        return 2 * 3.14159 * radius;  // Duplicated magic number!
+    }
+
+    boolean isLarge() {
+        return radius > 10;  // Why 10? What does it represent?
+    }
+}
+
+// ✅ Best Practice - Named Constants
+public class Circle {
+    private static final double PI = 3.14159;
+    private static final double LARGE_RADIUS_THRESHOLD = 10.0;
+
+    private double radius;
+
+    double calculateArea() {
+        return PI * radius * radius;  // Clear meaning
+    }
+
+    double calculateCircumference() {
+        return 2 * PI * radius;  // Consistent value
+    }
+
+    boolean isLarge() {
+        return radius > LARGE_RADIUS_THRESHOLD;  // Self-documenting
+    }
+}
+
+// Another example with multiple constants:
+public class TaxCalculator {
+    private static final double STANDARD_TAX_RATE = 0.08;
+    private static final double LUXURY_TAX_RATE = 0.15;
+    private static final double LUXURY_THRESHOLD = 1000.0;
+    private static final double TAX_EXEMPT_LIMIT = 50.0;
+
+    double calculateTax(double amount) {
+        if (amount <= TAX_EXEMPT_LIMIT) {
+            return 0;
+        } else if (amount > LUXURY_THRESHOLD) {
+            return amount * LUXURY_TAX_RATE;
+        } else {
+            return amount * STANDARD_TAX_RATE;
+        }
+    }
+}
+```
+
+---
+
+### 7. Create Objects with Valid State
+
+**Practice**: Ensure objects are created in a valid, usable state. Don't create "half-initialized" objects that require multiple setter calls before use.
+
+**Why It's Important**: Objects should be ready to use immediately after creation. This prevents bugs from using objects in an invalid state.
+
+**Example**:
+```java
+// ❌ Poor Practice - Half-Initialized Object
+public class User {
+    String username;
+    String email;
+    String password;
+
+    void setUsername(String username) {
+        this.username = username;
+    }
+
+    void setEmail(String email) {
+        this.email = email;
+    }
+
+    void setPassword(String password) {
+        this.password = password;
+    }
+
+    boolean login() {
+        // What if username, email, or password is null?
+        return password.equals("secret123");  // NullPointerException risk!
+    }
+}
+
+// Dangerous usage:
+User user = new User();
+user.login();  // Crashes! Fields are null
+
+// ✅ Best Practice - Fully Initialized Object (Preview of Constructors)
+public class User {
+    String username;
+    String email;
+    String password;
+
+    // Factory method or setup method to ensure valid state
+    static User createUser(String username, String email, String password) {
+        if (username == null || email == null || password == null) {
+            throw new IllegalArgumentException("All fields are required");
+        }
+
+        User user = new User();
+        user.username = username;
+        user.email = email;
+        user.password = password;
+        return user;
+    }
+
+    boolean login(String inputPassword) {
+        // Safe - fields are guaranteed to be non-null
+        return password.equals(inputPassword);
+    }
+}
+
+// Safe usage:
+User user = User.createUser("john", "john@example.com", "secret123");
+user.login("password");  // Safe to use immediately
+```
+
+---
+
+### 8. Design for Testability
+
+**Practice**: Write classes and methods that are easy to test. Avoid dependencies on external resources (files, databases, network) in core logic.
+
+**Why It's Important**: Testable code is more reliable and easier to maintain. It encourages better design through separation of concerns.
+
+**Example**:
+```java
+// ❌ Poor Practice - Hard to Test
+public class ReportGenerator {
+    void generateReport() {
+        // Tightly coupled to file system
+        BufferedReader reader = new BufferedReader(new FileReader("data.txt"));
+
+        // Tightly coupled to system output
+        System.out.println("Report Header");
+
+        // Complex logic mixed with I/O
+        // How do you test this without actual files?
+    }
+}
+
+// ✅ Best Practice - Testable Design
+public class ReportGenerator {
+    // Core logic separated from I/O
+    String formatReportData(List<String> data) {
+        StringBuilder report = new StringBuilder();
+        report.append("Report Header\n");
+
+        for (String line : data) {
+            report.append("- ").append(line).append("\n");
+        }
+
+        return report.toString();
+    }
+
+    // I/O operations separate
+    List<String> readDataFromFile(String filename) throws IOException {
+        List<String> data = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            data.add(line);
+        }
+        reader.close();
+        return data;
+    }
+
+    void printReport(String report) {
+        System.out.println(report);
+    }
+
+    // Orchestration method
+    void generateReport(String filename) throws IOException {
+        List<String> data = readDataFromFile(filename);
+        String report = formatReportData(data);
+        printReport(report);
+    }
+}
+
+// Easy to test:
+ReportGenerator generator = new ReportGenerator();
+List<String> testData = Arrays.asList("Item1", "Item2");
+String report = generator.formatReportData(testData);
+// Assert that report contains expected content
 ```
 
 ---
@@ -996,58 +2377,979 @@ public class TestTime {
 
 ## ⚠️ Common Mistakes
 
-### 1. Forgetting to Create Object:
-```java
-Student student;  // Only declaration, no object created
-student.name = "Alice";  // ERROR! NullPointerException
+### 1. Class Definition and Structure Issues
 
-Student student = new Student();  // CORRECT
-student.name = "Alice";
+#### ❌ Wrong - Missing 'new' Keyword When Creating Object:
+```java
+// WRONG
+Student student;  // Only declaration, no object created
+student.name = "Alice";  // NullPointerException!
+```
+**Issue:** Variable declared but no object instantiated; reference is null
+
+#### ✅ Right:
+```java
+// CORRECT
+Student student = new Student();  // Object created in heap
+student.name = "Alice";  // Now safe to access
 ```
 
-### 2. Class Name vs Filename:
+**Why:** Object declaration creates a reference variable; must use `new` to actually create the object in heap memory.
+
+**💡 Tip:** Always initialize object references with `new` before accessing members.
+
+---
+
+#### ❌ Wrong - Class Name Doesn't Match Filename:
 ```java
 // File: Student.java
-public class Student { }  // CORRECT
+public class Person { }  // Compilation error!
+```
+**Issue:** Public class name must exactly match the filename
 
-// File: MyClass.java
-public class Student { }  // ERROR! Class name must match filename
+#### ✅ Right:
+```java
+// File: Student.java
+public class Student { }  // Correct: matches filename
+
+// OR for non-public classes:
+// File: MyClasses.java
+class Student { }  // OK: non-public class
+class Teacher { }  // OK: non-public class
 ```
 
-### 3. Accessing Non-Static Members from Static Context:
+**Why:** Java requires public class name to match filename for proper compilation and class loading.
+
+**💡 Tip:** Filename must be `ClassName.java` where ClassName is the public class name.
+
+---
+
+#### ❌ Wrong - Multiple Public Classes in One File:
 ```java
-public class Test {
-    int x = 10;
-    
-    public static void main(String[] args) {
-        System.out.println(x);  // ERROR! Cannot access non-static from static
-        
-        Test obj = new Test();
-        System.out.println(obj.x);  // CORRECT
+// File: Test.java
+// WRONG
+public class Student { }
+public class Teacher { }  // Compilation error!
+```
+**Issue:** Only one public class allowed per file
+
+#### ✅ Right:
+```java
+// File: Student.java
+// CORRECT - Method 1: One public class per file
+public class Student { }
+
+// File: Teacher.java
+public class Teacher { }
+
+// OR Method 2: One public, rest non-public
+// File: Student.java
+public class Student { }
+class Teacher { }  // Non-public, OK in same file
+```
+
+**Why:** Java's file organization requires one public class per file for clarity and proper class loading.
+
+**💡 Tip:** Create separate files for public classes; non-public helper classes can share a file.
+
+---
+
+#### ❌ Wrong - Wrong Class Naming Convention:
+```java
+// WRONG - Not following PascalCase
+public class student { }       // Starts with lowercase
+public class bank_account { }  // Uses underscores
+public class EMPLOYEE { }      // All uppercase
+```
+**Issue:** Class names should use PascalCase convention
+
+#### ✅ Right:
+```java
+// CORRECT - PascalCase
+public class Student { }
+public class BankAccount { }
+public class Employee { }
+public class CarEngine { }
+```
+
+**Why:** Java naming conventions improve code readability and follow industry standards.
+
+**💡 Tip:** Classes: PascalCase, methods/variables: camelCase, constants: UPPER_CASE.
+
+---
+
+#### ❌ Wrong - Missing Class Body Braces:
+```java
+// WRONG
+public class Student;  // Compilation error!
+```
+**Issue:** Class must have a body enclosed in braces, even if empty
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student { }  // Empty class is valid
+
+// OR with members
+public class Student {
+    String name;
+    int age;
+}
+```
+
+**Why:** Class syntax requires braces to define the class body.
+
+**💡 Tip:** Every class needs `{ }` even if it's empty.
+
+---
+
+### 2. Object Creation and Instantiation Mistakes
+
+#### ❌ Wrong - Trying to Use Class Name as Object:
+```java
+// WRONG
+public class Student {
+    String name;
+}
+
+Student.name = "Alice";  // Compilation error!
+```
+**Issue:** Trying to access instance members through class name
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;
+}
+
+Student student = new Student();
+student.name = "Alice";  // Access through object reference
+```
+
+**Why:** Instance variables belong to objects, not the class itself.
+
+**💡 Tip:** Create an object first, then access its members through the reference variable.
+
+---
+
+#### ❌ Wrong - Assigning One Object Reference to Another Without Understanding:
+```java
+// WRONG (conceptual mistake)
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = student1;  // Both point to same object!
+student2.name = "Bob";
+
+System.out.println(student1.name);  // Prints "Bob", not "Alice"!
+```
+**Issue:** Assignment copies reference, not the object; both variables point to same object
+
+#### ✅ Right:
+```java
+// CORRECT - Create separate objects
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = new Student();  // New object
+student2.name = "Bob";
+
+System.out.println(student1.name);  // Prints "Alice"
+System.out.println(student2.name);  // Prints "Bob"
+```
+
+**Why:** Reference assignment creates an alias, not a copy of the object.
+
+**💡 Tip:** Each `new` creates a separate object in memory; assignment copies references.
+
+---
+
+#### ❌ Wrong - Creating Array of Objects Without Initializing Elements:
+```java
+// WRONG
+Student[] students = new Student[3];  // Array created
+students[0].name = "Alice";  // NullPointerException!
+```
+**Issue:** Array of objects only creates array; each element is null
+
+#### ✅ Right:
+```java
+// CORRECT
+Student[] students = new Student[3];  // Array created
+students[0] = new Student();  // Create object
+students[0].name = "Alice";   // Now safe
+
+// OR initialize all elements
+for (int i = 0; i < students.length; i++) {
+    students[i] = new Student();
+}
+```
+
+**Why:** Array allocation doesn't create the objects, only creates space for references.
+
+**💡 Tip:** After creating object array, initialize each element with `new`.
+
+---
+
+#### ❌ Wrong - Not Checking for Null Before Access:
+```java
+// WRONG
+Student student = null;
+System.out.println(student.name);  // NullPointerException!
+```
+**Issue:** Accessing member on null reference
+
+#### ✅ Right:
+```java
+// CORRECT
+Student student = null;
+
+if (student != null) {
+    System.out.println(student.name);
+} else {
+    System.out.println("Student is null");
+}
+```
+
+**Why:** Null references don't point to any object; accessing members causes runtime error.
+
+**💡 Tip:** Always check for null before accessing object members.
+
+---
+
+### 3. Instance Variable (Field) Mistakes
+
+#### ❌ Wrong - Declaring Variables Inside Methods as Instance Variables:
+```java
+// WRONG
+public class Student {
+    void setName() {
+        String name;  // Local variable, not instance variable!
+    }
+
+    void displayName() {
+        System.out.println(name);  // Compilation error! name not found
+    }
+}
+```
+**Issue:** Variable declared inside method is local, not accessible elsewhere
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;  // Instance variable (field)
+
+    void setName(String n) {
+        name = n;  // Accessible throughout class
+    }
+
+    void displayName() {
+        System.out.println(name);  // Works!
     }
 }
 ```
 
-### 4. Not Initializing Fields:
+**Why:** Instance variables declared at class level; local variables exist only within their method.
+
+**💡 Tip:** Declare fields at class level (outside methods) for class-wide access.
+
+---
+
+#### ❌ Wrong - Using Uninitialized Instance Variables in Calculations:
 ```java
+// WRONG (logic error)
+public class Calculator {
+    int result;  // Default: 0
+
+    void add(int a, int b) {
+        result = result + a + b;  // First call: 0 + a + b
+    }
+}
+
+Calculator calc = new Calculator();
+calc.add(5, 10);  // result = 15
+calc.add(3, 7);   // result = 25 (includes previous 15)
+```
+**Issue:** Not resetting or aware result accumulates across method calls
+
+#### ✅ Right:
+```java
+// CORRECT - Be explicit about accumulation
+public class Calculator {
+    int result;
+
+    void add(int a, int b) {
+        result = a + b;  // Replace, don't accumulate
+    }
+
+    // OR if accumulation intended:
+    void addToResult(int value) {
+        result += value;  // Clear that we're accumulating
+    }
+}
+```
+
+**Why:** Instance variables retain values between method calls; be intentional about accumulation.
+
+**💡 Tip:** Reset instance variables when needed; make accumulation explicit.
+
+---
+
+#### ❌ Wrong - Shadowing Instance Variables with Parameters:
+```java
+// WRONG (confusing)
+public class Student {
+    String name;
+    int age;
+
+    void setDetails(String name, int age) {
+        name = name;  // Assigns parameter to itself!
+        age = age;    // Doesn't update instance variable!
+    }
+}
+```
+**Issue:** Parameter names shadow instance variables; assignment does nothing
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Use 'this' keyword
+public class Student {
+    String name;
+    int age;
+
+    void setDetails(String name, int age) {
+        this.name = name;  // 'this' refers to instance variable
+        this.age = age;
+    }
+}
+
+// CORRECT - Method 2: Different parameter names
+public class Student {
+    String name;
+    int age;
+
+    void setDetails(String n, int a) {
+        name = n;
+        age = a;
+    }
+}
+```
+
+**Why:** When parameter and field have same name, parameter takes precedence; use `this` to access field.
+
+**💡 Tip:** Use `this.fieldName` when parameter shadows instance variable.
+
+---
+
+#### ❌ Wrong - Wrong Field Naming Convention:
+```java
+// WRONG
+public class Student {
+    String Name;           // PascalCase (wrong for fields)
+    int roll_number;       // snake_case (wrong)
+    String STUDENT_ID;     // UPPER_CASE (for constants only)
+}
+```
+**Issue:** Fields should use camelCase, not other conventions
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name;           // camelCase
+    int rollNumber;        // camelCase
+    String studentId;      // camelCase
+    final int MAX_AGE = 150;  // UPPER_CASE for constants
+}
+```
+
+**Why:** Java conventions use camelCase for fields and methods; UPPER_CASE for constants.
+
+**💡 Tip:** Fields: camelCase, Constants: UPPER_CASE with final keyword.
+
+---
+
+### 4. Method-Related Mistakes
+
+#### ❌ Wrong - Missing Return Statement:
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        int sum = a + b;
+        // Missing return statement! Compilation error!
+    }
+}
+```
+**Issue:** Method with non-void return type must return a value
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        int sum = a + b;
+        return sum;  // Must return int value
+    }
+
+    // OR directly
+    int multiply(int a, int b) {
+        return a * b;
+    }
+}
+```
+
+**Why:** Non-void methods must return a value matching the declared return type.
+
+**💡 Tip:** Every code path in a non-void method must have a return statement.
+
+---
+
+#### ❌ Wrong - Returning Value from Void Method:
+```java
+// WRONG
+public class Display {
+    void showMessage() {
+        return "Hello";  // Compilation error! void can't return value
+    }
+}
+```
+**Issue:** Void methods cannot return values
+
+#### ✅ Right:
+```java
+// CORRECT - Method 1: Change to String return type
+public class Display {
+    String getMessage() {
+        return "Hello";
+    }
+}
+
+// CORRECT - Method 2: Keep void, just print
+public class Display {
+    void showMessage() {
+        System.out.println("Hello");
+        return;  // Optional; void methods can have empty return
+    }
+}
+```
+
+**Why:** void means no return value; change return type if you need to return data.
+
+**💡 Tip:** Use void for methods that perform actions without returning data.
+
+---
+
+#### ❌ Wrong - Wrong Return Type:
+```java
+// WRONG
+public class Calculator {
+    int divide(int a, int b) {
+        return a / b;  // Integer division loses decimal!
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.divide(10, 3));  // Prints 3, not 3.333...
+```
+**Issue:** int return type causes truncation; decimal part lost
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    double divide(int a, int b) {
+        return (double) a / b;  // Cast to double for decimal result
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.divide(10, 3));  // Prints 3.333...
+```
+
+**Why:** Choose return type based on expected result; use double for decimal values.
+
+**💡 Tip:** Use double for division when you need decimal precision.
+
+---
+
+#### ❌ Wrong - Calling Method Without Object (Non-Static):
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int result = Calculator.add(5, 10);  // Compilation error!
+    }
+}
+```
+**Issue:** Non-static methods require an object to be called
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();  // Create object
+        int result = calc.add(5, 10);  // Call through object
+        System.out.println(result);
+    }
+}
+```
+
+**Why:** Non-static methods belong to objects; must create object first.
+
+**💡 Tip:** Instance methods require object; static methods can be called on class.
+
+---
+
+#### ❌ Wrong - Method Name Not Following camelCase:
+```java
+// WRONG
+public class Student {
+    void DisplayInfo() { }      // PascalCase (wrong)
+    void display_info() { }     // snake_case (wrong)
+    void DISPLAYINFO() { }      // All uppercase (wrong)
+}
+```
+**Issue:** Method names should follow camelCase convention
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    void displayInfo() { }      // camelCase
+    void calculateGrade() { }   // camelCase
+    void setStudentName() { }   // camelCase
+}
+```
+
+**Why:** Java conventions use camelCase for method names.
+
+**💡 Tip:** Methods start with lowercase, capitalize each subsequent word.
+
+---
+
+### 5. Static vs Non-Static Confusion
+
+#### ❌ Wrong - Accessing Instance Members from Static Context:
+```java
+// WRONG
+public class Test {
+    int instanceVar = 10;
+
+    public static void main(String[] args) {
+        System.out.println(instanceVar);  // Compilation error!
+    }
+}
+```
+**Issue:** Static methods can't directly access instance members
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Test {
+    int instanceVar = 10;
+
+    public static void main(String[] args) {
+        Test obj = new Test();  // Create object
+        System.out.println(obj.instanceVar);  // Access through object
+    }
+}
+```
+
+**Why:** Static methods belong to class; instance members belong to objects.
+
+**💡 Tip:** Create object to access instance members from static context.
+
+---
+
+#### ❌ Wrong - Calling Instance Method from Static Method:
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        int result = add(5, 10);  // Compilation error!
+    }
+}
+```
+**Issue:** Can't call instance method without object from static context
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        int result = calc.add(5, 10);  // Call through object
+        System.out.println(result);
+    }
+}
+```
+
+**Why:** Instance methods need an object; static methods don't have implicit object reference.
+
+**💡 Tip:** From static context, create object first to call instance methods.
+
+---
+
+### 6. Dot Operator and Access Issues
+
+#### ❌ Wrong - Forgetting Dot Operator:
+```java
+// WRONG
 Student student = new Student();
-System.out.println(student.name);  // null (default value)
-System.out.println(student.age);   // 0 (default value)
-
-// Better: Initialize before use
-student.name = "Alice";
-student.age = 20;
+student name = "Alice";  // Syntax error!
 ```
+**Issue:** Missing dot operator to access member
 
-### 5. Confusing Class and Object:
+#### ✅ Right:
 ```java
-// Wrong thinking
-Student.name = "Alice";  // ERROR! Student is a class, not an object
-
-// Correct
-Student student1 = new Student();
-student1.name = "Alice";  // Object has the data
+// CORRECT
+Student student = new Student();
+student.name = "Alice";  // Dot operator required
 ```
+
+**Why:** Dot operator (.) is required to access object members.
+
+**💡 Tip:** Syntax is `objectName.memberName` with the dot.
+
+---
+
+#### ❌ Wrong - Chaining Dots Incorrectly:
+```java
+// WRONG
+public class Address {
+    String city;
+}
+
+public class Student {
+    Address address;  // Not initialized!
+    String name;
+}
+
+Student student = new Student();
+student.address.city = "New York";  // NullPointerException!
+```
+**Issue:** Intermediate reference (address) is null
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Address {
+    String city;
+}
+
+public class Student {
+    Address address;
+    String name;
+}
+
+Student student = new Student();
+student.address = new Address();  // Initialize first
+student.address.city = "New York";  // Now safe
+```
+
+**Why:** Must initialize all references in the chain before accessing nested members.
+
+**💡 Tip:** Initialize reference fields before accessing their members.
+
+---
+
+### 7. Parameter and Argument Mistakes
+
+#### ❌ Wrong - Wrong Number of Arguments:
+```java
+// WRONG
+public class Rectangle {
+    void setDimensions(double length, double width) {
+        // ...
+    }
+}
+
+Rectangle rect = new Rectangle();
+rect.setDimensions(10.5);  // Compilation error! Missing argument
+```
+**Issue:** Method expects 2 arguments, only 1 provided
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Rectangle {
+    void setDimensions(double length, double width) {
+        // ...
+    }
+}
+
+Rectangle rect = new Rectangle();
+rect.setDimensions(10.5, 5.0);  // Both arguments provided
+```
+
+**Why:** Must provide exact number of arguments matching method signature.
+
+**💡 Tip:** Check method signature for required parameters and their types.
+
+---
+
+#### ❌ Wrong - Wrong Argument Type:
+```java
+// WRONG
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add("5", "10");  // Compilation error! Strings not ints
+```
+**Issue:** Passing String arguments to int parameters
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add(5, 10);  // Correct types
+```
+
+**Why:** Argument types must match parameter types (or be compatible).
+
+**💡 Tip:** Ensure argument types match method parameter types.
+
+---
+
+### 8. Default Values Misunderstanding
+
+#### ❌ Wrong - Assuming Non-Default Values:
+```java
+// WRONG (logic error)
+public class Counter {
+    int count;  // Default: 0
+
+    void increment() {
+        count++;
+    }
+}
+
+Counter counter = new Counter();
+if (counter.count == 1) {  // False! count is 0, not 1
+    System.out.println("One");
+}
+```
+**Issue:** Assuming count starts at 1; actually starts at 0 (default)
+
+#### ✅ Right:
+```java
+// CORRECT - Be aware of default values
+public class Counter {
+    int count = 1;  // Explicitly initialize if not 0
+
+    void increment() {
+        count++;
+    }
+}
+
+// OR check the actual default
+Counter counter = new Counter();
+if (counter.count == 0) {  // Correct! Default is 0
+    System.out.println("Zero");
+}
+```
+
+**Why:** Numeric fields default to 0; explicitly initialize if different value needed.
+
+**💡 Tip:** Know default values: numbers=0, boolean=false, references=null.
+
+---
+
+#### ❌ Wrong - Using Reference Type Defaults Without Initialization:
+```java
+// WRONG
+public class Student {
+    String name;  // Default: null
+
+    void printLength() {
+        System.out.println(name.length());  // NullPointerException!
+    }
+}
+
+Student student = new Student();
+student.printLength();  // Crashes!
+```
+**Issue:** String field is null by default; calling methods on null causes error
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    String name = "";  // Initialize to empty string
+
+    void printLength() {
+        System.out.println(name.length());  // Works! Prints 0
+    }
+}
+
+// OR check for null
+public class Student {
+    String name;
+
+    void printLength() {
+        if (name != null) {
+            System.out.println(name.length());
+        } else {
+            System.out.println("Name not set");
+        }
+    }
+}
+```
+
+**Why:** Reference types default to null; initialize or check before use.
+
+**💡 Tip:** Initialize String fields to "" or check for null before operations.
+
+---
+
+### 9. Memory and Reference Confusion
+
+#### ❌ Wrong - Comparing Objects with ==:
+```java
+// WRONG (logic error)
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = new Student();
+student2.name = "Alice";
+
+if (student1 == student2) {  // False! Different objects
+    System.out.println("Same");
+}
+```
+**Issue:** == compares references, not object contents
+
+#### ✅ Right:
+```java
+// CORRECT - Compare field values
+Student student1 = new Student();
+student1.name = "Alice";
+
+Student student2 = new Student();
+student2.name = "Alice";
+
+if (student1.name.equals(student2.name)) {  // True! Same names
+    System.out.println("Same name");
+}
+
+// For complete object comparison, override equals() (Day 12)
+```
+
+**Why:** == checks if references point to same object, not if contents are equal.
+
+**💡 Tip:** Use == for reference equality; compare fields or use equals() for content equality.
+
+---
+
+#### ❌ Wrong - Modifying Shared Reference Unknowingly:
+```java
+// WRONG (logic error)
+Student original = new Student();
+original.name = "Alice";
+original.age = 20;
+
+Student copy = original;  // Both point to same object!
+copy.age = 25;  // Modifies the only object
+
+System.out.println(original.age);  // Prints 25, not 20!
+```
+**Issue:** Assignment copies reference; both variables point to same object
+
+#### ✅ Right:
+```java
+// CORRECT - Create separate object
+Student original = new Student();
+original.name = "Alice";
+original.age = 20;
+
+Student copy = new Student();  // New object
+copy.name = original.name;
+copy.age = 25;
+
+System.out.println(original.age);  // Prints 20
+System.out.println(copy.age);      // Prints 25
+```
+
+**Why:** Reference assignment creates alias; to copy, must create new object.
+
+**💡 Tip:** Use `new` to create independent copy; assignment only copies reference.
+
+---
+
+### 10. Scope and Visibility Issues
+
+#### ❌ Wrong - Accessing Local Variable from Another Method:
+```java
+// WRONG
+public class Test {
+    void method1() {
+        int x = 10;
+    }
+
+    void method2() {
+        System.out.println(x);  // Compilation error! x not in scope
+    }
+}
+```
+**Issue:** Local variables exist only within their method
+
+#### ✅ Right:
+```java
+// CORRECT - Use instance variable
+public class Test {
+    int x;  // Instance variable
+
+    void method1() {
+        x = 10;  // Set instance variable
+    }
+
+    void method2() {
+        System.out.println(x);  // Access instance variable
+    }
+}
+```
+
+**Why:** Local variables have method scope; instance variables have class scope.
+
+**💡 Tip:** Use instance variables for data shared across methods.
+
+---
+
+This comprehensive list now contains **35+ OOP and Class mistakes** covering all fundamental concepts!
 
 ---
 

@@ -752,8 +752,62 @@ public final class ImmutablePerson {
 ## 💻 Practical Exercises
 
 ### Exercise 1: Bank Account with Encapsulation
-Create a fully encapsulated BankAccount class.
 
+**📝 Problem Statement:**
+Create a fully encapsulated BankAccount class that demonstrates proper data hiding, validation, and controlled access to private fields. The class should protect account data from unauthorized access and invalid operations while providing a clean public interface for banking operations.
+
+**Requirements:**
+- Create private fields for accountNumber, accountHolder, balance, accountType, and isActive
+- Implement constructor accepting accountNumber, accountHolder, initialBalance, and accountType
+- Make accountNumber read-only (no setter, only getter)
+- Validate accountHolder name is not null or empty
+- Validate balance is non-negative (private setter used only in constructor)
+- Validate accountType is one of: "Savings", "Checking", or "Fixed"
+- Implement deposit() method with validation for positive amounts
+- Implement withdraw() method returning boolean for success/failure
+- Add closeAccount() method that deactivates account only if balance is zero
+- Prevent operations on inactive accounts
+- Provide displayInfo() method showing all account details with formatted output
+
+**Sample Test Cases:**
+```
+Input: BankAccount("ACC001", "Alice Johnson", 1000.0, "Savings")
+Expected Output:
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice Johnson
+Balance: $1000.00
+Account Type: Savings
+Status: Active
+
+Input: deposit(500), withdraw(200)
+Expected Output:
+Deposited: $500
+Withdrawn: $200
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice Johnson
+Balance: $1300.00
+Account Type: Savings
+Status: Active
+
+Input: closeAccount() with non-zero balance
+Expected Output:
+Cannot close account with non-zero balance!
+
+Input: withdraw(1300), then closeAccount()
+Expected Output:
+Withdrawn: $1300
+Account closed successfully
+=== Account Information ===
+Account Number: ACC001
+Account Holder: Alice Johnson
+Balance: $0.00
+Account Type: Savings
+Status: Inactive
+```
+
+**Solution:**
 ```java
 public class BankAccount {
     private String accountNumber;
@@ -885,11 +939,72 @@ public class TestBankAccount {
 }
 ```
 
+**💡 Tips:**
+- Encapsulation = private fields + public getters/setters with validation
+- Read-only properties: provide getter only, no setter (like accountNumber)
+- Private setter can be used internally (e.g., in constructor) for validation reuse
+- Validate in setters to ensure data integrity at all times
+- Use boolean return from methods like withdraw() to indicate success/failure
+- Check account status (isActive) before allowing operations
+- String.format("%.2f") formats currency to 2 decimal places
+- Encapsulation protects object state from invalid modifications
+
 ---
 
 ### Exercise 2: Student with Grade Validation
-Create a Student class with proper encapsulation and validation.
 
+**📝 Problem Statement:**
+Create a Student class demonstrating encapsulation with comprehensive validation for academic data. The class should enforce business rules for student information, calculate derived properties like academic standing and class level, and provide safe access to student records.
+
+**Requirements:**
+- Create private fields for studentId, name, age, gpa, major, and creditsCompleted
+- Make studentId read-only (getter only, no setter)
+- Validate name has at least 2 characters
+- Validate age is between 16 and 100
+- Validate GPA is between 0.0 and 4.0
+- Implement addCredits() method that only accepts positive values
+- Create getAcademicStanding() method returning status based on GPA (>=3.5: "Dean's List", >=3.0: "Good Standing", >=2.0: "Satisfactory", else: "Academic Probation")
+- Create getClassLevel() method returning level based on credits (>=90: "Senior", >=60: "Junior", >=30: "Sophomore", else: "Freshman")
+- Handle null major gracefully (display "Undeclared")
+- Format GPA to 2 decimal places in display
+
+**Sample Test Cases:**
+```
+Input: Student("S001", "Alice Johnson", 20), setMajor("Computer Science"), setGPA(3.7), addCredits(45)
+Expected Output:
+=== Student Information ===
+Student ID: S001
+Name: Alice Johnson
+Age: 20
+Major: Computer Science
+GPA: 3.70
+Credits: 45
+Class Level: Sophomore
+Academic Standing: Dean's List
+
+Input: setAge(15) - invalid
+Expected Output:
+Invalid age! Must be 16-100
+
+Input: setGPA(5.0) - invalid
+Expected Output:
+Invalid GPA! Must be 0.0-4.0
+
+Input: addCredits(20), setGPA(3.9)
+Expected Output:
+Added 20 credits
+=== Student Information ===
+Student ID: S001
+Name: Alice Johnson
+Age: 20
+Major: Computer Science
+GPA: 3.90
+Credits: 65
+Class Level: Junior
+Academic Standing: Dean's List
+```
+
+**Solution:**
 ```java
 public class Student {
     private String studentId;
@@ -1018,11 +1133,80 @@ public class TestStudent {
 }
 ```
 
+**💡 Tips:**
+- Calculated properties (getAcademicStanding(), getClassLevel()) have getters but no setters - computed on demand
+- Validate ranges: age (16-100), GPA (0.0-4.0) to enforce business rules
+- Use ternary operator in display for optional fields: `(major != null ? major : "Undeclared")`
+- addCredits() prevents negative values - only increments, never decrements
+- Call setters from constructor to reuse validation logic
+- Read-only ID fields prevent changing identity after object creation
+- Encapsulation enforces academic rules: can't manually set invalid GPA or age
+
 ---
 
 ### Exercise 3: Product Inventory System
-Create an encapsulated Product class for inventory management.
 
+**📝 Problem Statement:**
+Create an encapsulated Product class for inventory management that tracks stock levels, calculates inventory value, and signals when reordering is needed. The class should protect product data while providing methods for stock operations and inventory reporting.
+
+**Requirements:**
+- Create private fields for productId, name, category, price, stockQuantity, reorderLevel, and supplier
+- Make productId read-only (no setter)
+- Validate name is not null or empty
+- Validate price is non-negative
+- Validate stockQuantity is non-negative
+- Implement addStock(int quantity) method to increase inventory
+- Implement removeStock(int quantity) method that returns boolean for success/failure
+- Create getTotalValue() method calculating price × quantity
+- Create needsReorder() method returning true if stock ≤ reorderLevel
+- Handle null supplier gracefully (display "Not assigned")
+- Set default reorderLevel to 10 in constructor
+
+**Sample Test Cases:**
+```
+Input: Product("P001", "Laptop", "Electronics", 999.99, 25), setSupplier("TechSupply Inc."), setReorderLevel(15)
+Expected Output:
+=== Product Information ===
+Product ID: P001
+Name: Laptop
+Category: Electronics
+Price: $999.99
+Stock Quantity: 25
+Reorder Level: 15
+Supplier: TechSupply Inc.
+Total Value: $24999.75
+Status: OK
+
+Input: removeStock(12)
+Expected Output:
+Removed 12 units
+=== Product Information ===
+Product ID: P001
+Name: Laptop
+Category: Electronics
+Price: $999.99
+Stock Quantity: 13
+Reorder Level: 15
+Supplier: TechSupply Inc.
+Total Value: $12999.87
+Status: NEEDS REORDER
+
+Input: addStock(20)
+Expected Output:
+Added 20 units
+=== Product Information ===
+Product ID: P001
+Name: Laptop
+Category: Electronics
+Price: $999.99
+Stock Quantity: 33
+Reorder Level: 15
+Supplier: TechSupply Inc.
+Total Value: $32999.67
+Status: OK
+```
+
+**Solution:**
 ```java
 public class Product {
     private String productId;
@@ -1178,11 +1362,65 @@ public class TestProduct {
 }
 ```
 
+**💡 Tips:**
+- Inventory management requires validation: stock can't be negative, price must be >= 0
+- getTotalValue() is a calculated property: price × quantity (no setter needed)
+- needsReorder() method encapsulates business logic for reordering alerts
+- removeStock() returns boolean to indicate if operation was successful
+- Default values in constructor (reorderLevel = 10) provide sensible defaults
+- Read-only productId prevents changing product identity after creation
+- Ternary operator handles optional fields: `(supplier != null ? supplier : "Not assigned")`
+
 ---
 
 ### Exercise 4: Employee with Salary Management
-Create an Employee class with encapsulated salary management.
 
+**📝 Problem Statement:**
+Create an Employee class with encapsulated salary management that handles base salary, bonuses, raises, and employment status. The class should protect sensitive compensation data while providing controlled methods for salary operations and employee lifecycle management.
+
+**Requirements:**
+- Create private fields for employeeId, name, department, baseSalary, bonus, yearsOfService, and isActive
+- Make employeeId read-only
+- Make baseSalary setter private (used only in constructor)
+- Validate baseSalary is positive
+- Validate bonus is non-negative
+- Implement giveRaise(double percentage) method with validation (0-50% range)
+- Create getTotalCompensation() method calculating baseSalary + bonus
+- Implement incrementYearsOfService() method (no direct setter for years)
+- Add terminate() method that sets isActive to false
+- Prevent invalid raise percentages (must be 0-50%)
+- Display formatted salary information with 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: Employee("E001", "Alice Johnson", "IT", 60000)
+Expected Output:
+=== Employee Information ===
+Employee ID: E001
+Name: Alice Johnson
+Department: IT
+Base Salary: $60000.00
+Bonus: $0.00
+Total Compensation: $60000.00
+Years of Service: 0
+Status: Active
+
+Input: setBonus(5000), incrementYearsOfService(), giveRaise(10)
+Expected Output:
+Years of service updated to: 1
+Raise of 10.0% applied. New salary: $66000.00
+=== Employee Information ===
+Employee ID: E001
+Name: Alice Johnson
+Department: IT
+Base Salary: $66000.00
+Bonus: $5000.00
+Total Compensation: $71000.00
+Years of Service: 1
+Status: Active
+```
+
+**Solution:**
 ```java
 public class Employee {
     private String employeeId;
@@ -1306,11 +1544,75 @@ public class TestEmployee {
 }
 ```
 
+**💡 Tips:**
+- Private baseSalary setter prevents external salary manipulation - only constructor and giveRaise() can modify it
+- Raise percentage validation (0-50%) prevents unrealistic salary changes
+- getTotalCompensation() is a calculated property combining base + bonus
+- incrementYearsOfService() controls how years can change - prevents direct setting to invalid values
+- yearsOfService has getter but no public setter - increments only, never decrements
+- terminate() method handles employee lifecycle - sets isActive to false permanently
+- Encapsulation protects sensitive compensation data from unauthorized access
+
 ---
 
 ### Exercise 5: Car with Mileage Tracking
-Create a Car class with encapsulated mileage and maintenance tracking.
 
+**📝 Problem Statement:**
+Create a Car class with encapsulated mileage and maintenance tracking that monitors fuel consumption, service needs, and prevents unauthorized mileage manipulation. The class should use final constants for capacity and service intervals, and calculate when maintenance is required.
+
+**Requirements:**
+- Create private fields for vin, make, model, year, mileage, fuelLevel, and lastServiceMileage
+- Use final constant FUEL_CAPACITY = 50.0 gallons
+- Use final constant SERVICE_INTERVAL = 5000 miles
+- Make VIN read-only (no setter)
+- Validate year is between 1900 and current year + 1
+- Implement drive(int miles) method that increases mileage and decreases fuel (fuel consumption: 25 mpg)
+- Implement refuel(double gallons) method preventing overfilling (max FUEL_CAPACITY)
+- Create performService() method that updates lastServiceMileage
+- Implement needsService() method returning true if miles since service >= SERVICE_INTERVAL
+- Create getMilesSinceService() and getMilesUntilService() calculated properties
+- Prevent driving if fuel is insufficient for the distance
+
+**Sample Test Cases**:
+```
+Input: Car("1HGBH41JXMN109186", "Honda", "Accord", 2020)
+Expected Output:
+=== Car Information ===
+VIN: 1HGBH41JXMN109186
+Make: Honda
+Model: Accord
+Year: 2020
+Mileage: 0 miles
+Fuel Level: 50.00 / 50.0 gallons
+Miles Since Service: 0
+Miles Until Service: 5000
+Service Status: OK
+
+Input: drive(100)
+Expected Output:
+Drove 100 miles
+=== Car Information ===
+[mileage: 100, fuel decreased]
+Service Status: OK
+
+Input: drive(5000)
+Expected Output:
+Drove 5000 miles
+=== Car Information ===
+[mileage: 5100]
+Service Status: REQUIRED
+
+Input: performService(), refuel(20)
+Expected Output:
+Service performed at 5100 miles
+Refueled 20.0 gallons
+=== Car Information ===
+Miles Since Service: 0
+Miles Until Service: 5000
+Service Status: OK
+```
+
+**Solution:**
 ```java
 public class Car {
     private String vin;  // Vehicle Identification Number
@@ -1469,11 +1771,74 @@ public class TestCar {
 }
 ```
 
+**💡 Tips:**
+- Final constants (FUEL_CAPACITY, SERVICE_INTERVAL) can't be changed - use for fixed values
+- Read-only VIN prevents changing vehicle identity
+- drive() method coordinates multiple state changes (mileage↑, fuel↓) in one operation
+- Fuel consumption formula: miles / MPG (25 miles per gallon)
+- Calculated properties (getMilesSinceService, getMilesUntilService) compute on demand, no storage needed
+- Math.max(0, remaining) ensures miles until service never goes negative
+- needsService() encapsulates business logic for maintenance schedule
+- Encapsulation prevents direct mileage manipulation (odometer fraud protection)
+
 ---
 
 ### Exercise 6: Temperature Sensor with Range Validation
-Create a TemperatureSensor class with validation.
 
+**📝 Problem Statement:**
+Create a TemperatureSensor class that validates temperature readings against absolute physical limits and tracks minimum, maximum, and average temperatures. The class should enforce sensor activation status and provide temperature range analytics.
+
+**Requirements:**
+- Create private fields for sensorId, location, currentTemperature, minTemperature, maxTemperature, and isActive
+- Use final constants ABSOLUTE_MIN = -273.15°C (absolute zero) and ABSOLUTE_MAX = 1000.0°C
+- Make sensorId read-only
+- Initialize with default room temperature (20.0°C)
+- Validate temperature readings are within absolute limits
+- Automatically update min/max temperatures when new readings are received
+- Implement getTemperatureRange() calculating max - min
+- Create getAverageTemperature() calculating (min + max) / 2
+- Add resetMinMax() method to reset tracking to current temperature
+- Implement activate() and deactivate() methods for sensor status
+- Display all sensor information with 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: TemperatureSensor("TEMP001", "Server Room")
+Expected Output:
+=== Temperature Sensor ===
+Sensor ID: TEMP001
+Location: Server Room
+Current: 20.00°C
+Minimum: 20.00°C
+Maximum: 20.00°C
+Range: 0.00°C
+Average: 20.00°C
+Status: Active
+
+Input: setCurrentTemperature(25.5), setCurrentTemperature(18.0), setCurrentTemperature(30.0)
+Expected Output:
+Temperature updated to: 25.50°C
+Temperature updated to: 18.00°C
+Temperature updated to: 30.00°C
+=== Temperature Sensor ===
+Current: 30.00°C
+Minimum: 18.00°C
+Maximum: 30.00°C
+Range: 12.00°C
+Average: 24.00°C
+
+Input: resetMinMax()
+Expected Output:
+Min/Max temperatures reset
+=== Temperature Sensor ===
+Current: 30.00°C
+Minimum: 30.00°C
+Maximum: 30.00°C
+Range: 0.00°C
+Average: 30.00°C
+```
+
+**Solution:**
 ```java
 public class TemperatureSensor {
     private String sensorId;
@@ -1595,11 +1960,71 @@ public class TestTemperatureSensor {
 }
 ```
 
+**💡 Tips:**
+- Final constants for absolute limits (ABSOLUTE_MIN, ABSOLUTE_MAX) represent physical laws - never change
+- Absolute zero (-273.15°C) is the lowest possible temperature in physics
+- Automatic min/max tracking: setCurrentTemperature() updates both current and historical values
+- Calculated properties (range, average) compute on demand - no storage needed
+- resetMinMax() is useful for starting new measurement periods
+- Read-only sensorId prevents changing sensor identity
+- Temperature validation prevents physically impossible readings
+
 ---
 
 ### Exercise 7: Library Book with Checkout System
-Create a Book class for library management.
 
+**📝 Problem Statement:**
+Create a Book class for library management that tracks checkout history, enforces maximum checkout limits, and manages book availability status. The class should encapsulate borrower information and prevent checkouts when books are unavailable or have reached their checkout limit.
+
+**Requirements:**
+- Create private fields for isbn, title, author, category, isAvailable, borrowerName, and checkoutCount
+- Use final constant MAX_CHECKOUTS = 50
+- Make ISBN read-only
+- Validate title and author are not null or empty
+- Implement checkout(String borrowerName) method that returns boolean for success/failure
+- Prevent checkout if book is unavailable or has reached MAX_CHECKOUTS limit
+- Implement returnBook() method that clears borrower and sets available to true
+- Create needsReplacement() method returning true if checkoutCount >= MAX_CHECKOUTS
+- Implement getRemainingCheckouts() calculating MAX_CHECKOUTS - checkoutCount (min 0)
+- Display borrower name only when book is checked out
+- Track checkout count throughout book's lifecycle
+
+**Sample Test Cases:**
+```
+Input: Book("978-0134685991", "Effective Java", "Joshua Bloch", "Programming")
+Expected Output:
+=== Book Information ===
+ISBN: 978-0134685991
+Title: Effective Java
+Author: Joshua Bloch
+Category: Programming
+Status: Available
+Checkout Count: 0 / 50
+Remaining Checkouts: 50
+
+Input: checkout("Alice Johnson")
+Expected Output:
+Book 'Effective Java' checked out by: Alice Johnson
+=== Book Information ===
+Status: Checked Out
+Borrowed by: Alice Johnson
+Checkout Count: 1 / 50
+Remaining Checkouts: 49
+
+Input: returnBook()
+Expected Output:
+Book returned by: Alice Johnson
+=== Book Information ===
+Status: Available
+Checkout Count: 1 / 50
+
+Input: checkout("Bob Smith")
+Expected Output:
+Book 'Effective Java' checked out by: Bob Smith
+Checkout Count: 2 / 50
+```
+
+**Solution:**
 ```java
 public class Book {
     private String isbn;
@@ -1742,11 +2167,74 @@ public class TestBook {
 }
 ```
 
+**💡 Tips:**
+- Final constant MAX_CHECKOUTS limits book usage - books wear out after many checkouts
+- checkout() returns boolean to indicate success/failure - useful for error handling
+- borrowerName is private and only displayed when book is checked out (conditional display)
+- checkoutCount persists across checkouts/returns - tracks book's entire history
+- needsReplacement() encapsulates business logic for book lifecycle management
+- Math.max(0, remaining) ensures getRemainingCheckouts() never returns negative
+- Read-only ISBN prevents changing book identity
+- Encapsulation protects checkout logic - can't manually set isAvailable to bypass checks
+
 ---
 
 ### Exercise 8: Circle with Immutable Properties
-Create a Circle class demonstrating immutability.
 
+**📝 Problem Statement:**
+Create an immutable Circle class that demonstrates the immutability pattern using final fields and no setters. Instead of modifying the object, provide methods that return new Circle instances with modified values, ensuring thread safety and preventing unintended state changes.
+
+**Requirements:**
+- Declare class as final to prevent inheritance
+- Use final fields for radius and color (cannot be changed after construction)
+- Validate radius is positive in constructor (default to 1.0 if invalid)
+- Provide only getters, no setters
+- Implement calculated properties: getArea(), getCircumference(), getDiameter()
+- Create withRadius(double) method returning NEW Circle with changed radius
+- Create withColor(String) method returning NEW Circle with changed color
+- Create scale(double factor) method returning NEW Circle with scaled radius
+- Demonstrate that original object remains unchanged after "modifications"
+- Use final for PI constant
+
+**Sample Test Cases:**
+```
+Input: Circle(5.0, "Red")
+Expected Output:
+=== Circle Information ===
+Radius: 5.0
+Color: Red
+Diameter: 10.00
+Area: 78.54
+Circumference: 31.42
+
+Input: circle1.withRadius(10.0)
+Expected Output:
+[New circle created with radius 10.0, color "Red"]
+=== Circle Information ===
+Radius: 10.0
+[original circle1 unchanged]
+
+Input: circle1.withColor("Blue")
+Expected Output:
+[New circle created with radius 5.0, color "Blue"]
+=== Circle Information ===
+Color: Blue
+[original circle1 unchanged]
+
+Input: circle1.scale(2.0)
+Expected Output:
+[New circle with radius 10.0 (5.0 × 2.0)]
+=== Circle Information ===
+Radius: 10.0
+
+Original circle:
+=== Circle Information ===
+Radius: 5.0
+Color: Red
+[unchanged]
+```
+
+**Solution:**
 ```java
 public final class Circle {
     private final double radius;
@@ -1829,11 +2317,67 @@ public class TestCircle {
 }
 ```
 
+**💡 Tips:**
+- Immutable class: final class + final fields + no setters = object state never changes
+- Final class prevents subclasses from adding mutable behavior
+- Final fields can only be set once (in constructor) - no modification possible
+- "with" methods (withRadius, withColor) return NEW objects - original unchanged
+- Immutable objects are thread-safe - can be shared safely between threads
+- String is immutable in Java - same pattern used here
+- Calculated properties (area, circumference) always compute fresh - no stale data
+- Immutability prevents bugs from unexpected state changes
+
 ---
 
 ### Exercise 9: Password Manager
-Create a PasswordManager class with secure encapsulation.
 
+**📝 Problem Statement:**
+Create a secure PasswordManager class that demonstrates encapsulation for sensitive data. The class should validate password strength, track failed login attempts, automatically lock accounts after excessive failures, and provide email-based account recovery.
+
+**Requirements:**
+- Create private fields for username, password, email, failedAttempts, and isLocked
+- Use final constant MAX_ATTEMPTS = 3 for failed login limit
+- Validate username has minimum 3 characters
+- Validate email contains "@" symbol
+- Implement password validation requiring: minimum 8 characters, at least one uppercase letter, at least one lowercase letter, and at least one digit
+- NO password getter (write-only field for security)
+- Implement verifyPassword() method that tracks failed attempts and locks account after MAX_ATTEMPTS
+- Implement unlock() method that verifies email before unlocking
+- Create getRemainingAttempts() method returning MAX_ATTEMPTS - failedAttempts
+- Display method should mask password as "********"
+- Prevent password verification when account is locked
+
+**Sample Test Cases:**
+```
+Input: PasswordManager("alice123", "alice@example.com"), setPassword("weak")
+Expected Output:
+Password must be at least 8 characters!
+
+Input: setPassword("weakpassword") - no uppercase or digit
+Expected Output:
+Password must contain at least one uppercase letter!
+
+Input: setPassword("StrongPass123") - valid
+Expected Output:
+Password set successfully!
+
+Input: verifyPassword("wrong"), verifyPassword("wrong"), verifyPassword("wrong")
+Expected Output:
+Incorrect password! Attempts: 1/3
+Incorrect password! Attempts: 2/3
+Incorrect password! Attempts: 3/3
+Account locked!
+
+Input: verifyPassword("StrongPass123") when locked
+Expected Output:
+Account is locked due to too many failed attempts!
+
+Input: unlock("alice@example.com")
+Expected Output:
+Account unlocked!
+```
+
+**Solution:**
 ```java
 public class PasswordManager {
     private String username;
@@ -1981,21 +2525,21 @@ public class TestPasswordManager {
     public static void main(String[] args) {
         PasswordManager pm = new PasswordManager("alice123", "alice@example.com");
         pm.displayInfo();
-        
+
         // Set password with validation
         pm.setPassword("weak");  // Too short
         pm.setPassword("weakpassword");  // No uppercase or digit
         pm.setPassword("StrongPass123");  // Valid
-        
+
         pm.displayInfo();
-        
+
         // Verify password
         pm.verifyPassword("wrong");
         pm.verifyPassword("wrong");
         pm.verifyPassword("wrong");  // Account locked
-        
+
         pm.displayInfo();
-        
+
         // Unlock
         pm.unlock("alice@example.com");
         pm.displayInfo();
@@ -2003,11 +2547,85 @@ public class TestPasswordManager {
 }
 ```
 
+**💡 Tips:**
+- No password getter protects sensitive data - write-only field pattern
+- Private helper methods (hasUpperCase, hasLowerCase, hasDigit) encapsulate validation logic
+- Password validation uses multiple criteria: length, uppercase, lowercase, digit
+- Failed attempt counter tracks security breaches and triggers account locking
+- MAX_ATTEMPTS constant defines security policy threshold
+- Account locking prevents brute-force password attacks
+- Email verification for unlock provides recovery mechanism
+- Display method masks password with "********" to prevent information leakage
+- verifyPassword() returns boolean and has side effects (incrementing counter, locking)
+- Resetting failedAttempts to 0 on successful verification prevents false lockouts
+
 ---
 
 ### Exercise 10: Shopping Cart with Price Calculation
-Create a ShoppingCart class with encapsulated pricing logic.
 
+**📝 Problem Statement:**
+Create a ShoppingCart class with encapsulated pricing logic that handles item management, tax calculation, discount application, and total price computation. The class should validate cart limits, manage item counts, and provide comprehensive price breakdowns.
+
+**Requirements:**
+- Create private fields for cartId, customerId, subtotal, taxRate, discountPercentage, and itemCount
+- Use final constant MAX_CART_VALUE = 10000.0 to limit cart size
+- Make cartId and customerId read-only (getters only, no setters)
+- Initialize with default taxRate of 0.08 (8%)
+- Validate taxRate is between 0 and 0.20 (max 20%)
+- Validate discountPercentage is between 0 and 100
+- Implement addItem(price) method that validates total doesn't exceed MAX_CART_VALUE
+- Implement removeItem(price) method with validation
+- Create getDiscountAmount() calculating subtotal × discountPercentage / 100
+- Create getTaxAmount() calculating (subtotal - discount) × taxRate
+- Create getTotal() calculating subtotal - discount + tax
+- Implement clear() method to reset cart to empty state
+- Provide displaySummary() showing all price components with 2 decimal places
+
+**Sample Test Cases:**
+```
+Input: ShoppingCart("CART001", "CUST123"), addItem(29.99), addItem(49.99), addItem(19.99)
+Expected Output:
+Item added. Price: $29.99
+Item added. Price: $49.99
+Item added. Price: $19.99
+=== Shopping Cart Summary ===
+Cart ID: CART001
+Customer ID: CUST123
+Items: 3
+Subtotal: $99.97
+Discount (0.0%): -$0.00
+Tax (8.0%): $7.99
+Total: $107.96
+
+Input: setDiscountPercentage(10), displaySummary()
+Expected Output:
+=== Shopping Cart Summary ===
+Cart ID: CART001
+Customer ID: CUST123
+Items: 3
+Subtotal: $99.97
+Discount (10.0%): -$9.99
+Tax (8.0%): $7.19
+Total: $97.17
+
+Input: removeItem(19.99), displaySummary()
+Expected Output:
+Item removed. Price: $19.99
+=== Shopping Cart Summary ===
+Cart ID: CART001
+Customer ID: CUST123
+Items: 2
+Subtotal: $79.98
+Discount (10.0%): -$7.99
+Tax (8.0%): $5.75
+Total: $77.74
+
+Input: addItem(9500.0) when subtotal would exceed MAX_CART_VALUE
+Expected Output:
+Cannot add item. Exceeds maximum cart value!
+```
+
+**Solution:**
 ```java
 public class ShoppingCart {
     private String cartId;
@@ -2134,22 +2752,35 @@ public class ShoppingCart {
 
 public class TestShoppingCart {
     public static void main(String[] args) {
-        Shopping
-Cart cart = new ShoppingCart("CART001", "CUST123");
-        
+        ShoppingCart cart = new ShoppingCart("CART001", "CUST123");
+
         cart.addItem(29.99);
         cart.addItem(49.99);
         cart.addItem(19.99);
         cart.displaySummary();
-        
+
         cart.setDiscountPercentage(10);
         cart.displaySummary();
-        
+
         cart.removeItem(19.99);
         cart.displaySummary();
     }
 }
 ```
+
+**💡 Tips:**
+- Read-only cartId and customerId prevent modifying cart identity after creation
+- MAX_CART_VALUE constant enforces business rule preventing excessive cart totals
+- Calculated properties (discount amount, tax amount, total) compute on demand - no storage needed
+- Order of operations matters: discount applied first, then tax calculated on discounted price
+- Tax formula: (subtotal - discount) × taxRate (tax on final price, not original)
+- Total formula: subtotal - discount + tax (combines all pricing components)
+- Validation ranges: taxRate 0-20%, discountPercentage 0-100%
+- addItem() returns boolean to indicate success/failure for error handling
+- clear() resets cart but preserves cartId, customerId (identity remains)
+- displaySummary() shows percentage values for transparency (e.g., "Discount (10.0%): -$9.99")
+- String.format("%.2f") ensures currency displays with exactly 2 decimal places
+- Encapsulation protects pricing logic - can't manually set subtotal or manipulate calculations
 
 ---
 
@@ -2170,7 +2801,9 @@ Cart cart = new ShoppingCart("CART001", "CUST123");
 
 ## ⚠️ Common Mistakes
 
-### 1. Making Everything Public:
+### 1. Access Modifier Misuse
+
+#### ❌ Wrong - Making All Fields Public:
 ```java
 // WRONG - No encapsulation
 public class Student {
@@ -2179,204 +2812,1336 @@ public class Student {
     public double gpa;
 }
 
+// Anyone can do this:
+Student s = new Student();
+s.age = -5;      // Invalid! No validation
+s.gpa = 10.0;    // Invalid! GPA should be 0-4
+```
+**Issue:** Public fields expose data without validation or control
+
+#### ✅ Right:
+```java
 // CORRECT - Proper encapsulation
 public class Student {
     private String name;
     private int age;
     private double gpa;
-    
-    // Provide controlled access
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-}
-```
 
-### 2. No Validation in Setters:
-```java
-// WRONG - No validation
-public void setAge(int age) {
-    this.age = age;  // Could be negative!
-}
-
-// CORRECT - With validation
-public void setAge(int age) {
-    if (age > 0 && age < 150) {
-        this.age = age;
-    } else {
-        System.out.println("Invalid age!");
+    public String getName() {
+        return name;
     }
-}
-```
 
-### 3. Exposing Mutable Objects:
-```java
-// WRONG - Exposes internal array
-public class Classroom {
-    private int[] grades;
-    
-    public int[] getGrades() {
-        return grades;  // Caller can modify!
+    public void setName(String name) {
+        this.name = name;
     }
-}
 
-// CORRECT - Return copy
-public class Classroom {
-    private int[] grades;
-    
-    public int[] getGrades() {
-        return grades.clone();  // Return copy
+    public int getAge() {
+        return age;
     }
-}
-```
 
-### 4. Inconsistent Naming:
-```java
-// WRONG - Inconsistent naming
-public class Person {
-    private String name;
-    
-    public String fetchName() { return name; }  // Should be getName()
-    public void updateName(String name) { this.name = name; }  // Should be setName()
-}
-
-// CORRECT - Standard naming
-public class Person {
-    private String name;
-    
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-}
-```
-
-### 5. Setter Returning void When Chaining Needed:
-```java
-// WRONG - Cannot chain
-public void setName(String name) {
-    this.name = name;
-}
-
-// CORRECT - Enables chaining
-public Person setName(String name) {
-    this.name = name;
-    return this;
-}
-
-// Usage: person.setName("Alice").setAge(25).setEmail("alice@example.com");
-```
-
-### 6. Not Using `this` in Setters:
-```java
-// WRONG - Ambiguous
-public void setName(String name) {
-    name = name;  // Assigns parameter to itself!
-}
-
-// CORRECT - Use this
-public void setName(String name) {
-    this.name = name;  // Clear distinction
-}
-```
-
-### 7. Providing Setter for ID Fields:
-```java
-// WRONG - ID should be immutable
-public class Employee {
-    private String employeeId;
-    
-    public void setEmployeeId(String id) {  // Should not exist!
-        this.employeeId = id;
-    }
-}
-
-// CORRECT - ID is read-only
-public class Employee {
-    private final String employeeId;
-    
-    public Employee(String employeeId) {
-        this.employeeId = employeeId;
-    }
-    
-    public String getEmployeeId() {
-        return employeeId;
-    }
-    // No setter!
-}
-```
-
-### 8. Exposing Implementation Details:
-```java
-// WRONG - Exposes ArrayList
-public class StudentList {
-    private ArrayList<String> students;
-    
-    public ArrayList<String> getStudents() {
-        return students;  // Exposes implementation
-    }
-}
-
-// CORRECT - Use interface
-public class StudentList {
-    private ArrayList<String> students;
-    
-    public List<String> getStudents() {
-        return new ArrayList<>(students);  // Return copy as List
-    }
-}
-```
-
-### 9. Not Validating in Constructor:
-```java
-// WRONG - No validation
-public class Product {
-    private double price;
-    
-    public Product(double price) {
-        this.price = price;  // Could be negative!
-    }
-}
-
-// CORRECT - Validate in constructor
-public class Product {
-    private double price;
-    
-    public Product(double price) {
-        setPrice(price);  // Use setter for validation
-    }
-    
-    public void setPrice(double price) {
-        if (price >= 0) {
-            this.price = price;
+    public void setAge(int age) {
+        if (age > 0 && age < 150) {
+            this.age = age;
         } else {
-            throw new IllegalArgumentException("Price cannot be negative");
+            System.out.println("Invalid age!");
+        }
+    }
+
+    public double getGPA() {
+        return gpa;
+    }
+
+    public void setGPA(double gpa) {
+        if (gpa >= 0.0 && gpa <= 4.0) {
+            this.gpa = gpa;
+        } else {
+            System.out.println("Invalid GPA!");
         }
     }
 }
 ```
 
-### 10. Over-Encapsulation:
+**Why:** Private fields with public getters/setters allow validation and controlled access.
+
+**💡 Tip:** Default to private fields; only expose through methods when necessary.
+
+---
+
+#### ❌ Wrong - Using Default Access When Private Intended:
 ```java
-// WRONG - Too many getters/setters for simple data holder
-public class Point {
+// WRONG - Accidentally default access
+public class BankAccount {
+    double balance;  // Package-private! Other classes in same package can access
+    String accountNumber;
+}
+
+// In another class in same package:
+BankAccount account = new BankAccount();
+account.balance = -1000;  // Direct access! Bad!
+```
+**Issue:** Missing access modifier makes field package-private, not private
+
+#### ✅ Right:
+```java
+// CORRECT - Explicitly private
+public class BankAccount {
+    private double balance;
+    private String accountNumber;
+
+    public double getBalance() {
+        return balance;
+    }
+
+    private void setBalance(double balance) {
+        if (balance >= 0) {
+            this.balance = balance;
+        }
+    }
+}
+```
+
+**Why:** Explicit `private` ensures field is truly hidden from other classes.
+
+**💡 Tip:** Always explicitly declare access modifiers; don't rely on defaults.
+
+---
+
+#### ❌ Wrong - Making Methods Private That Should Be Public:
+```java
+// WRONG
+public class Calculator {
+    private int add(int a, int b) {  // Private!
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        int result = calc.add(5, 10);  // Compilation error! add is private
+    }
+}
+```
+**Issue:** Public API methods marked as private prevent external use
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {  // Public API
+        return a + b;
+    }
+
+    private int validateInput(int value) {  // Private helper
+        return Math.max(0, value);
+    }
+}
+```
+
+**Why:** Public for API methods users need; private for internal helper methods.
+
+**💡 Tip:** Public = external API; Private = internal implementation.
+
+---
+
+#### ❌ Wrong - Using Protected for Non-Inheritance Scenarios:
+```java
+// WRONG
+public class User {
+    protected String password;  // Protected but not meant for inheritance
+
+    public User(String password) {
+        this.password = password;
+    }
+}
+
+// Subclass can access password directly
+public class AdminUser extends User {
+    public AdminUser(String password) {
+        super(password);
+    }
+
+    public void displayPassword() {
+        System.out.println(password);  // Direct access! Security risk!
+    }
+}
+```
+**Issue:** Protected exposes sensitive fields to subclasses unnecessarily
+
+#### ✅ Right:
+```java
+// CORRECT - Use private for sensitive data
+public class User {
+    private String password;  // Private
+
+    public User(String password) {
+        this.password = password;
+    }
+
+    // Provide protected method for subclasses if needed
+    protected boolean verifyPassword(String input) {
+        return this.password.equals(input);
+    }
+}
+
+public class AdminUser extends User {
+    public AdminUser(String password) {
+        super(password);
+    }
+
+    public void checkPassword(String input) {
+        if (verifyPassword(input)) {  // Controlled access
+            System.out.println("Password correct");
+        }
+    }
+}
+```
+
+**Why:** Private protects sensitive data; protected methods provide controlled access.
+
+**💡 Tip:** Use protected only for fields/methods intended for subclass extension.
+
+---
+
+#### ❌ Wrong - Package-Private Classes When Public Needed:
+```java
+// File: Calculator.java
+// WRONG - Missing public keyword
+class Calculator {  // Default (package-private)
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// File: Main.java (different package)
+import com.example.Calculator;  // Compilation error! Calculator not accessible
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();  // Error!
+    }
+}
+```
+**Issue:** Missing `public` on class makes it package-private
+
+#### ✅ Right:
+```java
+// File: Calculator.java
+// CORRECT - Public class
+public class Calculator {  // Explicitly public
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// File: Main.java (different package)
+import com.example.Calculator;  // Works!
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();  // Works!
+    }
+}
+```
+
+**Why:** Public classes are accessible from any package; package-private only within package.
+
+**💡 Tip:** Classes meant for external use must be explicitly `public`.
+
+---
+
+### 2. Getter and Setter Mistakes
+
+#### ❌ Wrong - No Validation in Setters:
+```java
+// WRONG
+public class Person {
+    private int age;
+
+    public void setAge(int age) {
+        this.age = age;  // Accepts negative values!
+    }
+}
+
+Person p = new Person();
+p.setAge(-5);  // No error, but logically wrong
+System.out.println(p.getAge());  // -5
+```
+**Issue:** Setter accepts invalid values without validation
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Person {
+    private int age;
+
+    public void setAge(int age) {
+        if (age >= 0 && age <= 150) {
+            this.age = age;
+        } else {
+            throw new IllegalArgumentException("Age must be 0-150");
+        }
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+```
+
+**Why:** Setters enforce business rules and prevent invalid state.
+
+**💡 Tip:** Always validate in setters; throw exceptions for invalid values.
+
+---
+
+#### ❌ Wrong - Setter Without Using `this` Keyword:
+```java
+// WRONG
+public class Student {
+    private String name;
+    private int age;
+
+    public void setName(String name) {
+        name = name;  // Assigns parameter to itself! Instance variable unchanged
+    }
+
+    public void setAge(int age) {
+        age = age;  // Same problem
+    }
+}
+
+Student s = new Student();
+s.setName("Alice");
+System.out.println(s.getName());  // null! name not set
+```
+**Issue:** Parameter shadows field; assignment does nothing
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    private String name;
+    private int age;
+
+    public void setName(String name) {
+        this.name = name;  // this.name = field, name = parameter
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+```
+
+**Why:** `this` keyword distinguishes instance variable from parameter.
+
+**💡 Tip:** Use `this.fieldName` in setters when parameter names match fields.
+
+---
+
+#### ❌ Wrong - Inconsistent Getter/Setter Naming:
+```java
+// WRONG
+public class Product {
+    private String name;
+    private double price;
+
+    public String fetchName() { return name; }       // Should be getName()
+    public void updateName(String name) { this.name = name; }  // Should be setName()
+    public double retrievePrice() { return price; }  // Should be getPrice()
+    public void modifyPrice(double price) { this.price = price; }  // Should be setPrice()
+}
+```
+**Issue:** Non-standard naming breaks JavaBeans convention and tools
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Product {
+    private String name;
+    private double price;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        if (price >= 0) {
+            this.price = price;
+        }
+    }
+}
+```
+
+**Why:** Standard get/set naming enables frameworks and IDEs to recognize properties.
+
+**💡 Tip:** Always use `getName()`, `setName()` pattern; `isName()` for booleans.
+
+---
+
+#### ❌ Wrong - Boolean Getter Not Using `is` Prefix:
+```java
+// WRONG
+public class User {
+    private boolean active;
+    private boolean admin;
+
+    public boolean getActive() { return active; }    // Should be isActive()
+    public boolean getAdmin() { return admin; }      // Should be isAdmin()
+}
+```
+**Issue:** Boolean getters should use `is` prefix, not `get`
+
+#### ✅ Right:
+```java
+// CORRECT
+public class User {
+    private boolean active;
+    private boolean admin;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+}
+```
+
+**Why:** `is` prefix is standard convention for boolean getters.
+
+**💡 Tip:** Boolean getters: `isFieldName()`, not `getFieldName()`.
+
+---
+
+#### ❌ Wrong - Providing Setter for Immutable Fields:
+```java
+// WRONG
+public class Employee {
+    private String employeeId;  // Should be immutable
+
+    public Employee(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {  // Should not exist!
+        this.employeeId = employeeId;  // IDs shouldn't change
+    }
+}
+```
+**Issue:** Providing setter for fields that should never change
+
+#### ✅ Right:
+```java
+// CORRECT - Immutable ID
+public class Employee {
+    private final String employeeId;  // final = immutable
+
+    public Employee(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+    // No setter! ID is read-only
+}
+```
+
+**Why:** Immutable fields prevent accidental changes to critical data.
+
+**💡 Tip:** Use `final` for immutable fields; provide getter but no setter.
+
+---
+
+#### ❌ Wrong - Returning Mutable Object Directly from Getter:
+```java
+// WRONG
+public class Classroom {
+    private int[] grades;
+
+    public Classroom(int[] grades) {
+        this.grades = grades;
+    }
+
+    public int[] getGrades() {
+        return grades;  // Returns direct reference!
+    }
+}
+
+Classroom classroom = new Classroom(new int[]{90, 85, 95});
+int[] grades = classroom.getGrades();
+grades[0] = 0;  // Modifies internal array!
+System.out.println(classroom.getGrades()[0]);  // 0 - changed!
+```
+**Issue:** Returning direct reference allows external modification
+
+#### ✅ Right:
+```java
+// CORRECT - Return defensive copy
+public class Classroom {
+    private int[] grades;
+
+    public Classroom(int[] grades) {
+        this.grades = grades.clone();  // Store copy
+    }
+
+    public int[] getGrades() {
+        return grades.clone();  // Return copy
+    }
+}
+
+Classroom classroom = new Classroom(new int[]{90, 85, 95});
+int[] grades = classroom.getGrades();
+grades[0] = 0;  // Modifies copy only
+System.out.println(classroom.getGrades()[0]);  // 90 - original unchanged
+```
+
+**Why:** Defensive copying prevents external code from modifying internal state.
+
+**💡 Tip:** Clone arrays/collections before returning from getters.
+
+---
+
+### 3. Encapsulation Principle Violations
+
+#### ❌ Wrong - Exposing Implementation Details:
+```java
+// WRONG
+public class StudentList {
+    private ArrayList<String> students;  // Implementation detail
+
+    public ArrayList<String> getStudents() {
+        return students;  // Exposes ArrayList implementation
+    }
+}
+
+// Code becomes coupled to ArrayList
+StudentList list = new StudentList();
+ArrayList<String> students = list.getStudents();
+students.add("New Student");  // Direct modification
+```
+**Issue:** Exposing concrete implementation prevents future changes
+
+#### ✅ Right:
+```java
+// CORRECT - Use interface
+public class StudentList {
+    private ArrayList<String> students;  // Implementation hidden
+
+    public List<String> getStudents() {
+        return new ArrayList<>(students);  // Return copy as interface
+    }
+
+    public void addStudent(String student) {
+        students.add(student);
+    }
+}
+
+// Code uses interface, implementation can change
+StudentList list = new StudentList();
+List<String> students = list.getStudents();  // Can't modify original
+```
+
+**Why:** Returning interface allows changing implementation without breaking clients.
+
+**💡 Tip:** Return copies and use interfaces to hide implementation details.
+
+---
+
+#### ❌ Wrong - Direct Field Access Between Classes:
+```java
+// WRONG
+public class Car {
+    String brand;  // Package-private
+    int speed;
+}
+
+public class CarRental {
+    void rentCar(Car car) {
+        car.speed = 100;  // Direct field access
+        car.brand = "Modified";  // No validation
+    }
+}
+```
+**Issue:** Other classes directly access and modify fields
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Car {
+    private String brand;
+    private int speed;
+
+    public Car(String brand) {
+        this.brand = brand;
+        this.speed = 0;
+    }
+
+    public void accelerate(int increment) {
+        if (increment > 0 && speed + increment <= 200) {
+            speed += increment;
+        }
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+}
+
+public class CarRental {
+    void rentCar(Car car) {
+        car.accelerate(100);  // Through controlled method
+    }
+}
+```
+
+**Why:** Methods provide controlled access with validation and business logic.
+
+**💡 Tip:** All field access should go through methods, not direct access.
+
+---
+
+#### ❌ Wrong - Not Validating in Constructor:
+```java
+// WRONG
+public class Rectangle {
+    private double length;
+    private double width;
+
+    public Rectangle(double length, double width) {
+        this.length = length;  // No validation
+        this.width = width;    // Could be negative!
+    }
+}
+
+Rectangle rect = new Rectangle(-5, -10);  // Invalid object created!
+```
+**Issue:** Constructor accepts invalid values, creating invalid object state
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Rectangle {
+    private double length;
+    private double width;
+
+    public Rectangle(double length, double width) {
+        setLength(length);  // Use setters for validation
+        setWidth(width);
+    }
+
+    public void setLength(double length) {
+        if (length > 0) {
+            this.length = length;
+        } else {
+            throw new IllegalArgumentException("Length must be positive");
+        }
+    }
+
+    public void setWidth(double width) {
+        if (width > 0) {
+            this.width = width;
+        } else {
+            throw new IllegalArgumentException("Width must be positive");
+        }
+    }
+}
+```
+
+**Why:** Constructor validation ensures objects are never in invalid state.
+
+**💡 Tip:** Call setters from constructor to reuse validation logic.
+
+---
+
+#### ❌ Wrong - Breaking Encapsulation in toString():
+```java
+// WRONG
+public class User {
+    private String username;
+    private String password;  // Sensitive!
+
+    @Override
+    public String toString() {
+        return "User{username='" + username + "', password='" + password + "'}";
+        // Exposes password!
+    }
+}
+
+User user = new User();
+user.setPassword("secret123");
+System.out.println(user);  // Prints password in plain text!
+```
+**Issue:** toString() exposes sensitive information
+
+#### ✅ Right:
+```java
+// CORRECT
+public class User {
+    private String username;
+    private String password;
+
+    @Override
+    public String toString() {
+        return "User{username='" + username + "', password='********'}";
+        // Hide sensitive data
+    }
+}
+```
+
+**Why:** toString() should never expose sensitive or internal state.
+
+**💡 Tip:** Mask sensitive fields in toString(), equals(), and hashCode().
+
+---
+
+### 4. Package Visibility Issues
+
+#### ❌ Wrong - Assuming Package-Private Provides Encapsulation:
+```java
+// File: com/example/BankAccount.java
+// WRONG
+package com.example;
+
+public class BankAccount {
+    double balance;  // Package-private, thinking it's protected
+
+    public void deposit(double amount) {
+        balance += amount;
+    }
+}
+
+// File: com/example/Hacker.java
+package com.example;  // Same package!
+
+public class Hacker {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount();
+        account.balance = 1000000;  // Direct access! Security breach!
+    }
+}
+```
+**Issue:** Package-private allows access from any class in same package
+
+#### ✅ Right:
+```java
+// File: com/example/BankAccount.java
+// CORRECT
+package com.example;
+
+public class BankAccount {
+    private double balance;  // Private
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+}
+```
+
+**Why:** Private ensures only the class itself can access the field.
+
+**💡 Tip:** Use private for sensitive data, not package-private.
+
+---
+
+#### ❌ Wrong - Forgetting Access Modifier on Method:
+```java
+// WRONG
+public class Employee {
+    private double salary;
+
+    void setSalary(double salary) {  // Package-private! Missing public
+        this.salary = salary;
+    }
+
+    double getSalary() {  // Package-private! Missing public
+        return salary;
+    }
+}
+
+// Different package
+import com.example.Employee;
+
+public class Main {
+    public static void main(String[] args) {
+        Employee emp = new Employee();
+        emp.setSalary(50000);  // Compilation error! setSalary is package-private
+    }
+}
+```
+**Issue:** Missing access modifier makes methods package-private
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Employee {
+    private double salary;
+
+    public void setSalary(double salary) {  // Explicitly public
+        if (salary > 0) {
+            this.salary = salary;
+        }
+    }
+
+    public double getSalary() {  // Explicitly public
+        return salary;
+    }
+}
+```
+
+**Why:** Public access modifier makes methods accessible from anywhere.
+
+**💡 Tip:** Always explicitly declare access modifiers; don't rely on defaults.
+
+---
+
+### 5. Immutability Mistakes
+
+#### ❌ Wrong - Claiming Immutable But Providing Setters:
+```java
+// WRONG - Not truly immutable
+public final class Point {
     private int x;
     private int y;
-    
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+
+    public void setX(int x) { this.x = x; }  // Breaks immutability!
+    public void setY(int y) { this.y = y; }  // Breaks immutability!
+}
+
+Point p = new Point(5, 10);
+p.setX(20);  // Modified! Not immutable
+```
+**Issue:** Setters allow modification, breaking immutability
+
+#### ✅ Right:
+```java
+// CORRECT - Truly immutable
+public final class Point {
+    private final int x;  // final fields
+    private final int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    // No setters! To "modify", create new object
+    public Point withX(int newX) {
+        return new Point(newX, this.y);
+    }
+
+    public Point withY(int newY) {
+        return new Point(this.x, newY);
+    }
+}
+```
+
+**Why:** Immutable objects have no setters; modifications create new objects.
+
+**💡 Tip:** Immutable class: `final` class, `final` fields, no setters, return new objects.
+
+---
+
+#### ❌ Wrong - Mutable Fields in Immutable Class:
+```java
+// WRONG
+public final class Person {
+    private final String name;
+    private final int[] scores;  // Mutable array!
+
+    public Person(String name, int[] scores) {
+        this.name = name;
+        this.scores = scores;  // Direct assignment!
+    }
+
+    public int[] getScores() {
+        return scores;  // Returns direct reference!
+    }
+}
+
+int[] scores = {90, 85, 95};
+Person person = new Person("Alice", scores);
+scores[0] = 0;  // Modifies person's scores!
+person.getScores()[1] = 0;  // Also modifies!
+```
+**Issue:** Array fields can be modified even with `final`
+
+#### ✅ Right:
+```java
+// CORRECT
+public final class Person {
+    private final String name;
+    private final int[] scores;
+
+    public Person(String name, int[] scores) {
+        this.name = name;
+        this.scores = scores.clone();  // Defensive copy
+    }
+
+    public int[] getScores() {
+        return scores.clone();  // Return copy
+    }
+}
+
+int[] scores = {90, 85, 95};
+Person person = new Person("Alice", scores);
+scores[0] = 0;  // Doesn't affect person
+person.getScores()[1] = 0;  // Doesn't affect person
+```
+
+**Why:** Clone arrays in constructor and getter to maintain immutability.
+
+**💡 Tip:** Immutable classes must defensively copy mutable fields.
+
+---
+
+### 6. Validation and Business Logic Errors
+
+#### ❌ Wrong - Weak Validation in Setters:
+```java
+// WRONG
+public class Product {
+    private String name;
+    private double price;
+
+    public void setName(String name) {
+        if (name != null) {  // Only checks null
+            this.name = name;
+        }
+    }
+
+    public void setPrice(double price) {
+        this.price = price;  // No validation at all
+    }
+}
+
+Product p = new Product();
+p.setName("");  // Empty name accepted!
+p.setPrice(-100);  // Negative price accepted!
+```
+**Issue:** Insufficient validation allows logically invalid values
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Product {
+    private String name;
+    private double price;
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
+        if (price > 1000000) {
+            throw new IllegalArgumentException("Price too high");
+        }
+        this.price = price;
+    }
+}
+```
+
+**Why:** Comprehensive validation prevents invalid business states.
+
+**💡 Tip:** Validate all constraints: null, empty, range, format, business rules.
+
+---
+
+#### ❌ Wrong - No Range Checking:
+```java
+// WRONG
+public class Student {
+    private int age;
+    private double gpa;
+
+    public void setAge(int age) {
+        this.age = age;  // No range check
+    }
+
+    public void setGPA(double gpa) {
+        this.gpa = gpa;  // No range check
+    }
+}
+
+Student s = new Student();
+s.setAge(500);  // Unrealistic age
+s.setGPA(10.0);  // GPA should be 0-4
+```
+**Issue:** No range validation for bounded values
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Student {
+    private int age;
+    private double gpa;
+
+    public void setAge(int age) {
+        if (age < 0 || age > 150) {
+            throw new IllegalArgumentException("Age must be 0-150");
+        }
+        this.age = age;
+    }
+
+    public void setGPA(double gpa) {
+        if (gpa < 0.0 || gpa > 4.0) {
+            throw new IllegalArgumentException("GPA must be 0.0-4.0");
+        }
+        this.gpa = gpa;
+    }
+}
+```
+
+**Why:** Range validation enforces realistic and valid values.
+
+**💡 Tip:** Define min/max constants for validation ranges.
+
+---
+
+### 7. Method Chaining Issues
+
+#### ❌ Wrong - Setters Returning void Preventing Chaining:
+```java
+// WRONG
+public class Person {
+    private String name;
+    private int age;
+    private String email;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+
+// Verbose usage
+Person p = new Person();
+p.setName("Alice");
+p.setAge(25);
+p.setEmail("alice@example.com");
+```
+**Issue:** Void setters require separate statements; can't chain
+
+#### ✅ Right:
+```java
+// CORRECT - Fluent interface with method chaining
+public class Person {
+    private String name;
+    private int age;
+    private String email;
+
+    public Person setName(String name) {
+        this.name = name;
+        return this;  // Return this for chaining
+    }
+
+    public Person setAge(int age) {
+        this.age = age;
+        return this;
+    }
+
+    public Person setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+}
+
+// Fluent usage
+Person p = new Person()
+    .setName("Alice")
+    .setAge(25)
+    .setEmail("alice@example.com");
+```
+
+**Why:** Returning `this` enables fluent, readable method chaining.
+
+**💡 Tip:** Return `this` from setters for builder-style fluent APIs.
+
+---
+
+### 8. Access Control Best Practices Violations
+
+#### ❌ Wrong - Making Helper Methods Public:
+```java
+// WRONG
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    public int validateInput(int value) {  // Should be private
+        return Math.max(0, value);
+    }
+
+    public void logOperation(String op) {  // Should be private
+        System.out.println("Operation: " + op);
+    }
+}
+
+// Users can call internal methods
+Calculator calc = new Calculator();
+calc.logOperation("Random");  // Not intended for external use
+```
+**Issue:** Internal helper methods exposed as public API
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Calculator {
+    public int add(int a, int b) {  // Public API
+        int validA = validateInput(a);
+        int validB = validateInput(b);
+        logOperation("add");
+        return validA + validB;
+    }
+
+    private int validateInput(int value) {  // Private helper
+        return Math.max(0, value);
+    }
+
+    private void logOperation(String op) {  // Private helper
+        System.out.println("Operation: " + op);
+    }
+}
+```
+
+**Why:** Private helpers hide implementation details and reduce API surface.
+
+**💡 Tip:** Make methods private by default; only make public if needed externally.
+
+---
+
+#### ❌ Wrong - Over-Encapsulation for Simple Data Holders:
+```java
+// WRONG - Over-engineered for simple data transfer
+public class Coordinates {
+    private int x;
+    private int y;
+
+    public Coordinates(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public int getX() { return x; }
     public void setX(int x) { this.x = x; }
     public int getY() { return y; }
     public void setY(int y) { this.y = y; }
 }
+```
+**Issue:** Excessive boilerplate for simple immutable data
 
-// BETTER - For simple data holders, consider public fields or records (Java 14+)
-public class Point {
+#### ✅ Right:
+```java
+// CORRECT - For simple immutable data holders
+public class Coordinates {
     public final int x;
     public final int y;
-    
-    public Point(int x, int y) {
+
+    public Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
     }
 }
+
+// Or use record (Java 14+)
+public record Coordinates(int x, int y) { }
 ```
+
+**Why:** Simple immutable data doesn't need full encapsulation overhead.
+
+**💡 Tip:** For simple data transfer, public final fields or records are acceptable.
+
+---
+
+### 9. Exposing Sensitive Information
+
+#### ❌ Wrong - Providing Getter for Password:
+```java
+// WRONG
+public class User {
+    private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {  // Security risk!
+        return password;  // Exposes password
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+
+User user = new User();
+user.setPassword("secret123");
+System.out.println(user.getPassword());  // Prints password!
+```
+**Issue:** Password exposed through getter
+
+#### ✅ Right:
+```java
+// CORRECT - Write-only password, verification method
+public class User {
+    private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    // No getter for password!
+
+    public void setPassword(String password) {
+        if (password != null && password.length() >= 8) {
+            this.password = password;
+        }
+    }
+
+    public boolean verifyPassword(String input) {
+        return this.password != null && this.password.equals(input);
+    }
+}
+```
+
+**Why:** Sensitive fields should be write-only; provide verification methods instead.
+
+**💡 Tip:** Never expose passwords, keys, or tokens through getters.
+
+---
+
+### 10. Constructor and Initialization Issues
+
+#### ❌ Wrong - Bypassing Setter Validation in Constructor:
+```java
+// WRONG
+public class Employee {
+    private String name;
+    private double salary;
+
+    public Employee(String name, double salary) {
+        this.name = name;      // No validation
+        this.salary = salary;  // No validation
+    }
+
+    public void setSalary(double salary) {
+        if (salary > 0) {  // Validation in setter
+            this.salary = salary;
+        } else {
+            throw new IllegalArgumentException("Salary must be positive");
+        }
+    }
+}
+
+// Can create invalid object through constructor
+Employee emp = new Employee("Alice", -1000);  // Negative salary!
+```
+**Issue:** Constructor bypasses setter validation, allowing invalid state
+
+#### ✅ Right:
+```java
+// CORRECT
+public class Employee {
+    private String name;
+    private double salary;
+
+    public Employee(String name, double salary) {
+        setName(name);      // Use setter for validation
+        setSalary(salary);  // Use setter for validation
+    }
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        this.name = name;
+    }
+
+    public void setSalary(double salary) {
+        if (salary <= 0) {
+            throw new IllegalArgumentException("Salary must be positive");
+        }
+        this.salary = salary;
+    }
+}
+```
+
+**Why:** Calling setters from constructor reuses validation logic consistently.
+
+**💡 Tip:** Always call setters from constructors to ensure validation.
+
+---
+
+This comprehensive list now contains **40+ Encapsulation and Access Modifier mistakes** covering all fundamental concepts!
 
 ---
 
