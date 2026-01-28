@@ -383,6 +383,49 @@ t.start();
    t2.start();
    ```
 
+**Best Practices:**
+1. ✅ **Prefer Runnable over extending Thread**: Implement Runnable interface instead of extending Thread class for better flexibility and design.
+   - Why: Java supports single inheritance only. If you extend Thread, you can't extend any other class. Also, implementing Runnable separates the task from the thread execution mechanism.
+   - How: Create a class implementing Runnable, then pass instance to Thread constructor: `Thread t = new Thread(new MyRunnable());`
+   - Example: Use lambda for simple tasks: `new Thread(() -> doWork()).start();`
+
+2. ✅ **Always use try-finally with quit()**: Ensure browser cleanup even if test fails.
+   - Why: Prevents resource leaks and zombie browser processes. Without proper cleanup, you'll accumulate running browser instances consuming memory and system resources.
+   - How: Wrap all thread code in try-finally block and call cleanup in finally block.
+   - Example:
+     ```java
+     Thread t = new Thread(() -> {
+         try {
+             // Thread work
+         } finally {
+             // Cleanup resources
+         }
+     });
+     ```
+
+3. ✅ **Give threads meaningful names**: Use descriptive thread names for debugging and monitoring.
+   - Why: Makes debugging and logging much easier. When viewing thread dumps or logs, you can instantly identify which thread is doing what instead of seeing generic Thread-0, Thread-1.
+   - How: Use `thread.setName("meaningful-name")` or pass name in constructor.
+   - Example: `Thread t = new Thread(runnable, "DataProcessor-1");`
+
+4. ✅ **Handle InterruptedException properly**: Always restore interrupt status or exit gracefully.
+   - Why: Interruption is the cooperative cancellation mechanism in Java. If you swallow the exception, higher-level code can't know the thread was interrupted, breaking the cancellation protocol.
+   - How: Catch InterruptedException, restore status with `Thread.currentThread().interrupt()`, then exit or handle appropriately.
+   - Example:
+     ```java
+     try {
+         Thread.sleep(1000);
+     } catch (InterruptedException e) {
+         Thread.currentThread().interrupt(); // Restore status
+         return; // Exit gracefully
+     }
+     ```
+
+5. ✅ **Use join() to wait for thread completion**: Don't use busy-wait loops.
+   - Why: `join()` is efficient and blocks the calling thread until the target thread completes. Busy-waiting with `isAlive()` wastes CPU cycles and is error-prone.
+   - How: After starting threads, call `thread.join()` to wait for completion before accessing results.
+   - Example: `thread1.start(); thread1.join(); // Wait for completion`
+
 **🎯 Challenge:**
 1. Create 5 threads that count simultaneously
 2. Implement thread that downloads data (simulated)
@@ -728,6 +771,32 @@ join()         // Wait for another thread
        return; // Exit cleanly
    }
    ```
+
+**Best Practices:**
+1. ✅ **Never poll thread state for control flow**: Don't use getState() to make program decisions.
+   - Why: Thread states change asynchronously and checking state creates race conditions. By the time you act on a state check, the state may have already changed.
+   - How: Use proper synchronization primitives (locks, semaphores, CountDownLatch) instead of polling thread states.
+   - Example: Use `thread.join()` to wait for completion instead of checking `thread.getState() == TERMINATED`
+
+2. ✅ **Understand state transition triggers**: Know what causes threads to change states.
+   - Why: Understanding state transitions helps you write correct concurrent code and debug threading issues effectively.
+   - How: Learn that `start()` moves from NEW to RUNNABLE, `sleep()`/`wait()` move to WAITING/TIMED_WAITING, finishing `run()` moves to TERMINATED.
+   - Example: Document expected state flows in complex thread coordination scenarios.
+
+3. ✅ **Use thread.join() for coordination**: Wait for thread completion properly.
+   - Why: `join()` is the designed mechanism for waiting for thread completion. It's efficient and doesn't waste CPU cycles unlike busy-waiting.
+   - How: Call `join()` after `start()` when you need to wait for results.
+   - Example: `thread.start(); thread.join(); // Now safe to access thread results`
+
+4. ✅ **Monitor threads in production carefully**: Use thread dumps and monitoring tools.
+   - Why: Thread state information is valuable for debugging deadlocks, performance issues, and understanding system behavior under load.
+   - How: Use jstack for thread dumps, JMX for monitoring, or APM tools that show thread states.
+   - Example: Take thread dumps when system hangs to identify stuck threads and deadlocks.
+
+5. ✅ **Don't rely on thread priorities**: Priorities are platform-dependent hints only.
+   - Why: Thread priorities are not guaranteed to affect execution order. Different platforms implement priorities differently, and some may ignore them entirely.
+   - How: Use priority only as optimization hint. Never depend on priority for correctness.
+   - Example: Use explicit synchronization (locks, barriers) for ordering, not priorities.
 
 **🎯 Challenge:**
 1. Create thread state visualizer

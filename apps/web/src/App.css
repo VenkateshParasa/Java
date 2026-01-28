@@ -30,6 +30,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  position: relative;
 }
 
 /* Menu Toggle Button */
@@ -44,6 +45,9 @@
   justify-content: center;
   border-radius: 4px;
   transition: background 0.3s;
+  position: absolute;
+  left: 0;
+  z-index: 10;
 }
 
 .menu-toggle-btn:hover {
@@ -58,6 +62,7 @@
 .logo {
   text-decoration: none;
   color: white;
+  margin-left: 3rem;
 }
 
 .logo h1 {

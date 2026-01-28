@@ -276,6 +276,60 @@ reference.method();  // Calls ChildClass version!
    }
    ```
 
+**Best Practices:**
+
+1. **Always Use @Override Annotation**: Mark overridden methods with @Override to catch errors at compile time.
+   - Why: Prevents mistakes like typos or incorrect signatures that would create new methods instead of overriding.
+   - How: Add @Override before any method that overrides a parent method.
+   - Example:
+   ```java
+   @Override
+   void makeSound() {  // Compiler verifies this actually overrides
+       System.out.println("Woof!");
+   }
+   ```
+
+2. **Design for Polymorphism from the Start**: When creating class hierarchies, identify common behaviors and place them in the parent class.
+   - Why: Enables writing generic code that works with all subtypes, making your system more flexible and maintainable.
+   - How: Identify methods that all subclasses should have, define them in the parent, and override in children.
+   - Example: All animals should have makeSound(), eat(), sleep() methods defined in Animal class.
+
+3. **Prefer Parent Type for Variables and Parameters**: Use the most general type appropriate for your needs.
+   - Why: Maximizes flexibility - your code works with current and future subtypes without modification.
+   - How: Declare variables and parameters as the parent type: `Animal animal` instead of `Dog dog`.
+   - Example:
+   ```java
+   // Flexible - works with any Animal subtype
+   void processAnimal(Animal animal) {
+       animal.makeSound();
+   }
+   ```
+
+4. **Use Polymorphic Collections for Mixed Types**: Store related objects in arrays or collections of the parent type.
+   - Why: Simplifies code by allowing uniform processing of different types through loops.
+   - How: Create arrays/lists of parent type: `Animal[] animals` can hold Dog, Cat, Bird instances.
+   - Example:
+   ```java
+   Animal[] zoo = {new Dog("Buddy"), new Cat("Whiskers"), new Bird("Tweety")};
+   for (Animal animal : zoo) {
+       animal.makeSound();  // Each calls its own implementation
+   }
+   ```
+
+5. **Document Polymorphic Behavior**: Clearly document which methods are meant to be overridden and what the expected behavior is.
+   - Why: Helps future developers understand the design intent and properly implement subclasses.
+   - How: Add JavaDoc comments explaining the contract of overridable methods.
+   - Example:
+   ```java
+   /**
+    * Makes the animal's characteristic sound.
+    * Subclasses should override to provide species-specific sounds.
+    */
+   void makeSound() {
+       System.out.println("Generic animal sound");
+   }
+   ```
+
 **🎯 Challenge:**
 1. Add more animal types (Fish, Rabbit)
 2. Create a method that accepts Animal parameter
@@ -652,6 +706,72 @@ Circle c = (Circle) shape;  // Might throw ClassCastException!
    Shape shape = null;
    if (shape instanceof Circle) { // Returns false, no NPE
        // This won't execute
+   }
+   ```
+
+**Best Practices:**
+
+1. **Always Check with instanceof Before Downcasting**: Never downcast without verifying the object type first.
+   - Why: Prevents ClassCastException at runtime and makes code more robust and maintainable.
+   - How: Use instanceof to check the type, then perform the cast inside the if block.
+   - Example:
+   ```java
+   if (shape instanceof Circle) {
+       Circle circle = (Circle) shape;
+       circle.roll();  // Safe to call Circle-specific methods
+   }
+   ```
+
+2. **Use Java 14+ Pattern Matching for instanceof**: Simplify type checking and casting in one step (when using Java 14+).
+   - Why: Reduces boilerplate code and eliminates the redundant cast operation, making code cleaner.
+   - How: Combine instanceof check with automatic variable declaration.
+   - Example:
+   ```java
+   // Java 14+ Pattern Matching
+   if (shape instanceof Circle circle) {
+       circle.roll();  // No explicit cast needed
+   }
+   ```
+
+3. **Check Specific Types Before General Types**: Order instanceof checks from most specific to most general.
+   - Why: Parent type checks will match child objects too, so checking parent first prevents child-specific code from executing.
+   - How: Place child class checks before parent class checks in if-else chains.
+   - Example:
+   ```java
+   if (shape instanceof Circle) {
+       // Handle Circle
+   } else if (shape instanceof Rectangle) {
+       // Handle Rectangle
+   } else if (shape instanceof Shape) {
+       // Handle generic Shape
+   }
+   ```
+
+4. **Minimize Downcasting Through Better Design**: Rely on polymorphism instead of excessive downcasting.
+   - Why: Frequent downcasting suggests the design might need improvement. Polymorphism is usually a better solution.
+   - How: Define common methods in parent class that children override, rather than downcasting to access child-specific methods.
+   - Example:
+   ```java
+   // Instead of downcasting everywhere:
+   if (shape instanceof Circle) {
+       ((Circle) shape).roll();
+   }
+
+   // Better: Define common behavior polymorphically:
+   abstract class Shape {
+       abstract void performAction();  // Each type implements this
+   }
+   ```
+
+5. **Use Upcasting for Flexibility**: Leverage automatic upcasting to write flexible, reusable code.
+   - Why: Upcasting is automatic and safe, enabling you to write methods that work with any subtype.
+   - How: Accept parent types as parameters and return parent types from methods when possible.
+   - Example:
+   ```java
+   // Flexible method signature using upcast
+   void displayShapeInfo(Shape shape) {  // Works with Circle, Rectangle, Triangle, etc.
+       shape.display();
+       System.out.println("Area: " + shape.calculateArea());
    }
    ```
 
@@ -1076,6 +1196,54 @@ if (emp instanceof Manager) {  // false, no NullPointerException
    - Why: instanceof works with interfaces too - it checks if an object implements the interface.
    - Fix: You can use instanceof to check interface implementation: `obj instanceof Serializable`
 
+**Best Practices:**
+
+1. **Use instanceof Sparingly**: Prefer polymorphism over type checking whenever possible.
+   - Why: Excessive instanceof checks indicate poor object-oriented design and violate the Open/Closed Principle.
+   - How: Design methods in parent class that children override instead of checking types and branching.
+   - Example:
+   ```java
+   // Avoid this pattern:
+   if (emp instanceof Manager) { processManager(...); }
+   else if (emp instanceof Developer) { processDeveloper(...); }
+
+   // Prefer this:
+   emp.performWork();  // Each type has its own implementation
+   ```
+
+2. **Combine instanceof with Pattern Matching (Java 14+)**: Use modern Java features to reduce boilerplate.
+   - Why: Pattern matching eliminates redundant casting and makes code more concise and readable.
+   - How: Declare the variable directly in the instanceof check.
+   - Example:
+   ```java
+   if (emp instanceof Manager mgr) {
+       mgr.conductMeeting();  // No cast needed
+   }
+   ```
+
+3. **Handle Null Cases Explicitly**: Don't rely on instanceof returning false for null in critical logic.
+   - Why: While instanceof safely returns false for null, explicit null checks make intent clearer and prevent logic errors.
+   - How: Check for null separately when it's a meaningful case for your logic.
+   - Example:
+   ```java
+   if (emp == null) {
+       return "No employee";
+   } else if (emp instanceof Manager) {
+       return "Manager: " + emp.name;
+   }
+   ```
+
+4. **Use instanceof for Safe Downcasting Only**: Limit instanceof use to scenarios where you genuinely need type-specific behavior.
+   - Why: Keeps code clean and maintainable while still allowing necessary type-specific operations.
+   - How: Use instanceof when you need to access child-specific fields or methods that can't be polymorphic.
+   - Example:
+   ```java
+   // Legitimate use: accessing type-specific data
+   if (emp instanceof Manager mgr) {
+       System.out.println("Team size: " + mgr.teamSize);
+   }
+   ```
+
 **🎯 Challenge:**
 1. Add an `Intern` class that extends `Employee`
 2. Create a method to promote employees
@@ -1464,6 +1632,63 @@ Calling getPaymentMethod() on each:
    - Why: The reference type only determines what methods you can CALL (compile-time). The object type determines what actually EXECUTES (runtime).
    - Fix: Reference type = compile-time checking. Object type = runtime execution.
 
+**Best Practices:**
+
+1. **Design Overridable Methods Intentionally**: Mark methods as final if they should not be overridden, leave them open if they should be.
+   - Why: Prevents accidental overriding that could break parent class behavior and makes design intent clear.
+   - How: Use final keyword for methods that must not be overridden, document which methods are meant to be overridden.
+   - Example:
+   ```java
+   class Payment {
+       final void logTransaction() { }  // Cannot be overridden
+       void processPayment() { }         // Meant to be overridden
+   }
+   ```
+
+2. **Rely on Polymorphism for Extensibility**: Write code that depends on parent types to allow easy addition of new subtypes.
+   - Why: New payment types can be added without modifying existing code that processes payments.
+   - How: Accept parent type parameters and use polymorphic method calls.
+   - Example:
+   ```java
+   void processTransaction(Payment payment) {
+       payment.processPayment();  // Works with any Payment subtype
+       payment.displayReceipt();
+   }
+   ```
+
+3. **Use Consistent Method Signatures**: Ensure overridden methods have identical signatures (name, parameters, return type).
+   - Why: Dynamic dispatch requires exact signature match. Different signatures create new methods, not overrides.
+   - How: Always use @Override annotation to catch signature mismatches at compile time.
+   - Example:
+   ```java
+   @Override
+   double calculateFee() {  // Exact match with parent signature
+       return amount * 0.025;
+   }
+   ```
+
+4. **Understand Static vs Dynamic Binding**: Know which methods use dynamic dispatch and which don't.
+   - Why: Static, private, and final methods are bound at compile-time, not runtime.
+   - How: Remember that only regular instance methods use dynamic dispatch.
+   - Example:
+   ```java
+   // Uses dynamic dispatch (instance method):
+   payment.processPayment();
+
+   // Uses static binding (static method):
+   Payment.getServiceName();
+   ```
+
+5. **Test Polymorphic Behavior Explicitly**: Verify that overridden methods are called correctly through parent references.
+   - Why: Ensures polymorphism works as expected and catches design errors early.
+   - How: Create test cases with parent-type variables holding child objects.
+   - Example:
+   ```java
+   Payment payment = new CreditCardPayment(...);
+   // Verify it calls CreditCardPayment's version, not Payment's
+   assert payment.calculateFee() != payment.amount * 0.02;
+   ```
+
 **🎯 Challenge:**
 1. Add a `BankTransferPayment` class
 2. Implement refund functionality
@@ -1850,6 +2075,60 @@ Calling getType() on each vehicle:
    // Compiles but dangerous:
    Vehicle[] vehicles = new Car[5]; // Array covariance
    vehicles[0] = new Motorcycle(...); // ArrayStoreException at runtime!
+   ```
+
+**Best Practices:**
+
+1. **Use Parent Type for Collection Variables**: Declare arrays and lists with the most general applicable type.
+   - Why: Maximizes flexibility and allows storing multiple related types in one collection.
+   - How: Use `Vehicle[] vehicles` instead of `Car[] cars` when you need to handle multiple vehicle types.
+   - Example:
+   ```java
+   // Flexible design
+   Vehicle[] fleet = {
+       new Car(...),
+       new Motorcycle(...),
+       new Truck(...)
+   };
+   ```
+
+2. **Leverage Polymorphism for Batch Operations**: Process collections uniformly using polymorphic method calls.
+   - Why: Eliminates need for type checking in loops and makes code cleaner and more maintainable.
+   - How: Call parent class methods in loops; each object executes its own implementation.
+   - Example:
+   ```java
+   for (Vehicle vehicle : fleet) {
+       vehicle.start();  // Each type has its own start() implementation
+   }
+   ```
+
+3. **Prefer ArrayList Over Arrays for Type Safety**: Use generic collections instead of arrays when working with polymorphic types.
+   - Why: Generics provide compile-time type safety and avoid ArrayStoreException issues.
+   - How: Use `ArrayList<Vehicle>` instead of `Vehicle[]` for better type safety.
+   - Example:
+   ```java
+   ArrayList<Vehicle> vehicles = new ArrayList<>();
+   vehicles.add(new Car(...));       // Type-safe
+   vehicles.add(new Motorcycle(...)); // Type-safe
+   ```
+
+4. **Design Filter and Search Methods Generically**: Write utility methods that work with parent types.
+   - Why: These methods automatically work with all current and future subtypes.
+   - How: Accept and return parent type in method signatures.
+   - Example:
+   ```java
+   static Vehicle[] filterByYear(Vehicle[] vehicles, int year) {
+       // Works with Car, Motorcycle, Truck, etc.
+   }
+   ```
+
+5. **Document Collection Contents**: Clearly indicate what types of objects a collection holds.
+   - Why: Helps other developers understand the design and expected types in the collection.
+   - How: Use descriptive variable names and add comments for mixed-type collections.
+   - Example:
+   ```java
+   // Collection of different vehicle types for fleet management
+   Vehicle[] companyFleet = {...};
    ```
 
 **🎯 Challenge:**
@@ -2312,6 +2591,73 @@ TOTAL: $1176.34
    - Why: If you never intend to create direct instances of Product, make it abstract to prevent misuse.
    - Fix: Make base classes abstract when they're meant to be extended, not instantiated.
 
+**Best Practices:**
+
+1. **Use Abstract Classes for Common Base Types**: Define abstract base classes when you have shared behavior but no meaningful base instances.
+   - Why: Prevents creating instances of the base class while providing shared code for subclasses.
+   - How: Mark the class as abstract and define both abstract and concrete methods.
+   - Example:
+   ```java
+   abstract class Product {
+       // Concrete shared behavior
+       public double calculateTax() { return price * 0.08; }
+
+       // Abstract type-specific behavior
+       abstract double calculateShippingCost();
+   }
+   ```
+
+2. **Design Minimal but Complete Abstractions**: Keep abstract methods to the minimum needed for polymorphism.
+   - Why: Too many abstract methods make the class hard to extend; too few limit flexibility.
+   - How: Abstract only the methods that truly vary across subclasses.
+   - Example:
+   ```java
+   // Good balance: only 3 abstract methods for category-specific behavior
+   abstract class Product {
+       abstract String getCategory();
+       abstract double calculateShippingCost();
+       abstract void displayDetails();
+   }
+   ```
+
+3. **Provide Template Methods in Base Class**: Implement high-level algorithms in the base class that call abstract methods.
+   - Why: Ensures consistent behavior while allowing customization of specific steps.
+   - How: Create public methods that orchestrate calls to abstract/overridable methods.
+   - Example:
+   ```java
+   abstract class Product {
+       public double getFinalPrice() {
+           // Template method using abstract methods
+           return price + calculateTax() + calculateShippingCost();
+       }
+       abstract double calculateShippingCost();
+   }
+   ```
+
+4. **Use Protected Access for Shared Fields**: Make fields protected so subclasses can access them directly.
+   - Why: Balances encapsulation with subclass needs - protected fields are hidden from outside but accessible to children.
+   - How: Declare shared fields as protected in the abstract base class.
+   - Example:
+   ```java
+   abstract class Product {
+       protected String productId;
+       protected double price;
+       protected int stock;
+   }
+   ```
+
+5. **Document the Contract**: Clearly document what each abstract method should do.
+   - Why: Helps developers implementing subclasses understand expectations and requirements.
+   - How: Use JavaDoc comments to explain the purpose and requirements of abstract methods.
+   - Example:
+   ```java
+   /**
+    * Calculate shipping cost based on product type and weight.
+    * @return shipping cost in dollars
+    */
+   abstract double calculateShippingCost();
+   ```
+
 **🎯 Challenge:**
 1. Add a `Food` product category
 2. Implement discount system
@@ -2668,6 +3014,145 @@ CONCRETE CLASS:
 - [ ] Know concrete classes must implement abstract methods
 - [ ] See benefits of abstraction
 
+**Best Practices:**
+
+1. **Use Abstract Classes for Shared Implementation**: Choose abstract classes over interfaces when you have common code to share.
+   - Why: Abstract classes can have both abstract methods (contract) and concrete methods (shared behavior).
+   - How: Place common logic in concrete methods, force customization with abstract methods.
+   - Example:
+   ```java
+   abstract class Shape {
+       String color;  // Shared field
+       void displayColor() { }  // Shared behavior
+       abstract double calculateArea();  // Must be customized
+   }
+   ```
+
+2. **Make Intent Clear with Naming**: Use descriptive names that indicate the abstract nature or purpose.
+   - Why: Helps developers understand this is a base class not meant for direct instantiation.
+   - How: Use abstract base names like `Shape`, `Animal`, `Vehicle` rather than specific names.
+   - Example:
+   ```java
+   abstract class Shape { }  // Clear base class
+   class Circle extends Shape { }  // Clear concrete implementation
+   ```
+
+3. **Provide Constructors in Abstract Classes**: Include constructors to initialize shared fields.
+   - Why: Ensures all subclasses properly initialize common state defined in the abstract class.
+   - How: Create protected or public constructors that subclasses call via super().
+   - Example:
+   ```java
+   abstract class Shape {
+       protected String color;
+       Shape(String color) {  // Constructor for shared fields
+           this.color = color;
+       }
+   }
+   ```
+
+4. **Balance Abstract and Concrete Methods**: Don't make everything abstract - provide concrete methods for common behavior.
+   - Why: Reduces code duplication and makes subclasses easier to implement.
+   - How: Only make methods abstract when implementation truly varies across subclasses.
+   - Example:
+   ```java
+   abstract class Shape {
+       void displayColor() { }  // Concrete - same for all
+       abstract double calculateArea();  // Abstract - varies per shape
+   }
+   ```
+
+5. **Use Final with Concrete Methods When Appropriate**: Mark non-overridable methods as final.
+   - Why: Prevents subclasses from breaking expected behavior by overriding critical methods.
+   - How: Use final keyword on methods that must not be changed.
+   - Example:
+   ```java
+   abstract class Shape {
+       final void logCreation() {  // Cannot be overridden
+           System.out.println("Shape created");
+       }
+   }
+   ```
+
+**Common Mistakes:**
+
+1. ❌ **Trying to instantiate an abstract class**: Attempting to create objects using `new Shape("Red")` directly.
+   - Why: Abstract classes are incomplete blueprints - they may have abstract methods without implementations, so Java prohibits their instantiation.
+   - Fix: Only instantiate concrete subclasses that implement all abstract methods.
+   ```java
+   // Wrong:
+   Shape shape = new Shape("Red"); // Compile error!
+
+   // Right:
+   Shape shape = new Circle("Red", 5.0); // Concrete class
+   ```
+
+2. ❌ **Forgetting to implement all abstract methods**: Creating a concrete class that doesn't override all abstract methods from parent.
+   - Why: Concrete classes must provide implementations for all inherited abstract methods, otherwise they remain incomplete.
+   - Fix: Either implement all abstract methods or declare the subclass as abstract too.
+   ```java
+   // Wrong:
+   class Circle extends Shape {
+       // Missing calculatePerimeter() implementation!
+       double calculateArea() { return Math.PI * radius * radius; }
+   }
+
+   // Right:
+   class Circle extends Shape {
+       double calculateArea() { return Math.PI * radius * radius; }
+       double calculatePerimeter() { return 2 * Math.PI * radius; }
+   }
+   ```
+
+3. ❌ **Adding method bodies to abstract methods**: Writing implementation in the abstract method declaration.
+   - Why: Abstract methods are contracts - they define what must exist but not how. Adding a body defeats the purpose.
+   - Fix: Remove the body from abstract methods; implement them in concrete subclasses.
+   ```java
+   // Wrong:
+   abstract class Shape {
+       abstract double calculateArea() { return 0.0; } // Error!
+   }
+
+   // Right:
+   abstract class Shape {
+       abstract double calculateArea(); // No body
+   }
+   class Circle extends Shape {
+       double calculateArea() { return Math.PI * radius * radius; }
+   }
+   ```
+
+4. ❌ **Making the abstract class final**: Declaring `final abstract class Shape`.
+   - Why: Final classes cannot be extended, but abstract classes exist specifically to be extended. These modifiers are contradictory.
+   - Fix: Never combine final and abstract keywords on the same class.
+   ```java
+   // Wrong:
+   final abstract class Shape { } // Contradictory!
+
+   // Right:
+   abstract class Shape { } // Can be extended
+   ```
+
+5. ❌ **Not calling super() in subclass constructor**: Forgetting to initialize parent class fields.
+   - Why: Abstract classes often have constructors to initialize shared state. Subclasses must call super() to properly initialize parent fields.
+   - Fix: Always call super() as first line in subclass constructor when parent has a constructor.
+   ```java
+   // Wrong:
+   class Circle extends Shape {
+       Circle(String color, double radius) {
+           // Missing super(color)!
+           this.radius = radius;
+       }
+   }
+
+   // Right:
+   class Circle extends Shape {
+       Circle(String color, double radius) {
+           super(color); // Initialize parent
+           this.radius = radius;
+       }
+   }
+   ```
+
 **🎯 Challenge:**
 1. Add a `Square` class (special rectangle)
 2. Add abstract method `getShapeType()`
@@ -2970,6 +3455,166 @@ Intern:
 - [ ] Use abstract methods polymorphically
 - [ ] Understand benefits of abstraction
 
+**Best Practices:**
+
+1. **Group Related Abstract Methods**: Define abstract methods that logically belong together.
+   - Why: Makes the contract clearer and easier to understand and implement.
+   - How: Group methods by functionality (e.g., all calculation methods, all display methods).
+   - Example:
+   ```java
+   abstract class Employee {
+       abstract double calculateSalary();  // Calculation methods together
+       abstract double calculateBonus();
+       abstract String getEmployeeType();  // Identification methods
+   }
+   ```
+
+2. **Provide Template Methods**: Implement high-level methods that call abstract methods.
+   - Why: Defines the algorithm structure while allowing customization of specific steps.
+   - How: Create concrete methods that orchestrate calls to abstract methods.
+   - Example:
+   ```java
+   abstract class Employee {
+       abstract double calculateSalary();
+       abstract double calculateBonus();
+       // Template method
+       final double getTotalCompensation() {
+           return calculateSalary() + calculateBonus();
+       }
+   }
+   ```
+
+3. **Document Abstract Method Contracts**: Clearly specify what each abstract method should do.
+   - Why: Helps implementers understand requirements and expected behavior.
+   - How: Use JavaDoc comments to explain purpose, parameters, return values, and constraints.
+   - Example:
+   ```java
+   /**
+    * Calculate employee's annual salary.
+    * @return annual salary in dollars, must be non-negative
+    */
+   abstract double calculateSalary();
+   ```
+
+4. **Ensure All Abstractions Are Necessary**: Don't create abstract methods for behaviors that could be concrete.
+   - Why: Unnecessary abstraction makes subclasses harder to implement.
+   - How: Make a method abstract only if different subclasses truly need different implementations.
+   - Example:
+   ```java
+   // Only abstract if implementations differ significantly
+   abstract double calculateBonus();  // Good - varies by type
+   // Not: abstract String getName();  // Bad - just store in field
+   ```
+
+5. **Use @Override in Implementations**: Always annotate when implementing abstract methods.
+   - Why: Catches typos and signature errors at compile time.
+   - How: Add @Override annotation to all abstract method implementations.
+   - Example:
+   ```java
+   @Override
+   double calculateSalary() {
+       return baseSalary * 12;
+   }
+   ```
+
+**Common Mistakes:**
+
+1. ❌ **Not implementing all abstract methods in concrete subclass**: Creating a class that extends an abstract class but misses implementing one or more abstract methods.
+   - Why: Java requires all abstract methods to be implemented unless the subclass is also declared abstract. Forgetting even one causes a compile error.
+   - Fix: Ensure every abstract method from the parent is implemented with @Override annotation.
+   ```java
+   // Wrong:
+   class FullTimeEmployee extends Employee {
+       double calculateSalary() { return 5000.0; }
+       // Missing calculateBonus() and getEmployeeType()!
+   }
+
+   // Right:
+   class FullTimeEmployee extends Employee {
+       double calculateSalary() { return 5000.0; }
+       double calculateBonus() { return 500.0; }
+       String getEmployeeType() { return "Full-Time"; }
+   }
+   ```
+
+2. ❌ **Incorrect method signatures when implementing**: Changing the return type, parameters, or method name slightly.
+   - Why: The signature must match exactly - different signature creates a new method instead of implementing the abstract one.
+   - Fix: Use @Override annotation to catch signature mismatches at compile time.
+   ```java
+   // Wrong:
+   abstract class Employee {
+       abstract double calculateSalary();
+   }
+   class FullTimeEmployee extends Employee {
+       int calculateSalary() { return 5000; } // Wrong return type!
+   }
+
+   // Right:
+   class FullTimeEmployee extends Employee {
+       @Override
+       double calculateSalary() { return 5000.0; } // Exact match
+   }
+   ```
+
+3. ❌ **Making abstract methods private or final**: Declaring abstract methods with access modifiers that prevent overriding.
+   - Why: Abstract methods must be overrideable, but private methods can't be accessed by subclasses and final methods can't be overridden.
+   - Fix: Use protected or public for abstract methods, never private or final.
+   ```java
+   // Wrong:
+   abstract class Employee {
+       private abstract double calculateSalary(); // Can't override!
+       final abstract double calculateBonus(); // Contradictory!
+   }
+
+   // Right:
+   abstract class Employee {
+       protected abstract double calculateSalary();
+       public abstract double calculateBonus();
+   }
+   ```
+
+4. ❌ **Providing default implementations in abstract methods**: Adding method body to abstract methods thinking it's a "default".
+   - Why: Abstract methods by definition have no implementation. If you want a default, make it a concrete method that subclasses can override.
+   - Fix: Remove body from abstract methods, or make them concrete non-abstract methods.
+   ```java
+   // Wrong:
+   abstract class Employee {
+       abstract double calculateBonus() { return 0.0; } // Compile error!
+   }
+
+   // Right Option 1 - Truly abstract:
+   abstract class Employee {
+       abstract double calculateBonus(); // No body
+   }
+
+   // Right Option 2 - Concrete with default:
+   abstract class Employee {
+       double calculateBonus() { return 0.0; } // Can be overridden
+   }
+   ```
+
+5. ❌ **Forgetting to call abstract methods in template methods**: Creating concrete methods that should use abstract methods but don't.
+   - Why: The power of abstract methods is in template method pattern - concrete methods define structure, abstract methods provide customization points.
+   - Fix: Design concrete methods to orchestrate calls to abstract methods.
+   ```java
+   // Less useful:
+   abstract class Employee {
+       abstract double calculateSalary();
+       abstract double calculateBonus();
+       // These exist but aren't used together
+   }
+
+   // Better:
+   abstract class Employee {
+       abstract double calculateSalary();
+       abstract double calculateBonus();
+       // Template method using abstract methods
+       double getTotalCompensation() {
+           return calculateSalary() + calculateBonus();
+       }
+   }
+   ```
+
 **🎯 Challenge:**
 1. Add a `Manager` employee type
 2. Add abstract method `getWorkSchedule()`
@@ -3237,6 +3882,167 @@ Total Annual Cost: $9900.00
 - [ ] Know how to call parent constructor
 - [ ] See shared functionality benefits
 - [ ] Combine abstract and concrete methods
+
+**Best Practices:**
+
+1. **Always Call super() in Subclass Constructors**: Initialize parent class fields properly.
+   - Why: Ensures all inherited fields are correctly initialized before subclass initialization.
+   - How: Make super() the first statement in every subclass constructor.
+   - Example:
+   ```java
+   class Car extends Vehicle {
+       Car(String brand, String model, int year, double price) {
+           super(brand, model, year, price);  // Initialize parent first
+           // Then initialize Car-specific fields
+       }
+   }
+   ```
+
+2. **Use Protected for Shared Fields**: Make fields accessible to subclasses but hidden from outside.
+   - Why: Balances encapsulation with subclass needs - subclasses can access directly while maintaining information hiding.
+   - How: Declare shared fields as protected in the abstract class.
+   - Example:
+   ```java
+   abstract class Vehicle {
+       protected String brand;  // Accessible to Car, Motorcycle, etc.
+       protected double price;
+   }
+   ```
+
+3. **Implement Common Logic in Parent**: Place shared behavior in concrete methods of the abstract class.
+   - Why: Reduces code duplication and ensures consistent behavior across all subclasses.
+   - How: Identify common operations and implement them once in the abstract class.
+   - Example:
+   ```java
+   abstract class Vehicle {
+       int calculateAge() {  // Concrete method - same for all
+           return Year.now().getValue() - this.year;
+       }
+       abstract double calculateValue();  // Abstract - varies per type
+   }
+   ```
+
+4. **Validate in Parent Constructor**: Perform common validation in the abstract class constructor.
+   - Why: Ensures all subclasses meet basic requirements without duplicating validation code.
+   - How: Add validation logic in the abstract class constructor.
+   - Example:
+   ```java
+   abstract class Vehicle {
+       Vehicle(String brand, int year, double price) {
+           if (price < 0) throw new IllegalArgumentException("Price cannot be negative");
+           this.price = price;
+       }
+   }
+   ```
+
+**Common Mistakes:**
+
+1. ❌ **Forgetting to call super() in subclass constructor**: Not initializing parent class fields when extending an abstract class with constructor.
+   - Why: If the parent has a constructor, the subclass must call it explicitly. Java won't compile if you forget this when parent has no default constructor.
+   - Fix: Always call super() as the first statement in subclass constructor.
+   ```java
+   // Wrong:
+   class Car extends Vehicle {
+       int doors;
+       Car(String brand, String model, int year, double price, int doors) {
+           // Missing super call! Won't compile!
+           this.doors = doors;
+       }
+   }
+
+   // Right:
+   class Car extends Vehicle {
+       int doors;
+       Car(String brand, String model, int year, double price, int doors) {
+           super(brand, model, year, price); // Must be first!
+           this.doors = doors;
+       }
+   }
+   ```
+
+2. ❌ **Accessing private parent fields from subclass**: Trying to use parent's private fields directly in child class.
+   - Why: Private fields are not inherited or accessible by subclasses, even if they conceptually belong to the object.
+   - Fix: Use protected instead of private for fields that subclasses need to access, or provide protected getters/setters.
+   ```java
+   // Wrong:
+   abstract class Vehicle {
+       private String brand; // Can't access from subclass!
+   }
+   class Car extends Vehicle {
+       void display() {
+           System.out.println(brand); // Compile error!
+       }
+   }
+
+   // Right:
+   abstract class Vehicle {
+       protected String brand; // Accessible to subclasses
+   }
+   class Car extends Vehicle {
+       void display() {
+           System.out.println(brand); // Works!
+       }
+   }
+   ```
+
+3. ❌ **Not initializing subclass-specific fields properly**: Initializing only parent fields but forgetting child-specific fields.
+   - Why: Each class is responsible for initializing its own fields. Super() only initializes parent fields.
+   - Fix: After calling super(), initialize all subclass-specific fields in the constructor.
+   ```java
+   // Wrong:
+   class Car extends Vehicle {
+       int doors; // Never initialized!
+       Car(String brand, String model, int year, double price, int doors) {
+           super(brand, model, year, price);
+           // Forgot: this.doors = doors;
+       }
+   }
+
+   // Right:
+   class Car extends Vehicle {
+       int doors;
+       Car(String brand, String model, int year, double price, int doors) {
+           super(brand, model, year, price);
+           this.doors = doors; // Initialize own fields
+       }
+   }
+   ```
+
+4. ❌ **Duplicate code in subclasses instead of parent**: Implementing the same logic in every subclass rather than in parent concrete method.
+   - Why: Violates DRY principle, makes code harder to maintain. If logic needs to change, you must update every subclass.
+   - Fix: Move common logic to concrete methods in the abstract parent class.
+   ```java
+   // Wrong:
+   abstract class Vehicle { }
+   class Car extends Vehicle {
+       int getAge() { return 2024 - year; } // Duplicated
+   }
+   class Motorcycle extends Vehicle {
+       int getAge() { return 2024 - year; } // Same logic repeated!
+   }
+
+   // Right:
+   abstract class Vehicle {
+       int getAge() { return 2024 - year; } // Once in parent
+   }
+   class Car extends Vehicle { } // Inherits getAge()
+   class Motorcycle extends Vehicle { } // Inherits getAge()
+   ```
+
+5. ❌ **Creating abstract class constructors as private**: Making the constructor private prevents subclasses from calling it.
+   - Why: Subclasses need to call parent constructor via super(). Private constructors can't be accessed by subclasses.
+   - Fix: Use protected or public for abstract class constructors.
+   ```java
+   // Wrong:
+   abstract class Vehicle {
+       private Vehicle(String brand) { } // Subclasses can't call!
+   }
+
+   // Right:
+   abstract class Vehicle {
+       protected Vehicle(String brand) { } // Subclasses can call
+   }
+   ```
 
 **🎯 Challenge:**
 1. Add an `ElectricCar` class
@@ -3585,6 +4391,170 @@ public class AbstractClassUsageDemo {
 - [ ] Know abstract vs interface differences
 - [ ] Can design abstract class hierarchies
 - [ ] Understand real-world applications
+
+**Best Practices:**
+
+1. **Choose Abstract Classes for IS-A Relationships with Shared Code**: Use when subclasses share common implementation.
+   - Why: Abstract classes excel at code reuse while maintaining type relationships.
+   - How: If you have common fields and methods, use abstract class over interface.
+   - Example:
+   ```java
+   // Good use case: shared balance field and deposit logic
+   abstract class BankAccount {
+       protected double balance;
+       void deposit(double amount) { balance += amount; }  // Shared
+       abstract void withdraw(double amount);  // Varies
+   }
+   ```
+
+2. **Identify Common Behavior Early in Design**: Analyze what's shared before creating hierarchy.
+   - Why: Prevents code duplication and creates cleaner, more maintainable design.
+   - How: List behaviors of all types, identify what's common, place in abstract parent.
+   - Example: All accounts deposit/getBalance the same way, but withdraw differently.
+
+3. **Don't Force Abstract Classes Where Interfaces Fit Better**: Use interfaces for contracts without implementation.
+   - Why: Interfaces are more flexible - a class can implement multiple interfaces.
+   - How: If there's no shared code, just a contract, prefer interface.
+   - Example:
+   ```java
+   // Interface better here - no shared implementation
+   interface Drawable {
+       void draw();
+   }
+   // Abstract class better here - shared fields/methods
+   abstract class Shape {
+       protected String color;
+       void setColor(String c) { color = c; }
+   }
+   ```
+
+4. **Keep Hierarchies Shallow**: Limit inheritance depth to 2-3 levels.
+   - Why: Deep hierarchies become hard to understand and maintain.
+   - How: Prefer composition over deep inheritance when possible.
+   - Example: Animal → Dog → GoldenRetriever is reasonable. Deeper than 3-4 levels gets complex.
+
+**Common Mistakes:**
+
+1. ❌ **Using interfaces when abstract classes would be better**: Choosing interface when you have shared implementation code.
+   - Why: Interfaces (pre-Java 8) can't have concrete methods or fields, forcing code duplication in implementing classes.
+   - Fix: Use abstract classes when you need to share fields, constructors, or concrete method implementations.
+   ```java
+   // Less ideal - duplicated code:
+   interface BankAccount {
+       void deposit(double amount);
+       void withdraw(double amount);
+   }
+   class SavingsAccount implements BankAccount {
+       void deposit(double amount) { balance += amount; } // Repeated
+       void withdraw(double amount) { balance -= amount; } // Repeated
+   }
+   class CheckingAccount implements BankAccount {
+       void deposit(double amount) { balance += amount; } // Duplicated!
+       void withdraw(double amount) { balance -= amount; } // Duplicated!
+   }
+
+   // Better - shared implementation:
+   abstract class BankAccount {
+       protected double balance;
+       void deposit(double amount) { balance += amount; } // Once
+       void withdraw(double amount) { balance -= amount; } // Once
+       abstract double calculateInterest(); // Varies per type
+   }
+   ```
+
+2. ❌ **Not using template method pattern**: Missing opportunities to define algorithm structure in abstract class.
+   - Why: One of the key benefits of abstract classes is combining concrete (structure) with abstract (customization) methods.
+   - Fix: Create concrete methods that call abstract methods to define the flow while allowing customization.
+   ```java
+   // Less useful:
+   abstract class BankAccount {
+       abstract double getMonthlyFee();
+       abstract double calculateInterest();
+       // Methods exist but aren't coordinated
+   }
+
+   // Better - template method:
+   abstract class BankAccount {
+       abstract double getMonthlyFee();
+       abstract double calculateInterest();
+       // Template method orchestrates the abstract methods
+       void applyMonthlyCharges() {
+           balance -= getMonthlyFee();
+           balance += calculateInterest();
+       }
+   }
+   ```
+
+3. ❌ **Forgetting the minimum balance check in withdraw**: Not using abstract method getMinimumBalance() in concrete withdraw method.
+   - Why: The whole point of having getMinimumBalance() abstract is so each account type can enforce its own rules during withdrawal.
+   - Fix: Always check against minimum balance before allowing withdrawal.
+   ```java
+   // Wrong:
+   abstract class BankAccount {
+       abstract double getMinimumBalance();
+       void withdraw(double amount) {
+           balance -= amount; // Doesn't check minimum!
+       }
+   }
+
+   // Right:
+   abstract class BankAccount {
+       abstract double getMinimumBalance();
+       boolean withdraw(double amount) {
+           if (balance - amount < getMinimumBalance()) {
+               return false; // Enforces minimum balance rule
+           }
+           balance -= amount;
+           return true;
+       }
+   }
+   ```
+
+4. ❌ **Making everything abstract when some methods could be concrete**: Over-abstracting by making methods abstract when they don't vary between subclasses.
+   - Why: Forces unnecessary code duplication in every subclass. Makes subclasses harder to implement.
+   - Fix: Only make methods abstract when implementation truly varies; use concrete methods for shared behavior.
+   ```java
+   // Wrong - too much abstraction:
+   abstract class BankAccount {
+       abstract void deposit(double amount); // Same for all accounts!
+       abstract void displayInfo(); // Same for all accounts!
+       abstract double calculateInterest(); // Actually varies
+   }
+
+   // Right - appropriate abstraction:
+   abstract class BankAccount {
+       void deposit(double amount) { } // Concrete - same for all
+       void displayInfo() { } // Concrete - same for all
+       abstract double calculateInterest(); // Abstract - varies
+   }
+   ```
+
+5. ❌ **Not validating in parent class methods**: Putting validation only in subclasses instead of shared parent methods.
+   - Why: Leads to inconsistent validation and potential bugs if a subclass forgets to validate.
+   - Fix: Place common validation in abstract class concrete methods that all subclasses inherit.
+   ```java
+   // Wrong:
+   abstract class BankAccount {
+       void deposit(double amount) {
+           balance += amount; // No validation!
+       }
+   }
+   class SavingsAccount extends BankAccount {
+       void deposit(double amount) {
+           if (amount > 0) super.deposit(amount); // Each must validate
+       }
+   }
+
+   // Right:
+   abstract class BankAccount {
+       void deposit(double amount) {
+           if (amount <= 0) {
+               throw new IllegalArgumentException("Invalid amount");
+           }
+           balance += amount; // Validation in one place
+       }
+   }
+   ```
 
 **🎯 Challenge:**
 1. Add a `StudentAccount` with special rules
@@ -3961,6 +4931,124 @@ Waddles slides on belly!
 - [ ] See gradual specialization
 - [ ] Know when to add abstraction levels
 - [ ] Can design complex hierarchies
+
+**Best Practices:**
+
+1. **Use Intermediate Abstract Classes for Category-Level Behavior**: Add abstraction levels when there's shared behavior within a subgroup.
+   - Why: Allows sharing code at the appropriate level without forcing it on unrelated types.
+   - How: Create intermediate abstract classes for categories that share behavior.
+   - Example:
+   ```java
+   abstract class Animal { }  // All animals
+   abstract class Mammal extends Animal {  // Mammal-specific behavior
+       void nurseBaby() { }  // Only mammals do this
+   }
+   class Dog extends Mammal { }  // Concrete mammal
+   ```
+
+2. **Limit Hierarchy Depth to 3-4 Levels Maximum**: Avoid deep inheritance chains.
+   - Why: Deep hierarchies become hard to understand, modify, and debug.
+   - How: If you need more than 3-4 levels, consider using composition instead.
+   - Example: Animal → Mammal → Dog → GoldenRetriever is acceptable. Going deeper suggests redesign.
+
+3. **Each Level Should Add Meaningful Specialization**: Don't create levels just for the sake of it.
+   - Why: Every level adds complexity - only add when it provides real organizational value.
+   - How: Ask "Does this level group classes with genuinely shared behavior?"
+   - Example: Bird level makes sense (all birds have feathers, lay eggs). Don't add FlyingBird if only one method differs.
+
+4. **Document the Hierarchy Structure**: Clearly explain the abstraction levels and their purposes.
+   - Why: Helps developers understand where to add new types and what contracts exist at each level.
+   - How: Use comments or documentation showing the hierarchy tree and responsibilities.
+   - Example:
+   ```java
+   /**
+    * Animal (Level 1): All living creatures
+    *   ├── Mammal (Level 2): Warm-blooded, nurse young
+    *   └── Bird (Level 2): Have feathers, lay eggs
+    */
+   ```
+
+**Common Mistakes:**
+
+1. ❌ **Creating too many hierarchy levels**: Building deep inheritance chains like Animal → Mammal → Carnivore → Canine → Dog → GoldenRetriever.
+   - Why: Deep hierarchies are difficult to understand, maintain, and extend. Changes at high levels affect many subclasses.
+   - Fix: Keep hierarchies shallow (2-3 levels max). Use composition for additional behavior instead of more inheritance.
+   ```java
+   // Wrong - too deep:
+   Animal → Mammal → Carnivore → Canine → Dog → GoldenRetriever  // 6 levels!
+
+   // Right - shallow:
+   Animal → Mammal → Dog  // 3 levels, use composition for breed-specific behavior
+   ```
+
+2. ❌ **Not calling super() properly through multiple levels**: Forgetting that each level must initialize its parent.
+   - Why: Each constructor in the chain must call its parent's constructor. Breaking the chain causes compilation errors.
+   - Fix: Every subclass constructor must call super() as first statement to continue the initialization chain.
+   ```java
+   // Wrong:
+   class Dog extends Mammal {
+       Dog(String name, int age, boolean hasFur) {
+           // Missing super(name, age, hasFur)!
+           // This breaks the initialization chain
+       }
+   }
+
+   // Right:
+   class Dog extends Mammal {
+       Dog(String name, int age, boolean hasFur) {
+           super(name, age, hasFur); // Continues chain to Animal
+       }
+   }
+   ```
+
+3. ❌ **Duplicating methods at wrong level**: Implementing the same method in multiple concrete classes instead of pushing it up to common parent.
+   - Why: Violates DRY principle. If all Dogs, Cats, and Lions need the same method, it belongs in Mammal, not in each concrete class.
+   - Fix: Identify the appropriate abstraction level where the method is truly shared and implement it there once.
+   ```java
+   // Wrong - duplicated:
+   class Dog extends Mammal {
+       void breathe() { System.out.println("Breathing with lungs"); }
+   }
+   class Cat extends Mammal {
+       void breathe() { System.out.println("Breathing with lungs"); }
+   }
+
+   // Right - in parent:
+   abstract class Mammal extends Animal {
+       void breathe() { System.out.println("Breathing with lungs"); }
+   }
+   ```
+
+4. ❌ **Creating intermediate abstract class for just one subclass**: Adding Mammal level when only Dog extends it.
+   - Why: Unnecessary complexity. Intermediate abstractions should only exist when they're shared by multiple concrete classes.
+   - Fix: Only create intermediate levels when you have 2+ classes that share category-specific behavior.
+   ```java
+   // Wrong - unnecessary level:
+   abstract class Animal { }
+   abstract class Mammal extends Animal { } // Only used by Dog!
+   class Dog extends Mammal { }
+
+   // Right - removed unnecessary level:
+   abstract class Animal { }
+   class Dog extends Animal { }
+   ```
+
+5. ❌ **Mixing abstraction with implementation concerns**: Putting database or UI logic in abstract domain classes.
+   - Why: Abstract classes should focus on domain logic and behavior, not infrastructure concerns. Mixing concerns makes code harder to test and maintain.
+   - Fix: Keep abstractions clean - focus on domain behavior. Use separate classes for persistence, UI, etc.
+   ```java
+   // Wrong - mixed concerns:
+   abstract class Animal {
+       void saveToDatabase() { } // Infrastructure concern!
+       void renderToUI() { } // Presentation concern!
+   }
+
+   // Right - separated concerns:
+   abstract class Animal {
+       abstract void makeSound(); // Domain behavior only
+   }
+   // Separate: AnimalRepository for database, AnimalView for UI
+   ```
 
 **🎯 Challenge:**
 1. Add a `Reptile` abstract class
@@ -4382,6 +5470,199 @@ Net Amount: $1700.52
 - [ ] Can add new implementations easily
 - [ ] Ready to design similar systems
 
+**Best Practices:**
+
+1. **Design Template Methods for Common Workflows**: Implement high-level algorithms that call abstract methods for customization.
+   - Why: Ensures consistent process across all implementations while allowing type-specific behavior.
+   - How: Create a final method that defines the workflow, calling abstract methods at key points.
+   - Example:
+   ```java
+   abstract class Payment {
+       final void executePayment() {  // Template method
+           validate();      // Step 1: varies by type
+           process();       // Step 2: varies by type
+           recordTransaction();  // Step 3: same for all
+       }
+       abstract void validate();
+       abstract void process();
+   }
+   ```
+
+2. **Encapsulate Varying Behavior in Abstract Methods**: Identify what changes between types and make it abstract.
+   - Why: Isolates variation points, making each type responsible only for its unique behavior.
+   - How: Analyze the differences between types and abstract only those differences.
+   - Example: validate() and calculateFee() vary by payment type, so make them abstract.
+
+3. **Use Enums for Status and Type Constants**: Define common states and types as enums.
+   - Why: Type-safe, prevents invalid values, makes code more readable.
+   - How: Create enums for payment status, payment type, etc.
+   - Example:
+   ```java
+   enum PaymentStatus { PENDING, PROCESSING, COMPLETED, FAILED }
+   enum Currency { USD, EUR, GBP }
+   ```
+
+4. **Implement Defensive Validation**: Validate inputs in both abstract and concrete classes.
+   - Why: Catches errors early and ensures data integrity throughout the system.
+   - How: Validate common constraints in abstract class, type-specific constraints in concrete classes.
+   - Example:
+   ```java
+   abstract class Payment {
+       Payment(double amount) {
+           if (amount <= 0) throw new IllegalArgumentException("Invalid amount");
+       }
+   }
+   class CreditCardPayment extends Payment {
+       CreditCardPayment(String cardNumber, double amount) {
+           super(amount);
+           if (!isValidCardNumber(cardNumber)) throw new IllegalArgumentException();
+       }
+   }
+   ```
+
+5. **Design for Extensibility**: Make it easy to add new payment types without modifying existing code.
+   - Why: Follows Open/Closed Principle - open for extension, closed for modification.
+   - How: Ensure all interaction happens through the abstract class interface.
+   - Example: Adding new payment type only requires creating new subclass, no changes to processing code.
+
+**Common Mistakes:**
+
+1. ❌ **Not using template method pattern**: Having each payment type implement the entire payment workflow separately.
+   - Why: Leads to code duplication and inconsistent processing flow across payment types. Difficult to change the workflow later.
+   - Fix: Define the workflow once in abstract class's concrete method (executePayment), calling abstract methods for type-specific steps.
+   ```java
+   // Wrong - duplicated workflow:
+   class CreditCardPayment extends Payment {
+       void process() {
+           validate(); // Duplicated workflow
+           calculateFee();
+           processPayment();
+           updateStatus();
+       }
+   }
+   class PayPalPayment extends Payment {
+       void process() {
+           validate(); // Same workflow duplicated!
+           calculateFee();
+           processPayment();
+           updateStatus();
+       }
+   }
+
+   // Right - template method:
+   abstract class Payment {
+       final boolean executePayment() {  // Workflow once
+           if (!validatePayment()) return false;
+           double fee = calculateProcessingFee();
+           if (!processPayment()) return false;
+           status = "COMPLETED";
+           return true;
+       }
+       abstract boolean validatePayment();
+       abstract double calculateProcessingFee();
+       abstract boolean processPayment();
+   }
+   ```
+
+2. ❌ **Forgetting to validate in abstract methods**: Not checking for null or invalid data in payment validation.
+   - Why: Payment systems must be robust - processing invalid payments can cause financial losses and security issues.
+   - Fix: Always validate all inputs thoroughly in both abstract and concrete classes.
+   ```java
+   // Wrong - no validation:
+   abstract class Payment {
+       Payment(String paymentId, double amount, String currency) {
+           this.paymentId = paymentId; // No validation!
+           this.amount = amount;
+       }
+   }
+
+   // Right - defensive validation:
+   abstract class Payment {
+       Payment(String paymentId, double amount, String currency) {
+           if (paymentId == null || paymentId.isEmpty()) {
+               throw new IllegalArgumentException("Payment ID required");
+           }
+           if (amount <= 0) {
+               throw new IllegalArgumentException("Amount must be positive");
+           }
+           this.paymentId = paymentId;
+           this.amount = amount;
+       }
+   }
+   ```
+
+3. ❌ **Making template method overridable**: Not marking executePayment() as final, allowing subclasses to break the workflow.
+   - Why: The workflow should be consistent across all payment types. If subclasses can override it, they might skip critical steps.
+   - Fix: Mark template methods as final to prevent overriding and ensure consistent process.
+   ```java
+   // Wrong - can be overridden:
+   abstract class Payment {
+       boolean executePayment() {  // Subclass could override and skip validation!
+           validatePayment();
+           processPayment();
+       }
+   }
+
+   // Right - enforced workflow:
+   abstract class Payment {
+       final boolean executePayment() {  // Cannot be overridden
+           validatePayment();
+           processPayment();
+       }
+   }
+   ```
+
+4. ❌ **Putting payment-specific details in abstract class**: Including credit card or PayPal-specific fields in Payment class.
+   - Why: Abstract class should only contain fields common to ALL payment types. Type-specific details belong in concrete classes.
+   - Fix: Keep abstract class general, move specific details to concrete subclasses.
+   ```java
+   // Wrong - type-specific in abstract:
+   abstract class Payment {
+       String cardNumber; // Not all payments use cards!
+       String paypalEmail; // Not all payments use PayPal!
+   }
+
+   // Right - only common fields:
+   abstract class Payment {
+       String paymentId;    // All payments have ID
+       double amount;       // All payments have amount
+       String currency;     // All payments have currency
+   }
+   class CreditCardPayment extends Payment {
+       String cardNumber;   // Card-specific
+   }
+   ```
+
+5. ❌ **Not handling payment failures properly**: Assuming all payments succeed without proper error handling.
+   - Why: Payments can fail for many reasons (insufficient funds, network issues, fraud detection). Must handle gracefully.
+   - Fix: Use return values and status tracking to handle both success and failure cases.
+   ```java
+   // Wrong - no failure handling:
+   abstract class Payment {
+       void executePayment() {
+           validatePayment();
+           processPayment(); // What if this fails?
+           status = "COMPLETED"; // Always sets completed!
+       }
+   }
+
+   // Right - proper error handling:
+   abstract class Payment {
+       boolean executePayment() {
+           if (!validatePayment()) {
+               status = "FAILED";
+               return false;
+           }
+           if (!processPayment()) {
+               status = "FAILED";
+               return false;
+           }
+           status = "COMPLETED";
+           return true;
+       }
+   }
+   ```
+
 **🎯 Challenge:**
 1. Add a `RefundPayment` abstract class
 2. Implement refund for each payment type
@@ -4773,6 +6054,138 @@ ABSTRACT CLASS:
 - [ ] Know all methods must be implemented
 - [ ] See polymorphism with interfaces
 
+**Best Practices:**
+
+1. **Use Interfaces to Define Contracts**: Interfaces specify what a class can do, not how it does it.
+   - Why: Separates contract from implementation, allowing multiple implementations of the same behavior.
+   - How: Define method signatures that represent capabilities without implementation details.
+   - Example:
+   ```java
+   interface Drawable {
+       void draw();  // Contract: must be able to draw
+       void erase(); // Contract: must be able to erase
+   }
+   ```
+
+2. **Name Interfaces Based on Capabilities**: Use adjectives (ending in -able) or nouns describing the capability.
+   - Why: Makes the interface's purpose immediately clear from its name.
+   - How: Use names like Drawable, Runnable, Comparable, Serializable.
+   - Example:
+   ```java
+   interface Drawable { }  // Things that can be drawn
+   interface Comparable { }  // Things that can be compared
+   ```
+
+3. **Keep Interfaces Focused and Cohesive**: Each interface should represent one capability or closely related set of methods.
+   - Why: Follows Single Responsibility Principle and makes interfaces easier to implement.
+   - How: Don't create "god interfaces" with many unrelated methods.
+   - Example:
+   ```java
+   // Good: focused interface
+   interface Drawable {
+       void draw();
+   }
+   // Bad: too many responsibilities
+   interface Shape {
+       void draw();
+       void save();
+       void sendEmail();  // Unrelated!
+   }
+   ```
+
+4. **Use @Override When Implementing Interface Methods**: Always annotate interface method implementations.
+   - Why: Catches typos and signature mismatches at compile time.
+   - How: Add @Override to every method implementing an interface.
+   - Example:
+   ```java
+   class Circle implements Drawable {
+       @Override
+       public void draw() { }  // Compiler verifies this matches interface
+   }
+   ```
+
+**Common Mistakes:**
+
+1. ❌ **Forgetting to implement all interface methods**: Missing one or more required methods from the interface.
+   - Why: Java requires implementing classes to provide implementations for ALL methods declared in the interface, or the class must be declared abstract.
+   - Fix: Implement every method from the interface with @Override annotation to catch errors.
+   ```java
+   // Wrong:
+   class Circle implements Drawable {
+       public void draw() { } // Missing erase() and getColor()!
+   }
+
+   // Right:
+   class Circle implements Drawable {
+       public void draw() { }
+       public void erase() { }
+       public String getColor() { return color; }
+   }
+   ```
+
+2. ❌ **Using wrong access modifier for interface methods**: Making implemented methods private or package-private instead of public.
+   - Why: Interface methods are implicitly public. Implementation must be public or more accessible, not less.
+   - Fix: Always make interface method implementations public.
+   ```java
+   // Wrong:
+   class Circle implements Drawable {
+       void draw() { } // Package-private! Should be public!
+   }
+
+   // Right:
+   class Circle implements Drawable {
+       public void draw() { } // Must be public
+   }
+   ```
+
+3. ❌ **Trying to instantiate an interface**: Attempting `new Drawable()` directly.
+   - Why: Interfaces are contracts, not implementations. They can't be instantiated, only implemented by classes.
+   - Fix: Create instances of classes that implement the interface.
+   ```java
+   // Wrong:
+   Drawable drawable = new Drawable(); // Error! Cannot instantiate interface!
+
+   // Right:
+   Drawable drawable = new Circle(5.0, "Red"); // Instance of implementing class
+   ```
+
+4. ❌ **Adding fields or constructors to interfaces**: Trying to declare instance variables or constructors in interface.
+   - Why: Interfaces (in Java 7) can only have constants (public static final) and abstract methods, no instance state or constructors.
+   - Fix: Put fields in implementing classes. Use constants (static final) if needed in interface.
+   ```java
+   // Wrong:
+   interface Drawable {
+       String color; // Instance field not allowed!
+       Drawable() { } // Constructor not allowed!
+       void draw();
+   }
+
+   // Right:
+   interface Drawable {
+       String DEFAULT_COLOR = "Black"; // Constant OK
+       void draw();
+   }
+   class Circle implements Drawable {
+       String color; // Instance field in implementing class
+   }
+   ```
+
+5. ❌ **Not using @Override annotation**: Implementing interface methods without @Override.
+   - Why: Without @Override, typos or wrong signatures create new methods instead of implementing interface, causing compile errors.
+   - Fix: Always use @Override when implementing interface methods.
+   ```java
+   // Risky:
+   class Circle implements Drawable {
+       public void darw() { } // Typo! Doesn't implement draw()
+   }
+
+   // Safe:
+   class Circle implements Drawable {
+       @Override
+       public void draw() { } // Compiler catches typos
+   }
+   ```
+
 **🎯 Challenge:**
 1. Create a `Resizable` interface
 2. Add methods `resize()` and `getSize()`
@@ -5143,6 +6556,136 @@ All walkers:
 - [ ] Can use polymorphism with each interface
 - [ ] Know when to use multiple interfaces
 
+**Best Practices:**
+
+1. **Use Multiple Interfaces for Orthogonal Capabilities**: Implement multiple interfaces when a class has distinct, independent abilities.
+   - Why: Avoids forcing unrelated capabilities into a single interface and provides maximum flexibility.
+   - How: Identify independent behaviors and create separate interfaces for each.
+   - Example:
+   ```java
+   class Duck implements Flyable, Swimmable, Walkable {
+       // Duck has three independent capabilities
+   }
+   ```
+
+2. **Prefer Interface Composition Over Class Inheritance**: Use multiple interfaces instead of deep inheritance hierarchies.
+   - Why: More flexible - can mix and match capabilities without being locked into a rigid hierarchy.
+   - How: Design capabilities as interfaces, not as parent classes.
+   - Example: Better to have Flyable + Swimmable interfaces than FlyingSwimmingAnimal parent class.
+
+3. **Design Small, Focused Interfaces**: Create interfaces with just a few related methods (Interface Segregation Principle).
+   - Why: Classes only implement what they actually need, not forced to implement unused methods.
+   - How: Split large interfaces into smaller, more specific ones.
+   - Example:
+   ```java
+   // Better: multiple small interfaces
+   interface Flyable { void fly(); }
+   interface Swimmable { void swim(); }
+   // Worse: one large interface
+   interface Animal { void fly(); void swim(); void walk(); }  // Not all animals do all!
+   ```
+
+4. **Use Polymorphic References for Each Interface**: Store and pass objects using interface types.
+   - Why: Enables writing generic code that works with any implementation of that capability.
+   - How: Declare variables and parameters using interface types.
+   - Example:
+   ```java
+   void testFlight(Flyable flyer) {  // Works with Duck, Airplane, Bird, etc.
+       flyer.fly();
+   }
+   ```
+
+**Common Mistakes:**
+
+1. ❌ **Forgetting to implement methods from all interfaces**: Implementing methods from only one interface when the class implements multiple.
+   - Why: When a class implements multiple interfaces, it must provide implementations for ALL methods from ALL interfaces.
+   - Fix: Use a checklist or IDE features to ensure all interface methods are implemented.
+   ```java
+   // Wrong:
+   class Duck implements Flyable, Swimmable, Walkable {
+       public void fly() { }
+       public double getAltitude() { return 0; }
+       public void land() { }
+       // Missing Swimmable and Walkable methods!
+   }
+
+   // Right:
+   class Duck implements Flyable, Swimmable, Walkable {
+       // All Flyable methods
+       public void fly() { }
+       public double getAltitude() { return 0; }
+       public void land() { }
+       // All Swimmable methods
+       public void swim() { }
+       public double getDepth() { return 0; }
+       public void surface() { }
+       // All Walkable methods
+       public void walk() { }
+       public double getSpeed() { return 0; }
+   }
+   ```
+
+2. ❌ **Using commas incorrectly in implements clause**: Trying to use "and" or semicolon instead of comma.
+   - Why: Java syntax requires comma-separated list of interfaces in implements clause.
+   - Fix: Use commas to separate multiple interfaces: `implements Interface1, Interface2, Interface3`
+   ```java
+   // Wrong:
+   class Duck implements Flyable and Swimmable { } // "and" not allowed!
+   class Duck implements Flyable; Swimmable { } // semicolon wrong!
+
+   // Right:
+   class Duck implements Flyable, Swimmable, Walkable { } // Commas!
+   ```
+
+3. ❌ **Creating bloated classes implementing too many interfaces**: Having one class implement 10+ unrelated interfaces.
+   - Why: Violates Single Responsibility Principle. Class becomes hard to understand and maintain.
+   - Fix: If a class needs many interfaces, consider if it's trying to do too much. Split into smaller, focused classes.
+   ```java
+   // Wrong - too many responsibilities:
+   class SuperAnimal implements Flyable, Swimmable, Walkable, Runable,
+                                Climbable, Diveable, Jumpable, Hideable { }
+
+   // Right - focused classes:
+   class Duck implements Flyable, Swimmable, Walkable { } // Related
+   class Fish implements Swimmable, Diveable { } // Related
+   ```
+
+4. ❌ **Not considering interface segregation**: Creating fat interfaces that force classes to implement methods they don't need.
+   - Why: Forces implementing classes to provide dummy implementations for irrelevant methods.
+   - Fix: Split large interfaces into smaller, more focused ones that represent specific capabilities.
+   ```java
+   // Wrong - fat interface:
+   interface Animal {
+       void fly();
+       void swim();
+       void walk();
+   }
+   class Fish implements Animal {
+       public void swim() { }  // Needs this
+       public void fly() { } // Forced to implement but fish can't fly!
+       public void walk() { } // Forced to implement but fish can't walk!
+   }
+
+   // Right - segregated interfaces:
+   interface Flyable { void fly(); }
+   interface Swimmable { void swim(); }
+   interface Walkable { void walk(); }
+   class Fish implements Swimmable { // Only what it needs
+       public void swim() { }
+   }
+   ```
+
+5. ❌ **Mixing extends and implements incorrectly**: Putting implements before extends.
+   - Why: Java requires extends clause before implements clause. Order matters.
+   - Fix: Always: `class MyClass extends ParentClass implements Interface1, Interface2`
+   ```java
+   // Wrong:
+   class Duck implements Flyable extends Bird { } // Wrong order!
+
+   // Right:
+   class Duck extends Bird implements Flyable, Swimmable { } // extends first!
+   ```
+
 **🎯 Challenge:**
 1. Add a `Diveable` interface
 2. Create a `Penguin` class (swims, walks, dives)
@@ -5461,6 +7004,156 @@ Version: 1.0.0
 - [ ] Can use constants in implementing classes
 - [ ] See benefits for configuration
 - [ ] Know constants are immutable
+
+**Best Practices:**
+
+1. **Use Interfaces for Related Constants Only**: Group constants that are logically related to the interface's purpose.
+   - Why: Keeps constants organized and associated with their proper context.
+   - How: Only add constants that are directly related to the interface's functionality.
+   - Example:
+   ```java
+   interface GameConstants {
+       int MAX_PLAYERS = 4;  // Related to games
+       int MAX_SCORE = 1000;  // Related to games
+       // Don't add: String DATABASE_URL = "...";  // Unrelated!
+   }
+   ```
+
+2. **Prefer Enums Over Interface Constants for Type Safety**: Use enums instead of integer constants when representing a fixed set of values.
+   - Why: Enums provide type safety and prevent invalid values.
+   - How: Replace groups of related constants with enum types.
+   - Example:
+   ```java
+   // Better: enum for type safety
+   enum Difficulty { EASY, MEDIUM, HARD }
+   // Worse: interface constants
+   interface GameConstants {
+       int EASY = 1, MEDIUM = 2, HARD = 3;  // Can pass any int!
+   }
+   ```
+
+3. **Use Descriptive, ALL_CAPS Names for Constants**: Follow Java naming conventions for constants.
+   - Why: Makes constants immediately recognizable and distinguishes them from variables.
+   - How: Use ALL_UPPERCASE with underscores for multi-word constants.
+   - Example:
+   ```java
+   interface GameConstants {
+       int MAX_PLAYERS = 4;
+       double DEFAULT_DIFFICULTY_MULTIPLIER = 1.5;
+   }
+   ```
+
+4. **Consider Dedicated Constants Classes Over Interface Constants**: For pure configuration, use a final class with private constructor.
+   - Why: More explicit intent - the class exists solely for constants, not as a contract.
+   - How: Create a final class that cannot be instantiated or extended.
+   - Example:
+   ```java
+   public final class GameConfig {
+       private GameConfig() { }  // Prevent instantiation
+       public static final int MAX_PLAYERS = 4;
+   }
+   ```
+
+**Common Mistakes:**
+
+1. ❌ **Trying to modify interface constants**: Attempting to change the value of interface constants at runtime.
+   - Why: Interface constants are implicitly final - they cannot be modified after declaration. Any attempt results in compilation error.
+   - Fix: Remember that interface constants are immutable. If you need mutable values, use class fields instead.
+   ```java
+   // Wrong:
+   interface GameConstants {
+       int MAX_PLAYERS = 4;
+   }
+   class Game implements GameConstants {
+       void adjustPlayers() {
+           MAX_PLAYERS = 5; // Compile error! Cannot modify!
+       }
+   }
+
+   // Right:
+   class Game implements GameConstants {
+       private int currentMaxPlayers = MAX_PLAYERS; // Copy to mutable field
+       void adjustPlayers() {
+           currentMaxPlayers = 5; // Modify the copy, not the constant
+       }
+   }
+   ```
+
+2. ❌ **Using interface constants as a namespace**: Creating interfaces solely to hold unrelated constants.
+   - Why: Abuses the interface mechanism. Interfaces should define behavior contracts, not just hold constants.
+   - Fix: Use a final class with private constructor for pure constant collections.
+   ```java
+   // Wrong - constants-only interface:
+   interface AppConstants {
+       String DATABASE_URL = "jdbc://...";
+       int TIMEOUT = 5000;
+       String API_KEY = "xyz";
+   }
+
+   // Right - dedicated constants class:
+   public final class AppConfig {
+       private AppConfig() { } // Prevent instantiation
+       public static final String DATABASE_URL = "jdbc://...";
+       public static final int TIMEOUT = 5000;
+       public static final String API_KEY = "xyz";
+   }
+   ```
+
+3. ❌ **Naming constants inconsistently**: Using lowercase or camelCase for constants.
+   - Why: Java convention dictates ALL_CAPS_WITH_UNDERSCORES for constants. Inconsistent naming confuses readers.
+   - Fix: Always use UPPER_SNAKE_CASE for constant names.
+   ```java
+   // Wrong:
+   interface GameConstants {
+       int maxPlayers = 4; // Should be uppercase!
+       int minScore = 0;
+       String gameVersion = "1.0"; // Should be uppercase!
+   }
+
+   // Right:
+   interface GameConstants {
+       int MAX_PLAYERS = 4;
+       int MIN_SCORE = 0;
+       String GAME_VERSION = "1.0";
+   }
+   ```
+
+4. ❌ **Accessing constants through implementing class instead of interface**: Using `game.MAX_PLAYERS` instead of `GameConstants.MAX_PLAYERS`.
+   - Why: Less clear that it's a constant from the interface. Makes the code harder to trace and understand.
+   - Fix: Access constants through the interface name to make the source explicit.
+   ```java
+   // Less clear:
+   class Game implements GameConstants {
+       void setup() {
+           int players = MAX_PLAYERS; // Where does this come from?
+       }
+   }
+
+   // Better - explicit:
+   class Game implements GameConstants {
+       void setup() {
+           int players = GameConstants.MAX_PLAYERS; // Clear source!
+       }
+   }
+   ```
+
+5. ❌ **Putting complex initialization logic in interface constants**: Trying to compute or initialize constants with complex expressions.
+   - Why: Interface constants must be compile-time constants. Complex initialization (method calls, new objects) won't work.
+   - Fix: Use simple literals or expressions involving only other constants.
+   ```java
+   // Wrong:
+   interface GameConstants {
+       Random RANDOM = new Random(); // Runtime initialization!
+       int MAX_SCORE = calculateMax(); // Method call not allowed!
+   }
+
+   // Right:
+   interface GameConstants {
+       int MAX_SCORE = 1000; // Simple literal
+       int HALF_SCORE = MAX_SCORE / 2; // Expression with constants OK
+       double MULTIPLIER = 1.5; // Simple literal
+   }
+   ```
 
 **🎯 Challenge:**
 1. Add more game constants (difficulty levels)
@@ -5853,6 +7546,42 @@ Speed: 60.0 mph
 - [ ] See benefits of interface hierarchies
 - [ ] Can use polymorphism at any level
 
+**Best Practices:**
+
+1. **Use Interface Inheritance for Specialization**: Extend interfaces to add more specific requirements to a general contract.
+   - Why: Creates logical hierarchies that group related capabilities at different levels of specificity.
+   - How: Define general interfaces, then extend them for more specialized versions.
+   - Example:
+   ```java
+   interface Vehicle { void start(); void stop(); }
+   interface ElectricVehicle extends Vehicle { void chargeBattery(); }
+   ```
+
+2. **Keep Interface Hierarchies Shallow**: Limit interface inheritance depth to 2-3 levels.
+   - Why: Deep hierarchies become hard to understand and implement.
+   - How: Only extend when adding genuinely related functionality.
+   - Example: Vehicle → ElectricVehicle is good. Going deeper usually indicates over-engineering.
+
+3. **Implementing Classes Must Implement All Methods in Hierarchy**: Remember that implementing a child interface requires implementing parent methods too.
+   - Why: Ensures complete contract fulfillment at all levels.
+   - How: Implement all methods from the entire inheritance chain.
+   - Example:
+   ```java
+   class ElectricCar implements ElectricVehicle {
+       // Must implement: start(), stop() from Vehicle
+       // Plus: chargeBattery() from ElectricVehicle
+   }
+   ```
+
+4. **Use Polymorphism at Any Level**: Reference objects using any interface in the hierarchy.
+   - Why: Provides flexibility in how you work with objects.
+   - How: Choose the most appropriate level of abstraction for each use case.
+   - Example:
+   ```java
+   Vehicle v = new ElectricCar();  // General
+   ElectricVehicle ev = new ElectricCar();  // Specific
+   ```
+
 **🎯 Challenge:**
 1. Add a `HybridVehicle` interface extending both
 2. Create a `HybridCar` class
@@ -6180,6 +7909,283 @@ Loaded: User: Alice
 - [ ] See benefits of dependency injection
 - [ ] Know how to swap implementations
 - [ ] Understand testability benefits
+
+**Best Practices:**
+
+1. **Program to Interfaces, Not Implementations**: Depend on abstractions, not concrete classes.
+   - Why: Makes code flexible, testable, and easy to modify or extend.
+   - How: Declare dependencies as interface types and inject concrete implementations.
+   - Example:
+   ```java
+   class UserManager {
+       private DataStorage storage;  // Interface, not FileStorage
+       UserManager(DataStorage storage) {
+           this.storage = storage;
+       }
+   }
+   ```
+
+2. **Use Constructor Injection for Dependencies**: Pass dependencies through constructors.
+   - Why: Makes dependencies explicit, ensures they're available when the object is created.
+   - How: Accept interfaces as constructor parameters.
+   - Example:
+   ```java
+   UserManager(DataStorage storage, Notifier notifier) {
+       this.storage = storage;
+       this.notifier = notifier;
+   }
+   ```
+
+3. **Design for Substitutability**: Ensure all implementations are truly interchangeable.
+   - Why: Guarantees you can swap implementations without breaking functionality.
+   - How: All implementations must fulfill the complete interface contract correctly.
+   - Example: FileStorage, DatabaseStorage, CloudStorage all work identically from UserManager's perspective.
+
+4. **Use Dependency Injection to Enable Testing**: Inject mock implementations for unit testing.
+   - Why: Allows testing components in isolation without real databases, networks, etc.
+   - How: Create simple test implementations of interfaces for testing.
+   - Example:
+   ```java
+   class MockStorage implements DataStorage {
+       public void save(String data) { /* do nothing */ }
+   }
+   ```
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Creating instances of concrete classes directly instead of using dependency injection**
+
+```java
+// WRONG - Tight coupling
+class UserManager {
+    private DataStorage storage = new FileStorage("users.txt");  // Hard-coded dependency
+    private Notifier notifier = new EmailNotifier("user@example.com");
+
+    void createUser(String username) {
+        storage.save(username);
+        notifier.sendNotification("User created");
+    }
+}
+```
+
+**Why**: The UserManager is tightly coupled to FileStorage and EmailNotifier. You can't switch to a different storage or notifier without modifying UserManager's code. Testing becomes difficult because you can't use mock objects.
+
+**Fix**: Use dependency injection through constructor parameters.
+
+```java
+// CORRECT - Loose coupling with dependency injection
+class UserManager {
+    private DataStorage storage;    // Interface reference
+    private Notifier notifier;      // Interface reference
+
+    // Dependencies injected through constructor
+    UserManager(DataStorage storage, Notifier notifier) {
+        this.storage = storage;
+        this.notifier = notifier;
+    }
+
+    void createUser(String username) {
+        storage.save(username);
+        notifier.sendNotification("User created");
+    }
+}
+
+// Usage - easy to switch implementations
+UserManager manager1 = new UserManager(new FileStorage("users.txt"), new EmailNotifier("a@b.com"));
+UserManager manager2 = new UserManager(new DatabaseStorage("users"), new SMSNotifier("123"));
+```
+
+---
+
+❌ **Mistake 2: Not programming to interfaces - using concrete types for variables and parameters**
+
+```java
+// WRONG - Using concrete class types
+class ReportGenerator {
+    void generateReport(FileStorage storage) {  // Concrete type parameter
+        String data = storage.load();
+        System.out.println("Report: " + data);
+    }
+}
+
+// Can only accept FileStorage - not flexible!
+ReportGenerator gen = new ReportGenerator();
+gen.generateReport(new FileStorage("data.txt"));  // OK
+// gen.generateReport(new DatabaseStorage("data"));  // Compile error!
+```
+
+**Why**: When you use concrete class types, you limit your code to work only with that specific implementation. You lose the flexibility that interfaces provide.
+
+**Fix**: Always declare variables and parameters using interface types.
+
+```java
+// CORRECT - Programming to interfaces
+class ReportGenerator {
+    void generateReport(DataStorage storage) {  // Interface type parameter
+        String data = storage.load();
+        System.out.println("Report: " + data);
+    }
+}
+
+// Can accept ANY DataStorage implementation
+ReportGenerator gen = new ReportGenerator();
+gen.generateReport(new FileStorage("data.txt"));      // OK
+gen.generateReport(new DatabaseStorage("data"));      // OK
+gen.generateReport(new CloudStorage("bucket"));       // OK
+```
+
+---
+
+❌ **Mistake 3: Creating dependencies inside methods instead of injecting them**
+
+```java
+// WRONG - Creating dependencies inside methods
+class UserManager {
+    private DataStorage storage;
+
+    UserManager(DataStorage storage) {
+        this.storage = storage;
+    }
+
+    void createUser(String username) {
+        // Creating new dependency inside method - BAD!
+        Notifier notifier = new EmailNotifier("user@example.com");
+
+        storage.save(username);
+        notifier.sendNotification("User created");
+    }
+}
+```
+
+**Why**: Even though storage is injected, the notifier is hard-coded inside the method. This creates tight coupling for the notifier and makes it impossible to swap notification mechanisms or use mock notifiers for testing.
+
+**Fix**: Inject all dependencies through the constructor.
+
+```java
+// CORRECT - All dependencies injected
+class UserManager {
+    private DataStorage storage;
+    private Notifier notifier;
+
+    UserManager(DataStorage storage, Notifier notifier) {
+        this.storage = storage;
+        this.notifier = notifier;  // Inject all dependencies
+    }
+
+    void createUser(String username) {
+        storage.save(username);
+        notifier.sendNotification("User created");
+    }
+}
+```
+
+---
+
+❌ **Mistake 4: Making dependencies optional or nullable without proper handling**
+
+```java
+// WRONG - Nullable dependencies without checks
+class UserManager {
+    private DataStorage storage;
+    private Notifier notifier;
+
+    UserManager(DataStorage storage, Notifier notifier) {
+        this.storage = storage;
+        this.notifier = notifier;  // Could be null!
+    }
+
+    void createUser(String username) {
+        storage.save(username);
+        notifier.sendNotification("User created");  // NullPointerException if null!
+    }
+}
+
+// Usage
+UserManager manager = new UserManager(fileStorage, null);  // Allowed but dangerous
+manager.createUser("Alice");  // Crashes!
+```
+
+**Why**: If dependencies are essential for the class to function, accepting null values leads to NullPointerExceptions at runtime.
+
+**Fix**: Either validate that dependencies are not null, or use the Null Object pattern.
+
+```java
+// CORRECT - Validate dependencies
+class UserManager {
+    private DataStorage storage;
+    private Notifier notifier;
+
+    UserManager(DataStorage storage, Notifier notifier) {
+        if (storage == null || notifier == null) {
+            throw new IllegalArgumentException("Dependencies cannot be null");
+        }
+        this.storage = storage;
+        this.notifier = notifier;
+    }
+
+    void createUser(String username) {
+        storage.save(username);
+        notifier.sendNotification("User created");  // Safe
+    }
+}
+
+// Alternative: Null Object Pattern
+class NoOpNotifier implements Notifier {
+    public void sendNotification(String message) {
+        // Do nothing - safe default behavior
+    }
+}
+
+// Usage
+Notifier notifier = enableNotifications ? new EmailNotifier("a@b.com") : new NoOpNotifier();
+UserManager manager = new UserManager(storage, notifier);
+```
+
+---
+
+❌ **Mistake 5: Not understanding the difference between loose coupling and no coupling**
+
+```java
+// WRONG - "Too loose" - no clear contract
+class UserManager {
+    private Object storage;    // Too generic - what can it do?
+
+    UserManager(Object storage) {
+        this.storage = storage;
+    }
+
+    void createUser(String username) {
+        // How do we save? No clear contract!
+        // storage.save(username);  // Compile error
+    }
+}
+```
+
+**Why**: Using Object or overly generic types removes the benefits of interfaces. You need a clear contract (interface) that defines what operations are available.
+
+**Fix**: Use specific interfaces that define the contract clearly.
+
+```java
+// CORRECT - Clear interface contract
+class UserManager {
+    private DataStorage storage;  // Clear contract: has save(), load(), delete()
+
+    UserManager(DataStorage storage) {
+        this.storage = storage;
+    }
+
+    void createUser(String username) {
+        storage.save(username);  // Clear contract - we know this exists
+    }
+}
+
+// Interface provides the contract
+interface DataStorage {
+    void save(String data);
+    String load();
+    void delete();
+}
+```
 
 **🎯 Challenge:**
 1. Add a `Logger` interface
@@ -6611,6 +8617,370 @@ Characters (no spaces): 49
 - [ ] Know Open/Closed Principle
 - [ ] Ready to build similar systems
 
+**Best Practices:**
+
+1. **Design Plugin Interface with Lifecycle Methods**: Include initialize(), execute(), and shutdown() methods.
+   - Why: Allows plugins to set up resources, perform work, and clean up properly.
+   - How: Define clear lifecycle hooks that all plugins must implement.
+   - Example:
+   ```java
+   interface Plugin {
+       void initialize();
+       void execute(String input);
+       void shutdown();
+   }
+   ```
+
+2. **Keep Plugin Interface Minimal**: Only require methods that every plugin genuinely needs.
+   - Why: Makes it easier to create new plugins and reduces implementation burden.
+   - How: Start with the bare minimum required methods, add more only when truly needed.
+   - Example: getName(), getVersion(), execute() might be enough - don't add methods only some plugins need.
+
+3. **Use Metadata Methods for Plugin Information**: Include methods that return plugin details.
+   - Why: Enables the host application to display, filter, and manage plugins.
+   - How: Add methods like getName(), getVersion(), getDescription().
+   - Example:
+   ```java
+   String getName();
+   String getVersion();
+   String getDescription();
+   ```
+
+4. **Follow the Open/Closed Principle**: Design so new plugins can be added without modifying the host application.
+   - Why: Core principle of extensible design - open for extension, closed for modification.
+   - How: Host application only depends on Plugin interface, not specific implementations.
+   - Example: TextEditor class never knows about specific plugins, only the Plugin interface.
+
+5. **Implement Plugin Discovery Patterns**: Design how the host finds and loads plugins.
+   - Why: Makes the system truly extensible - users can add plugins without recompiling.
+   - How: Use techniques like service loaders, reflection, or configuration files.
+   - Example: Store plugins in list/map, iterate to call methods on all.
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Plugin interface is too specific or contains methods not all plugins need**
+
+```java
+// WRONG - Too specific, not all plugins need these
+interface Plugin {
+    String getName();
+    void initialize();
+    void execute(String input);
+    void shutdown();
+    void saveToDatabase();      // Not all plugins use database
+    void sendEmailReport();     // Not all plugins send emails
+    int getMaxMemoryUsage();    // Not all plugins track memory
+}
+
+// Now every plugin MUST implement these methods even if they don't use them
+class SpellCheckerPlugin implements Plugin {
+    // ... getName, initialize, execute, shutdown ...
+
+    public void saveToDatabase() {
+        // Don't need this! But forced to implement it
+    }
+
+    public void sendEmailReport() {
+        // Don't need this either!
+    }
+
+    public int getMaxMemoryUsage() {
+        return 0;  // Just returning dummy value
+    }
+}
+```
+
+**Why**: Interface Segregation Principle violation. An interface should only contain methods that all implementations genuinely need. Adding specific functionality forces unnecessary implementation burden on plugins.
+
+**Fix**: Keep the plugin interface minimal with only essential methods.
+
+```java
+// CORRECT - Minimal, essential methods only
+interface Plugin {
+    String getName();
+    String getVersion();
+    void initialize();
+    void execute(String input);
+    void shutdown();
+}
+
+// Create separate interfaces for specific capabilities
+interface DatabasePlugin extends Plugin {
+    void saveToDatabase();
+}
+
+interface ReportPlugin extends Plugin {
+    void sendEmailReport();
+}
+
+// Plugins only implement what they need
+class SpellCheckerPlugin implements Plugin {
+    // Only implements essential methods
+    public String getName() { return "Spell Checker"; }
+    public String getVersion() { return "1.0"; }
+    public void initialize() { /* setup */ }
+    public void execute(String input) { /* spell check */ }
+    public void shutdown() { /* cleanup */ }
+}
+
+class DataAnalysisPlugin implements Plugin, DatabasePlugin {
+    // Implements both Plugin and DatabasePlugin
+    public void saveToDatabase() { /* actual implementation */ }
+}
+```
+
+---
+
+❌ **Mistake 2: Not calling lifecycle methods (initialize/shutdown) properly**
+
+```java
+// WRONG - Forgetting to initialize or shutdown plugins
+class TextEditor {
+    private Plugin[] plugins;
+    private int pluginCount;
+
+    void installPlugin(Plugin plugin) {
+        plugins[pluginCount++] = plugin;
+        // Forgot to call plugin.initialize()!
+    }
+
+    void processText(String text) {
+        for (int i = 0; i < pluginCount; i++) {
+            plugins[i].execute(text);  // Plugin not initialized - might crash!
+        }
+    }
+
+    void shutdown() {
+        // Forgot to call plugin.shutdown() for each plugin!
+        System.out.println("Editor closed");
+    }
+}
+```
+
+**Why**: Plugins need lifecycle methods to set up resources (open files, connect to databases) and clean up (close connections, save state). Skipping these can lead to resource leaks, crashes, or undefined behavior.
+
+**Fix**: Always call initialize() when installing and shutdown() when closing.
+
+```java
+// CORRECT - Proper lifecycle management
+class TextEditor {
+    private Plugin[] plugins;
+    private int pluginCount;
+
+    void installPlugin(Plugin plugin) {
+        if (pluginCount < plugins.length) {
+            plugins[pluginCount++] = plugin;
+            plugin.initialize();  // Initialize the plugin
+            System.out.println("Plugin installed: " + plugin.getName());
+        }
+    }
+
+    void processText(String text) {
+        for (int i = 0; i < pluginCount; i++) {
+            plugins[i].execute(text);  // Safe - plugin was initialized
+        }
+    }
+
+    void shutdown() {
+        System.out.println("Shutting down editor...");
+        for (int i = 0; i < pluginCount; i++) {
+            plugins[i].shutdown();  // Clean up each plugin
+        }
+        System.out.println("Editor closed");
+    }
+}
+```
+
+---
+
+❌ **Mistake 3: Host application depends on concrete plugin classes instead of the interface**
+
+```java
+// WRONG - TextEditor knows about specific plugin implementations
+class TextEditor {
+    private SpellCheckerPlugin spellChecker;    // Concrete class
+    private WordCounterPlugin wordCounter;      // Concrete class
+    private FormatterPlugin formatter;          // Concrete class
+
+    TextEditor() {
+        // Hard-coded plugin creation - tight coupling!
+        this.spellChecker = new SpellCheckerPlugin();
+        this.wordCounter = new WordCounterPlugin();
+        this.formatter = new FormatterPlugin();
+    }
+
+    void processText(String text) {
+        spellChecker.execute(text);
+        wordCounter.execute(text);
+        formatter.execute(text);
+        // Can't add new plugins without modifying this code!
+    }
+}
+```
+
+**Why**: This defeats the purpose of a plugin system. The host application is tightly coupled to specific implementations, making it impossible to add new plugins without modifying the TextEditor code. This violates the Open/Closed Principle.
+
+**Fix**: Store plugins in a collection and use the interface type.
+
+```java
+// CORRECT - TextEditor only knows about Plugin interface
+class TextEditor {
+    private Plugin[] plugins;    // Interface type - flexible!
+    private int pluginCount;
+
+    TextEditor(int maxPlugins) {
+        this.plugins = new Plugin[maxPlugins];
+        this.pluginCount = 0;
+    }
+
+    void installPlugin(Plugin plugin) {  // Accept any Plugin implementation
+        if (pluginCount < plugins.length) {
+            plugins[pluginCount++] = plugin;
+            plugin.initialize();
+        }
+    }
+
+    void processText(String text) {
+        // Process with ALL plugins, whatever they are
+        for (int i = 0; i < pluginCount; i++) {
+            plugins[i].execute(text);
+        }
+    }
+}
+
+// Usage - easy to add ANY plugin
+TextEditor editor = new TextEditor(10);
+editor.installPlugin(new SpellCheckerPlugin());
+editor.installPlugin(new WordCounterPlugin());
+editor.installPlugin(new FormatterPlugin());
+editor.installPlugin(new CustomPlugin());  // Easy to add new plugins!
+```
+
+---
+
+❌ **Mistake 4: Plugin interface returns void instead of providing plugin information**
+
+```java
+// WRONG - No way to get plugin information
+interface Plugin {
+    void execute(String input);
+    // How do we know which plugin this is?
+    // How do we display installed plugins?
+}
+
+class TextEditor {
+    void listPlugins() {
+        System.out.println("Installed plugins:");
+        for (int i = 0; i < pluginCount; i++) {
+            // Can't get plugin name or version!
+            System.out.println((i + 1) + ". ???");
+        }
+    }
+}
+```
+
+**Why**: Without metadata methods, the host application can't display plugin information, manage plugins effectively, or provide meaningful feedback to users.
+
+**Fix**: Add metadata methods to the plugin interface.
+
+```java
+// CORRECT - Plugin interface provides metadata
+interface Plugin {
+    String getName();        // Get plugin name
+    String getVersion();     // Get plugin version
+    void initialize();
+    void execute(String input);
+    void shutdown();
+}
+
+class SpellCheckerPlugin implements Plugin {
+    public String getName() {
+        return "Spell Checker";
+    }
+
+    public String getVersion() {
+        return "1.0.0";
+    }
+
+    // ... other methods ...
+}
+
+class TextEditor {
+    void listPlugins() {
+        System.out.println("Installed plugins:");
+        for (int i = 0; i < pluginCount; i++) {
+            // Now we can show meaningful information
+            System.out.println((i + 1) + ". " +
+                plugins[i].getName() + " v" + plugins[i].getVersion());
+        }
+    }
+
+    void installPlugin(Plugin plugin) {
+        plugins[pluginCount++] = plugin;
+        System.out.println("Installing: " + plugin.getName() +
+                         " v" + plugin.getVersion());
+        plugin.initialize();
+    }
+}
+```
+
+---
+
+❌ **Mistake 5: Not handling plugin errors gracefully**
+
+```java
+// WRONG - Plugin error crashes entire application
+class TextEditor {
+    void processText(String text) {
+        for (int i = 0; i < pluginCount; i++) {
+            plugins[i].execute(text);  // If one plugin crashes, all processing stops!
+        }
+    }
+}
+
+class BuggyPlugin implements Plugin {
+    public void execute(String input) {
+        throw new RuntimeException("Plugin crashed!");
+        // This crashes the entire TextEditor!
+    }
+}
+```
+
+**Why**: A bug in one plugin shouldn't crash the entire application or prevent other plugins from running. Plugin systems need to be resilient to individual plugin failures.
+
+**Fix**: Wrap plugin execution in try-catch blocks and handle errors gracefully.
+
+```java
+// CORRECT - Handle plugin errors gracefully
+class TextEditor {
+    void processText(String text) {
+        for (int i = 0; i < pluginCount; i++) {
+            try {
+                plugins[i].execute(text);  // Try to execute
+            } catch (Exception e) {
+                // Plugin failed, but don't crash - just log and continue
+                System.out.println("Error in plugin " + plugins[i].getName() +
+                                 ": " + e.getMessage());
+                System.out.println("Continuing with other plugins...");
+            }
+        }
+    }
+
+    void installPlugin(Plugin plugin) {
+        try {
+            plugins[pluginCount++] = plugin;
+            plugin.initialize();
+            System.out.println("Successfully installed: " + plugin.getName());
+        } catch (Exception e) {
+            pluginCount--;  // Rollback
+            System.out.println("Failed to install plugin: " + e.getMessage());
+        }
+    }
+}
+
+// Even if BuggyPlugin crashes, other plugins continue working
+```
+
 **🎯 Challenge:**
 1. Add plugin priority/ordering
 2. Create plugin dependencies
@@ -6958,6 +9328,32 @@ IllegalArgumentException - Invalid argument
    - Why: When an exception occurs, control immediately jumps to the catch block - no code after the exception executes in the try block.
    - Fix: Understand exception flow - place cleanup code in finally blocks, not after risky operations.
 
+**Best Practices:**
+1. ✅ **Use Specific Exception Types**: Catch specific exceptions rather than generic Exception
+   - Why: Makes error handling precise and prevents masking unexpected errors
+   - How: Catch ArithmeticException, NullPointerException, etc. instead of catching Exception
+   - Example: `catch (ArithmeticException e)` for division errors, `catch (NullPointerException e)` for null issues
+
+2. ✅ **Always Log or Handle Exceptions**: Never use empty catch blocks
+   - Why: Silent failures make debugging impossible and hide critical errors
+   - How: Print error message, log exception, show user-friendly message, or take corrective action
+   - Example: `System.err.println("Error: " + e.getMessage());` or use logging framework
+
+3. ✅ **Catch Only What You Can Handle**: Don't catch exceptions you can't meaningfully handle
+   - Why: Better to let exception propagate than to handle it incorrectly
+   - How: Only catch exceptions where you can take appropriate recovery action
+   - Example: Catch IOException when reading file if you can use default values, otherwise let it propagate
+
+4. ✅ **Use Exceptions for Exceptional Cases Only**: Don't use exceptions for normal control flow
+   - Why: Exceptions are performance-expensive and obscure program logic
+   - How: Use if-else for expected conditions, exceptions only for unexpected errors
+   - Example: Check `if (index < array.length)` instead of catching ArrayIndexOutOfBoundsException
+
+5. ✅ **Provide User-Friendly Error Messages**: Translate technical exceptions into understandable messages
+   - Why: End users don't understand "NullPointerException" or stack traces
+   - How: Catch exception and display meaningful message to user
+   - Example: Instead of showing stack trace, display "Unable to process request. Please try again."
+
 **🎯 Challenge:**
 1. Create method that parses string to integer
 2. Handle NumberFormatException
@@ -7286,6 +9682,32 @@ Stack Trace:
    - Why: This makes it unclear which line caused the exception and makes it harder to handle different exceptions appropriately.
    - Fix: Use smaller, focused try blocks around specific risky operations, or use multiple catch blocks with clear handling.
 
+**Best Practices:**
+1. ✅ **Order Catch Blocks from Specific to General**: Place most specific exception types first
+   - Why: Java checks catch blocks top-to-bottom, general exceptions would catch everything
+   - How: Order from specific (ArithmeticException) to general (Exception)
+   - Example: Catch NumberFormatException before Exception, NullPointerException before RuntimeException
+
+2. ✅ **Use Multiple Specific Catch Blocks**: Catch each exception type separately when handling differs
+   - Why: Allows tailored handling for each error type
+   - How: Create separate catch blocks for each expected exception with appropriate handling
+   - Example: One catch for ArithmeticException (division errors), another for NullPointerException (null references)
+
+3. ✅ **Extract Exception Message Details**: Use exception methods to get useful information
+   - Why: Helps debugging and provides context for errors
+   - How: Use `e.getMessage()`, `e.getCause()`, `e.toString()` to understand the error
+   - Example: `System.err.println("Error: " + e.getMessage() + " at " + e.getStackTrace()[0]);`
+
+4. ✅ **Keep Try Blocks Focused and Small**: Wrap only the risky code that needs protection
+   - Why: Makes it clear what operation might fail and easier to handle appropriately
+   - How: Place only the specific line(s) that might throw exception in try block
+   - Example: Wrap just the division line, not the entire method
+
+5. ✅ **Add Context When Logging Exceptions**: Include relevant information in error messages
+   - Why: Makes debugging easier by providing context about what was being attempted
+   - How: Include variable values, operation description, user context in error messages
+   - Example: `System.err.println("Failed to divide " + a + " by " + b + ": " + e.getMessage());`
+
 **🎯 Challenge:**
 1. Create calculator with exception handling
 2. Handle division by zero
@@ -7595,6 +10017,32 @@ Testing: null
    // Better:
    String result = (text != null) ? text.toString() : "";
    ```
+
+**Best Practices:**
+1. ✅ **Never Catch Error or Throwable**: Only catch Exception and its subclasses
+   - Why: Errors represent serious JVM issues that applications cannot recover from
+   - How: Catch Exception (or specific subtypes), never Throwable or Error
+   - Example: `catch (Exception e)` is acceptable, `catch (Throwable t)` or `catch (Error e)` is not
+
+2. ✅ **Understand Checked vs Unchecked Exceptions**: Know which need explicit handling
+   - Why: Helps you decide what to catch and what to prevent with code
+   - How: Checked (IOException, SQLException) must be handled. Unchecked (RuntimeException) indicate bugs to fix
+   - Example: Catch IOException when reading files, but fix NullPointerException with null checks
+
+3. ✅ **Fix RuntimeExceptions, Don't Catch Them**: Prevent programming errors rather than catching them
+   - Why: RuntimeExceptions indicate bugs that should be fixed, not handled at runtime
+   - How: Add null checks, validate input, check array bounds instead of catching exceptions
+   - Example: Use `if (text != null)` instead of catching NullPointerException
+
+4. ✅ **Use Most Specific Exception Type Possible**: Catch the narrowest exception type you can handle
+   - Why: Makes error handling precise and prevents catching unexpected exceptions
+   - How: Catch IOException for file operations, NumberFormatException for parsing, not just Exception
+   - Example: `catch (FileNotFoundException e)` is better than `catch (IOException e)` if you only handle missing files
+
+5. ✅ **Understand Exception Hierarchy for Catch Order**: Know parent-child relationships between exceptions
+   - Why: Determines catch block ordering and what gets caught where
+   - How: Learn that ArithmeticException extends RuntimeException extends Exception extends Throwable
+   - Example: Can catch ArithmeticException as RuntimeException, Exception, or Throwable (but shouldn't catch as Throwable)
 
 **🎯 Challenge:**
 1. Create custom exception hierarchy
@@ -7966,6 +10414,32 @@ Cleanup in finally:
    - Why: If resource initialization fails, the variable is null, and calling close() throws NullPointerException.
    - Fix: Always check if (resource != null) before calling cleanup methods in finally.
 
+**Best Practices:**
+1. ✅ **Use Finally for Resource Cleanup**: Always close files, connections, streams in finally block
+   - Why: Ensures resources are released even if exceptions occur
+   - How: Open resource before try, close in finally with null check
+   - Example: `try { fr = new FileReader(...); } finally { if (fr != null) fr.close(); }`
+
+2. ✅ **Never Return from Finally**: Finally blocks should only contain cleanup code
+   - Why: Returns in finally override returns from try/catch, hiding original values or exceptions
+   - How: Use finally only for cleanup operations, never for return statements
+   - Example: Set variables in try/catch, return after finally block, not inside it
+
+3. ✅ **Handle Exceptions Within Finally**: Don't let exceptions escape from finally
+   - Why: Exceptions from finally suppress exceptions from try block, losing error information
+   - How: Wrap cleanup code in try-catch if it might throw exceptions
+   - Example: `finally { try { resource.close(); } catch (IOException e) { log.error("Cleanup failed", e); } }`
+
+4. ✅ **Always Check Null Before Closing**: Verify resource exists before cleanup
+   - Why: Resource might be null if initialization failed before try block completed
+   - How: Add `if (resource != null)` check before calling close or cleanup methods
+   - Example: `finally { if (connection != null) connection.close(); }`
+
+5. ✅ **Prefer Try-With-Resources for Auto-Cleanup**: Use modern Java 7+ syntax when possible
+   - Why: Automatically handles resource cleanup and exception suppression correctly
+   - How: Use `try (ResourceType resource = new Resource()) { }` syntax
+   - Example: `try (FileReader fr = new FileReader("file.txt")) { }` - auto-closes fr
+
 **🎯 Challenge:**
 1. Create file handler with finally
 2. Implement connection pool cleanup
@@ -8281,6 +10755,32 @@ Processing: abc
 3. ❌ **Modifying the exception variable in multi-catch**: Trying to reassign the exception variable.
    - Why: The exception variable in multi-catch is implicitly final - you cannot reassign it.
    - Fix: Don't try to reassign the exception variable; use it as-is.
+
+**Best Practices:**
+1. ✅ **Use Multi-Catch for Same Error Handling**: Combine exceptions with | when handling identically
+   - Why: Reduces code duplication and makes intent clear
+   - How: Use `catch (Type1 | Type2 e)` when response is identical for both exceptions
+   - Example: `catch (IOException | SQLException e) { logError(e); }` when both get same logging
+
+2. ✅ **Keep Separate Catches for Different Handling**: Use individual catch blocks when responses differ
+   - Why: Makes handling specific to each exception type clear
+   - How: Create separate catch blocks with tailored recovery logic for each exception
+   - Example: Different handling for FileNotFoundException (use default) vs IOException (retry)
+
+3. ✅ **Understand Multi-Catch Restrictions**: Know what exception types can be combined
+   - Why: Prevents compilation errors and redundant catches
+   - How: Don't combine parent and child exceptions (Exception | IOException won't compile)
+   - Example: Can combine `ArithmeticException | NullPointerException` (siblings), not `Exception | IOException` (parent-child)
+
+4. ✅ **Order Specific Before General**: Always catch specific exceptions before general ones
+   - Why: Java checks catches top-to-bottom, general catches would make specific ones unreachable
+   - How: Put most specific exception types first, most general last
+   - Example: Catch NumberFormatException, then RuntimeException, then Exception last
+
+5. ✅ **Avoid Overly Broad Catch-All**: Don't catch Exception unless you truly handle all errors
+   - Why: May catch unexpected exceptions you're not prepared to handle
+   - How: Catch specific exceptions you expect and know how to handle
+   - Example: Catch specific exceptions (FileNotFoundException, SQLException) instead of generic Exception
 
 **🎯 Challenge:**
 1. Create input validator with multiple exceptions
@@ -8674,6 +11174,32 @@ Salary: $0.00
 3. ❌ **Using wrong exception types for validation**: Throwing generic RuntimeException for all validation errors.
    - Why: Specific exception types help calling code handle different errors appropriately.
    - Fix: Use or create specific exception types: IllegalArgumentException for invalid arguments, custom ValidationException for business rule violations.
+
+**Best Practices:**
+1. ✅ **Validate All Fields Before Failing**: Collect all validation errors instead of failing at first error
+   - Why: Better user experience - users see all problems at once and can fix everything
+   - How: Use error counter or list, validate all fields, then report all errors together
+   - Example: Validate name, age, email, phone all before returning, not stopping at first invalid field
+
+2. ✅ **Provide Specific, Actionable Error Messages**: Tell users exactly what's wrong and how to fix it
+   - Why: Generic messages frustrate users who can't understand or fix the problem
+   - How: Include field name, what was wrong, what's expected, what was provided
+   - Example: "Age must be between 0 and 150, got: 200" instead of "Invalid input"
+
+3. ✅ **Use Appropriate Exception Types**: Choose exception types that match the error category
+   - Why: Helps calling code handle different error types appropriately
+   - How: Use IllegalArgumentException for invalid parameters, NumberFormatException for parsing, custom exceptions for business rules
+   - Example: `throw new IllegalArgumentException("Age out of range")` for validation, not generic Exception
+
+4. ✅ **Separate Validation Logic from Business Logic**: Create dedicated validation methods
+   - Why: Makes code more maintainable, testable, and reusable
+   - How: Extract validation into separate methods that focus only on validation
+   - Example: `validateAge()`, `validateEmail()`, `validatePhone()` methods separate from business logic
+
+5. ✅ **Continue Processing After Recoverable Errors**: Don't crash on validation errors
+   - Why: Allows users to correct input and retry
+   - How: Catch validation exceptions, log them, show user-friendly message, allow retry
+   - Example: Catch validation errors, display them to user, prompt for corrected input
 
 **🎯 Challenge:**
 1. Add password validation
@@ -9112,6 +11638,319 @@ InvalidOperationException:
 3. Include timestamp in exception
 4. Create exception hierarchy for banking system
 
+**Best Practices:**
+1. ✅ **Extend Exception for Checked, RuntimeException for Unchecked**: Choose parent class based on error type
+   - Why: Checked exceptions force handling, unchecked indicate programming errors
+   - How: Extend Exception for recoverable errors (business logic), RuntimeException for programming bugs
+   - Example: `class InsufficientFundsException extends Exception` (checked), `class InvalidOperationException extends RuntimeException` (unchecked)
+
+2. ✅ **Include Contextual Data in Custom Exceptions**: Store relevant error information as fields
+   - Why: Provides detailed diagnostic information for debugging and error handling
+   - How: Add private fields for error context and public getters to access them
+   - Example: Store `balance` and `requestedAmount` in InsufficientBalanceException, provide `getShortfall()` method
+
+3. ✅ **Provide Multiple Constructors**: Offer flexibility in exception creation
+   - Why: Different scenarios need different amounts of information
+   - How: Provide constructors with (message), (message, cause), (cause), and custom parameters
+   - Example: `InvalidAgeException(int age)`, `InvalidAgeException(String message, int age)` for different use cases
+
+4. ✅ **Create Meaningful Exception Names**: Use descriptive, domain-specific names ending in "Exception"
+   - Why: Makes code self-documenting and error types immediately clear
+   - How: Name exceptions after what went wrong in domain terms, always end with "Exception"
+   - Example: `InsufficientBalanceException`, `InvalidAgeException` instead of `ErrorException` or `Problem`
+
+5. ✅ **Override getMessage() for Detailed Messages**: Provide comprehensive error descriptions
+   - Why: Helps debugging by giving complete context of what went wrong
+   - How: Override getMessage() or create getDetailedMessage() to include all relevant context
+   - Example: `"Insufficient balance: $500.00 (Requested: $600.00)"` instead of just `"Insufficient balance"`
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Creating custom exception that doesn't extend Exception or RuntimeException**
+
+```java
+// WRONG - Doesn't extend Exception or RuntimeException
+class InvalidAgeError {  // Not an exception class!
+    private String message;
+
+    public InvalidAgeError(String message) {
+        this.message = message;
+    }
+}
+
+// Can't use it in throw statement
+void validateAge(int age) {
+    if (age < 0) {
+        throw new InvalidAgeError("Invalid age");  // Compile error!
+    }
+}
+```
+
+**Why**: Java's exception handling mechanism (try-catch, throws) only works with classes that extend Throwable (through Exception or RuntimeException). Your custom class must be part of this hierarchy.
+
+**Fix**: Always extend Exception (for checked) or RuntimeException (for unchecked).
+
+```java
+// CORRECT - Extends Exception (checked exception)
+class InvalidAgeException extends Exception {
+    public InvalidAgeException(String message) {
+        super(message);
+    }
+}
+
+// OR extends RuntimeException (unchecked exception)
+class InvalidAgeException extends RuntimeException {
+    public InvalidAgeException(String message) {
+        super(message);
+    }
+}
+
+// Now it works with throw, try-catch
+void validateAge(int age) throws InvalidAgeException {
+    if (age < 0) {
+        throw new InvalidAgeException("Invalid age");  // Works!
+    }
+}
+```
+
+---
+
+❌ **Mistake 2: Not calling super() constructor to pass exception message**
+
+```java
+// WRONG - Doesn't pass message to parent Exception class
+class InsufficientBalanceException extends Exception {
+    private double balance;
+    private double requested;
+
+    public InsufficientBalanceException(double balance, double requested) {
+        // Forgot to call super()!
+        this.balance = balance;
+        this.requested = requested;
+    }
+}
+
+// When you catch it
+try {
+    throw new InsufficientBalanceException(100, 200);
+} catch (InsufficientBalanceException e) {
+    System.out.println(e.getMessage());  // Prints: null (no message!)
+}
+```
+
+**Why**: The Exception class stores the message in its own field. If you don't call super(message), the getMessage() method will return null, making debugging much harder.
+
+**Fix**: Always call super() with a descriptive message.
+
+```java
+// CORRECT - Pass message to parent class
+class InsufficientBalanceException extends Exception {
+    private double balance;
+    private double requested;
+
+    public InsufficientBalanceException(double balance, double requested) {
+        super("Insufficient balance: $" + balance + " (Requested: $" + requested + ")");
+        this.balance = balance;
+        this.requested = requested;
+    }
+}
+
+// Now getMessage() works properly
+try {
+    throw new InsufficientBalanceException(100, 200);
+} catch (InsufficientBalanceException e) {
+    System.out.println(e.getMessage());
+    // Prints: Insufficient balance: $100.0 (Requested: $200.0)
+}
+```
+
+---
+
+❌ **Mistake 3: Choosing wrong exception type (checked vs unchecked) for the situation**
+
+```java
+// WRONG - Using unchecked exception for business rule violation
+class InsufficientBalanceException extends RuntimeException {  // Unchecked!
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+void withdraw(double amount) {
+    if (amount > balance) {
+        // Caller not forced to handle this!
+        throw new InsufficientBalanceException("Not enough funds");
+    }
+    balance -= amount;
+}
+
+// Caller can ignore the exception - dangerous!
+withdraw(1000);  // Might throw, but compiler doesn't force handling
+```
+
+**Why**: Business logic violations (like insufficient balance) are recoverable errors that callers should handle explicitly. Using unchecked exceptions lets callers ignore them, leading to unhandled errors.
+
+**Fix**: Use checked exceptions (extend Exception) for recoverable errors that callers must handle.
+
+```java
+// CORRECT - Use checked exception for business rules
+class InsufficientBalanceException extends Exception {  // Checked!
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+void withdraw(double amount) throws InsufficientBalanceException {
+    if (amount > balance) {
+        throw new InsufficientBalanceException("Not enough funds");
+    }
+    balance -= amount;
+}
+
+// Caller MUST handle it - compiler enforces it
+try {
+    withdraw(1000);  // Compiler forces try-catch or throws declaration
+} catch (InsufficientBalanceException e) {
+    System.out.println("Transaction failed: " + e.getMessage());
+}
+```
+
+**Rule of thumb:**
+- Checked (extends Exception): Business logic errors, recoverable, caller should handle
+- Unchecked (extends RuntimeException): Programming errors, bugs, optional to handle
+
+---
+
+❌ **Mistake 4: Not storing contextual data in exception class**
+
+```java
+// WRONG - Exception has no context about the error
+class InvalidAgeException extends Exception {
+    public InvalidAgeException(String message) {
+        super(message);
+    }
+    // No age field! Can't retrieve what age caused the problem
+}
+
+void validateAge(int age) throws InvalidAgeException {
+    if (age < 0 || age > 150) {
+        throw new InvalidAgeException("Invalid age");
+    }
+}
+
+// Later in error handling
+try {
+    validateAge(-5);
+} catch (InvalidAgeException e) {
+    System.out.println(e.getMessage());  // "Invalid age"
+    // What was the actual age value? We don't know!
+}
+```
+
+**Why**: Without contextual data, you can't provide detailed error messages or make intelligent recovery decisions. The exception should carry all relevant information about what went wrong.
+
+**Fix**: Store contextual data as fields with getters.
+
+```java
+// CORRECT - Store context and provide getters
+class InvalidAgeException extends Exception {
+    private int age;  // Store the problematic age
+
+    public InvalidAgeException(int age) {
+        super("Invalid age: " + age + " (must be 0-150)");
+        this.age = age;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getDetailedMessage() {
+        if (age < 0) {
+            return "Age cannot be negative: " + age;
+        } else {
+            return "Age too high: " + age + " (maximum is 150)";
+        }
+    }
+}
+
+// Now we have full context
+try {
+    validateAge(-5);
+} catch (InvalidAgeException e) {
+    System.out.println(e.getDetailedMessage());  // "Age cannot be negative: -5"
+    System.out.println("Invalid age was: " + e.getAge());  // Can access the age!
+}
+```
+
+---
+
+❌ **Mistake 5: Creating overly generic custom exception names**
+
+```java
+// WRONG - Generic, meaningless names
+class MyException extends Exception {  // What kind of error?
+    public MyException(String message) {
+        super(message);
+    }
+}
+
+class ErrorException extends Exception {  // All exceptions are errors!
+    public ErrorException(String message) {
+        super(message);
+    }
+}
+
+class ProblemException extends Exception {  // What problem?
+    public ProblemException(String message) {
+        super(message);
+    }
+}
+
+// Usage - unclear what went wrong
+void processPayment() throws MyException, ErrorException, ProblemException {
+    // Which exception means what?
+}
+```
+
+**Why**: Generic names don't convey what actually went wrong. Exception names should be self-documenting, immediately telling you the type of error that occurred.
+
+**Fix**: Use specific, descriptive names that reflect the business domain.
+
+```java
+// CORRECT - Specific, meaningful names
+class InsufficientBalanceException extends Exception {
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+class InvalidPaymentMethodException extends Exception {
+    public InvalidPaymentMethodException(String message) {
+        super(message);
+    }
+}
+
+class PaymentProcessingException extends Exception {
+    public PaymentProcessingException(String message) {
+        super(message);
+    }
+}
+
+// Usage - crystal clear what each exception means
+void processPayment() throws InsufficientBalanceException,
+                            InvalidPaymentMethodException,
+                            PaymentProcessingException {
+    // Each exception type is immediately understandable
+}
+```
+
+**Naming guidelines:**
+- Always end with "Exception"
+- Use business domain terms
+- Be specific (not generic)
+- Make it self-documenting
+
 ---
 
 #### Exercise 2: Throwing Exceptions (throw keyword) (20 minutes)
@@ -9434,6 +12273,242 @@ Current balance: $500.0
 2. Throw custom exceptions
 3. Add exception chaining
 4. Create guard clauses for methods
+
+**Best Practices:**
+1. ✅ **Throw Exceptions for Invalid Input**: Use throw to reject bad parameters early
+   - Why: Prevents invalid data from propagating through system (fail-fast principle)
+   - How: Validate parameters at method entry, throw IllegalArgumentException for invalid values
+   - Example: `if (age < 0) throw new IllegalArgumentException("Age cannot be negative");` at start of method
+
+2. ✅ **Provide Descriptive Exception Messages**: Include what went wrong and why
+   - Why: Makes debugging easier and error messages more helpful
+   - How: Include parameter name, invalid value, and what was expected in message
+   - Example: `throw new IllegalArgumentException("Age must be 0-150, got: " + age);` instead of `"Invalid age"`
+
+3. ✅ **Use Appropriate Exception Types**: Match exception type to error category
+   - Why: Helps callers handle different error types appropriately
+   - How: IllegalArgumentException for invalid parameters, IllegalStateException for wrong object state, custom exceptions for domain errors
+   - Example: Use `IllegalArgumentException` for bad parameters, `IllegalStateException` for operations on closed resources
+
+4. ✅ **Validate Early (Guard Clauses)**: Check preconditions at method start
+   - Why: Prevents wasting resources on doomed operations
+   - How: Put all validation checks at top of method before doing any work
+   - Example: Validate all parameters first, throw exceptions if invalid, then proceed with business logic
+
+5. ✅ **Chain Exceptions to Preserve Context**: Wrap and re-throw with cause
+   - Why: Preserves stack trace and root cause while adding higher-level context
+   - How: Catch exception, create new exception with original as cause using constructor
+   - Example: `catch (IOException e) { throw new DataAccessException("Failed to read config", e); }`
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Using throw without creating a new exception instance**
+
+```java
+// WRONG - Trying to throw the exception class, not an instance
+void validateAge(int age) {
+    if (age < 0) {
+        throw IllegalArgumentException;  // Compile error!
+    }
+}
+```
+
+**Why**: The throw keyword requires an exception object (instance), not a class. You must create an instance using the `new` keyword.
+
+**Fix**: Always create a new instance of the exception.
+
+```java
+// CORRECT - Create exception instance with new
+void validateAge(int age) {
+    if (age < 0) {
+        throw new IllegalArgumentException("Age cannot be negative");
+    }
+}
+```
+
+---
+
+❌ **Mistake 2: Throwing exceptions with empty or generic messages**
+
+```java
+// WRONG - Unhelpful exception messages
+void processPayment(double amount) {
+    if (amount <= 0) {
+        throw new IllegalArgumentException("Invalid");  // What's invalid?
+    }
+    if (amount > balance) {
+        throw new RuntimeException("Error");  // What error?
+    }
+}
+
+// When this throws, you get: "Error" - not helpful!
+```
+
+**Why**: Generic messages make debugging extremely difficult. You can't tell what went wrong, what value caused the problem, or how to fix it.
+
+**Fix**: Provide detailed, specific messages that include the problematic value and context.
+
+```java
+// CORRECT - Descriptive messages with context
+void processPayment(double amount) {
+    if (amount <= 0) {
+        throw new IllegalArgumentException(
+            "Payment amount must be positive, got: $" + amount);
+    }
+    if (amount > balance) {
+        throw new InsufficientBalanceException(
+            "Insufficient balance: $" + balance + " (requested: $" + amount + ")");
+    }
+}
+
+// Now when it throws: "Payment amount must be positive, got: $-50.0"
+```
+
+---
+
+❌ **Mistake 3: Catching and re-throwing without adding context or preserving the original exception**
+
+```java
+// WRONG - Loses original exception information
+void readFile(String filename) {
+    try {
+        // File reading code
+        FileReader fr = new FileReader(filename);
+    } catch (FileNotFoundException e) {
+        // Re-throw without preserving original exception
+        throw new RuntimeException("File error");  // Lost original exception!
+    }
+}
+
+// Stack trace won't show the original FileNotFoundException details
+```
+
+**Why**: When you create a new exception without passing the original as a cause, you lose the complete stack trace and root cause information, making debugging much harder.
+
+**Fix**: Pass the original exception as the cause when re-throwing.
+
+```java
+// CORRECT - Preserve original exception as cause
+void readFile(String filename) {
+    try {
+        FileReader fr = new FileReader(filename);
+    } catch (FileNotFoundException e) {
+        // Include original exception as cause
+        throw new RuntimeException("Failed to read file: " + filename, e);
+    }
+}
+
+// OR better - create custom exception with cause
+void readFile(String filename) throws DataAccessException {
+    try {
+        FileReader fr = new FileReader(filename);
+    } catch (FileNotFoundException e) {
+        throw new DataAccessException("File not found: " + filename, e);
+    }
+}
+
+// Stack trace now shows both exceptions with full context
+```
+
+---
+
+❌ **Mistake 4: Using throw in situations where a simple return would be better**
+
+```java
+// WRONG - Throwing exception for normal control flow
+String getGreeting(String name) {
+    if (name == null || name.isEmpty()) {
+        throw new IllegalArgumentException("No name");  // Overkill!
+    }
+    return "Hello, " + name;
+}
+
+// Every caller must handle exception for empty names
+try {
+    System.out.println(getGreeting(""));
+} catch (IllegalArgumentException e) {
+    // Exception handling for a normal case
+}
+```
+
+**Why**: Exceptions should be for exceptional situations, not normal control flow. Using exceptions for common cases is inefficient and makes code harder to read.
+
+**Fix**: Use return values for normal cases, exceptions only for truly exceptional errors.
+
+```java
+// CORRECT - Return default value for normal empty case
+String getGreeting(String name) {
+    if (name == null || name.isEmpty()) {
+        return "Hello, Guest";  // Normal case, just return default
+    }
+    return "Hello, " + name;
+}
+
+// Clean usage - no exception handling needed
+System.out.println(getGreeting(""));  // Prints: Hello, Guest
+
+// OR use exceptions only for null (truly exceptional)
+String getGreeting(String name) {
+    if (name == null) {
+        throw new IllegalArgumentException("Name cannot be null");
+    }
+    if (name.isEmpty()) {
+        return "Hello, Guest";  // Empty is normal, handle with return
+    }
+    return "Hello, " + name;
+}
+```
+
+---
+
+❌ **Mistake 5: Throwing the wrong type of exception for the error condition**
+
+```java
+// WRONG - Using generic Exception or wrong exception types
+void withdraw(double amount) {
+    if (amount <= 0) {
+        throw new Exception("Invalid amount");  // Too generic!
+    }
+    if (amount > balance) {
+        throw new NullPointerException("Not enough money");  // Wrong type!
+    }
+}
+```
+
+**Why**: Using generic Exception or mismatched exception types makes it impossible for callers to handle specific errors appropriately. NullPointerException is for actual null pointer issues, not business logic violations.
+
+**Fix**: Use specific, appropriate exception types.
+
+```java
+// CORRECT - Use specific, appropriate exceptions
+void withdraw(double amount) throws InsufficientBalanceException {
+    if (amount <= 0) {
+        // IllegalArgumentException for invalid parameters
+        throw new IllegalArgumentException("Amount must be positive: $" + amount);
+    }
+    if (amount > balance) {
+        // Custom exception for business rule violation
+        throw new InsufficientBalanceException(balance, amount);
+    }
+    balance -= amount;
+}
+
+// Callers can now handle each exception type appropriately
+try {
+    account.withdraw(-50);
+} catch (IllegalArgumentException e) {
+    System.out.println("Input error: " + e.getMessage());
+} catch (InsufficientBalanceException e) {
+    System.out.println("Transaction failed: need $" + e.getShortfall() + " more");
+}
+```
+
+**Exception type guidelines:**
+- `IllegalArgumentException`: Invalid method parameters
+- `IllegalStateException`: Method called at wrong time/state
+- `NullPointerException`: Actual null reference (usually not thrown manually)
+- `UnsupportedOperationException`: Operation not supported
+- Custom exceptions: Domain-specific business rule violations
 
 ---
 
@@ -9760,6 +12835,234 @@ Call stack: level1 → level2 → level3
 2. Mix checked and unchecked exceptions
 3. Create custom checked exception
 4. Demonstrate proper exception handling at different levels
+
+**Best Practices:**
+1. ✅ **Declare Checked Exceptions with throws**: Include all checked exceptions in method signature
+   - Why: Compiler enforces handling, makes method contract explicit
+   - How: Add `throws ExceptionType` to method signature for all checked exceptions that might be thrown
+   - Example: `void readFile(String name) throws IOException, FileNotFoundException`
+
+2. ✅ **Let Exceptions Propagate When You Can't Handle Them**: Don't catch if you can't meaningfully respond
+   - Why: Forces handling at appropriate level where context exists to handle properly
+   - How: Declare exception with throws instead of catching it locally
+   - Example: Low-level data access method throws SQLException, service layer handles with business logic
+
+3. ✅ **Document Exception Conditions in JavaDoc**: Explain when/why exceptions are thrown
+   - Why: Helps callers understand what can go wrong and how to prevent it
+   - How: Use @throws/@exception tags in JavaDoc to document exception scenarios
+   - Example: `@throws IllegalArgumentException if filename is null or empty`
+
+4. ✅ **Don't Overuse throws for Unchecked Exceptions**: Declaring RuntimeException is optional and usually unnecessary
+   - Why: Clutters method signature, unchecked exceptions can happen anywhere
+   - How: Only declare checked exceptions in throws clause
+   - Example: Don't declare `throws NullPointerException, IllegalArgumentException` - fix the bugs instead
+
+5. ✅ **Handle at Appropriate Level**: Catch exceptions where you can take meaningful action
+   - Why: Low-level code shouldn't make high-level decisions about error handling
+   - How: Propagate exceptions up to layer that has context to handle properly
+   - Example: DAO throws SQLException, service layer catches and decides whether to retry, use cache, or fail
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Forgetting to add throws declaration for checked exceptions**
+
+```java
+// WRONG - Method throws checked exception but doesn't declare it
+void readFile(String filename) {  // Compile error!
+    FileReader reader = new FileReader(filename);  // FileNotFoundException is checked
+    // ...
+}
+```
+
+**Why**: Java requires that checked exceptions be either caught or declared with throws. The compiler will not let you compile code that can throw a checked exception without handling it.
+
+**Fix**: Add throws declaration to method signature.
+
+```java
+// CORRECT - Declare checked exception with throws
+void readFile(String filename) throws FileNotFoundException {
+    FileReader reader = new FileReader(filename);
+    // ...
+}
+
+// OR catch it if you can handle it
+void readFile(String filename) {
+    try {
+        FileReader reader = new FileReader(filename);
+    } catch (FileNotFoundException e) {
+        System.out.println("File not found: " + filename);
+    }
+}
+```
+
+---
+
+❌ **Mistake 2: Declaring throws Exception instead of specific exception types**
+
+```java
+// WRONG - Too generic, hides what can actually go wrong
+void processData(String filename) throws Exception {  // What exceptions?
+    // Might throw FileNotFoundException, IOException, NumberFormatException
+    // Callers don't know what to expect!
+}
+
+// Caller can't handle specific errors
+try {
+    processData("data.txt");
+} catch (Exception e) {  // Have to catch everything generically
+    // Can't tell if it's a file error, parse error, or something else
+}
+```
+
+**Why**: Declaring `throws Exception` is too generic. It doesn't tell callers what specific errors can occur, making it impossible to handle different failure modes appropriately.
+
+**Fix**: Declare specific exception types that the method can throw.
+
+```java
+// CORRECT - Specific exception types
+void processData(String filename)
+        throws FileNotFoundException, IOException, NumberFormatException {
+    // Now callers know exactly what can go wrong
+}
+
+// Caller can handle each error type appropriately
+try {
+    processData("data.txt");
+} catch (FileNotFoundException e) {
+    System.out.println("File missing: " + e.getMessage());
+} catch (IOException e) {
+    System.out.println("Read error: " + e.getMessage());
+} catch (NumberFormatException e) {
+    System.out.println("Parse error: " + e.getMessage());
+}
+```
+
+---
+
+❌ **Mistake 3: Declaring unchecked exceptions in throws clause unnecessarily**
+
+```java
+// WRONG - Declaring unchecked exceptions (not required)
+void validateAge(int age)
+        throws IllegalArgumentException, NullPointerException {  // Unnecessary
+    if (age < 0) {
+        throw new IllegalArgumentException("Invalid age");
+    }
+}
+```
+
+**Why**: You don't need to declare unchecked exceptions (RuntimeException and its subclasses) in the throws clause. It's redundant and clutters the method signature. Focus on fixing the bugs that cause these instead.
+
+**Fix**: Only declare checked exceptions. Remove unchecked exception declarations.
+
+```java
+// CORRECT - Don't declare unchecked exceptions
+void validateAge(int age) {  // No throws needed for IllegalArgumentException
+    if (age < 0) {
+        throw new IllegalArgumentException("Invalid age");
+    }
+}
+
+// Callers can still catch it if they want
+try {
+    validateAge(-5);
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+}
+```
+
+---
+
+❌ **Mistake 4: Catching an exception just to re-throw it unchanged**
+
+```java
+// WRONG - Pointless catch-and-rethrow
+void readFile(String filename) throws IOException {
+    try {
+        FileReader reader = new FileReader(filename);
+    } catch (IOException e) {
+        throw e;  // Why catch it just to throw it again?
+    }
+}
+```
+
+**Why**: Catching an exception only to immediately re-throw it adds no value. It makes the code longer and harder to read without providing any benefit.
+
+**Fix**: Just declare the exception in throws and let it propagate naturally.
+
+```java
+// CORRECT - Let exception propagate naturally
+void readFile(String filename) throws IOException {
+    FileReader reader = new FileReader(filename);  // IOException propagates automatically
+}
+
+// Only catch if you're adding value (logging, wrapping, cleanup, etc.)
+void readFile(String filename) throws IOException {
+    try {
+        FileReader reader = new FileReader(filename);
+    } catch (IOException e) {
+        logger.log("Failed to read: " + filename);  // Adding value with logging
+        throw e;  // Now the catch makes sense
+    }
+}
+```
+
+---
+
+❌ **Mistake 5: Using throws for control flow instead of proper error handling**
+
+```java
+// WRONG - Using exceptions for normal control flow
+int findUser(String username) throws UserNotFoundException {
+    for (User user : users) {
+        if (user.getName().equals(username)) {
+            return user.getId();
+        }
+    }
+    throw new UserNotFoundException(username);  // Not found is normal, not exceptional
+}
+
+// Every caller must handle exception for common case
+try {
+    int id = findUser("alice");
+} catch (UserNotFoundException e) {
+    // Exception handling for a common scenario
+}
+```
+
+**Why**: Not finding something is often a normal outcome, not an exceptional condition. Using exceptions for normal control flow is inefficient and makes code harder to read.
+
+**Fix**: Return a special value (like -1, null, or Optional) for normal "not found" cases.
+
+```java
+// CORRECT - Return special value for normal case
+int findUser(String username) {
+    for (User user : users) {
+        if (user.getName().equals(username)) {
+            return user.getId();
+        }
+    }
+    return -1;  // Not found - normal case, return sentinel value
+}
+
+// Clean usage
+int id = findUser("alice");
+if (id == -1) {
+    System.out.println("User not found");
+} else {
+    System.out.println("Found user: " + id);
+}
+
+// OR use Optional (Java 8+)
+Optional<Integer> findUser(String username) {
+    for (User user : users) {
+        if (user.getName().equals(username)) {
+            return Optional.of(user.getId());
+        }
+    }
+    return Optional.empty();  // Not found
+}
+```
 
 ---
 
@@ -10116,8 +13419,288 @@ Method A: Caught exception from C
 3. Add proper logging
 4. Create exception handling guidelines document
 
+**Best Practices:**
+1. ✅ **Catch Specific Exceptions, Not Generic Exception**: Avoid catching Exception or Throwable
+   - Why: Prevents accidentally catching and suppressing unexpected errors
+   - How: Catch only the specific exception types you expect and can handle
+   - Example: Catch `IOException`, `SQLException` specifically, not `Exception` which catches everything
+
+2. ✅ **Never Use Empty Catch Blocks**: Always handle or log exceptions
+   - Why: Silent failures hide bugs and make debugging nearly impossible
+   - How: At minimum, log the exception; ideally, take corrective action or propagate it
+   - Example: `catch (IOException e) { logger.error("File read failed", e); }` not `catch (IOException e) {}`
+
+3. ✅ **Log Exceptions with Context**: Include what you were trying to do when error occurred
+   - Why: Makes debugging easier by providing situational context beyond stack trace
+   - How: Include operation description, relevant parameters, user context in log message
+   - Example: `logger.error("Failed to save user profile for userId=" + userId, e);`
+
+4. ✅ **Fail Fast with Validation**: Validate inputs at method entry, throw immediately if invalid
+   - Why: Prevents wasted work and cascading errors from bad data
+   - How: Check all preconditions at start of method, throw IllegalArgumentException if violated
+   - Example: Validate all parameters first, before executing any business logic
+
+5. ✅ **Don't Use Exceptions for Flow Control**: Reserve exceptions for exceptional conditions only
+   - Why: Exceptions are expensive and obscure normal program logic
+   - How: Use if-else for expected conditions, exceptions only for unexpected errors
+   - Example: Check `if (file.exists())` instead of catching FileNotFoundException in normal flow
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Catching exceptions too early in the call stack**
+
+```java
+// WRONG - Catching at low level where we can't handle it properly
+class DataAccess {
+    String readData(String filename) {
+        try {
+            FileReader reader = new FileReader(filename);
+            // read data...
+            return data;
+        } catch (IOException e) {
+            // What should we do here? We don't have enough context!
+            System.out.println("Error");  // Just printing doesn't help
+            return null;  // Returning null hides the problem
+        }
+    }
+}
+
+// Higher level code doesn't know an error occurred
+String data = dataAccess.readData("config.txt");
+// data is null - but why? File missing? Permission denied? Disk error?
+```
+
+**Why**: Low-level code doesn't have enough context to make good decisions about error handling. The method doesn't know if the missing file is critical, if there's an alternative source, or how the application should respond.
+
+**Fix**: Let exceptions propagate to a level that has context to handle them properly.
+
+```java
+// CORRECT - Let exception propagate to higher level
+class DataAccess {
+    String readData(String filename) throws IOException {
+        FileReader reader = new FileReader(filename);
+        // read data...
+        return data;
+        // Let IOException propagate
+    }
+}
+
+// Higher level can make informed decisions
+class ConfigLoader {
+    void loadConfig() {
+        try {
+            String data = dataAccess.readData("config.txt");
+            // use data...
+        } catch (IOException e) {
+            // This level knows what to do: try backup file, use defaults, etc.
+            System.out.println("Primary config failed, trying backup...");
+            try {
+                String data = dataAccess.readData("config-backup.txt");
+            } catch (IOException e2) {
+                System.out.println("All configs failed, using defaults");
+                useDefaultConfig();
+            }
+        }
+    }
+}
+```
+
 ---
 
+❌ **Mistake 2: Swallowing exceptions without any handling**
+
+```java
+// WRONG - Empty catch block swallows the exception
+void processFiles(List<String> filenames) {
+    for (String filename : filenames) {
+        try {
+            processFile(filename);
+        } catch (IOException e) {
+            // Empty catch - exception disappears!
+        }
+    }
+    // Code continues as if nothing went wrong
+}
+```
+
+**Why**: Empty catch blocks hide errors completely. You'll never know that something went wrong, making debugging impossible. The error silently disappears and causes problems later.
+
+**Fix**: At minimum, log the exception. Better yet, handle it or propagate it.
+
+```java
+// CORRECT - At least log the exception
+void processFiles(List<String> filenames) {
+    for (String filename : filenames) {
+        try {
+            processFile(filename);
+        } catch (IOException e) {
+            // Log the error so we know what happened
+            System.err.println("Failed to process " + filename + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+
+// BETTER - Collect errors and handle them
+void processFiles(List<String> filenames) throws ProcessingException {
+    List<String> failedFiles = new ArrayList<>();
+
+    for (String filename : filenames) {
+        try {
+            processFile(filename);
+        } catch (IOException e) {
+            System.err.println("Failed: " + filename);
+            failedFiles.add(filename);
+        }
+    }
+
+    if (!failedFiles.isEmpty()) {
+        throw new ProcessingException("Failed to process files: " + failedFiles);
+    }
+}
+```
+
+---
+
+❌ **Mistake 3: Not preserving exception chain when wrapping exceptions**
+
+```java
+// WRONG - Creating new exception without including original cause
+void loadConfig(String filename) throws ConfigException {
+    try {
+        // File operations
+        FileReader reader = new FileReader(filename);
+    } catch (FileNotFoundException e) {
+        // Lost the original exception!
+        throw new ConfigException("Config load failed");
+    }
+}
+
+// Stack trace won't show FileNotFoundException - debugging is hard
+```
+
+**Why**: When you wrap an exception in a higher-level exception without passing the original as a cause, you lose the complete stack trace. This makes it very difficult to understand what actually went wrong.
+
+**Fix**: Always pass the original exception as the cause.
+
+```java
+// CORRECT - Preserve exception chain
+void loadConfig(String filename) throws ConfigException {
+    try {
+        FileReader reader = new FileReader(filename);
+    } catch (FileNotFoundException e) {
+        // Include original exception as cause
+        throw new ConfigException("Config load failed: " + filename, e);
+    }
+}
+
+// Stack trace now shows both exceptions:
+// ConfigException: Config load failed: config.txt
+//   Caused by: FileNotFoundException: config.txt (No such file)
+```
+
+---
+
+❌ **Mistake 4: Using exceptions for normal control flow**
+
+```java
+// WRONG - Using exceptions to control program flow
+int parseNumber(String input) {
+    try {
+        return Integer.parseInt(input);
+    } catch (NumberFormatException e) {
+        return 0;  // Using exception for normal "not a number" case
+    }
+}
+
+// Called in loop - very inefficient!
+for (String input : inputs) {
+    int num = parseNumber(input);  // Exception thrown on every non-number
+}
+```
+
+**Why**: Exceptions are expensive (creating stack traces, unwinding the stack). Using them for expected, common cases hurts performance and makes code harder to understand.
+
+**Fix**: Check before parsing, use exceptions only for truly exceptional cases.
+
+```java
+// CORRECT - Check before parsing
+int parseNumber(String input) {
+    if (input == null || input.trim().isEmpty()) {
+        return 0;  // Normal case - just return default
+    }
+
+    // Only parse if it looks like a number
+    try {
+        return Integer.parseInt(input);
+    } catch (NumberFormatException e) {
+        // This is now truly exceptional (shouldn't happen often)
+        return 0;
+    }
+}
+
+// OR better - be explicit about failure
+Optional<Integer> parseNumber(String input) {
+    if (input == null || input.trim().isEmpty()) {
+        return Optional.empty();
+    }
+
+    try {
+        return Optional.of(Integer.parseInt(input));
+    } catch (NumberFormatException e) {
+        return Optional.empty();
+    }
+}
+```
+
+---
+
+❌ **Mistake 5: Catching Exception or Throwable instead of specific exceptions**
+
+```java
+// WRONG - Catching everything generically
+void processRequest() {
+    try {
+        // Various operations
+        readFile();
+        parseData();
+        updateDatabase();
+    } catch (Exception e) {  // Too broad!
+        System.out.println("Something went wrong");
+        // How do we handle it? We don't know what failed!
+    }
+}
+```
+
+**Why**: Catching `Exception` or `Throwable` catches everything, including errors you didn't anticipate and can't handle properly. You might catch OutOfMemoryError, which you shouldn't try to recover from.
+
+**Fix**: Catch specific exceptions you can actually handle.
+
+```java
+// CORRECT - Catch specific exceptions
+void processRequest() {
+    try {
+        readFile();
+        parseData();
+        updateDatabase();
+    } catch (IOException e) {
+        // Handle file/network errors
+        System.out.println("I/O error: " + e.getMessage());
+        useCache();
+    } catch (SQLException e) {
+        // Handle database errors
+        System.out.println("Database error: " + e.getMessage());
+        rollback();
+    } catch (ParseException e) {
+        // Handle parsing errors
+        System.out.println("Invalid data format: " + e.getMessage());
+        useDefaultData();
+    }
+    // Don't catch Exception - let unexpected errors propagate
+}
+```
+
+---
 
 #### Exercise 5: Try-with-Resources (Java 7+) (25 minutes)
 
@@ -10552,6 +14135,204 @@ Processed content:
 2. Use try-with-resources for file operations
 3. Handle multiple resources with exceptions
 4. Create resource pool with AutoCloseable
+
+**Best Practices:**
+1. ✅ **Always Use Try-With-Resources for AutoCloseable**: Let Java automatically manage resource cleanup
+   - Why: Prevents resource leaks, handles exceptions during close properly
+   - How: Use `try (Resource r = new Resource()) { }` syntax for any AutoCloseable resource
+   - Example: `try (BufferedReader br = new BufferedReader(new FileReader("file.txt"))) { }` - auto-closes br
+
+2. ✅ **Declare Resources in Try Parentheses**: Put resource initialization in try declaration
+   - Why: Ensures resource is closed even if exception occurs during initialization or use
+   - How: Initialize resources within try parentheses, separated by semicolons for multiple resources
+   - Example: `try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) { }`
+
+3. ✅ **Understand Resources Close in Reverse Order**: Last opened closes first
+   - Why: Prevents closing dependencies before dependents (outer resources depend on inner)
+   - How: Declare resources in order of dependency - innermost first, outermost last
+   - Example: Declare FileReader before BufferedReader, BufferedReader closes first
+
+4. ✅ **Implement AutoCloseable for Custom Resources**: Make cleanup automatic for your resources
+   - Why: Enables try-with-resources for your classes, standardizes cleanup
+   - How: Implement AutoCloseable interface, put cleanup logic in close() method
+   - Example: `class Connection implements AutoCloseable { public void close() { /* cleanup */ } }`
+
+5. ✅ **Handle Suppressed Exceptions**: Check for exceptions during resource close
+   - Why: Exceptions during close can hide main exception if not handled properly
+   - How: Try-with-resources automatically adds close exceptions as suppressed, access with getSuppressed()
+   - Example: `catch (Exception e) { for (Throwable t : e.getSuppressed()) { log(t); } }`
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Forgetting that resources must implement AutoCloseable/Closeable**
+
+```java
+// ❌ WRONG: Using a class that doesn't implement AutoCloseable
+class MyConnection {
+    public void open() { System.out.println("Opening..."); }
+    public void close() { System.out.println("Closing..."); }
+}
+
+// This won't compile!
+try (MyConnection conn = new MyConnection()) {  // Compilation error
+    conn.open();
+}
+```
+
+**Why:** Try-with-resources requires the resource to implement AutoCloseable or Closeable interface.
+
+**Fix:** Make your class implement AutoCloseable:
+
+```java
+// ✅ CORRECT: Implement AutoCloseable
+class MyConnection implements AutoCloseable {
+    public void open() { System.out.println("Opening..."); }
+
+    @Override
+    public void close() {  // Required by AutoCloseable
+        System.out.println("Closing...");
+    }
+}
+
+try (MyConnection conn = new MyConnection()) {  // Works!
+    conn.open();
+}  // close() called automatically
+```
+
+---
+
+❌ **Mistake 2: Closing resources manually when using try-with-resources**
+
+```java
+// ❌ WRONG: Manually closing resource that's already auto-managed
+try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
+    String line = reader.readLine();
+    System.out.println(line);
+    reader.close();  // Don't do this! Will be closed automatically
+}
+// reader.close() called AGAIN automatically - resource closed twice!
+```
+
+**Why:** Try-with-resources automatically calls close(), so manual close causes double-closing and potential errors.
+
+**Fix:** Let try-with-resources handle closing automatically:
+
+```java
+// ✅ CORRECT: Let try-with-resources handle closing
+try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
+    String line = reader.readLine();
+    System.out.println(line);
+    // No manual close needed
+}  // close() called automatically once
+```
+
+---
+
+❌ **Mistake 3: Declaring resources outside try-with-resources parentheses**
+
+```java
+// ❌ WRONG: Declaring resource outside try parentheses
+BufferedReader reader = new BufferedReader(new FileReader("file.txt"));
+try (reader) {  // Java 9+ only, and resource isn't effectively final
+    String line = reader.readLine();
+    System.out.println(line);
+}
+```
+
+**Why:** Resource must be declared in try parentheses or be effectively final (Java 9+). If exception occurs during initialization, resource won't be auto-closed.
+
+**Fix:** Always declare and initialize resources in try parentheses:
+
+```java
+// ✅ CORRECT: Declare and initialize in try parentheses
+try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
+    String line = reader.readLine();
+    System.out.println(line);
+}  // close() guaranteed to be called
+```
+
+---
+
+❌ **Mistake 4: Not understanding resources close in REVERSE order**
+
+```java
+// ❌ WRONG: Assuming resources close in declaration order
+try (
+    FileOutputStream fos = new FileOutputStream("output.txt");
+    BufferedOutputStream bos = new BufferedOutputStream(fos)
+) {
+    bos.write("Hello".getBytes());
+}
+// Student thinks: fos closes first, then bos
+// Reality: bos closes first (reverse order), then fos
+```
+
+**Why:** Resources close in reverse order of declaration. If you depend on forward order, data may not flush properly.
+
+**Fix:** Understand reverse order and declare dependencies first:
+
+```java
+// ✅ CORRECT: Declare inner resource first, outer resource last
+try (
+    FileOutputStream fos = new FileOutputStream("output.txt");      // Closes LAST
+    BufferedOutputStream bos = new BufferedOutputStream(fos)        // Closes FIRST
+) {
+    bos.write("Hello".getBytes());
+    // Closes: bos.close() flushes to fos, then fos.close() flushes to disk
+}
+// Order: bos closes first (reverse), flushes data to fos, then fos closes
+```
+
+---
+
+❌ **Mistake 5: Not handling or checking for suppressed exceptions**
+
+```java
+// ❌ WRONG: Ignoring suppressed exceptions from close()
+class ProblematicResource implements AutoCloseable {
+    public void doWork() throws Exception {
+        throw new Exception("Work failed");
+    }
+
+    @Override
+    public void close() throws Exception {
+        throw new Exception("Close failed");  // This gets suppressed!
+    }
+}
+
+try (ProblematicResource res = new ProblematicResource()) {
+    res.doWork();  // Throws exception
+} catch (Exception e) {
+    System.out.println("Caught: " + e.getMessage());  // Only shows "Work failed"
+    // "Close failed" exception is lost!
+}
+```
+
+**Why:** When both try block and close() throw exceptions, the close() exception is suppressed. You lose valuable debugging information.
+
+**Fix:** Check for suppressed exceptions to see all errors:
+
+```java
+// ✅ CORRECT: Check for suppressed exceptions
+try (ProblematicResource res = new ProblematicResource()) {
+    res.doWork();
+} catch (Exception e) {
+    System.out.println("Primary exception: " + e.getMessage());
+
+    // Check for suppressed exceptions
+    Throwable[] suppressed = e.getSuppressed();
+    if (suppressed.length > 0) {
+        System.out.println("Suppressed exceptions:");
+        for (Throwable t : suppressed) {
+            System.out.println("  - " + t.getMessage());
+        }
+    }
+}
+// Output:
+// Primary exception: Work failed
+// Suppressed exceptions:
+//   - Close failed
+```
 
 ---
 
@@ -11046,6 +14827,332 @@ public class CompleteExceptionSystem {
 5. Add metrics and monitoring
 6. Implement circuit breaker pattern
 
+**Best Practices:**
+1. ✅ **Use Layered Exception Handling**: Handle exceptions at appropriate architectural layer
+   - Why: Each layer has different context and capabilities for handling errors
+   - How: Validation layer handles input errors, service layer handles business errors, DAO layer throws data errors
+   - Example: Controller validates input, service enforces business rules, DAO lets SQLException propagate
+
+2. ✅ **Create Exception Hierarchy for Domain**: Build custom exception tree for your application domain
+   - Why: Provides semantic meaning to errors and enables precise handling
+   - How: Create base exception for domain, extend for specific error categories
+   - Example: `BusinessException` (base) → `ValidationException`, `InsufficientFundsException`, etc.
+
+3. ✅ **Log at Multiple Levels**: Log exceptions at each layer with appropriate detail
+   - Why: Provides complete trace of error propagation through system
+   - How: Log when catching, transforming, or re-throwing exceptions with layer-specific context
+   - Example: DAO logs SQL details, service logs business context, controller logs user action
+
+4. ✅ **Chain Exceptions to Preserve Root Cause**: Always include original exception when wrapping
+   - Why: Preserves complete stack trace and root cause for debugging
+   - How: Pass original exception as cause parameter when creating new exception
+   - Example: `throw new BusinessException("Order failed", e);` preserves original exception `e`
+
+5. ✅ **Separate System from Business Exceptions**: Use checked for business, unchecked for system errors
+   - Why: Business errors are expected and recoverable, system errors usually aren't
+   - How: Checked exceptions (extends Exception) for business rules, unchecked (extends RuntimeException) for infrastructure
+   - Example: `ValidationException` (checked) for bad input, `DataAccessException` (unchecked) for DB failures
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Creating flat exception hierarchy instead of building a proper exception tree**
+
+```java
+// ❌ WRONG: All exceptions extend Exception directly - no hierarchy
+class InvalidUsernameException extends Exception {}
+class InvalidEmailException extends Exception {}
+class InvalidAgeException extends Exception {}
+class UserExistsException extends Exception {}
+class UserNotFoundException extends Exception {}
+
+// Handler can't catch "all validation errors" or "all business errors"
+try {
+    registerUser(user);
+} catch (InvalidUsernameException | InvalidEmailException | InvalidAgeException e) {
+    // Must list every exception type!
+}
+```
+
+**Why:** Flat structure requires catching each exception individually, doesn't group related exceptions.
+
+**Fix:** Build exception hierarchy with meaningful parent classes:
+
+```java
+// ✅ CORRECT: Hierarchical exception tree
+class UserServiceException extends Exception {}  // Base
+
+class ValidationException extends UserServiceException {}  // Category
+    class InvalidUsernameException extends ValidationException {}
+    class InvalidEmailException extends ValidationException {}
+    class InvalidAgeException extends ValidationException {}
+
+class BusinessException extends UserServiceException {}  // Category
+    class UserExistsException extends BusinessException {}
+    class UserNotFoundException extends BusinessException {}
+
+// Now can catch by category!
+try {
+    registerUser(user);
+} catch (ValidationException e) {  // Catches all validation errors
+    System.out.println("Validation failed: " + e.getMessage());
+} catch (BusinessException e) {  // Catches all business errors
+    System.out.println("Business rule violation: " + e.getMessage());
+}
+```
+
+---
+
+❌ **Mistake 2: Not preserving exception chain when transforming exceptions between layers**
+
+```java
+// ❌ WRONG: Losing original exception information
+class UserRepository {
+    public void save(User user) throws DataAccessException {
+        try {
+            database.insert(user);
+        } catch (SQLException e) {
+            // Original exception lost!
+            throw new DataAccessException("Failed to save user");
+        }
+    }
+}
+
+// When exception occurs, you only see "Failed to save user"
+// No information about the actual SQL error (duplicate key? connection timeout?)
+```
+
+**Why:** Losing original exception makes debugging impossible - you don't know root cause.
+
+**Fix:** Always chain exceptions to preserve full error context:
+
+```java
+// ✅ CORRECT: Preserve exception chain
+class UserRepository {
+    public void save(User user) throws DataAccessException {
+        try {
+            database.insert(user);
+        } catch (SQLException e) {
+            // Pass original exception as cause
+            throw new DataAccessException("Failed to save user: " + user.getUsername(), e);
+        }
+    }
+}
+
+// Now stack trace shows:
+// DataAccessException: Failed to save user: john_doe
+//   Caused by: SQLException: Duplicate entry 'john_doe' for key 'username'
+// Full context preserved!
+```
+
+---
+
+❌ **Mistake 3: Logging and re-throwing at every layer creating noise in logs**
+
+```java
+// ❌ WRONG: Logging at every single layer
+class UserRepository {
+    public void save(User user) throws DataAccessException {
+        try {
+            database.insert(user);
+        } catch (SQLException e) {
+            logger.error("Repository: Failed to save", e);  // Log #1
+            throw new DataAccessException("Save failed", e);
+        }
+    }
+}
+
+class UserService {
+    public void registerUser(User user) throws BusinessException {
+        try {
+            repository.save(user);
+        } catch (DataAccessException e) {
+            logger.error("Service: Failed to register", e);  // Log #2
+            throw new BusinessException("Registration failed", e);
+        }
+    }
+}
+
+class UserController {
+    public void handleRegister(User user) {
+        try {
+            service.registerUser(user);
+        } catch (BusinessException e) {
+            logger.error("Controller: Registration error", e);  // Log #3
+            // Same error logged 3 times!
+        }
+    }
+}
+```
+
+**Why:** One error gets logged multiple times at different layers, cluttering logs with duplicate information.
+
+**Fix:** Log once at appropriate layer (usually top or catch point), add context at others:
+
+```java
+// ✅ CORRECT: Log once, add context at other layers
+class UserRepository {
+    public void save(User user) throws DataAccessException {
+        try {
+            database.insert(user);
+        } catch (SQLException e) {
+            // Don't log, just wrap with context
+            throw new DataAccessException("Repository: Save failed for user=" + user.getUsername(), e);
+        }
+    }
+}
+
+class UserService {
+    public void registerUser(User user) throws BusinessException {
+        try {
+            repository.save(user);
+        } catch (DataAccessException e) {
+            // Don't log, just wrap with context
+            throw new BusinessException("Service: Registration failed", e);
+        }
+    }
+}
+
+class UserController {
+    public void handleRegister(User user) {
+        try {
+            service.registerUser(user);
+        } catch (BusinessException e) {
+            // Log ONCE here with full stack trace
+            logger.error("Registration failed for user: " + user.getUsername(), e);
+            // Stack trace shows all context from all layers
+        }
+    }
+}
+```
+
+---
+
+❌ **Mistake 4: Not using fail-fast validation - validating fields one at a time**
+
+```java
+// ❌ WRONG: Validate one field, throw exception, user fixes, repeat
+void validateUser(User user) throws ValidationException {
+    if (user.getUsername().length() < 3) {
+        throw new ValidationException("username", user.getUsername(), "Too short");
+    }
+    // Only gets here if username valid
+    if (!user.getEmail().contains("@")) {
+        throw new ValidationException("email", user.getEmail(), "Invalid email");
+    }
+    // Only gets here if email valid
+    if (user.getAge() < 18) {
+        throw new ValidationException("age", user.getAge(), "Too young");
+    }
+}
+
+// User experience: Fix username → submit → get email error → fix email → submit → get age error
+// Frustrating!
+```
+
+**Why:** User has to fix and resubmit multiple times, poor user experience.
+
+**Fix:** Collect all validation errors and return them together:
+
+```java
+// ✅ CORRECT: Validate all fields, collect all errors
+class ValidationErrors extends Exception {
+    private List<String> errors = new ArrayList<>();
+
+    public void add(String field, Object value, String message) {
+        errors.add(field + ": " + message + " (got: " + value + ")");
+    }
+
+    public boolean hasErrors() {
+        return !errors.isEmpty();
+    }
+
+    @Override
+    public String getMessage() {
+        return "Validation failed:\n" + String.join("\n", errors);
+    }
+}
+
+void validateUser(User user) throws ValidationErrors {
+    ValidationErrors errors = new ValidationErrors();
+
+    if (user.getUsername().length() < 3) {
+        errors.add("username", user.getUsername(), "Must be at least 3 characters");
+    }
+    if (!user.getEmail().contains("@")) {
+        errors.add("email", user.getEmail(), "Invalid email format");
+    }
+    if (user.getAge() < 18) {
+        errors.add("age", user.getAge(), "Must be 18 or older");
+    }
+
+    if (errors.hasErrors()) {
+        throw errors;
+    }
+}
+
+// User experience: Submit → get ALL errors at once → fix all → done!
+```
+
+---
+
+❌ **Mistake 5: Mixing exception handling concerns - business logic in catch blocks**
+
+```java
+// ❌ WRONG: Business logic inside catch blocks
+void processOrder(Order order) {
+    try {
+        chargePayment(order);
+        shipOrder(order);
+        sendConfirmation(order);
+    } catch (PaymentException e) {
+        // Business logic in catch block!
+        order.setStatus("PAYMENT_FAILED");
+        notifyCustomer(order, "Payment failed");
+        notifyAdmin(order, "Payment issue");
+        refundIfCharged(order);
+        // Too much business logic here!
+    } catch (ShippingException e) {
+        order.setStatus("SHIPPING_FAILED");
+        rollbackPayment(order);
+        // More business logic in catch!
+    }
+}
+```
+
+**Why:** Catch blocks should handle exceptions, not contain complex business logic. Makes code hard to test and maintain.
+
+**Fix:** Keep catch blocks focused on exception handling, move logic to methods:
+
+```java
+// ✅ CORRECT: Separate exception handling from business logic
+void processOrder(Order order) {
+    try {
+        chargePayment(order);
+        shipOrder(order);
+        sendConfirmation(order);
+    } catch (PaymentException e) {
+        handlePaymentFailure(order, e);  // Delegate to dedicated method
+    } catch (ShippingException e) {
+        handleShippingFailure(order, e);  // Delegate to dedicated method
+    }
+}
+
+// Business logic in separate, testable methods
+private void handlePaymentFailure(Order order, PaymentException e) {
+    logger.error("Payment failed for order: " + order.getId(), e);
+    order.setStatus("PAYMENT_FAILED");
+    notifyCustomer(order, "Payment failed: " + e.getMessage());
+    notifyAdmin(order, "Payment issue for order: " + order.getId());
+    refundIfCharged(order);
+}
+
+private void handleShippingFailure(Order order, ShippingException e) {
+    logger.error("Shipping failed for order: " + order.getId(), e);
+    order.setStatus("SHIPPING_FAILED");
+    rollbackPayment(order);
+}
+```
+
 ---
 
 ### 🎓 Day 19 Summary: Exception Handling Advanced
@@ -11385,12 +15492,193 @@ ArrayList size after add: 4
 | `list.length` | ArrayList has no length field | `list.size()` |
 | `for (i < list.length())` | size() not length() | `for (i < list.size())` |
 
+**Best Practices:**
+1. ✅ **Always Use Generics with Collections**: Specify element type for type safety
+   - Why: Prevents runtime ClassCastException and enables compile-time type checking
+   - How: Use `ArrayList<Type>` instead of raw `ArrayList`
+   - Example: `ArrayList<String> names = new ArrayList<>();` not `ArrayList names = new ArrayList();`
+
+2. ✅ **Use Diamond Operator for Cleaner Code**: Omit type on right side in Java 7+
+   - Why: Reduces verbosity while maintaining type safety
+   - How: Use `new ArrayList<>()` instead of `new ArrayList<String>()` when type is obvious from left side
+   - Example: `ArrayList<String> list = new ArrayList<>();` instead of `ArrayList<String> list = new ArrayList<String>();`
+
+3. ✅ **Initialize with Capacity for Large Lists**: Provide initial capacity if you know approximate size
+   - Why: Reduces internal array resizing operations, improves performance
+   - How: Use `new ArrayList<>(capacity)` constructor when you know rough size
+   - Example: `ArrayList<String> list = new ArrayList<>(1000);` when adding ~1000 items
+
+4. ✅ **Use Enhanced For-Loop for Read-Only Iteration**: Prefer foreach when not modifying list
+   - Why: Simpler, more readable, less error-prone than index-based loops
+   - How: Use `for (Type item : list)` instead of `for (int i = 0; i < list.size(); i++)`
+   - Example: `for (String name : names) { System.out.println(name); }`
+
+5. ✅ **Check isEmpty() Before Accessing Elements**: Prevent IndexOutOfBoundsException
+   - Why: Safer than checking size() > 0, more expressive intent
+   - How: Use `if (!list.isEmpty())` before calling get(0) or accessing elements
+   - Example: `if (!list.isEmpty()) { String first = list.get(0); }`
+
 **🎯 Challenge:**
 1. Create ArrayList of your favorite movies
 2. Add at least 5 movies
 3. Print the total number of movies
 4. Print each movie with its position number
 5. Find and print the first and last movie
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Confusing array syntax with ArrayList syntax**
+
+```java
+// ❌ WRONG: Trying to use array syntax with ArrayList
+ArrayList<String> names = new ArrayList<>();
+names.add("Alice");
+names.add("Bob");
+
+String first = names[0];  // Compilation error! ArrayList doesn't use []
+int size = names.length;  // Compilation error! ArrayList uses size(), not length
+```
+
+**Why:** ArrayList is a class, not an array. It uses methods like get() and size(), not array operators.
+
+**Fix:** Use ArrayList methods: get() for access, size() for length:
+
+```java
+// ✅ CORRECT: Use ArrayList methods
+ArrayList<String> names = new ArrayList<>();
+names.add("Alice");
+names.add("Bob");
+
+String first = names.get(0);  // Correct: use get(index)
+int size = names.size();      // Correct: use size()
+```
+
+---
+
+❌ **Mistake 2: Forgetting that ArrayList uses wrapper classes, not primitives**
+
+```java
+// ❌ WRONG: Trying to use primitive type with ArrayList
+ArrayList<int> numbers = new ArrayList<>();  // Compilation error! Can't use int
+
+numbers.add(5);
+```
+
+**Why:** Generics only work with reference types (classes), not primitive types like int, double, char.
+
+**Fix:** Use wrapper classes: Integer, Double, Character, etc.:
+
+```java
+// ✅ CORRECT: Use wrapper class Integer, not primitive int
+ArrayList<Integer> numbers = new ArrayList<>();  // Use Integer wrapper class
+
+numbers.add(5);        // Auto-boxing: int 5 → Integer
+numbers.add(10);
+int sum = numbers.get(0) + numbers.get(1);  // Auto-unboxing: Integer → int
+System.out.println(sum);  // 15
+```
+
+---
+
+❌ **Mistake 3: Not checking size before accessing elements (IndexOutOfBoundsException)**
+
+```java
+// ❌ WRONG: Accessing without checking size
+ArrayList<String> items = new ArrayList<>();
+items.add("First");
+items.add("Second");
+
+String third = items.get(2);  // Runtime error! Index 2 out of bounds for size 2
+String fifth = items.get(4);  // Runtime error! Index 4 doesn't exist
+```
+
+**Why:** ArrayList indices are 0-based. Size 2 means valid indices are 0 and 1. Accessing index 2+ throws IndexOutOfBoundsException.
+
+**Fix:** Always check size before accessing, or use try-catch:
+
+```java
+// ✅ CORRECT: Check size before accessing
+ArrayList<String> items = new ArrayList<>();
+items.add("First");
+items.add("Second");
+
+if (items.size() > 2) {
+    String third = items.get(2);  // Safe - only if exists
+} else {
+    System.out.println("No third item exists. Size: " + items.size());
+}
+
+// Or get last item safely
+if (!items.isEmpty()) {
+    String last = items.get(items.size() - 1);  // Last valid index is size - 1
+    System.out.println("Last item: " + last);  // "Second"
+}
+```
+
+---
+
+❌ **Mistake 4: Using == to compare ArrayList elements instead of equals()**
+
+```java
+// ❌ WRONG: Using == to compare strings in ArrayList
+ArrayList<String> names = new ArrayList<>();
+names.add(new String("Alice"));  // Creates new String object
+
+if (names.get(0) == "Alice") {  // false! Compares references, not content
+    System.out.println("Found Alice");
+} else {
+    System.out.println("Not found");  // This executes!
+}
+```
+
+**Why:** == compares object references (memory addresses), not content. Different String objects with same content have different references.
+
+**Fix:** Use equals() to compare content:
+
+```java
+// ✅ CORRECT: Use equals() to compare content
+ArrayList<String> names = new ArrayList<>();
+names.add("Alice");
+
+if (names.get(0).equals("Alice")) {  // true! Compares content
+    System.out.println("Found Alice");  // This executes
+}
+
+// Even better: check for null first
+if ("Alice".equals(names.get(0))) {  // Null-safe: won't throw NullPointerException
+    System.out.println("Found Alice");
+}
+```
+
+---
+
+❌ **Mistake 5: Creating ArrayList without generic type (raw type warning)**
+
+```java
+// ❌ WRONG: Using raw type ArrayList without generics
+ArrayList list = new ArrayList();  // Raw type - no type safety!
+list.add("String");
+list.add(123);       // Can add anything - dangerous!
+list.add(true);
+
+String first = (String) list.get(0);  // Must cast - error prone
+String second = (String) list.get(1); // Runtime error! 123 is Integer, not String
+```
+
+**Why:** Raw ArrayList has no type safety. You can add any type, leading to ClassCastException at runtime.
+
+**Fix:** Always use generics to specify the element type:
+
+```java
+// ✅ CORRECT: Use generics for type safety
+ArrayList<String> list = new ArrayList<>();  // Only Strings allowed
+list.add("String");
+// list.add(123);     // Compilation error! Type safety prevents this
+// list.add(true);    // Compilation error! Type safety prevents this
+
+String first = list.get(0);   // No cast needed
+String second = list.get(1);  // Type safe - guaranteed to be String
+```
 
 ---
 
@@ -11697,12 +15985,252 @@ Result: [JavaScript, Python, JavaScript, C++, JavaScript]
 | Modifying list while iterating | ConcurrentModificationException | Use iterator or loop backwards |
 | `indexOf()` returns -1 but used as index | Can cause exception | Check if >= 0 first |
 
+**Best Practices:**
+1. ✅ **Check Bounds Before remove(), get(), set()**: Verify index validity before access
+   - Why: Prevents IndexOutOfBoundsException crashes
+   - How: Check `index >= 0 && index < list.size()` before accessing
+   - Example: `if (index < list.size()) { list.remove(index); }`
+
+2. ✅ **Validate indexOf() Results Before Using**: Check for -1 (not found) before using index
+   - Why: indexOf() returns -1 when element not found, using -1 as index causes exception
+   - How: Store result and check `if (index >= 0)` before using in get/remove/set
+   - Example: `int idx = list.indexOf("item"); if (idx >= 0) { list.remove(idx); }`
+
+3. ✅ **Use Iterator When Removing During Iteration**: Avoid ConcurrentModificationException
+   - Why: Modifying list with remove() while using foreach causes exception
+   - How: Use Iterator.remove() or loop backwards by index
+   - Example: `Iterator<String> it = list.iterator(); while (it.hasNext()) { if (condition) it.remove(); }`
+
+4. ✅ **Prefer remove(Object) for Searching and Deleting**: Use value-based removal when you have the object
+   - Why: More readable and efficient than indexOf() + remove(index)
+   - How: Use `list.remove(object)` instead of `list.remove(list.indexOf(object))`
+   - Example: `list.remove("Java");` instead of `int i = list.indexOf("Java"); if (i >= 0) list.remove(i);`
+
+5. ✅ **Use contains() Before Operations**: Check existence before searching or modifying
+   - Why: Avoids unnecessary work and exceptions
+   - How: Use `if (list.contains(item))` before indexOf, remove, or other operations
+   - Example: `if (list.contains("item")) { int index = list.indexOf("item"); }`
+
 **🎯 Challenge:**
 1. Create ArrayList of prices (Double)
 2. Remove all prices below $10
 3. Find and replace the highest price with $99.99
 4. Check if price $50.00 exists
 5. Print all operations and final list
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Modifying ArrayList while iterating with enhanced for loop (ConcurrentModificationException)**
+
+```java
+// ❌ WRONG: Removing elements while iterating
+ArrayList<String> names = new ArrayList<>();
+names.add("Alice");
+names.add("Bob");
+names.add("Charlie");
+
+for (String name : names) {
+    if (name.equals("Bob")) {
+        names.remove(name);  // ConcurrentModificationException!
+    }
+}
+```
+
+**Why:** Enhanced for loop uses an iterator internally. Modifying collection during iteration invalidates the iterator.
+
+**Fix:** Use iterator's remove() method, or traditional for loop backwards:
+
+```java
+// ✅ CORRECT Option 1: Use Iterator
+ArrayList<String> names = new ArrayList<>();
+names.add("Alice");
+names.add("Bob");
+names.add("Charlie");
+
+Iterator<String> iterator = names.iterator();
+while (iterator.hasNext()) {
+    String name = iterator.next();
+    if (name.equals("Bob")) {
+        iterator.remove();  // Safe: iterator's remove method
+    }
+}
+
+// ✅ CORRECT Option 2: Traditional for loop backwards
+for (int i = names.size() - 1; i >= 0; i--) {
+    if (names.get(i).equals("Bob")) {
+        names.remove(i);  // Safe: going backwards avoids index shifting issues
+    }
+}
+```
+
+---
+
+❌ **Mistake 2: Using remove(index) when you mean to remove by value**
+
+```java
+// ❌ WRONG: Trying to remove Integer value 2, but removes index 2 instead
+ArrayList<Integer> numbers = new ArrayList<>();
+numbers.add(10);
+numbers.add(20);
+numbers.add(30);
+numbers.add(40);
+
+numbers.remove(2);  // Removes element at index 2 (which is 30), NOT the value 2!
+System.out.println(numbers);  // [10, 20, 40] - removed 30, not 2
+```
+
+**Why:** remove() is overloaded: remove(int index) vs remove(Object o). For Integer ArrayList, passing an int calls remove(index).
+
+**Fix:** Explicitly create Integer object or use remove(Object):
+
+```java
+// ✅ CORRECT: Remove by value, not by index
+ArrayList<Integer> numbers = new ArrayList<>();
+numbers.add(10);
+numbers.add(20);
+numbers.add(30);
+numbers.add(40);
+
+numbers.remove(Integer.valueOf(2));  // Remove value 2 (not found, no change)
+numbers.remove(Integer.valueOf(30)); // Remove value 30
+System.out.println(numbers);  // [10, 20, 40]
+
+// Or to remove by index explicitly
+numbers.remove(2);  // Removes index 2 (which is 40)
+System.out.println(numbers);  // [10, 20]
+```
+
+---
+
+❌ **Mistake 3: Using indexOf() or contains() with custom objects without overriding equals()**
+
+```java
+// ❌ WRONG: Custom class without equals() override
+class Person {
+    String name;
+    Person(String name) { this.name = name; }
+}
+
+ArrayList<Person> people = new ArrayList<>();
+people.add(new Person("Alice"));
+people.add(new Person("Bob"));
+
+Person alice = new Person("Alice");
+boolean found = people.contains(alice);  // false! Different object reference
+System.out.println("Found: " + found);   // false
+```
+
+**Why:** contains() and indexOf() use equals() to compare. Default equals() compares references, not content.
+
+**Fix:** Override equals() (and hashCode()) in custom class:
+
+```java
+// ✅ CORRECT: Override equals() for content comparison
+class Person {
+    String name;
+
+    Person(String name) { this.name = name; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Person)) return false;
+        Person other = (Person) obj;
+        return this.name.equals(other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+}
+
+ArrayList<Person> people = new ArrayList<>();
+people.add(new Person("Alice"));
+people.add(new Person("Bob"));
+
+Person alice = new Person("Alice");
+boolean found = people.contains(alice);  // true! Compares name content
+System.out.println("Found: " + found);   // true
+```
+
+---
+
+❌ **Mistake 4: Using set() on an index that doesn't exist**
+
+```java
+// ❌ WRONG: Trying to use set() to add new elements
+ArrayList<String> list = new ArrayList<>();
+list.add("First");
+list.add("Second");
+
+list.set(2, "Third");  // IndexOutOfBoundsException! Index 2 doesn't exist yet
+```
+
+**Why:** set() replaces existing element, it doesn't add new elements. Index must already exist.
+
+**Fix:** Use add() to append, set() only to replace existing:
+
+```java
+// ✅ CORRECT: Use add() for new elements, set() to replace
+ArrayList<String> list = new ArrayList<>();
+list.add("First");
+list.add("Second");
+
+list.add("Third");     // Correct: adds new element at index 2
+System.out.println(list);  // [First, Second, Third]
+
+list.set(1, "2nd");    // Correct: replaces existing element at index 1
+System.out.println(list);  // [First, 2nd, Third]
+```
+
+---
+
+❌ **Mistake 5: Not understanding that remove() shifts elements, changing indices**
+
+```java
+// ❌ WRONG: Removing elements in forward loop - skips elements
+ArrayList<String> items = new ArrayList<>();
+items.add("A");
+items.add("B");
+items.add("C");
+items.add("D");
+
+for (int i = 0; i < items.size(); i++) {
+    if (items.get(i).equals("B") || items.get(i).equals("C")) {
+        items.remove(i);  // After removing B, C shifts to index 1, but i becomes 2
+    }
+}
+System.out.println(items);  // [A, C, D] - C was skipped!
+```
+
+**Why:** When you remove an element, all subsequent elements shift left by one index. Loop counter i keeps incrementing, skipping the shifted element.
+
+**Fix:** Iterate backwards, or decrement i after removal:
+
+```java
+// ✅ CORRECT Option 1: Iterate backwards
+ArrayList<String> items = new ArrayList<>();
+items.add("A");
+items.add("B");
+items.add("C");
+items.add("D");
+
+for (int i = items.size() - 1; i >= 0; i--) {
+    if (items.get(i).equals("B") || items.get(i).equals("C")) {
+        items.remove(i);  // Safe: going backwards, no skipping
+    }
+}
+System.out.println(items);  // [A, D]
+
+// ✅ CORRECT Option 2: Decrement i after removal
+for (int i = 0; i < items.size(); i++) {
+    if (items.get(i).equals("B") || items.get(i).equals("C")) {
+        items.remove(i);
+        i--;  // Decrement to check same index again (which now has next element)
+    }
+}
+```
 
 ---
 
@@ -12063,12 +16591,237 @@ Tasks: [Read emails, Write report, Team meeting, Update documentation]
 | Not choosing right list type | Poor performance | Understand use cases |
 | Using LinkedList for random access | O(n) vs O(1) | Use ArrayList instead |
 
+**Best Practices:**
+1. ✅ **Prefer ArrayList Over LinkedList for Most Cases**: Default to ArrayList unless you have specific reason
+   - Why: ArrayList has better performance for most common operations and uses less memory
+   - How: Use ArrayList for general-purpose list needs, only switch to LinkedList when profiling shows benefit
+   - Example: Use ArrayList for storing students, products, or any random-access data
+
+2. ✅ **Use LinkedList Only for Frequent Head/Tail Operations**: When you insert/remove at beginning/end often
+   - Why: LinkedList excels at addFirst/removeFirst (O(1)), ArrayList is slow (O(n))
+   - How: Choose LinkedList for queues, stacks, or scenarios with many beginning insertions
+   - Example: Task queue, browser history, undo/redo functionality
+
+3. ✅ **Avoid get(index) with LinkedList**: Don't use index-based access on LinkedList
+   - Why: LinkedList.get(i) is O(n) - must traverse from head, ArrayList.get(i) is O(1)
+   - How: Use iterator or enhanced for-loop instead of index-based access
+   - Example: `for (String item : linkedList)` not `for (int i=0; i<linkedList.size(); i++)`
+
+4. ✅ **Use Deque Interface for Queue/Stack Operations**: Program to Deque, not LinkedList
+   - Why: More flexible, clearer intent, can swap implementations
+   - How: Declare as `Deque<String> queue = new LinkedList<>();`
+   - Example: `Deque<String> stack = new LinkedList<>(); stack.push("item");`
+
+5. ✅ **Measure Performance for Your Use Case**: Profile before choosing LinkedList
+   - Why: Theoretical benefits don't always match real-world performance
+   - How: Use ArrayList first, switch to LinkedList only if profiling shows bottleneck
+   - Example: Test with realistic data size and access patterns before deciding
+
 **🎯 Challenge:**
 1. Implement a simple music player queue using LinkedList
 2. Add songs to the queue
 3. Play (remove) songs from beginning
 4. Add "play next" feature (addFirst)
 5. Show current queue and next song (peekFirst)
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Using ArrayList when LinkedList would be more efficient for frequent insertions/deletions**
+
+```java
+// ❌ WRONG: Using ArrayList for frequent add/remove at beginning
+ArrayList<String> queue = new ArrayList<>();
+queue.add("First");
+queue.add("Second");
+queue.add("Third");
+
+// Inefficient! Shifts all elements when adding at beginning
+queue.add(0, "New First");  // O(n) - shifts all elements right
+queue.remove(0);             // O(n) - shifts all elements left
+```
+
+**Why:** ArrayList stores elements in a contiguous array. Adding/removing at beginning requires shifting all elements, which is O(n) time.
+
+**Fix:** Use LinkedList for frequent add/remove operations at beginning or middle:
+
+```java
+// ✅ CORRECT: Use LinkedList for efficient beginning operations
+LinkedList<String> queue = new LinkedList<>();
+queue.add("First");
+queue.add("Second");
+queue.add("Third");
+
+// Efficient! Just updates node pointers
+queue.addFirst("New First");  // O(1) - no shifting needed
+queue.removeFirst();          // O(1) - no shifting needed
+```
+
+---
+
+❌ **Mistake 2: Using get(index) in a loop with LinkedList (terrible performance)**
+
+```java
+// ❌ WRONG: Using index access with LinkedList
+LinkedList<String> list = new LinkedList<>();
+list.add("A");
+list.add("B");
+list.add("C");
+
+// O(n²) performance! Each get(i) traverses from beginning
+for (int i = 0; i < list.size(); i++) {
+    System.out.println(list.get(i));  // get(i) is O(n) for LinkedList
+}
+// For 1000 elements: 500,000 operations!
+```
+
+**Why:** LinkedList doesn't have random access. get(i) must traverse nodes from beginning, taking O(n) time. In a loop, this becomes O(n²).
+
+**Fix:** Use enhanced for loop or iterator for LinkedList:
+
+```java
+// ✅ CORRECT: Use enhanced for loop for sequential access
+LinkedList<String> list = new LinkedList<>();
+list.add("A");
+list.add("B");
+list.add("C");
+
+// O(n) performance - each element visited once
+for (String item : list) {
+    System.out.println(item);  // Iterator moves sequentially
+}
+
+// Or use iterator explicitly
+Iterator<String> iterator = list.iterator();
+while (iterator.hasNext()) {
+    System.out.println(iterator.next());
+}
+```
+
+---
+
+❌ **Mistake 3: Choosing LinkedList for all cases thinking it's always better**
+
+```java
+// ❌ WRONG: Using LinkedList when you mostly access by index
+LinkedList<String> names = new LinkedList<>();
+for (int i = 0; i < 1000; i++) {
+    names.add("Name" + i);
+}
+
+// Terrible performance! get(500) traverses 500 nodes
+String middle = names.get(500);  // O(n) - very slow
+
+// Also wastes memory: each node has 2 extra pointers
+```
+
+**Why:** LinkedList has overhead: each element requires 2 extra pointers (next/previous) and random access is O(n).
+
+**Fix:** Use ArrayList when you need random access or memory efficiency:
+
+```java
+// ✅ CORRECT: Use ArrayList for random access and memory efficiency
+ArrayList<String> names = new ArrayList<>();
+for (int i = 0; i < 1000; i++) {
+    names.add("Name" + i);
+}
+
+// Fast! Array indexing is O(1)
+String middle = names.get(500);  // O(1) - instant access
+
+// Memory efficient: no extra pointers per element
+```
+
+---
+
+❌ **Mistake 4: Not understanding LinkedList is also a Deque (double-ended queue)**
+
+```java
+// ❌ WRONG: Using ArrayList to implement queue, inefficient removal
+ArrayList<String> queue = new ArrayList<>();
+queue.add("Task1");
+queue.add("Task2");
+queue.add("Task3");
+
+// Process queue (FIFO)
+while (!queue.isEmpty()) {
+    String task = queue.remove(0);  // Inefficient! O(n) - shifts all elements
+    System.out.println("Processing: " + task);
+}
+```
+
+**Why:** ArrayList.remove(0) shifts all remaining elements left, making it O(n) per removal. Queue operations become O(n²) overall.
+
+**Fix:** Use LinkedList's Deque methods for efficient queue operations:
+
+```java
+// ✅ CORRECT: Use LinkedList as Deque for efficient queue
+LinkedList<String> queue = new LinkedList<>();
+queue.add("Task1");
+queue.add("Task2");
+queue.add("Task3");
+
+// Process queue (FIFO) - both operations O(1)
+while (!queue.isEmpty()) {
+    String task = queue.removeFirst();  // O(1) - no shifting!
+    System.out.println("Processing: " + task);
+}
+
+// Or use as Stack (LIFO)
+LinkedList<String> stack = new LinkedList<>();
+stack.push("Item1");  // addFirst()
+stack.push("Item2");
+String top = stack.pop();  // removeFirst() - O(1)
+```
+
+---
+
+❌ **Mistake 5: Not considering that ArrayList is almost always better for small collections**
+
+```java
+// ❌ WRONG: Using LinkedList for small collection
+LinkedList<String> smallList = new LinkedList<>();  // Overhead not worth it
+smallList.add("One");
+smallList.add("Two");
+smallList.add("Three");
+
+// Memory waste: 3 elements * 2 pointers each = 6 extra pointers
+// Even add/remove operations aren't noticeably faster for such small size
+```
+
+**Why:** For small collections (<100 elements), ArrayList's O(n) operations are fast enough, and it uses less memory.
+
+**Fix:** Use ArrayList by default, LinkedList only when you have specific needs:
+
+```java
+// ✅ CORRECT: Use ArrayList for small/general-purpose collections
+ArrayList<String> smallList = new ArrayList<>();
+smallList.add("One");
+smallList.add("Two");
+smallList.add("Three");
+
+// Less memory, cache-friendly, operations fast enough for small size
+
+// When to use LinkedList:
+// - Frequent add/remove at beginning/middle of large collection
+// - Implementing queue/deque with addFirst/removeFirst
+// - Memory is not a concern and you need insertion performance
+```
+
+**Quick Decision Guide:**
+```
+Use ArrayList when:
+- Random access needed (get by index)
+- Mostly adding at end
+- Memory efficiency matters
+- Collection is small (<100 elements)
+- You're unsure (ArrayList is the safe default)
+
+Use LinkedList when:
+- Frequent add/remove at beginning
+- Implementing queue/deque
+- Never need random access by index
+- Large collection with frequent insertions
+```
 
 ---
 
@@ -12383,12 +17136,233 @@ Difference (set1 - set2): [Java, C++]
 | Not checking add() return value | Might miss duplicate detection | Check boolean return |
 | Using for index-based loops | Set has no indices | Use foreach or iterator |
 
+**Best Practices:**
+1. ✅ **Use HashSet When Uniqueness is Required**: Automatically prevents duplicates
+   - Why: Set contract guarantees no duplicates, simpler than manual checking
+   - How: Use HashSet instead of ArrayList when each element should appear only once
+   - Example: Store unique user IDs, email addresses, tags, or categories
+
+2. ✅ **Check add() Return Value to Detect Duplicates**: Know if element was already present
+   - Why: add() returns false if element already exists, helps track duplicate attempts
+   - How: Store result: `boolean wasNew = set.add(item); if (!wasNew) { /* handle duplicate */ }`
+   - Example: `if (!userIds.add(userId)) { System.out.println("Duplicate user!"); }`
+
+3. ✅ **Use contains() for Fast Membership Testing**: O(1) average time complexity
+   - Why: HashSet.contains() is much faster than ArrayList.contains() for large collections
+   - How: Use HashSet when you frequently check if element exists
+   - Example: Use HashSet for blacklist checks, seen items, or permission sets
+
+4. ✅ **Convert ArrayList to HashSet to Remove Duplicates**: Quick deduplication
+   - Why: Simple one-liner to eliminate duplicates from list
+   - How: `Set<String> unique = new HashSet<>(listWithDuplicates);`
+   - Example: Remove duplicate entries from user input, log entries, or data imports
+
+5. ✅ **Don't Rely on HashSet Order**: No guarantee of iteration order
+   - Why: HashSet makes no promises about order, can change between runs
+   - How: Use LinkedHashSet if insertion order matters, TreeSet if sorted order matters
+   - Example: Use LinkedHashSet for ordered unique items, TreeSet for alphabetically sorted items
+
 **🎯 Challenge:**
 1. Create HashSet of your favorite book titles
 2. Try to add duplicate books
 3. Check if a specific book exists
 4. Remove a book
 5. Print total unique books and list them all
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Adding custom objects to HashSet without overriding equals() and hashCode()**
+
+```java
+// ❌ WRONG: Custom class without equals/hashCode overrides
+class Book {
+    String title;
+    Book(String title) { this.title = title; }
+}
+
+HashSet<Book> books = new HashSet<>();
+books.add(new Book("Java"));
+books.add(new Book("Java"));  // Different object, treated as different!
+System.out.println(books.size());  // 2 - duplicates allowed!
+```
+
+**Why:** HashSet uses hashCode() and equals() to detect duplicates. Default implementations compare object references, not content.
+
+**Fix:** Always override equals() and hashCode() in objects stored in HashSet:
+
+```java
+// ✅ CORRECT: Override equals and hashCode
+class Book {
+    String title;
+    Book(String title) { this.title = title; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Book)) return false;
+        return this.title.equals(((Book) obj).title);
+    }
+
+    @Override
+    public int hashCode() {
+        return title.hashCode();
+    }
+}
+
+HashSet<Book> books = new HashSet<>();
+books.add(new Book("Java"));
+books.add(new Book("Java"));  // Detected as duplicate!
+System.out.println(books.size());  // 1 - correct!
+```
+
+---
+
+❌ **Mistake 2: Expecting HashSet to maintain insertion order**
+
+```java
+// ❌ WRONG: Expecting order to be preserved
+HashSet<String> names = new HashSet<>();
+names.add("Alice");
+names.add("Bob");
+names.add("Charlie");
+
+System.out.println(names);  // [Bob, Charlie, Alice] - random order!
+// Order is NOT guaranteed and may change between runs
+```
+
+**Why:** HashSet stores elements based on hash values, not insertion order. Order is unpredictable.
+
+**Fix:** Use LinkedHashSet if you need insertion order, TreeSet for sorted order:
+
+```java
+// ✅ CORRECT Option 1: LinkedHashSet for insertion order
+LinkedHashSet<String> names = new LinkedHashSet<>();
+names.add("Alice");
+names.add("Bob");
+names.add("Charlie");
+System.out.println(names);  // [Alice, Bob, Charlie] - insertion order preserved
+
+// ✅ CORRECT Option 2: TreeSet for sorted order
+TreeSet<String> sorted = new TreeSet<>();
+sorted.add("Charlie");
+sorted.add("Alice");
+sorted.add("Bob");
+System.out.println(sorted);  // [Alice, Bob, Charlie] - alphabetically sorted
+```
+
+---
+
+❌ **Mistake 3: Using contains() in a loop to check for unique values before adding**
+
+```java
+// ❌ WRONG: Manually checking for duplicates with Set
+HashSet<String> items = new HashSet<>();
+String[] data = {"A", "B", "A", "C", "B"};
+
+for (String item : data) {
+    if (!items.contains(item)) {  // Redundant! Set already prevents duplicates
+        items.add(item);
+    }
+}
+```
+
+**Why:** HashSet automatically prevents duplicates. Checking with contains() before add() is redundant and wastes operations.
+
+**Fix:** Just add directly - Set handles duplicates automatically:
+
+```java
+// ✅ CORRECT: Let Set handle duplicates automatically
+HashSet<String> items = new HashSet<>();
+String[] data = {"A", "B", "A", "C", "B"};
+
+for (String item : data) {
+    items.add(item);  // add() returns false if duplicate, true if added
+}
+// items = [A, B, C] - duplicates automatically removed
+```
+
+---
+
+❌ **Mistake 4: Trying to access elements by index like a List**
+
+```java
+// ❌ WRONG: Trying to access Set elements by index
+HashSet<String> set = new HashSet<>();
+set.add("First");
+set.add("Second");
+
+String first = set.get(0);  // Compilation error! Set has no get(index)
+```
+
+**Why:** Set is an unordered collection (or ordered differently). It doesn't support index-based access.
+
+**Fix:** Iterate through Set, or convert to List if you need index access:
+
+```java
+// ✅ CORRECT Option 1: Iterate through Set
+HashSet<String> set = new HashSet<>();
+set.add("First");
+set.add("Second");
+
+for (String item : set) {
+    System.out.println(item);  // Process each element
+}
+
+// ✅ CORRECT Option 2: Convert to List for index access
+ArrayList<String> list = new ArrayList<>(set);
+String first = list.get(0);  // Now you can use index
+```
+
+---
+
+❌ **Mistake 5: Not understanding that null is allowed in HashSet (but only once)**
+
+```java
+// ❌ WRONG: Assuming HashSet rejects null or allows multiple nulls
+HashSet<String> set = new HashSet<>();
+set.add("A");
+set.add(null);
+set.add("B");
+set.add(null);  // Second null, but Set only keeps one
+
+System.out.println(set.size());  // 3 (not 4!) - only one null
+System.out.println(set);  // [null, A, B]
+
+// Then trying to use the null
+for (String item : set) {
+    System.out.println(item.toUpperCase());  // NullPointerException when it hits null!
+}
+```
+
+**Why:** HashSet allows null but treats multiple nulls as duplicates (only stores one). Forgetting about null causes NullPointerException.
+
+**Fix:** Either avoid null, or handle it explicitly:
+
+```java
+// ✅ CORRECT: Handle null explicitly
+HashSet<String> set = new HashSet<>();
+set.add("A");
+set.add("B");
+// Don't add null if you plan to process elements
+
+for (String item : set) {
+    System.out.println(item.toUpperCase());  // Safe - no null
+}
+
+// Or if null is necessary, check for it
+HashSet<String> setWithNull = new HashSet<>();
+setWithNull.add("A");
+setWithNull.add(null);
+setWithNull.add("B");
+
+for (String item : setWithNull) {
+    if (item != null) {
+        System.out.println(item.toUpperCase());
+    } else {
+        System.out.println("NULL VALUE");
+    }
+}
+```
 
 ---
 
@@ -12789,12 +17763,293 @@ Use TreeSet when:
 | Adding nulls to TreeSet | NullPointerException | TreeSet doesn't allow null |
 | Not understanding O(log n) | Slower than O(1) | Choose right Set for needs |
 
+**Best Practices:**
+1. ✅ **Choose Set Implementation Based on Requirements**: Match implementation to your ordering needs
+   - Why: Each Set type has performance trade-offs
+   - How: HashSet for speed, LinkedHashSet for insertion order, TreeSet for sorting
+   - Example: HashSet for unique IDs, LinkedHashSet for ordered processing, TreeSet for leaderboards
+
+2. ✅ **Use HashSet as Default Choice**: Start with HashSet unless you need specific ordering
+   - Why: Fastest performance (O(1)), lowest memory, sufficient for most use cases
+   - How: Use HashSet first, only switch if you need ordering features
+   - Example: `Set<String> users = new HashSet<>();` for general unique collection
+
+3. ✅ **Use LinkedHashSet When Order Matters**: Maintain insertion order with Set uniqueness
+   - Why: Preserves order without sorting overhead, predictable iteration
+   - How: Use when you need both uniqueness and stable ordering
+   - Example: Maintain order of user registration while preventing duplicates
+
+4. ✅ **Use TreeSet for Sorted Data and Range Operations**: Natural sorting with navigation methods
+   - Why: Automatically keeps elements sorted, provides first(), last(), higher(), lower()
+   - How: Use for sorted unique elements or when you need range queries
+   - Example: Leaderboard scores, alphabetically sorted names, chronological events
+
+5. ✅ **Avoid Nulls in TreeSet**: TreeSet cannot handle null elements
+   - Why: TreeSet uses compareTo() which throws NullPointerException on null
+   - How: Filter nulls before adding to TreeSet or use HashSet/LinkedHashSet if nulls are possible
+   - Example: Validate `if (item != null)` before `treeSet.add(item)`
+
 **🎯 Challenge:**
 1. Create three Sets with same data: HashSet, LinkedHashSet, TreeSet
 2. Add numbers in this order: 50, 20, 80, 10, 40
 3. Print all three and observe different ordering
 4. Use TreeSet to find highest and lowest
 5. Convert TreeSet to descending order
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Adding objects to TreeSet without implementing Comparable or providing Comparator**
+
+```java
+// ❌ WRONG: Custom class without Comparable
+class Person {
+    String name;
+    int age;
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+TreeSet<Person> people = new TreeSet<>();
+people.add(new Person("Alice", 25));  // ClassCastException! Person cannot be cast to Comparable
+```
+
+**Why:** TreeSet needs to sort elements. Without Comparable or Comparator, it doesn't know how to compare/order objects.
+
+**Fix:** Implement Comparable or provide Comparator:
+
+```java
+// ✅ CORRECT Option 1: Implement Comparable
+class Person implements Comparable<Person> {
+    String name;
+    int age;
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public int compareTo(Person other) {
+        return this.name.compareTo(other.name);  // Sort by name
+    }
+}
+
+TreeSet<Person> people = new TreeSet<>();
+people.add(new Person("Bob", 30));
+people.add(new Person("Alice", 25));  // Works! Sorted by name
+
+// ✅ CORRECT Option 2: Provide Comparator
+TreeSet<Person> peopleByAge = new TreeSet<>((p1, p2) -> Integer.compare(p1.age, p2.age));
+peopleByAge.add(new Person("Bob", 30));
+peopleByAge.add(new Person("Alice", 25));  // Sorted by age: Alice (25), then Bob (30)
+```
+
+---
+
+❌ **Mistake 2: Not understanding TreeSet uses compareTo() for both ordering AND equality**
+
+```java
+// ❌ WRONG: Comparable that doesn't match equals() - causes duplicates
+class Student implements Comparable<Student> {
+    String name;
+    int grade;
+
+    Student(String name, int grade) {
+        this.name = name;
+        this.grade = grade;
+    }
+
+    @Override
+    public int compareTo(Student other) {
+        return Integer.compare(this.grade, other.grade);  // Only compares grade
+    }
+
+    // equals() still compares both name and grade
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Student)) return false;
+        Student s = (Student) obj;
+        return this.name.equals(s.name) && this.grade == s.grade;
+    }
+}
+
+TreeSet<Student> students = new TreeSet<>();
+students.add(new Student("Alice", 90));
+students.add(new Student("Bob", 90));  // Removed! Same grade (90), considered duplicate by TreeSet
+System.out.println(students.size());  // 1 - Bob was rejected because grade matches Alice!
+```
+
+**Why:** TreeSet uses compareTo() to check equality (returns 0 = equal), ignoring equals(). If compareTo() returns 0, element is considered duplicate.
+
+**Fix:** Make compareTo() consistent with equals() - compare all fields that define uniqueness:
+
+```java
+// ✅ CORRECT: compareTo() matches equals() logic
+class Student implements Comparable<Student> {
+    String name;
+    int grade;
+
+    Student(String name, int grade) {
+        this.name = name;
+        this.grade = grade;
+    }
+
+    @Override
+    public int compareTo(Student other) {
+        // First compare by grade
+        int gradeCompare = Integer.compare(this.grade, other.grade);
+        if (gradeCompare != 0) return gradeCompare;
+
+        // If grades equal, compare by name to ensure uniqueness
+        return this.name.compareTo(other.name);
+    }
+}
+
+TreeSet<Student> students = new TreeSet<>();
+students.add(new Student("Alice", 90));
+students.add(new Student("Bob", 90));  // Both kept! Same grade but different names
+System.out.println(students.size());  // 2 - both students stored
+```
+
+---
+
+❌ **Mistake 3: Confusing when to use HashSet vs LinkedHashSet vs TreeSet**
+
+```java
+// ❌ WRONG: Using TreeSet when you don't need sorting (performance cost)
+TreeSet<String> cache = new TreeSet<>();  // Overkill if you just need uniqueness
+for (int i = 0; i < 100000; i++) {
+    cache.add("Item" + i);  // O(log n) per add - slower than HashSet
+}
+
+// ❌ WRONG: Using HashSet when you need order
+HashSet<String> orderedNames = new HashSet<>();  // Order not preserved!
+orderedNames.add("Charlie");
+orderedNames.add("Alice");
+orderedNames.add("Bob");
+System.out.println(orderedNames);  // [Bob, Charlie, Alice] - random order!
+```
+
+**Why:** Each Set implementation has different performance and ordering characteristics. Using the wrong one wastes performance or doesn't meet requirements.
+
+**Fix:** Choose based on your needs:
+
+```java
+// ✅ CORRECT: Use HashSet for best performance (no ordering needed)
+HashSet<String> cache = new HashSet<>();  // O(1) add - fastest!
+for (int i = 0; i < 100000; i++) {
+    cache.add("Item" + i);
+}
+
+// ✅ CORRECT: Use LinkedHashSet to preserve insertion order
+LinkedHashSet<String> orderedNames = new LinkedHashSet<>();
+orderedNames.add("Charlie");
+orderedNames.add("Alice");
+orderedNames.add("Bob");
+System.out.println(orderedNames);  // [Charlie, Alice, Bob] - insertion order!
+
+// ✅ CORRECT: Use TreeSet when you need sorted order
+TreeSet<String> sortedNames = new TreeSet<>();
+sortedNames.add("Charlie");
+sortedNames.add("Alice");
+sortedNames.add("Bob");
+System.out.println(sortedNames);  // [Alice, Bob, Charlie] - sorted!
+```
+
+**Decision Guide:**
+```
+HashSet: Fastest (O(1)), no order guarantee
+  - Use for: maximum performance, don't care about order
+  - Example: checking membership, removing duplicates
+
+LinkedHashSet: Fast (O(1)), preserves insertion order
+  - Use for: need insertion order, still want good performance
+  - Example: maintaining order of user selections
+
+TreeSet: Slower (O(log n)), sorted order
+  - Use for: need sorted data, range queries
+  - Example: leaderboard, sorted results, finding min/max
+```
+
+---
+
+❌ **Mistake 4: Not using TreeSet's special methods (first, last, subSet, headSet, tailSet)**
+
+```java
+// ❌ WRONG: Converting TreeSet to List just to find min/max
+TreeSet<Integer> scores = new TreeSet<>();
+scores.add(85);
+scores.add(92);
+scores.add(78);
+scores.add(95);
+
+// Inefficient approach
+ArrayList<Integer> list = new ArrayList<>(scores);
+int min = Collections.min(list);  // O(n) - unnecessary!
+int max = Collections.max(list);  // O(n) - unnecessary!
+```
+
+**Why:** TreeSet already maintains sorted order. Converting to List and using Collections.min/max is wasteful.
+
+**Fix:** Use TreeSet's built-in methods for efficient access:
+
+```java
+// ✅ CORRECT: Use TreeSet's specialized methods
+TreeSet<Integer> scores = new TreeSet<>();
+scores.add(85);
+scores.add(92);
+scores.add(78);
+scores.add(95);
+
+int min = scores.first();  // O(log n) - get minimum
+int max = scores.last();   // O(log n) - get maximum
+
+// Get range of scores
+SortedSet<Integer> range = scores.subSet(80, 93);  // [85, 92] - scores between 80-92
+SortedSet<Integer> below90 = scores.headSet(90);   // [78, 85] - scores < 90
+SortedSet<Integer> above90 = scores.tailSet(90);   // [92, 95] - scores >= 90
+
+// Descending order
+NavigableSet<Integer> descending = scores.descendingSet();
+System.out.println(descending);  // [95, 92, 85, 78] - reversed!
+```
+
+---
+
+❌ **Mistake 5: Adding null to TreeSet (NullPointerException)**
+
+```java
+// ❌ WRONG: Adding null to TreeSet
+TreeSet<String> names = new TreeSet<>();
+names.add("Alice");
+names.add(null);  // NullPointerException! TreeSet can't compare null
+```
+
+**Why:** TreeSet needs to compare elements for sorting. null can't be compared with compareTo(), causing NullPointerException.
+
+**Fix:** Don't add null to TreeSet, or handle it specially with custom Comparator:
+
+```java
+// ✅ CORRECT Option 1: Simply don't add null
+TreeSet<String> names = new TreeSet<>();
+names.add("Alice");
+names.add("Bob");
+// Don't add null
+
+// ✅ CORRECT Option 2: Use Comparator that handles null
+TreeSet<String> namesWithNull = new TreeSet<>((s1, s2) -> {
+    if (s1 == null && s2 == null) return 0;
+    if (s1 == null) return -1;  // null comes first
+    if (s2 == null) return 1;
+    return s1.compareTo(s2);
+});
+namesWithNull.add("Alice");
+namesWithNull.add(null);  // Works now
+namesWithNull.add("Bob");
+System.out.println(namesWithNull);  // [null, Alice, Bob]
+```
 
 ---
 
@@ -13321,12 +18576,290 @@ Courses Offered: [Chemistry, English, History, Math, Physics]
 | Not keeping collections in sync | Data inconsistency | Update all related collections together |
 | Using wrong collection type | Poor performance | Choose based on requirements |
 
+**Best Practices:**
+1. ✅ **Combine List and Set for Complex Requirements**: Use multiple collection types together
+   - Why: Each collection type excels at different operations
+   - How: ArrayList for ordered data, HashSet for uniqueness checking, TreeSet for sorting
+   - Example: ArrayList for students list, HashSet for unique email/ID validation
+
+2. ✅ **Keep Related Collections Synchronized**: Update all collections when data changes
+   - Why: Prevents data inconsistency between collections
+   - How: When removing from main list, also remove from tracking sets
+   - Example: Remove student from ArrayList, also remove ID from HashSet and email from emailSet
+
+3. ✅ **Use HashSet for Fast Duplicate Detection**: O(1) lookup vs O(n) list search
+   - Why: contains() on HashSet is much faster than ArrayList for large datasets
+   - How: Maintain separate HashSet to track unique values
+   - Example: `HashSet<Integer> usedIds` to quickly check if ID exists before adding student
+
+4. ✅ **Validate Data Before Adding to Collections**: Check constraints upfront
+   - Why: Prevents invalid data from entering system
+   - How: Validate all fields and check against existing data before add()
+   - Example: Check GPA range (0.0-4.0), verify email format, ensure ID/email uniqueness
+
+5. ✅ **Encapsulate Collection Operations**: Provide methods, don't expose raw collections
+   - Why: Maintains data integrity, prevents external modification
+   - How: Make collections private, provide addStudent(), removeStudent() methods
+   - Example: `private ArrayList<Student> students;` with `public boolean addStudent(Student s)` method
+
 **🎯 Challenge:**
 1. Add a method to update student GPA
 2. Add a method to find all students taking a specific course
 3. Add a method to drop a course for a student
 4. Add validation for GPA (0.0 to 4.0 range)
 5. Add a method to find students with no courses enrolled
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Storing students in List but needing unique students (duplicates possible)**
+
+```java
+// ❌ WRONG: Using ArrayList for students - allows duplicates
+class StudentManager {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    void addStudent(Student s) {
+        students.add(s);  // Can add same student multiple times!
+    }
+}
+
+Student alice = new Student("Alice", 101);
+manager.addStudent(alice);
+manager.addStudent(alice);  // Duplicate! Same student added twice
+```
+
+**Why:** ArrayList allows duplicates. Without checking, same student can be added multiple times.
+
+**Fix:** Use Set for unique students, or check before adding to List:
+
+```java
+// ✅ CORRECT Option 1: Use HashSet for automatic uniqueness
+class StudentManager {
+    private HashSet<Student> students = new HashSet<>();  // Unique students only
+
+    void addStudent(Student s) {
+        students.add(s);  // Duplicate automatically prevented
+    }
+}
+
+// ✅ CORRECT Option 2: Check before adding to ArrayList
+class StudentManager {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    void addStudent(Student s) {
+        if (!students.contains(s)) {  // Check for duplicate
+            students.add(s);
+        } else {
+            System.out.println("Student already exists: " + s.getName());
+        }
+    }
+}
+```
+
+---
+
+❌ **Mistake 2: Using List of courses per student instead of Set (duplicate courses possible)**
+
+```java
+// ❌ WRONG: Using ArrayList for courses - student can enroll in same course twice
+class Student {
+    String name;
+    ArrayList<String> courses = new ArrayList<>();  // Duplicates allowed!
+
+    void enrollCourse(String course) {
+        courses.add(course);  // Can add "Math" twice
+    }
+}
+
+Student alice = new Student("Alice");
+alice.enrollCourse("Math");
+alice.enrollCourse("Math");  // Duplicate enrollment! Student in Math twice
+System.out.println(alice.courses.size());  // 2 - wrong!
+```
+
+**Why:** ArrayList allows duplicates. Student can accidentally enroll in same course multiple times.
+
+**Fix:** Use HashSet for courses to prevent duplicates:
+
+```java
+// ✅ CORRECT: Use HashSet for courses
+class Student {
+    String name;
+    HashSet<String> courses = new HashSet<>();  // Unique courses only
+
+    void enrollCourse(String course) {
+        if (courses.add(course)) {  // add() returns false if duplicate
+            System.out.println(name + " enrolled in " + course);
+        } else {
+            System.out.println(name + " already enrolled in " + course);
+        }
+    }
+}
+
+Student alice = new Student("Alice");
+alice.enrollCourse("Math");
+alice.enrollCourse("Math");  // Prevented! Message shown
+// Output: Alice enrolled in Math
+//         Alice already enrolled in Math
+System.out.println(alice.courses.size());  // 1 - correct!
+```
+
+---
+
+❌ **Mistake 3: Not overriding equals() and hashCode() for Student class**
+
+```java
+// ❌ WRONG: Student class without equals/hashCode
+class Student {
+    int id;
+    String name;
+
+    Student(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    // No equals() or hashCode() override
+}
+
+HashSet<Student> students = new HashSet<>();
+students.add(new Student(101, "Alice"));
+students.add(new Student(101, "Alice"));  // Different objects, both added!
+System.out.println(students.size());  // 2 - duplicates!
+```
+
+**Why:** Without equals()/hashCode(), HashSet compares references, not content. Same student data treated as different.
+
+**Fix:** Override equals() and hashCode() based on unique identifier (ID):
+
+```java
+// ✅ CORRECT: Override equals and hashCode based on ID
+class Student {
+    int id;
+    String name;
+
+    Student(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Student)) return false;
+        Student other = (Student) obj;
+        return this.id == other.id;  // Compare by ID
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);  // Hash based on ID
+    }
+}
+
+HashSet<Student> students = new HashSet<>();
+students.add(new Student(101, "Alice"));
+students.add(new Student(101, "Alice"));  // Detected as duplicate!
+System.out.println(students.size());  // 1 - correct!
+```
+
+---
+
+❌ **Mistake 4: Linear search through ArrayList for every lookup (O(n) performance)**
+
+```java
+// ❌ WRONG: Searching through ArrayList every time
+class StudentManager {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    Student findById(int id) {
+        for (Student s : students) {  // O(n) - slow for large lists
+            if (s.getId() == id) {
+                return s;
+            }
+        }
+        return null;
+    }
+}
+
+// Finding student by ID: O(n) time
+Student s = manager.findById(101);  // Searches entire list
+```
+
+**Why:** ArrayList requires linear search (O(n)). For frequent lookups, this is inefficient.
+
+**Fix:** Use HashMap for O(1) lookup by ID:
+
+```java
+// ✅ CORRECT: Use HashMap for fast lookup
+class StudentManager {
+    private HashMap<Integer, Student> studentsById = new HashMap<>();
+
+    void addStudent(Student s) {
+        studentsById.put(s.getId(), s);
+    }
+
+    Student findById(int id) {
+        return studentsById.get(id);  // O(1) - instant lookup!
+    }
+}
+
+// Finding student by ID: O(1) time
+Student s = manager.findById(101);  // Instant retrieval
+```
+
+---
+
+❌ **Mistake 5: Modifying collection while iterating without using Iterator**
+
+```java
+// ❌ WRONG: Removing students while iterating
+class StudentManager {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    void removeFailingStudents(double minGPA) {
+        for (Student s : students) {
+            if (s.getGPA() < minGPA) {
+                students.remove(s);  // ConcurrentModificationException!
+            }
+        }
+    }
+}
+```
+
+**Why:** Modifying collection during enhanced for loop causes ConcurrentModificationException.
+
+**Fix:** Use Iterator or iterate backwards:
+
+```java
+// ✅ CORRECT Option 1: Use Iterator
+class StudentManager {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    void removeFailingStudents(double minGPA) {
+        Iterator<Student> iterator = students.iterator();
+        while (iterator.hasNext()) {
+            Student s = iterator.next();
+            if (s.getGPA() < minGPA) {
+                iterator.remove();  // Safe removal
+            }
+        }
+    }
+}
+
+// ✅ CORRECT Option 2: Iterate backwards
+void removeFailingStudents(double minGPA) {
+    for (int i = students.size() - 1; i >= 0; i--) {
+        if (students.get(i).getGPA() < minGPA) {
+            students.remove(i);  // Safe: going backwards
+        }
+    }
+}
+
+// ✅ CORRECT Option 3: Use removeIf (Java 8+)
+void removeFailingStudents(double minGPA) {
+    students.removeIf(s -> s.getGPA() < minGPA);  // Clean and safe
+}
+```
 
 ---
 
@@ -13774,6 +19307,32 @@ Final usernames: {bob=bob@example.com, alice=alice@example.com, charlie=charlie@
 | Mutable keys | Can break HashMap | Use immutable keys (String, Integer) |
 | Expecting order | HashMap is unordered | Use LinkedHashMap for order |
 
+**Best Practices:**
+1. ✅ **Use getOrDefault() for Safe Access**: Avoid null checks and provide default values
+   - Why: Prevents NullPointerException and makes code cleaner
+   - How: Use `map.getOrDefault(key, defaultValue)` instead of null-checking get() result
+   - Example: `int count = map.getOrDefault("key", 0);` instead of checking if key exists first
+
+2. ✅ **Use entrySet() for Iterating Key-Value Pairs**: Most efficient for accessing both keys and values
+   - Why: Single lookup vs two lookups with keySet() + get()
+   - How: `for (Map.Entry<K, V> entry : map.entrySet()) { entry.getKey(); entry.getValue(); }`
+   - Example: Iterate with entrySet() instead of `for (K key : map.keySet()) { V value = map.get(key); }`
+
+3. ✅ **Use Immutable Keys**: Ensure keys don't change after insertion
+   - Why: Changing mutable key breaks HashMap, key becomes unfindable
+   - How: Use String, Integer, or custom immutable objects as keys
+   - Example: Use `HashMap<String, Person>` not `HashMap<MutableObject, Person>`
+
+4. ✅ **Check containsKey() Before Complex Operations**: Verify key existence for clarity
+   - Why: Makes intent explicit and prevents null confusion
+   - How: Use `if (map.containsKey(key))` before operations that depend on key existence
+   - Example: `if (map.containsKey(id)) { /* process existing */ } else { /* handle missing */ }`
+
+5. ✅ **Initialize with Capacity for Large Maps**: Avoid resizing overhead
+   - Why: Reduces rehashing operations during growth
+   - How: Use `new HashMap<>(capacity)` when you know approximate size
+   - Example: `HashMap<String, User> users = new HashMap<>(1000);` for ~1000 expected entries
+
 **🎯 Challenge:**
 1. Create phone book HashMap (name -> phone)
 2. Add 5 contacts
@@ -13781,6 +19340,215 @@ Final usernames: {bob=bob@example.com, alice=alice@example.com, charlie=charlie@
 4. Count total contacts
 5. List all names and numbers
 6. Handle non-existent names gracefully
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Using get() without checking if key exists (NullPointerException risk)**
+
+```java
+// ❌ WRONG: Assuming key exists
+HashMap<String, Integer> ages = new HashMap<>();
+ages.put("Alice", 25);
+
+int bobAge = ages.get("Bob");  // Returns null (Bob doesn't exist)
+System.out.println(bobAge + 1);  // NullPointerException! Can't unbox null
+```
+
+**Why:** get() returns null if key doesn't exist. Auto-unboxing null Integer to int throws NullPointerException.
+
+**Fix:** Check if key exists before accessing, or use getOrDefault():
+
+```java
+// ✅ CORRECT Option 1: Check with containsKey()
+if (ages.containsKey("Bob")) {
+    int bobAge = ages.get("Bob");
+    System.out.println(bobAge + 1);
+} else {
+    System.out.println("Bob not found");
+}
+
+// ✅ CORRECT Option 2: Use getOrDefault()
+int bobAge = ages.getOrDefault("Bob", 0);  // Returns 0 if Bob doesn't exist
+System.out.println(bobAge + 1);  // Safe: 0 + 1 = 1
+```
+
+---
+
+❌ **Mistake 2: Forgetting HashMap doesn't maintain insertion or sorted order**
+
+```java
+// ❌ WRONG: Expecting order to be preserved
+HashMap<String, Integer> map = new HashMap<>();
+map.put("C", 3);
+map.put("A", 1);
+map.put("B", 2);
+
+System.out.println(map);  // {A=1, B=2, C=3} or random - order not guaranteed!
+```
+
+**Why:** HashMap uses hash-based storage, order is unpredictable and can change.
+
+**Fix:** Use LinkedHashMap for insertion order, TreeMap for sorted order:
+
+```java
+// ✅ CORRECT: LinkedHashMap for insertion order
+LinkedHashMap<String, Integer> ordered = new LinkedHashMap<>();
+ordered.put("C", 3);
+ordered.put("A", 1);
+ordered.put("B", 2);
+System.out.println(ordered);  // {C=3, A=1, B=2} - insertion order preserved!
+
+// ✅ CORRECT: TreeMap for sorted order
+TreeMap<String, Integer> sorted = new TreeMap<>();
+sorted.put("C", 3);
+sorted.put("A", 1);
+sorted.put("B", 2);
+System.out.println(sorted);  // {A=1, B=2, C=3} - alphabetically sorted!
+```
+
+---
+
+❌ **Mistake 3: Trying to modify HashMap while iterating (ConcurrentModificationException)**
+
+```java
+// ❌ WRONG: Removing entries while iterating
+HashMap<String, Integer> scores = new HashMap<>();
+scores.put("Alice", 85);
+scores.put("Bob", 55);
+scores.put("Charlie", 92);
+
+for (String name : scores.keySet()) {
+    if (scores.get(name) < 60) {
+        scores.remove(name);  // ConcurrentModificationException!
+    }
+}
+```
+
+**Why:** Modifying map during iteration invalidates the iterator.
+
+**Fix:** Use Iterator.remove() or collect keys to remove:
+
+```java
+// ✅ CORRECT Option 1: Use Iterator
+Iterator<Map.Entry<String, Integer>> iterator = scores.entrySet().iterator();
+while (iterator.hasNext()) {
+    Map.Entry<String, Integer> entry = iterator.next();
+    if (entry.getValue() < 60) {
+        iterator.remove();  // Safe removal
+    }
+}
+
+// ✅ CORRECT Option 2: Collect keys first, then remove
+ArrayList<String> toRemove = new ArrayList<>();
+for (String name : scores.keySet()) {
+    if (scores.get(name) < 60) {
+        toRemove.add(name);
+    }
+}
+for (String name : toRemove) {
+    scores.remove(name);  // Safe: not iterating scores anymore
+}
+
+// ✅ CORRECT Option 3: Use removeIf (Java 8+)
+scores.entrySet().removeIf(entry -> entry.getValue() < 60);
+```
+
+---
+
+❌ **Mistake 4: Using mutable objects as keys without proper equals/hashCode**
+
+```java
+// ❌ WRONG: Mutable object as key
+class Person {
+    String name;
+    Person(String name) { this.name = name; }
+}
+
+HashMap<Person, Integer> ages = new HashMap<>();
+Person alice = new Person("Alice");
+ages.put(alice, 25);
+
+alice.name = "Alicia";  // Mutate the key!
+Integer age = ages.get(alice);  // null! Hash changed, can't find entry
+System.out.println(age);  // null - entry lost!
+```
+
+**Why:** Changing key's fields changes its hashCode(), map can no longer find the entry.
+
+**Fix:** Use immutable keys, or don't modify keys after insertion:
+
+```java
+// ✅ CORRECT Option 1: Use immutable String as key
+HashMap<String, Integer> ages = new HashMap<>();
+ages.put("Alice", 25);  // String is immutable - safe!
+
+// ✅ CORRECT Option 2: Make Person immutable
+final class Person {
+    private final String name;  // final - can't change
+
+    Person(String name) { this.name = name; }
+
+    public String getName() { return name; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Person)) return false;
+        return this.name.equals(((Person) obj).name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+}
+
+HashMap<Person, Integer> ages = new HashMap<>();
+Person alice = new Person("Alice");
+ages.put(alice, 25);
+// alice.name = "Alicia";  // Compilation error - name is final!
+Integer age = ages.get(alice);  // 25 - works!
+```
+
+---
+
+❌ **Mistake 5: Not understanding null key/value behavior**
+
+```java
+// ❌ WRONG: Confusion about null handling
+HashMap<String, Integer> map = new HashMap<>();
+map.put(null, 100);  // Allowed - one null key OK
+map.put("A", null);  // Allowed - null values OK
+
+System.out.println(map.get(null));  // 100
+System.out.println(map.get("A"));   // null - exists with null value
+System.out.println(map.get("B"));   // null - doesn't exist
+
+// Problem: Can't distinguish "key exists with null value" from "key doesn't exist"
+if (map.get("A") == null) {  // true - but key DOES exist!
+    System.out.println("Key doesn't exist");  // Wrong conclusion!
+}
+```
+
+**Why:** get() returns null for both missing keys and keys with null values - ambiguous.
+
+**Fix:** Use containsKey() to check existence, or avoid null values:
+
+```java
+// ✅ CORRECT: Check with containsKey() to distinguish
+HashMap<String, Integer> map = new HashMap<>();
+map.put("A", null);
+
+if (map.containsKey("A")) {
+    System.out.println("Key exists, value: " + map.get("A"));  // "Key exists, value: null"
+} else {
+    System.out.println("Key doesn't exist");
+}
+
+// ✅ BETTER: Avoid null values, use Optional or default value
+HashMap<String, Integer> betterMap = new HashMap<>();
+betterMap.put("A", 0);  // Use 0 instead of null
+// Or use Optional<Integer> as value type
+```
 
 ---
 
@@ -14164,6 +19932,32 @@ Size: 0
 | Using values() for key lookup | Can't get key from value | Use entrySet() |
 | Forgetting null check on remove | Can return null | Check return value |
 
+**Best Practices:**
+1. ✅ **Use Iterator.remove() When Removing During Iteration**: Avoid ConcurrentModificationException
+   - Why: Direct map.remove() during iteration throws exception
+   - How: Use Iterator from keySet() or entrySet() and call iterator.remove()
+   - Example: `Iterator<String> it = map.keySet().iterator(); while (it.hasNext()) { if (condition) it.remove(); }`
+
+2. ✅ **Check remove() Return Value**: Know if key was actually removed
+   - Why: remove() returns null if key didn't exist, helps track operation success
+   - How: Store result and check: `V removed = map.remove(key); if (removed != null) { /* was removed */ }`
+   - Example: `String oldValue = prices.remove("item"); if (oldValue != null) { System.out.println("Removed: " + oldValue); }`
+
+3. ✅ **Use replace() vs put() for Updates**: Signal intent to update existing entry
+   - Why: replace() only updates if key exists, put() always succeeds
+   - How: Use replace() when updating, put() when adding or updating
+   - Example: `map.replace("key", newValue);` returns null if key doesn't exist
+
+4. ✅ **Use replaceAll() for Bulk Updates**: Update all values with lambda
+   - Why: More concise and clear than manual iteration
+   - How: `map.replaceAll((k, v) -> transformValue(v));`
+   - Example: `prices.replaceAll((item, price) -> price * 1.1);` to increase all prices by 10%
+
+5. ✅ **Don't Modify Keys from values() Collection**: Can't access keys from values
+   - Why: values() returns only values, no key information available
+   - How: Use entrySet() when you need both keys and values
+   - Example: `for (Map.Entry<K,V> e : map.entrySet())` not `for (V value : map.values())`
+
 **🎯 Challenge:**
 1. Create student grades HashMap
 2. Add 10 students with grades
@@ -14171,6 +19965,16 @@ Size: 0
 4. Calculate class average
 5. Find highest and lowest grades
 6. List all students who passed (>= 70)
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Confusing put() return value - it returns OLD value, not new value**
+❌ **Mistake 2: Using keySet() + get() instead of entrySet() for iteration (inefficient)**
+❌ **Mistake 3: Not using putIfAbsent() when checking before adding**
+❌ **Mistake 4: Using replace() without checking if key exists**
+❌ **Mistake 5: Not understanding compute(), computeIfAbsent(), merge() methods**
+
+**See Day 21 Exercise 1 for detailed Common Mistakes on HashMap operations.**
 
 ---
 
@@ -14559,6 +20363,32 @@ TreeMap:
 | Non-comparable keys in TreeMap | ClassCastException | Provide Comparator or use Comparable |
 | Null keys in TreeMap | NullPointerException | Use HashMap (allows 1 null key) |
 
+**Best Practices:**
+1. ✅ **Default to HashMap, Switch Only When Needed**: HashMap is fastest for most cases
+   - Why: HashMap provides O(1) operations, sufficient for 90% of use cases
+   - How: Start with HashMap, only use LinkedHashMap/TreeMap for specific ordering needs
+   - Example: Use HashMap for general key-value storage, LinkedHashMap for LRU cache, TreeMap for sorted data
+
+2. ✅ **Use LinkedHashMap for Insertion Order**: Predictable iteration order
+   - Why: Maintains order of insertion while keeping O(1) performance
+   - How: Replace HashMap with LinkedHashMap when iteration order matters
+   - Example: Store recent items, access logs, or any ordered history
+
+3. ✅ **Use TreeMap for Sorted Keys and Range Queries**: Automatic sorting with navigation
+   - Why: Keeps keys sorted, provides firstKey(), lastKey(), subMap(), headMap(), tailMap()
+   - How: Use when you need sorted iteration or range operations
+   - Example: Leaderboards, time-series data, alphabetical dictionaries
+
+4. ✅ **Provide Comparator for TreeMap with Custom Objects**: Avoid ClassCastException
+   - Why: TreeMap requires keys to be Comparable or you provide Comparator
+   - How: Pass Comparator to TreeMap constructor or implement Comparable in key class
+   - Example: `new TreeMap<>(Comparator.comparing(Person::getAge))` for custom sorting
+
+5. ✅ **Avoid Nulls as Keys in TreeMap**: TreeMap cannot handle null keys
+   - Why: TreeMap uses compareTo() which throws NullPointerException on null
+   - How: Filter nulls or use HashMap/LinkedHashMap if nulls are possible
+   - Example: Validate `if (key != null)` before adding to TreeMap
+
 **🎯 Challenge:**
 1. Create three maps (HashMap, LinkedHashMap, TreeMap)
 2. Add same data to all three
@@ -14566,6 +20396,16 @@ TreeMap:
 4. Use TreeMap range operations
 5. Implement LRU cache with LinkedHashMap
 6. Benchmark performance differences
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Using TreeMap without Comparable or Comparator (ClassCastException)**
+❌ **Mistake 2: Not understanding TreeMap uses compareTo() for equality (like TreeSet)**
+❌ **Mistake 3: Not knowing LinkedHashMap has access-order mode for LRU cache**
+❌ **Mistake 4: Adding null keys to TreeMap (NullPointerException)**
+❌ **Mistake 5: Using HashMap when LinkedHashMap or TreeMap is needed**
+
+**See Day 20 Exercise 5 for TreeSet/TreeMap comparison details.**
 
 ---
 
@@ -14998,6 +20838,32 @@ After addAll: [Java, Python, C++, JavaScript]
 | Expecting stable shuffle | Shuffle is random | Use sort for predictability |
 | Modifying list during operations | ConcurrentModificationException | Complete operation first |
 
+**Best Practices:**
+1. ✅ **Sort Before binarySearch()**: Binary search requires sorted list
+   - Why: binarySearch() assumes sorted order, returns wrong results on unsorted lists
+   - How: Call Collections.sort() before Collections.binarySearch()
+   - Example: `Collections.sort(list); int index = Collections.binarySearch(list, value);`
+
+2. ✅ **Use Collections Methods Over Manual Loops**: Clearer intent and optimized
+   - Why: Collections utility methods are well-tested, optimized, and more readable
+   - How: Use sort(), reverse(), shuffle(), max(), min() instead of writing loops
+   - Example: `Collections.reverse(list);` instead of manual swap loop
+
+3. ✅ **Validate Sizes for copy()**: Destination must be large enough
+   - Why: copy() throws exception if destination size < source size
+   - How: Ensure `dest.size() >= source.size()` before calling copy()
+   - Example: Create destination with `new ArrayList<>(Collections.nCopies(source.size(), null));`
+
+4. ✅ **Use frequency() for Counting**: Built-in method for counting occurrences
+   - Why: More efficient and clearer than manual counting loops
+   - How: `int count = Collections.frequency(list, element);`
+   - Example: Find duplicates or most common element using frequency()
+
+5. ✅ **Prefer Immutable Collections When Needed**: Use unmodifiableList/Set/Map
+   - Why: Prevents accidental modification, makes intent clear
+   - How: `List<String> immutable = Collections.unmodifiableList(list);`
+   - Example: Return unmodifiable collection from public API to protect internal state
+
 **🎯 Challenge:**
 1. Create list of 20 random numbers
 2. Find max, min, and average
@@ -15005,6 +20871,16 @@ After addAll: [Java, Python, C++, JavaScript]
 4. Shuffle and sort again
 5. Count frequency of each number
 6. Find most common number
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Sorting original list instead of a copy (modifies original data)**
+❌ **Mistake 2: Using binarySearch() on unsorted list (incorrect results)**
+❌ **Mistake 3: Not understanding Collections.sort() vs list.sort() differences**
+❌ **Mistake 4: Using shuffle() with predictable Random seed (not truly random)**
+❌ **Mistake 5: Calling frequency() in loop (O(n²) - very slow)**
+
+**Note:** Most Collections utility methods work on List interface, not all collections.
 
 ---
 
@@ -15507,6 +21383,32 @@ Original (with nulls): [Charlie, null, Alice, Bob, null, Diana]
 | Comparing with subtraction | Integer overflow | Use Integer.compare() |
 | Forgetting null checks | NullPointerException | Use nullsFirst/nullsLast |
 
+**Best Practices:**
+1. ✅ **Implement Comparable for Natural Ordering**: Define one obvious sort order in class
+   - Why: Enables Collections.sort() without external comparator
+   - How: Implement compareTo() for the most common/natural sort order
+   - Example: Sort Student by ID, Person by name - the obvious default order
+
+2. ✅ **Use Comparator for Alternative Orderings**: Create external comparators for flexibility
+   - Why: Allows multiple sort orders without modifying class
+   - How: Use Comparator.comparing() or lambda expressions
+   - Example: `Comparator.comparing(Product::getPrice)` for price sorting, `Comparator.comparing(Product::getName)` for name sorting
+
+3. ✅ **Use Integer.compare() Not Subtraction**: Avoid overflow in numeric comparisons
+   - Why: Subtraction can overflow for large values, giving wrong results
+   - How: Use Integer.compare(a, b), Double.compare(), Long.compare()
+   - Example: `Integer.compare(this.id, other.id)` not `this.id - other.id`
+
+4. ✅ **Handle Nulls with nullsFirst()/nullsLast()**: Prevent NullPointerException
+   - Why: Comparing nulls causes exceptions
+   - How: Wrap comparator with Comparator.nullsFirst() or nullsLast()
+   - Example: `Comparator.nullsFirst(Comparator.comparing(Person::getName))`
+
+5. ✅ **Use thenComparing() for Multi-Level Sorting**: Chain comparators for secondary sorting
+   - Why: Clean, readable way to sort by multiple criteria
+   - How: Start with comparing(), chain with thenComparing()
+   - Example: `Comparator.comparing(Student::getGrade).thenComparing(Student::getName)`
+
 **🎯 Challenge:**
 1. Create Product class with name, price, rating
 2. Implement Comparable for natural order
@@ -15514,6 +21416,68 @@ Original (with nulls): [Charlie, null, Alice, Bob, null, Diana]
 4. Sort products using all methods
 5. Implement multi-level sorting
 6. Handle null values properly
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Not understanding when to use Comparable vs Comparator**
+
+```java
+// Comparable: Natural ordering, defined inside class (one way to sort)
+// Comparator: Custom ordering, defined outside class (multiple ways to sort)
+
+// Use Comparable when there's ONE natural/default way to sort
+// Use Comparator when you need MULTIPLE ways to sort
+```
+
+❌ **Mistake 2: Returning wrong values from compareTo()/compare() methods**
+
+```java
+// ❌ WRONG: Returning 1/0 instead of proper comparison
+public int compareTo(Product other) {
+    return this.price > other.price ? 1 : 0;  // Returns 0 when equal OR less!
+}
+
+// ✅ CORRECT: Return negative/zero/positive based on less than/equal/greater than
+public int compareTo(Product other) {
+    return Double.compare(this.price, other.price);  // Proper comparison
+}
+```
+
+❌ **Mistake 3: Violating compareTo/equals consistency**
+
+```java
+// ❌ WRONG: compareTo() uses only name, equals() uses name + price
+// This causes issues in TreeSet/TreeMap
+```
+
+❌ **Mistake 4: Not handling null properly in Comparator**
+
+```java
+// ❌ WRONG: NullPointerException if name is null
+Comparator<Product> byName = (p1, p2) -> p1.getName().compareTo(p2.getName());
+
+// ✅ CORRECT: Use Comparator.nullsFirst() or nullsLast()
+Comparator<Product> byName = Comparator.comparing(
+    Product::getName,
+    Comparator.nullsLast(String::compareTo)
+);
+```
+
+❌ **Mistake 5: Creating complex Comparators instead of chaining with thenComparing()**
+
+```java
+// ❌ WRONG: Complex manual comparison
+Comparator<Product> complex = (p1, p2) -> {
+    int priceCompare = Double.compare(p1.getPrice(), p2.getPrice());
+    if (priceCompare != 0) return priceCompare;
+    return p1.getName().compareTo(p2.getName());
+};
+
+// ✅ CORRECT: Chain with thenComparing()
+Comparator<Product> simple = Comparator
+    .comparing(Product::getPrice)
+    .thenComparing(Product::getName);
+```
 
 ---
 
@@ -16194,6 +22158,32 @@ Items to restock:
 | Modifying during iteration | ConcurrentModificationException | Create new list |
 | Forgetting to update totals | Incorrect statistics | Recalculate |
 
+**Best Practices:**
+1. ✅ **Use HashMap for Primary Storage**: O(1) lookup by key
+   - Why: Fast access by product ID or unique identifier
+   - How: Store main data in HashMap with ID as key
+   - Example: `HashMap<String, Product> inventory` for instant product lookup by ID
+
+2. ✅ **Create Filtered Views Instead of Copies**: Use streams for filtering
+   - Why: Avoids duplicating data, works with original collection
+   - How: Use stream().filter() to create views of data
+   - Example: `inventory.values().stream().filter(p -> p.getCategory().equals(cat)).collect(Collectors.toList())`
+
+3. ✅ **Validate All Input Before Operations**: Check for null, duplicates, invalid values
+   - Why: Prevents data corruption and runtime exceptions
+   - How: Validate parameters before add/update/delete operations
+   - Example: Check if product ID exists before update, validate price/quantity ranges
+
+4. ✅ **Use Comparator for Flexible Sorting**: Create multiple sort options
+   - Why: Allows user to sort data by different criteria
+   - How: Define comparators for each sort field, use Collections.sort() or stream().sorted()
+   - Example: Sort by price, rating, stock level, category - different views of same data
+
+5. ✅ **Encapsulate Collection Operations**: Provide methods, don't expose raw maps
+   - Why: Maintains data integrity, enforces business rules
+   - How: Make collections private, provide addProduct(), removeProduct(), updateStock() methods
+   - Example: `private HashMap<String, Product> products;` with public methods for controlled access
+
 **🎯 Challenge:**
 Extend the inventory system with:
 1. Transaction history (LinkedHashMap for chronological order)
@@ -16204,6 +22194,16 @@ Extend the inventory system with:
 6. Search by name (contains/starts with)
 7. Price history tracking
 8. Automated reorder system (when stock < threshold)
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Using wrong collection - List for products needing unique IDs**
+❌ **Mistake 2: Not using HashMap for O(1) lookup by product ID**
+❌ **Mistake 3: Mutable Product objects allowing invalid state changes**
+❌ **Mistake 4: Not validating input data (negative stock, invalid prices)**
+❌ **Mistake 5: Linear search through all products for filtering (use streams or proper data structures)**
+
+**Best Practice:** Use HashMap<String, Product> for fast lookup, validate all inputs, make Product immutable or carefully control mutations.
 
 ---
 
@@ -16473,6 +22473,146 @@ a.equals(c) // true (same value)
 3. Compare time taken
 4. Print memory addresses using `System.identityHashCode()`
 5. Verify new objects are created each time with String
+
+**Common Mistakes:**
+
+❌ **Mistake 1: Expecting string methods to modify the original string**
+
+```java
+// ❌ WRONG: Thinking toUpperCase() modifies str
+String str = "hello";
+str.toUpperCase();
+System.out.println(str);  // "hello" - unchanged!
+```
+
+**Why:** Strings are immutable. Methods return new String objects, don't modify original.
+
+**Fix:** Reassign the result to variable:
+
+```java
+// ✅ CORRECT: Assign result back to variable
+String str = "hello";
+str = str.toUpperCase();
+System.out.println(str);  // "HELLO" - changed!
+```
+
+---
+
+❌ **Mistake 2: Using == to compare strings instead of equals()**
+
+```java
+// ❌ WRONG: Using == compares references
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+if (s1 == s2) {  // false! Different objects
+    System.out.println("Equal");
+} else {
+    System.out.println("Not equal");  // This executes
+}
+```
+
+**Why:** == compares object references (memory addresses), not content.
+
+**Fix:** Use equals() to compare content:
+
+```java
+// ✅ CORRECT: Use equals() for content comparison
+String s1 = new String("Java");
+String s2 = new String("Java");
+
+if (s1.equals(s2)) {  // true! Same content
+    System.out.println("Equal");  // This executes
+}
+```
+
+---
+
+❌ **Mistake 3: Using + operator in loops for string concatenation (very slow)**
+
+```java
+// ❌ WRONG: String concatenation in loop - creates many objects
+String result = "";
+for (int i = 0; i < 1000; i++) {
+    result += i + ",";  // Creates 1000 new String objects!
+}
+// Very slow: O(n²) time complexity
+```
+
+**Why:** Each += creates a new String object. 1000 iterations = 1000 objects, very inefficient.
+
+**Fix:** Use StringBuilder for efficient concatenation:
+
+```java
+// ✅ CORRECT: Use StringBuilder for loops
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++) {
+    sb.append(i).append(",");  // Modifies same object
+}
+String result = sb.toString();
+// Fast: O(n) time complexity
+```
+
+---
+
+❌ **Mistake 4: Creating strings with new String() unnecessarily**
+
+```java
+// ❌ WRONG: Using new String() creates heap object, bypasses pool
+String s1 = new String("Hello");  // Heap object
+String s2 = new String("Hello");  // Different heap object
+
+System.out.println(s1 == s2);  // false - different objects
+// Wastes memory, doesn't use string pool optimization
+```
+
+**Why:** new String() forces heap allocation, bypassing string pool. Creates separate objects even for same content.
+
+**Fix:** Use string literals for automatic pooling:
+
+```java
+// ✅ CORRECT: Use literals for string pool
+String s1 = "Hello";  // Pool
+String s2 = "Hello";  // Same pool object
+
+System.out.println(s1 == s2);  // true - same reference
+// Memory efficient, leverages string pool
+```
+
+---
+
+❌ **Mistake 5: Not understanding string pool vs heap allocation**
+
+```java
+// ❌ WRONG: Confusion about when strings are pooled
+String s1 = "Java";           // Pool
+String s2 = "Java";           // Pool (same as s1)
+String s3 = new String("Java"); // Heap (different from s1, s2)
+String s4 = s3.intern();      // Pool (now same as s1, s2)
+
+// Expecting all to be same object
+System.out.println(s1 == s2);  // true
+System.out.println(s1 == s3);  // false! s3 is heap object
+System.out.println(s1 == s4);  // true - intern() returns pool reference
+```
+
+**Why:** Literals use pool, new String() uses heap. intern() moves heap string to pool.
+
+**Fix:** Understand and use appropriate allocation:
+
+```java
+// ✅ CORRECT: Know when pooling happens
+String literal = "Java";      // Pool - used by default
+String heapObj = new String("Java"); // Heap - when explicitly needed
+String pooled = heapObj.intern();    // Pool - force to pool
+
+// For comparison:
+literal.equals(heapObj);  // true - content same
+literal == heapObj;       // false - different locations
+literal == pooled;        // true - both in pool
+
+// Best practice: Use literals unless you specifically need heap allocation
+```
 
 ---
 

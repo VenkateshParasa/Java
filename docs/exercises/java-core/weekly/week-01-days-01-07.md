@@ -93,6 +93,27 @@ Hello, World!
    - Why: Single quotes are for single characters only
    - Fix: Use double quotes for strings: `"Hello"`
 
+**Best Practices:**
+1. ✅ **Use Meaningful Output Messages**: Make your console output clear and descriptive
+   - Why: Helps you and others understand what the program is doing
+   - How: Instead of just "Hello", use "Program started successfully" or "Welcome to Java Programming"
+   - Example: `System.out.println("Application startup complete");`
+
+2. ✅ **Follow Java Naming Conventions**: Use PascalCase for class names
+   - Why: Makes your code professional and easier to read for other Java developers
+   - How: Class names should start with capital letter, use capitals for each word
+   - Example: `HelloWorld` (not `helloworld` or `hello_world`)
+
+3. ✅ **Add Comments to Explain Intent**: Use comments to document your code
+   - Why: Helps you remember what code does when you return to it later
+   - How: Use `//` for single-line comments to explain complex or important lines
+   - Example: `// Print welcome message to console`
+
+4. ✅ **Keep Code Properly Indented**: Maintain consistent indentation inside methods
+   - Why: Makes code structure visible and easier to read
+   - How: IntelliJ automatically indents, but verify all code inside main method is indented one level
+   - Example: Statements inside `main()` should be indented with 4 spaces or 1 tab
+
 ---
 
 #### Exercise 2: Print Multiple Lines (10 minutes)
@@ -172,6 +193,27 @@ Hobby: Coding
    - Why: `print()` doesn't add newline, all output appears on same line
    - Fix: Use `println()` for each separate line
 
+**Best Practices:**
+1. ✅ **Use Descriptive Variable Names in Comments**: Document what data represents
+   - Why: Makes it clear what information you're storing and displaying
+   - How: Add comments explaining each println: `// Display student name`, `// Display city information`
+   - Example: Comments help track which line prints what information
+
+2. ✅ **Organize Related Output Together**: Group similar println statements
+   - Why: Makes code easier to understand and modify
+   - How: Keep all personal info printlns together, not scattered
+   - Example: Name, city, age, hobby should be consecutive lines
+
+3. ✅ **Use Consistent Formatting**: Keep output format uniform across all lines
+   - Why: Creates professional-looking, easy-to-read output
+   - How: Use same pattern for each line: "Label: Value"
+   - Example: All lines follow "Property: Data" format
+
+4. ✅ **Test With Different Data**: Try your code with various inputs
+   - Why: Ensures your code works for different names, cities, ages
+   - How: Change the values and re-run to verify output updates correctly
+   - Example: Test with short names, long names, different ages
+
 ---
 
 #### Exercise 3: Creating a Box with Text (15 minutes)
@@ -247,6 +289,27 @@ public class WelcomeBox {
 4. ❌ **Inconsistent Spacing**: Different indentation on each line
    - Why: Creates misaligned, unprofessional output
    - Fix: Use exactly 4 spaces before each middle line
+
+**Best Practices:**
+1. ✅ **Plan Visual Layouts Before Coding**: Sketch out your desired output first
+   - Why: Helps you count characters correctly and visualize the final result
+   - How: Draw the box on paper or in comments, count border characters
+   - Example: Determine border length (28 chars) before writing code
+
+2. ✅ **Use Comments to Label Sections**: Document each visual element
+   - Why: Makes it easy to modify specific parts later
+   - How: Add comments like "// Top border", "// Title line", "// Bottom border"
+   - Example: Clear labels help you quickly find and update specific lines
+
+3. ✅ **Maintain Symmetry in Visual Designs**: Keep equal spacing and balanced layout
+   - Why: Creates professional, aesthetically pleasing output
+   - How: Use same number of spaces for all indented text, same border length
+   - Example: 4 spaces indent for all text lines, 28 equals for both borders
+
+4. ✅ **Test Alignment by Running Code**: Verify visual output matches your plan
+   - Why: Console display shows if spacing/alignment is correct
+   - How: Run code and compare output to your planned design
+   - Example: Check that text is centered and borders are equal length
 
 ---
 
@@ -330,6 +393,27 @@ Put your cursor at the start of each line in the code and count:
    - Why: Middle line should have 5 stars for diamond shape
    - Fix: Count stars: 1, 3, 5, 3, 1 (increasing then decreasing by 2)
 
+**Best Practices:**
+1. ✅ **Create Pattern Formulas**: Identify mathematical patterns in spacing and symbols
+   - Why: Makes it easier to create larger or modified patterns later
+   - How: Notice pattern: spaces decrease (2,1,0) then increase (1,2), stars increase (1,3,5) then decrease (3,1)
+   - Example: For line i: spaces = |2-i|, stars = 2*i+1 for first half
+
+2. ✅ **Use Comments to Document Pattern Logic**: Explain spacing and character counts
+   - Why: Helps you and others understand the pattern structure
+   - How: Add comments showing spaces and stars count for each line
+   - Example: `// Line 1: 2 spaces, then 1 star` makes pattern clear
+
+3. ✅ **Verify Symmetry in Patterns**: Check that pattern is balanced
+   - Why: Most visual patterns should be symmetrical for aesthetic appeal
+   - How: Compare first and last line, second and second-to-last, etc.
+   - Example: Line 1 (2 spaces, 1 star) should mirror Line 5 (2 spaces, 1 star)
+
+4. ✅ **Test Pattern Incrementally**: Build pattern line by line
+   - Why: Easier to catch and fix spacing errors early
+   - How: Add one println at a time, run and verify before adding next
+   - Example: Add line 1, verify it's centered, then add line 2, and so on
+
 ---
 
 #### Exercise 5: System Information (10 minutes)
@@ -362,6 +446,44 @@ Status: Ready to Learn!
 Day 1 Exercises: 5/5 Complete
 =============================
 ```
+
+**Best Practices:**
+1. ✅ **Create Summary Reports for Milestones**: Mark completion of important steps
+   - Why: Provides sense of achievement and tracks progress
+   - How: Create a summary message showing what was accomplished
+   - Example: Display status message after completing each day's exercises
+
+2. ✅ **Include Environment Details in Reports**: Document version and tool information
+   - Why: Helps troubleshooting if issues arise, documents your setup
+   - How: Include Java version, IDE name, and other relevant details
+   - Example: "Java Version: 17", "IDE: IntelliJ IDEA" provides context
+
+3. ✅ **Use Visual Separators for Report Sections**: Make output easy to scan
+   - Why: Visual boundaries help readers quickly find information
+   - How: Use equal signs, dashes, or other characters for headers/footers
+   - Example: `=====` at top and bottom frames the report content
+
+4. ✅ **Show Progress with Fractions or Percentages**: Quantify completion
+   - Why: Gives clear indication of how much work is done
+   - How: Use format like "5/5 Complete" or "100% Done"
+   - Example: "Day 1 Exercises: 5/5 Complete" shows all tasks finished
+
+**Common Mistakes:**
+1. ❌ **Hardcoding System-Specific Values**: Using specific Java version without variables
+   - Why: Makes report inaccurate if run on different system
+   - Fix: Either keep generic or use `System.getProperty("java.version")` for actual version
+
+2. ❌ **Inconsistent Border Length**: Top border 20 chars, bottom border 30 chars
+   - Why: Creates asymmetric, unprofessional appearance
+   - Fix: Count characters carefully, use same length for both borders
+
+3. ❌ **Missing Completion Status**: No indication if exercises are actually done
+   - Why: Reader doesn't know if report reflects real progress
+   - Fix: Include completion count: "Exercises: 5/5 Complete"
+
+4. ❌ **No Visual Hierarchy**: All text same format, no sections
+   - Why: Hard to scan for specific information
+   - Fix: Use separators, indentation, or labels to organize sections
 
 **✅ Congratulations! Day 1 Complete!**
 
@@ -435,6 +557,32 @@ My age is: 25
 5. ❌ **Missing Semicolon After Declaration**: `int age = 25` (no `;`)
    - Why: Java requires semicolon to end statements
    - Fix: Always end with semicolon: `int age = 25;`
+
+**Best Practices:**
+1. ✅ **Use camelCase for Variable Names**: Start with lowercase, capitalize each word after
+   - Why: Standard Java convention makes code readable and professional
+   - How: `myAge`, `studentName`, `totalScore` (not `my_age` or `MyAge`)
+   - Example: `int studentAge = 20;` is more readable than `int student_age = 20;`
+
+2. ✅ **Choose Meaningful Variable Names**: Name variables after what they store
+   - Why: Makes code self-documenting and easier to understand
+   - How: Use descriptive names like `age`, `score`, `userName` instead of `a`, `x`, `temp`
+   - Example: `int studentAge = 20;` is clearer than `int num = 20;`
+
+3. ✅ **Initialize Variables When Declared**: Assign value immediately when creating variable
+   - Why: Prevents "variable might not be initialized" errors
+   - How: Combine declaration and initialization: `int age = 25;` not `int age; age = 25;`
+   - Example: `int score = 0;` ensures variable always has a value
+
+4. ✅ **Group Related Variable Declarations**: Keep similar variables together
+   - Why: Improves code organization and readability
+   - How: Declare all age-related variables together, all name variables together
+   - Example: Group `int age`, `int birthYear` near each other, separate from `String name`
+
+5. ✅ **Add Comments for Complex Variables**: Explain purpose of non-obvious variables
+   - Why: Helps others (and future you) understand variable's role
+   - How: Add brief comment above or beside variable: `// User's age in years`
+   - Example: `int maxRetries = 3; // Maximum login attempts allowed`
 
 ---
 
@@ -536,6 +684,32 @@ boolean - Passed: true
    - Why: byte max is 127, int can't store decimals
    - Fix: Choose correct type: age 200 needs `short`, decimals need `double`
 
+**Best Practices:**
+1. ✅ **Choose the Right Data Type for Your Data**: Match type to value range and precision needs
+   - Why: Prevents data loss, overflow errors, and uses memory efficiently
+   - How: Use `int` for most whole numbers, `double` for decimals, `boolean` for true/false
+   - Example: `double price = 19.99;` (not `int`), `boolean isActive = true;` (not `int 1/0`)
+
+2. ✅ **Always Add Suffix for long and float**: Mark literal values explicitly
+   - Why: Prevents type mismatch errors and makes intent clear
+   - How: Add `L` for long numbers, `f` for float numbers
+   - Example: `long bigNum = 9999999999L;`, `float price = 99.99f;`
+
+3. ✅ **Use double Over float for Decimal Numbers**: Prefer double precision
+   - Why: double provides better precision and is Java's default for decimal literals
+   - How: Use `double` for prices, measurements, calculations unless memory is critical
+   - Example: `double temperature = 98.6;` preferred over `float temperature = 98.6f;`
+
+4. ✅ **Use boolean for Yes/No Data**: Never use numbers for true/false conditions
+   - Why: Makes code more readable and prevents logic errors
+   - How: Use `boolean` type with `true`/`false` values, not 1/0
+   - Example: `boolean isLoggedIn = true;` not `int isLoggedIn = 1;`
+
+5. ✅ **Document Units in Variable Names**: Include measurement units when relevant
+   - Why: Prevents confusion about what values represent
+   - How: Add unit to name: `ageInYears`, `distanceInKm`, `priceInDollars`
+   - Example: `int timeoutInSeconds = 30;` is clearer than `int timeout = 30;`
+
 ---
 
 #### Exercise 3: Student Information System (25 minutes)
@@ -633,6 +807,27 @@ Percentage: 87.5%
 4. ❌ **Printing Multiple Items Wrong**: `System.out.println(marks, maxMarks);`
    - Why: println takes one parameter, use `+` to combine
    - Fix: Combine with `+`: `System.out.println(marks + "/" + maxMarks);`
+
+**Best Practices:**
+1. ✅ **Create Realistic Test Data**: Use plausible values that represent real scenarios
+   - Why: Helps you understand how program works with actual data
+   - How: Use realistic student info: marks 0-100, GPA 0.0-4.0, reasonable ages
+   - Example: `double gpa = 3.8;` is better than `double gpa = 999.9;`
+
+2. ✅ **Format Output for Readability**: Make console output easy to read and understand
+   - Why: Well-formatted output is more professional and user-friendly
+   - How: Add labels, use spacing, align related data
+   - Example: `"Student Name: " + name` not just `name`
+
+3. ✅ **Organize Variable Declarations by Type**: Group similar variables together
+   - Why: Makes code structure clearer and easier to maintain
+   - How: Put all String variables together, all numeric variables together
+   - Example: Declare all student strings (name, major, ID) before numeric data (age, GPA)
+
+4. ✅ **Use Constants for Fixed Values**: Define unchanging values as final variables
+   - Why: Makes code easier to maintain and understand
+   - How: Use `final` keyword for values that never change
+   - Example: `final int MAX_MARKS = 100;` for total possible marks
 
 **🎯 Challenge:** Modify this program with YOUR information!
 
@@ -760,6 +955,32 @@ int intPrice = (int) price;  // Put (int) before the variable
 5. ❌ **Unnecessary Casting**: Writing `int x = (int) 42;`
    - Why: 42 is already int, no cast needed
    - Fix: Only cast when converting between different types
+
+**Best Practices:**
+1. ✅ **Prefer Wider Types to Avoid Casting**: Choose appropriate type initially
+   - Why: Reduces need for casting and prevents data loss
+   - How: Use `double` for numbers that might have decimals, `long` for large integers
+   - Example: `double price = 99.99;` instead of `int price = (int) 99.99;`
+
+2. ✅ **Always Validate Before Narrowing Casts**: Check value fits in target type
+   - Why: Prevents data corruption from overflow
+   - How: Verify value is within target type's range before casting
+   - Example: Check `longValue <= Integer.MAX_VALUE` before casting long to int
+
+3. ✅ **Use Math.round() for Converting Decimals to Integers**: When you want rounding behavior
+   - Why: Casting truncates (cuts off decimals), rounding is often what you want
+   - How: Use `Math.round(doubleValue)` instead of `(int) doubleValue`
+   - Example: `int rounded = (int) Math.round(99.99);` gives 100, not 99
+
+4. ✅ **Document Intentional Data Loss**: Add comments when casting loses precision
+   - Why: Makes clear that data loss is intentional, not a bug
+   - How: Add comment explaining why truncation/loss is acceptable
+   - Example: `int dollars = (int) price; // Intentionally dropping cents`
+
+5. ✅ **Avoid Chained Casts**: Don't cast multiple times in one expression
+   - Why: Hard to read and understand, error-prone
+   - How: Use intermediate variables for clarity
+   - Example: Use two lines instead of `int x = (int) (double) (long) value;`
 
 ---
 
@@ -1110,6 +1331,27 @@ If you try to store 200 in a byte:
    - Money? Use `double` (needs decimals)
    - ID numbers? Use `int` (up to 2 billion+)
 
+**Common Mistakes:**
+1. ❌ **Using Wrong Wrapper Class**: Writing `Int.MAX_VALUE` instead of `Integer.MAX_VALUE`
+   - Why: Wrapper class for `int` is `Integer`, not `Int`
+   - Fix: Use correct wrapper names: `Integer`, `Character`, `Boolean` (not `Int`, `Char`, `Bool`)
+
+2. ❌ **Storing Out-of-Range Values**: Trying `byte age = 200;`
+   - Why: 200 exceeds byte's maximum value (127)
+   - Fix: Use appropriate type: `short age = 200;` or check MIN_VALUE/MAX_VALUE first
+
+3. ❌ **Confusing Type Sizes**: Thinking `short` is larger than `int`
+   - Why: Names don't indicate size order clearly
+   - Fix: Remember hierarchy: byte(1) < short(2) < int(4) < long(8) bytes
+
+4. ❌ **Using Float for Precision**: Using `float` for financial calculations
+   - Why: Float has less precision than double, can lose accuracy
+   - Fix: Use `double` for money/measurements: `double price = 19.99;`
+
+5. ❌ **Not Understanding Scientific Notation**: Confused by output like `1.4E-45`
+   - Why: Very small/large numbers display in scientific notation
+   - Fix: Recognize format: `1.4E-45` means 1.4 × 10^-45 (very small number)
+
 **✅ Day 2 Complete! You now understand:**
 - All 8 primitive data types
 - When to use each type
@@ -1223,6 +1465,27 @@ double result = 10.0 / 3.0;  // result = 3.333...
 - Get last digit: `number % 10`
 - Cycle through values: `index % arraySize`
 
+**Common Mistakes:**
+1. ❌ **Integer Division When Expecting Decimals**: Using `int result = 10 / 3;` expecting 3.33
+   - Why: Dividing two integers gives integer result (3, not 3.33)
+   - Fix: Cast to double: `double result = (double) 10 / 3;` or use `10.0 / 3.0`
+
+2. ❌ **Confusing % with Division**: Thinking `10 % 3` gives quotient (3)
+   - Why: `%` gives remainder (1), not quotient
+   - Fix: Use `/` for quotient: `10 / 3 = 3`, use `%` for remainder: `10 % 3 = 1`
+
+3. ❌ **Wrong Operator Order**: Writing `10 + 3 / 2` expecting 6.5
+   - Why: Division happens before addition (order of operations)
+   - Fix: Use parentheses for clarity: `(10 + 3) / 2` or accept precedence: `10 + (3 / 2)`
+
+4. ❌ **Modulus with Negative Numbers**: Not understanding `-10 % 3`
+   - Why: Result takes sign of dividend: `-10 % 3 = -1` (not 2)
+   - Fix: Understand sign rules or use `Math.abs()` if needed
+
+5. ❌ **Concatenating Instead of Adding**: `"Result: " + 10 + 3` gives "Result: 103"
+   - Why: String + number concatenates, not adds
+   - Fix: Use parentheses: `"Result: " + (10 + 3)` gives "Result: 13"
+
 ---
 
 #### Exercise 2: Even or Odd Checker (15 minutes)
@@ -1321,6 +1584,27 @@ Odd numbers: 1, 3, 5, 7, 9...
 - Correctly identifies even numbers (remainder 0)
 - Correctly identifies odd numbers (remainder 1)
 - Shows the calculation (number % 2)
+
+**Common Mistakes:**
+1. ❌ **Using Division Instead of Modulus**: Writing `if (num / 2 == 0)`
+   - Why: Division gives quotient, need modulus for remainder
+   - Fix: Use `%` operator: `if (num % 2 == 0)` for even check
+
+2. ❌ **Checking Remainder == 1**: Using `if (num % 2 == 1)` for odd
+   - Why: Works for positive but negative odds give -1 remainder
+   - Fix: Better: `if (num % 2 != 0)` catches both positive and negative odds
+
+3. ❌ **Wrong Comparison Operator**: Writing `if (num % 2 = 0)` with single `=`
+   - Why: Single `=` is assignment, not comparison
+   - Fix: Use double equals: `if (num % 2 == 0)`
+
+4. ❌ **Forgetting Parentheses in Ternary**: `num % 2 == 0 ? "EVEN" : "ODD"` without parentheses
+   - Why: In complex expressions, may cause precedence issues
+   - Fix: Use parentheses for clarity: `(num % 2 == 0 ? "EVEN" : "ODD")`
+
+5. ❌ **Not Handling Zero**: Assuming 0 is neither even nor odd
+   - Why: 0 is mathematically even (0 % 2 == 0)
+   - Fix: Remember 0 is even, code handles it correctly already
 
 ---
 
@@ -2090,6 +2374,27 @@ Test the examples with different values:
 2. Loan: creditScore=600 (where does it fail?)
 3. Movie: viewerAge=12, parentPresent=true (can they watch?)
 
+**Common Mistakes:**
+1. ❌ **Too Deep Nesting**: More than 3 levels of nested if statements
+   - Why: Becomes very hard to read and debug
+   - Fix: Use logical operators (&&) or refactor into separate methods
+
+2. ❌ **Not Using Logical AND Instead**: Nesting when `&&` would be clearer
+   - Why: `if (a) { if (b) { if (c) {...}}}` harder to read than `if (a && b && c) {...}`
+   - Fix: Combine conditions: `if (age >= 18 && isCitizen && hasID) {...}`
+
+3. ❌ **Checking Same Condition Twice**: Inner if rechecks outer condition
+   - Why: Wastes resources, code redundancy
+   - Fix: Inner code only needs to check new conditions, outer already verified
+
+4. ❌ **Wrong Nesting Order**: Checking less important condition first
+   - Why: May do unnecessary work before catching deal-breaker
+   - Fix: Check critical conditions first (age before citizenship, etc.)
+
+5. ❌ **Missing else for Outer If**: No handling when outer condition fails
+   - Why: Silent failure, user doesn't know what went wrong
+   - Fix: Add else blocks explaining why outer condition failed
+
 ---
 
 #### Exercise 5: switch-case Statement (25 minutes)
@@ -2418,6 +2723,27 @@ Create a season identifier:
 - Months 6, 7, 8: Summer
 - Months 9, 10, 11: Fall
 
+**Common Mistakes:**
+1. ❌ **Forgetting break Statement**: Missing `break;` after each case
+   - Why: Causes fall-through, executes all cases below until break found
+   - Fix: Add `break;` at end of each case: `case 1: ...; break;`
+
+2. ❌ **Using Ranges in case**: Writing `case (x > 5):` or `case 10-20:`
+   - Why: switch only works with specific values, not ranges
+   - Fix: Use if-else-if for ranges: `if (x > 5 && x <= 10)`
+
+3. ❌ **Switching on double/float**: `switch(decimalValue)` with float/double
+   - Why: switch only accepts int, char, String, enum types
+   - Fix: Use if-else or convert to int if appropriate
+
+4. ❌ **Missing default Case**: No default to handle unexpected values
+   - Why: Invalid input silently does nothing
+   - Fix: Always add `default:` case for error handling
+
+5. ❌ **Semicolon After switch**: Writing `switch(day);` with semicolon
+   - Why: Semicolon ends the switch, body never executes
+   - Fix: No semicolon after switch condition: `switch(day) {`
+
 ---
 
 #### Exercise 6: Ternary Operator (15 minutes)
@@ -2671,6 +2997,27 @@ Convert these to ternary:
 1. `if (x > 0) { sign = "Positive"; } else { sign = "Negative"; }`
 2. `if (temp > 30) { weather = "Hot"; } else { weather = "Cold"; }`
 3. `if (age >= 65) { ticket = 7; } else { ticket = 12; }`
+
+**Common Mistakes:**
+1. ❌ **Missing Colon**: Writing `(condition ? value1 value2)` without `:`
+   - Why: Ternary requires both `?` and `:` separators
+   - Fix: Use format: `(condition ? valueIfTrue : valueIfFalse)`
+
+2. ❌ **Multiple Statements in Ternary**: Trying to execute multiple lines
+   - Why: Ternary returns single value, can't execute multiple statements
+   - Fix: Use if-else for multiple statements, ternary only for single assignment
+
+3. ❌ **Type Mismatch**: Different types for true/false values
+   - Why: Both values must be compatible types
+   - Fix: Ensure both are same type: `(age >= 18 ? "Adult" : "Minor")` both String
+
+4. ❌ **Overusing Nested Ternary**: Complex nested ternaries like `a ? b ? c : d : e ? f : g`
+   - Why: Extremely hard to read and maintain
+   - Fix: Use if-else-if for complex logic with 3+ conditions
+
+5. ❌ **Using for Side Effects**: `(condition ? x++ : y++)` for execution
+   - Why: Ternary meant for value selection, not side effects
+   - Fix: Use if-else when you need to execute code, not just assign value
 
 ---
 
@@ -2947,6 +3294,27 @@ Withdrawal Amount: $1000.0
 2. Change enteredPIN to 9999 (wrong PIN)
 3. Change selectedOption to 1 (check balance)
 4. Add a new option 5 for "Transfer Money"
+
+**Common Mistakes:**
+1. ❌ **Not Using return After Validation Failure**: Continuing after PIN fails
+   - Why: Executes rest of code when should exit early
+   - Fix: Use `return;` statement to exit program after critical failures
+
+2. ❌ **Not Validating Each Step**: Skipping PIN or card check
+   - Why: Security risk, allows unauthorized access
+   - Fix: Check all conditions in sequence: card → PIN → account status → transaction
+
+3. ❌ **Wrong Validation Order**: Checking transaction before PIN
+   - Why: May process sensitive operations before authentication
+   - Fix: Always verify identity first, then permissions, then transactions
+
+4. ❌ **No Balance Update**: Displaying withdrawal but not updating balance
+   - Why: Balance becomes inaccurate, system state inconsistent
+   - Fix: Always update: `balance = balance - transactionAmount;` after successful transaction
+
+5. ❌ **Missing Edge Cases**: Not checking for negative amounts or extreme values
+   - Why: User could enter invalid data causing errors
+   - Fix: Add validation: `if (amount <= 0)` and `if (amount > limit)`
 
 ---
 
@@ -3981,6 +4349,27 @@ for (int i = 0; i < 1000; i++) {
 2. Print a diamond shape
 3. Create times tables for 1-10
 
+**Common Mistakes:**
+1. ❌ **Confusing Row/Column Loop Order**: Putting column loop outside row loop
+   - Why: Prints columns first instead of row-by-row
+   - Fix: Outer loop = rows, inner loop = columns
+
+2. ❌ **Wrong Inner Loop Limit**: Using outer loop variable in wrong way
+   - Why: For triangle, inner loop should depend on outer: `j <= i` not `j <= length`
+   - Fix: Match inner limit to pattern: rectangle uses fixed limit, triangle uses `i`
+
+3. ❌ **Not Printing Newline**: Forgetting `System.out.println()` after inner loop
+   - Why: All output appears on one line
+   - Fix: Add `println()` after inner loop completes each row
+
+4. ❌ **Off-by-One in Nested Loops**: Starting at 1 when should start at 0
+   - Why: Array access needs 0-based, display might need 1-based
+   - Fix: Decide based on use: arrays start at 0, counting often starts at 1
+
+5. ❌ **Performance Issues**: Using nested loops on huge datasets without realizing O(n²)
+   - Why: 1000×1000 = 1 million operations, can be very slow
+   - Fix: Be aware of nested loop cost, optimize when working with large data
+
 ---
 
 #### Exercise 5: break and continue Statements (15 minutes)
@@ -4257,6 +4646,27 @@ for (int i = 0; i < 100; i++) {
 - Understand difference between them
 - Can use both in real-world scenarios
 
+**Common Mistakes:**
+1. ❌ **Using break Outside Loop**: Placing `break;` outside any loop
+   - Why: break only works inside loops or switch statements
+   - Fix: Ensure break is inside loop body: `while(...) { if(...) break; }`
+
+2. ❌ **Expecting break to Exit Multiple Loops**: Thinking break exits all nested loops
+   - Why: break only exits the immediate loop it's in
+   - Fix: Use labeled break or restructure code if need to exit outer loop
+
+3. ❌ **Using continue When break Needed**: Using continue when want to stop completely
+   - Why: continue goes to next iteration, doesn't stop loop
+   - Fix: Use break to exit, continue to skip current and continue loop
+
+4. ❌ **Unreachable Code After break**: Writing code after break in same block
+   - Why: break exits immediately, code after never executes
+   - Fix: Don't put code after break: `if(x) { break; doSomething(); }` won't work
+
+5. ❌ **continue in switch**: Using continue inside switch statement
+   - Why: continue works in loops, not switch (use break for switch)
+   - Fix: Use break in switch, continue only in loops
+
 ---
 
 #### Exercise 6: Real-World Application - Prime Number Finder (25 minutes)
@@ -4527,6 +4937,27 @@ Why? If n = a × b where a ≤ b:
 1. Find first 10 prime numbers
 2. Check if a number is a perfect square
 3. Find all factors of a number
+
+**Common Mistakes:**
+1. ❌ **Starting Loop at 0 or 1**: `for (int i = 0; i < num; i++)`
+   - Why: 0 and 1 cause division by zero or are not valid divisors
+   - Fix: Start at 2: `for (int i = 2; i < num; i++)`
+
+2. ❌ **Including Number Itself as Divisor**: Checking `i <= num` instead of `i < num`
+   - Why: Every number divides itself, would always find divisor
+   - Fix: Only check proper divisors: `i < num` or `i <= num - 1`
+
+3. ❌ **Not Breaking After Finding Divisor**: Continuing loop after confirming not prime
+   - Why: Wastes computation checking remaining numbers
+   - Fix: Use `break;` immediately after finding first divisor
+
+4. ❌ **Wrong Initial isPrime Value**: Starting with `boolean isPrime = false;`
+   - Why: Should assume prime until proven otherwise
+   - Fix: Initialize as true: `boolean isPrime = true;`
+
+5. ❌ **Not Optimizing to √n**: Checking all numbers up to n-1
+   - Why: Inefficient, only need to check up to square root
+   - Fix: Use `i * i <= num` or `i <= Math.sqrt(num)` as condition
 
 ---
 
@@ -5815,6 +6246,27 @@ Failed: 0 (0.0%)
 - Professional output formatting
 - Multiple parallel operations
 
+**Common Mistakes:**
+1. ❌ **Using Wrong Array for Index**: Accessing `students[i]` when using index from `scores`
+   - Why: Arrays might have different lengths if not parallel
+   - Fix: Ensure parallel arrays same length, use same index for both
+
+2. ❌ **Integer Division in Average**: `int avg = sum / count;` loses decimals
+   - Why: Two integers divide to integer
+   - Fix: Cast to double: `double avg = (double) sum / count;`
+
+3. ❌ **Not Validating Array Length**: Assuming parallel arrays are same size
+   - Why: If lengths differ, will get ArrayIndexOutOfBoundsException
+   - Fix: Check: `if (students.length != scores.length)` before processing
+
+4. ❌ **Sorting One Array Only**: Sorting scores but not rearranging student names
+   - Why: Names and scores become mismatched
+   - Fix: Swap both arrays together when sorting: swap scores[i] AND names[i]
+
+5. ❌ **Not Initializing Max/Min Correctly**: Setting `int max = 0;` for max
+   - Why: If all scores negative, max stays 0 (wrong)
+   - Fix: Initialize with first element: `int max = array[0];`
+
 ---
 
 **✅ Day 6 Complete!**
@@ -6045,6 +6497,27 @@ for (int[] row : matrix) {      // Each row
 - Know how to loop through rows and columns
 - Can access individual elements
 
+**Common Mistakes:**
+1. ❌ **Reversed Row/Column Order**: Using `array[column][row]` instead of `array[row][column]`
+   - Why: Convention is [row][column] like spreadsheet (A1 = row A, column 1)
+   - Fix: Remember: [row][column] or [y][x] in coordinate systems
+
+2. ❌ **Wrong Loop Bounds**: Using `matrix.length` for columns
+   - Why: `matrix.length` gives number of rows, not columns
+   - Fix: Rows: `matrix.length`, Columns: `matrix[0].length`
+
+3. ❌ **Assuming Square Matrix**: Thinking rows == columns always
+   - Why: 2D arrays can be rectangular (3×5, 2×8, etc.)
+   - Fix: Always use `matrix[i].length` for column count in row i
+
+4. ❌ **Single Loop for 2D Array**: Using one loop to access all elements
+   - Why: Need nested loops - one for rows, one for columns
+   - Fix: Use nested loops: `for (int i...) { for (int j...) {...} }`
+
+5. ❌ **Creating With Wrong Dimensions**: `new int[columns][rows]` mixing up order
+   - Why: First dimension is rows, second is columns
+   - Fix: Create as: `new int[rows][columns]`
+
 ---
 
 #### Exercise 2: Practical 2D Arrays - Seating Chart (20 minutes)
@@ -6238,6 +6711,27 @@ Row F: 7 available, 1 booked
 - Can visualize data as grid
 - Understand row/column traversal
 - Can find patterns in 2D data
+
+**Common Mistakes:**
+1. ❌ **Wrong Seat Coordinates**: Booking `seats[3][0]` when meaning row A, seat 4
+   - Why: 0-indexed arrays vs 1-indexed display labels
+   - Fix: Row A = index 0, Seat 1 = index 0, so "Row A Seat 4" = `seats[0][3]`
+
+2. ❌ **Not Checking Adjacency Correctly**: Wrong logic for adjacent seats
+   - Why: Adjacent means `col` and `col+1` in same row
+   - Fix: Check: `seats[row][col] == 0 && seats[row][col+1] == 0`
+
+3. ❌ **Array Bounds in Adjacency**: Checking `col+1` without ensuring it exists
+   - Why: Last column has no next column, causes ArrayIndexOutOfBoundsException
+   - Fix: Loop to `seats[row].length - 1` or check `col < seats[row].length - 1`
+
+4. ❌ **Inconsistent Coordinate Systems**: Mixing 0-based and 1-based indexing
+   - Why: Confuses actual array position with display position
+   - Fix: Internally use 0-based, convert to 1-based only for display
+
+5. ❌ **Not Accounting for Row Labels**: Off-by-one in row letter calculation
+   - Why: Row 0 is 'A', not row 1
+   - Fix: Use: `char rowLabel = (char)('A' + rowIndex);`
 
 ---
 
@@ -6461,11 +6955,31 @@ jagged[2] = new int[3];          // Row 2: 3 elements
 - Want to save memory
 - Real-world data (different number of items per category)
 
-**✅ Success Criteria:**
-- Understand jagged vs regular 2D arrays
-- Can create jagged arrays
-- Know when rows can have different lengths
-- Can handle varying row lengths safely
+**🎯 Practice:**
+Create a jagged array representing:
+- Student test scores (different students took different numbers of tests)
+- Monthly sales data (each salesperson has different number of sales)
+
+**Common Mistakes:**
+1. ❌ **Using Fixed Column Length**: Assuming `array[i].length` same for all rows
+   - Why: Each row can have different length in jagged arrays
+   - Fix: Always check `triangle[i].length` for each row individually
+
+2. ❌ **Creating as Regular 2D Array**: Using `new int[rows][cols]`
+   - Why: This creates rectangular array, all rows same length
+   - Fix: Create rows separately: `triangle[0] = new int[1]; triangle[1] = new int[2];`
+
+3. ❌ **Wrong Initialization Order**: Trying to set lengths before creating row arrays
+   - Why: Can't set length until row array exists
+   - Fix: First: `triangle[i] = new int[size];` Then: set values
+
+4. ❌ **Accessing Non-Existent Columns**: Using `triangle[0][5]` when row only has 1 element
+   - Why: Each row has different length, index can exceed bounds
+   - Fix: Check row length before accessing: `if (j < triangle[i].length)`
+
+5. ❌ **Not Understanding Memory Efficiency**: Thinking jagged wastes memory
+   - Why: Jagged arrays actually save memory when data naturally irregular
+   - Fix: Use jagged when data lengths vary (triangles, hierarchies, sparse data)
 
 ---
 
@@ -6693,6 +7207,27 @@ for each pass:
 - Can implement basic sorting
 - Know when elements swap
 - Can sort different data types
+
+**Common Mistakes:**
+1. ❌ **Wrong Inner Loop Limit**: Using `j < n` instead of `j < n - 1 - i`
+   - Why: Accessing `arr[j+1]` when j=n-1 causes ArrayIndexOutOfBoundsException
+   - Fix: Loop to `j < n - 1 - i` (also optimizes by skipping already sorted elements)
+
+2. ❌ **Not Swapping Correctly**: Missing temp variable or wrong swap order
+   - Why: `arr[j] = arr[j+1]; arr[j+1] = arr[j];` loses first value
+   - Fix: Use temp: `temp = arr[j]; arr[j] = arr[j+1]; arr[j+1] = temp;`
+
+3. ❌ **Wrong Comparison Operator**: Using `<` when want ascending order
+   - Why: Ascending needs `>` to move larger values right
+   - Fix: Ascending: `if (arr[j] > arr[j+1])`, Descending: `if (arr[j] < arr[j+1])`
+
+4. ❌ **Comparing Wrong Elements**: Using `arr[i]` and `arr[j]` instead of adjacent
+   - Why: Bubble sort compares adjacent elements, not i and j
+   - Fix: Compare `arr[j]` and `arr[j+1]` (consecutive elements)
+
+5. ❌ **Not Understanding O(n²)**: Using bubble sort on large datasets
+   - Why: With 1000 elements, makes up to 1 million comparisons (very slow)
+   - Fix: Use for small arrays or learning; use Arrays.sort() for production
 
 ---
 
@@ -6931,6 +7466,27 @@ Diagonal analysis:
 - Proper use of 2D arrays
 - Win detection logic
 - Professional board display
+
+**Common Mistakes:**
+1. ❌ **Checking Only Rows for Win**: Missing column and diagonal checks
+   - Why: Win can occur in rows, columns, or diagonals
+   - Fix: Check all three: rows (board[i][0,1,2]), columns (board[0,1,2][i]), diagonals
+
+2. ❌ **Wrong Diagonal Logic**: Using `board[i][i]` for anti-diagonal
+   - Why: Anti-diagonal is [0][2], [1][1], [2][0], not [0][0], [1][1], [2][2]
+   - Fix: Main diagonal: `board[i][i]`, Anti-diagonal: `board[i][2-i]`
+
+3. ❌ **Not Checking for Empty Spaces**: Allowing overwrite of occupied cells
+   - Why: Players can place mark on already occupied position
+   - Fix: Before move: `if (board[row][col] == ' ')` then allow placement
+
+4. ❌ **Comparing Characters Wrong**: Using `==` on Character objects
+   - Why: For primitives `==` works, but be consistent with logic
+   - Fix: For char primitive: `board[0][0] == 'X'` works correctly
+
+5. ❌ **Not Handling Draw Condition**: Only checking for winner, not full board
+   - Why: Game can end in draw when board full with no winner
+   - Fix: Count moves or check for empty spaces: if 9 moves and no winner, it's draw
 
 ---
 

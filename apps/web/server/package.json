@@ -1,0 +1,14 @@
+{
+  "name": "jdoodle-proxy",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Proxy server for JDoodle API",
+  "main": "proxy.js",
+  "scripts": {
+    "start": "node proxy.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}

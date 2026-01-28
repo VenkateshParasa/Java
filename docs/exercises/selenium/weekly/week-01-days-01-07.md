@@ -78,6 +78,68 @@ public class FirstSeleniumTest {
    - Why: Best practice is to use interface reference for flexibility
    - Fix: Declare as WebDriver driver = new ChromeDriver() (already correct in solution)
 
+**Best Practices:**
+
+1. ✅ **Use Interface Reference for WebDriver Initialization**: Always declare driver as WebDriver interface, not concrete class
+   - Why: Enables browser switching without code changes, follows dependency injection principles
+   - How: Use `WebDriver driver = new ChromeDriver()` instead of `ChromeDriver driver = new ChromeDriver()`
+   - Example:
+   ```java
+   // Good - flexible for different browsers
+   WebDriver driver = new ChromeDriver();
+   // Can easily switch to: new FirefoxDriver(), new EdgeDriver()
+
+   // Bad - tightly coupled to Chrome
+   ChromeDriver driver = new ChromeDriver();
+   ```
+
+2. ✅ **Always Use Try-Finally for Resource Cleanup**: Ensure browser closes even if test fails
+   - Why: Prevents memory leaks and zombie browser processes that consume system resources
+   - How: Wrap all WebDriver operations in try-finally block, call quit() in finally
+   - Example:
+   ```java
+   WebDriver driver = new ChromeDriver();
+   try {
+       // All test operations here
+       driver.get("https://example.com");
+   } finally {
+       driver.quit(); // Always executes, even on exceptions
+   }
+   ```
+
+3. ✅ **Use quit() Instead of close()**: Properly terminate the entire WebDriver session
+   - Why: quit() closes all browser windows and ends the session; close() only closes the current window
+   - How: Always call `driver.quit()` in finally block for complete cleanup
+   - Example:
+   ```java
+   driver.quit();  // ✓ Closes all windows, terminates driver session
+   driver.close(); // ✗ Only closes current window, leaves driver running
+   ```
+
+4. ✅ **Store and Verify Page Titles**: Use meaningful assertions to validate navigation
+   - Why: Confirms you're on the expected page before proceeding with test steps
+   - How: Get title immediately after navigation, use contains() for partial matches
+   - Example:
+   ```java
+   String actualTitle = driver.getTitle();
+   if (actualTitle.contains("Google")) {
+       System.out.println("✓ Navigated to correct page");
+   } else {
+       throw new AssertionError("Wrong page: " + actualTitle);
+   }
+   ```
+
+5. ✅ **Set Up WebDriver Manager**: Automate driver binary management
+   - Why: Eliminates manual driver downloads and PATH configuration, handles browser version compatibility
+   - How: Use WebDriverManager library to automatically manage driver binaries
+   - Example:
+   ```java
+   // Add dependency: io.github.bonigarcia:webdrivermanager:5.x.x
+   WebDriverManager.chromedriver().setup();
+   WebDriver driver = new ChromeDriver();
+   // Automatically downloads and configures correct ChromeDriver version
+   ```
+
 ### Exercise 2: Browser Navigation
 
 ```exercise
@@ -158,6 +220,67 @@ public class BrowserNavigation {
 4. ❌ **Not waiting between navigation commands**: Commands execute too fast
    - Why: Page may not fully load before next command
    - Fix: Add appropriate waits between navigation steps
+
+**Best Practices:**
+
+1. ✅ **Use navigate() for Browser History Operations**: Leverage Navigation interface for back/forward functionality
+   - Why: navigate() provides access to browser history methods and doesn't block like get()
+   - How: Use `driver.navigate().to()`, `back()`, `forward()`, `refresh()` for browser-like navigation
+   - Example:
+   ```java
+   driver.navigate().to("https://example.com");  // Navigate with history
+   driver.navigate().back();    // Go back in browser history
+   driver.navigate().forward(); // Go forward in browser history
+   driver.navigate().refresh(); // Reload current page
+   ```
+
+2. ✅ **Print URL After Each Navigation Step**: Track navigation flow for debugging
+   - Why: Helps verify navigation sequence and diagnose failures in complex test flows
+   - How: Call `getCurrentUrl()` after each navigation command and log it
+   - Example:
+   ```java
+   driver.navigate().to("https://example.com/page1");
+   System.out.println("Step 1: " + driver.getCurrentUrl());
+   driver.navigate().to("https://example.com/page2");
+   System.out.println("Step 2: " + driver.getCurrentUrl());
+   ```
+
+3. ✅ **Understand Difference Between get() and navigate().to()**: Choose the right method
+   - Why: get() waits for page load by default; navigate().to() provides more control
+   - How: Use get() for initial navigation, navigate().to() when working with browser history
+   - Example:
+   ```java
+   // First page load - use get()
+   driver.get("https://example.com");
+
+   // Subsequent navigation with history - use navigate()
+   driver.navigate().to("https://example.com/login");
+   ```
+
+4. ✅ **Avoid Thread.sleep() in Production Tests**: Replace with explicit waits
+   - Why: Thread.sleep() makes tests slower and still unreliable for dynamic content
+   - How: Use WebDriverWait for synchronization instead of hardcoded sleeps
+   - Example:
+   ```java
+   // Bad - hardcoded wait
+   Thread.sleep(2000);
+
+   // Good - wait for specific condition
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+   wait.until(ExpectedConditions.urlToBe("https://expected-url.com"));
+   ```
+
+5. ✅ **Validate URL Changes After Navigation**: Ensure navigation succeeded
+   - Why: Navigation commands may fail silently; URL validation confirms successful navigation
+   - How: Use assertions or expected conditions to verify URL after navigation
+   - Example:
+   ```java
+   driver.navigate().to("https://example.com/dashboard");
+   String currentUrl = driver.getCurrentUrl();
+   if (!currentUrl.contains("dashboard")) {
+       throw new AssertionError("Navigation failed: " + currentUrl);
+   }
+   ```
 
 ---
 
@@ -241,6 +364,78 @@ public class LocatorPractice {
 5. ❌ **Using dynamic IDs or classes**: Locators break when attributes change
    - Why: Dynamic attributes change on each page load
    - Fix: Use stable attributes or XPath/CSS with contains() or starts-with()
+
+**Best Practices:**
+
+1. ✅ **Prefer Stable Locator Strategies**: Choose locators in order of reliability
+   - Why: Reduces test maintenance when UI changes; stable locators are less likely to break
+   - How: Priority order: ID > Name > CSS Selector > XPath (avoid absolute XPath)
+   - Example:
+   ```java
+   // Best - unique, stable ID
+   driver.findElement(By.id("username"));
+
+   // Good - stable name attribute
+   driver.findElement(By.name("q"));
+
+   // Acceptable - CSS selector with stable attributes
+   driver.findElement(By.cssSelector("input[type='email']"));
+
+   // Avoid - fragile absolute XPath
+   // driver.findElement(By.xpath("/html/body/div[1]/div[2]/input"));
+   ```
+
+2. ✅ **Use Browser DevTools to Test Locators**: Validate before writing code
+   - Why: Catches locator errors immediately, saves debugging time
+   - How: Use Chrome DevTools Console or Elements panel to test locators
+   - Example:
+   ```javascript
+   // In Chrome DevTools Console:
+   $x("//textarea[@name='q']")        // Test XPath
+   document.querySelector("textarea[name='q']")  // Test CSS
+   // Verify the correct element is highlighted
+   ```
+
+3. ✅ **Store Locators as Constants**: Centralize for easy maintenance
+   - Why: Changing a locator in one place updates all test references
+   - How: Create constants at class level or use Page Object Model
+   - Example:
+   ```java
+   public class GooglePage {
+       private static final By SEARCH_BOX = By.name("q");
+       private static final By SEARCH_BUTTON = By.name("btnK");
+
+       public void search(String query) {
+           driver.findElement(SEARCH_BOX).sendKeys(query);
+           driver.findElement(SEARCH_BUTTON).click();
+       }
+   }
+   ```
+
+4. ✅ **Use Relative XPath Over Absolute XPath**: Build resilient locators
+   - Why: Absolute XPath breaks with any DOM structure change; relative XPath is more flexible
+   - How: Start with // and use attributes, not position-based paths
+   - Example:
+   ```java
+   // Bad - absolute XPath (fragile)
+   By.xpath("/html/body/div[1]/form/input[1]");
+
+   // Good - relative XPath with attributes
+   By.xpath("//input[@name='username']");
+   By.xpath("//button[contains(text(),'Submit')]");
+   ```
+
+5. ✅ **Combine Multiple Locator Strategies for Verification**: Ensure correct element identification
+   - Why: Validates that different locator methods find the same element
+   - How: Find element using multiple strategies and compare tag names or attributes
+   - Example:
+   ```java
+   WebElement byName = driver.findElement(By.name("q"));
+   WebElement byCSS = driver.findElement(By.cssSelector("[name='q']"));
+
+   // Verify both found the same element type
+   assert byName.getTagName().equals(byCSS.getTagName());
+   ```
 
 ### Exercise 4: Count and Iterate Through Elements
 
@@ -326,6 +521,84 @@ public class CountLinks {
 4. ❌ **Forgetting to import List interface**: Cannot resolve symbol
    - Why: Missing import java.util.List
    - Fix: Import java.util.List at the top of file
+
+**Best Practices:**
+
+1. ✅ **Always Check Collection Size Before Accessing Elements**: Prevent index out of bounds errors
+   - Why: Pages may have fewer elements than expected; accessing invalid index crashes test
+   - How: Use `Math.min(expectedCount, list.size())` or check size in loop condition
+   - Example:
+   ```java
+   List<WebElement> links = driver.findElements(By.tagName("a"));
+
+   // Safe iteration - handles any list size
+   for (int i = 0; i < Math.min(5, links.size()); i++) {
+       WebElement link = links.get(i);
+       System.out.println(link.getText());
+   }
+   ```
+
+2. ✅ **Handle Empty or Null Text Gracefully**: Not all elements have visible text
+   - Why: Images, icons, and decorative links often have no text content
+   - How: Check for empty/null before processing, provide meaningful fallback
+   - Example:
+   ```java
+   String linkText = link.getText();
+   if (linkText == null || linkText.trim().isEmpty()) {
+       System.out.println("Link: [No visible text]");
+       System.out.println("URL: " + link.getAttribute("href"));
+   } else {
+       System.out.println("Link: " + linkText);
+   }
+   ```
+
+3. ✅ **Use findElements() for Collections**: Returns empty list instead of throwing exception
+   - Why: findElement() throws NoSuchElementException; findElements() returns empty list
+   - How: Use findElements() when element presence is uncertain or multiple matches expected
+   - Example:
+   ```java
+   // Returns empty list if no matches - no exception
+   List<WebElement> buttons = driver.findElements(By.className("btn"));
+   if (buttons.isEmpty()) {
+       System.out.println("No buttons found");
+   } else {
+       System.out.println("Found " + buttons.size() + " buttons");
+   }
+   ```
+
+4. ✅ **Extract Meaningful Attributes for Logging**: Capture href, title, alt for better insights
+   - Why: Provides complete picture of element for debugging and reporting
+   - How: Use getAttribute() to get href, title, alt, and other relevant attributes
+   - Example:
+   ```java
+   for (WebElement link : allLinks) {
+       String text = link.getText();
+       String href = link.getAttribute("href");
+       String title = link.getAttribute("title");
+
+       System.out.println("Text: " + text);
+       System.out.println("URL: " + href);
+       System.out.println("Title: " + title);
+   }
+   ```
+
+5. ✅ **Filter Broken or Invalid Links**: Identify and report problematic links
+   - Why: Helps quality assurance by finding broken navigation early in testing
+   - How: Check href attribute for null, empty, or invalid patterns
+   - Example:
+   ```java
+   List<WebElement> allLinks = driver.findElements(By.tagName("a"));
+   int brokenLinks = 0;
+
+   for (WebElement link : allLinks) {
+       String href = link.getAttribute("href");
+       if (href == null || href.isEmpty() || href.equals("#")) {
+           brokenLinks++;
+           System.out.println("Invalid link: " + link.getText());
+       }
+   }
+   System.out.println("Total broken links: " + brokenLinks);
+   ```
 
 ---
 
@@ -416,6 +689,72 @@ public class WindowManagement {
 4. ❌ **Not waiting after window operations**: Commands execute too fast to see
    - Why: Window changes happen instantly in code but need visual confirmation
    - Fix: Add Thread.sleep() for demonstration purposes
+
+**Best Practices:**
+
+1. ✅ **Maximize Window at Test Start**: Ensure consistent viewport for element visibility
+   - Why: Elements may not be visible in smaller windows, causing test failures
+   - How: Call maximize() in test setup or immediately after browser launch
+   - Example:
+   ```java
+   WebDriver driver = new ChromeDriver();
+   driver.manage().window().maximize();  // First action after driver creation
+   // Now all elements are visible and clickable
+   ```
+
+2. ✅ **Set Fixed Window Size for Responsive Testing**: Test specific breakpoints
+   - Why: Validates responsive design behavior at different screen sizes
+   - How: Use setSize() with Dimension object for consistent test conditions
+   - Example:
+   ```java
+   // Mobile viewport
+   driver.manage().window().setSize(new Dimension(375, 667));
+
+   // Tablet viewport
+   driver.manage().window().setSize(new Dimension(768, 1024));
+
+   // Desktop viewport
+   driver.manage().window().setSize(new Dimension(1920, 1080));
+   ```
+
+3. ✅ **Store Window Dimensions in Test Configuration**: Centralize for easy adjustment
+   - Why: Makes window size changes across all tests simple and consistent
+   - How: Define constants or configuration properties for common window sizes
+   - Example:
+   ```java
+   public class TestConfig {
+       public static final Dimension MOBILE = new Dimension(375, 667);
+       public static final Dimension TABLET = new Dimension(768, 1024);
+       public static final Dimension DESKTOP = new Dimension(1920, 1080);
+   }
+
+   // In test
+   driver.manage().window().setSize(TestConfig.DESKTOP);
+   ```
+
+4. ✅ **Verify Window Size After Setting**: Confirm window operations succeeded
+   - Why: Some environments restrict window manipulation (CI/CD, headless mode)
+   - How: Get window size after setting and validate it matches expected dimensions
+   - Example:
+   ```java
+   driver.manage().window().setSize(new Dimension(1024, 768));
+   Dimension actualSize = driver.manage().window().getSize();
+
+   if (actualSize.getWidth() != 1024 || actualSize.getHeight() != 768) {
+       System.out.println("Warning: Window size not set correctly");
+   }
+   ```
+
+5. ✅ **Use Headless Mode in CI/CD**: Run tests without GUI in automated pipelines
+   - Why: Faster execution, no display required, suitable for containerized environments
+   - How: Set headless option in ChromeOptions or FirefoxOptions
+   - Example:
+   ```java
+   ChromeOptions options = new ChromeOptions();
+   options.addArguments("--headless=new");
+   options.addArguments("--window-size=1920,1080");  // Important in headless
+   WebDriver driver = new ChromeDriver(options);
+   ```
 
 ### Exercise 6: Take Screenshots
 
@@ -511,6 +850,77 @@ public class ScreenshotExample {
 5. ❌ **Overwriting screenshots with same name**: Previous screenshots lost
    - Why: Not using timestamp or unique identifier in filename
    - Fix: Include timestamp in filename as shown in solution
+
+**Best Practices:**
+
+1. ✅ **Include Timestamp in Screenshot Filenames**: Prevent overwriting and enable chronological tracking
+   - Why: Unique names preserve all evidence, timestamps help correlate with logs
+   - How: Use SimpleDateFormat to add date-time to filename
+   - Example:
+   ```java
+   String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+   String filename = "test_" + timestamp + ".png";
+   File destFile = new File("screenshots/" + filename);
+   ```
+
+2. ✅ **Create Screenshot Utility Method**: Reuse across all test classes
+   - Why: Centralizes screenshot logic, reduces code duplication
+   - How: Create static utility method or add to BaseTest class
+   - Example:
+   ```java
+   public static void captureScreenshot(WebDriver driver, String testName) {
+       try {
+           String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+           TakesScreenshot ts = (TakesScreenshot) driver;
+           File source = ts.getScreenshotAs(OutputType.FILE);
+           File dest = new File("screenshots/" + testName + "_" + timestamp + ".png");
+           dest.getParentFile().mkdirs();
+           FileUtils.copyFile(source, dest);
+           System.out.println("Screenshot: " + dest.getAbsolutePath());
+       } catch (Exception e) {
+           System.out.println("Screenshot failed: " + e.getMessage());
+       }
+   }
+   ```
+
+3. ✅ **Take Screenshots on Test Failure**: Capture evidence for debugging
+   - Why: Visual proof of failure state invaluable for troubleshooting
+   - How: Use TestNG @AfterMethod with ITestResult to detect failures
+   - Example:
+   ```java
+   @AfterMethod
+   public void afterMethod(ITestResult result) {
+       if (result.getStatus() == ITestResult.FAILURE) {
+           captureScreenshot(driver, result.getName() + "_FAILED");
+       }
+       driver.quit();
+   }
+   ```
+
+4. ✅ **Organize Screenshots by Test Suite/Date**: Maintain clean folder structure
+   - Why: Easy to locate screenshots for specific test runs or dates
+   - How: Create nested folder structure with date and test suite name
+   - Example:
+   ```java
+   String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+   String testSuite = "LoginTests";
+   String path = "screenshots/" + date + "/" + testSuite + "/";
+   File destFile = new File(path + testName + "_" + timestamp + ".png");
+   destFile.getParentFile().mkdirs();
+   ```
+
+5. ✅ **Capture Full Page Screenshots for Long Pages**: Don't miss content below fold
+   - Why: Default screenshots only capture visible viewport, missing critical content
+   - How: Use third-party libraries like AShot or Chrome DevTools Protocol
+   - Example:
+   ```java
+   // Using AShot library for full page screenshot
+   Screenshot screenshot = new AShot()
+       .shootingStrategy(ShootingStrategies.viewportPasting(1000))
+       .takeScreenshot(driver);
+   ImageIO.write(screenshot.getImage(), "PNG",
+       new File("screenshots/fullpage.png"));
+   ```
 
 ---
 
@@ -611,6 +1021,77 @@ public class FormInteraction {
    - Why: "text" is not an HTML attribute
    - Fix: Use getText() for visible text, getAttribute("value") for input values
 
+**Best Practices:**
+
+1. ✅ **Always Clear Input Fields Before Entering Text**: Ensure clean state
+   - Why: Fields may have pre-filled values or cached data from previous tests
+   - How: Call clear() method before sendKeys() for all input elements
+   - Example:
+   ```java
+   WebElement usernameField = driver.findElement(By.id("username"));
+   usernameField.clear();  // Remove any existing text
+   usernameField.sendKeys("testuser");  // Enter new text
+   ```
+
+2. ✅ **Verify Input After Entry**: Confirm text was entered correctly
+   - Why: Some fields have input masks, character limits, or JavaScript handlers
+   - How: Use getAttribute("value") to validate entered text
+   - Example:
+   ```java
+   WebElement emailField = driver.findElement(By.id("email"));
+   emailField.clear();
+   emailField.sendKeys("test@example.com");
+
+   String actualValue = emailField.getAttribute("value");
+   assert actualValue.equals("test@example.com") :
+       "Expected test@example.com but got " + actualValue;
+   ```
+
+3. ✅ **Check Element State Before Interaction**: Prevent ElementNotInteractableException
+   - Why: Disabled or hidden elements cannot be interacted with
+   - How: Verify isDisplayed() and isEnabled() before sendKeys() or click()
+   - Example:
+   ```java
+   WebElement submitBtn = driver.findElement(By.id("submit"));
+
+   if (submitBtn.isDisplayed() && submitBtn.isEnabled()) {
+       submitBtn.click();
+   } else {
+       throw new AssertionError("Submit button not interactable");
+   }
+   ```
+
+4. ✅ **Use Page Load Validation After Form Submission**: Confirm navigation succeeded
+   - Why: Form submission may fail silently or redirect to error page
+   - How: Wait for URL change or presence of success message
+   - Example:
+   ```java
+   submitButton.click();
+
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+   wait.until(ExpectedConditions.urlContains("success"));
+
+   String currentUrl = driver.getCurrentUrl();
+   assert currentUrl.contains("success") : "Form submission failed";
+   ```
+
+5. ✅ **Create Form Helper Methods**: Reusable form filling logic
+   - Why: Reduces code duplication across tests, easier maintenance
+   - How: Create methods for common form operations
+   - Example:
+   ```java
+   public void fillInputField(By locator, String value) {
+       WebElement field = driver.findElement(locator);
+       field.clear();
+       field.sendKeys(value);
+       assert field.getAttribute("value").equals(value);
+   }
+
+   // Usage
+   fillInputField(By.id("username"), "testuser");
+   fillInputField(By.id("password"), "password123");
+   ```
+
 ### Exercise 8: Element State Verification
 
 ```exercise
@@ -705,6 +1186,85 @@ public class ElementStateCheck {
 4. ❌ **Confusing isDisplayed() with isEnabled()**: Different meanings
    - Why: Displayed means visible, enabled means interactable
    - Fix: Check both conditions for reliable interaction
+
+**Best Practices:**
+
+1. ✅ **Always Verify Element State Before Action**: Implement defensive programming
+   - Why: Prevents ElementNotInteractableException and improves test reliability
+   - How: Check isDisplayed() and isEnabled() before every interaction
+   - Example:
+   ```java
+   public void safeClick(WebElement element) {
+       if (!element.isDisplayed()) {
+           throw new AssertionError("Element not visible");
+       }
+       if (!element.isEnabled()) {
+           throw new AssertionError("Element not enabled");
+       }
+       element.click();
+   }
+   ```
+
+2. ✅ **Use isSelected() Only for Appropriate Elements**: Avoid false assumptions
+   - Why: isSelected() only works for checkboxes, radio buttons, and select options
+   - How: Verify element type before using isSelected()
+   - Example:
+   ```java
+   WebElement checkbox = driver.findElement(By.id("terms"));
+   String tagName = checkbox.getTagName();
+   String type = checkbox.getAttribute("type");
+
+   if (tagName.equals("input") && type.equals("checkbox")) {
+       if (!checkbox.isSelected()) {
+           checkbox.click();  // Select if not already selected
+       }
+   }
+   ```
+
+3. ✅ **Create Reusable State Verification Methods**: Standardize across tests
+   - Why: Consistent state checking reduces bugs and improves code readability
+   - How: Create utility methods for common state verification patterns
+   - Example:
+   ```java
+   public boolean isElementInteractable(WebElement element) {
+       return element.isDisplayed() && element.isEnabled();
+   }
+
+   public void waitUntilInteractable(WebElement element) {
+       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+       wait.until(d -> element.isDisplayed() && element.isEnabled());
+   }
+   ```
+
+4. ✅ **Log Element States for Debugging**: Track element behavior
+   - Why: Helps diagnose intermittent test failures and timing issues
+   - How: Print or log state information before critical operations
+   - Example:
+   ```java
+   WebElement button = driver.findElement(By.id("submit"));
+
+   System.out.println("Button state check:");
+   System.out.println("  Displayed: " + button.isDisplayed());
+   System.out.println("  Enabled: " + button.isEnabled());
+   System.out.println("  Tag: " + button.getTagName());
+   System.out.println("  Text: " + button.getText());
+   ```
+
+5. ✅ **Combine State Checks with Explicit Waits**: Robust synchronization
+   - Why: Elements may become enabled/displayed dynamically after page load
+   - How: Use ExpectedConditions with state methods
+   - Example:
+   ```java
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+   // Wait for element to be both visible and enabled
+   WebElement button = wait.until(ExpectedConditions.elementToBeClickable(
+       By.id("submit")
+   ));
+
+   // Now safe to click
+   button.click();
+   ```
 
 ---
 
@@ -814,6 +1374,102 @@ public class ExplicitWaitExample {
    - Why: Creating new WebDriverWait for each operation is inefficient
    - Fix: Create one wait instance and reuse it
 
+**Best Practices:**
+
+1. ✅ **Always Use Explicit Waits Over Thread.sleep()**: Smart waiting for reliability
+   - Why: Explicit waits are faster (don't wait full duration) and more reliable
+   - How: Use WebDriverWait with ExpectedConditions for all synchronization
+   - Example:
+   ```java
+   // Bad - wastes time even if element appears immediately
+   Thread.sleep(5000);
+   driver.findElement(By.id("result")).getText();
+
+   // Good - waits only as long as needed (max 10 seconds)
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+   WebElement result = wait.until(
+       ExpectedConditions.visibilityOfElementLocated(By.id("result"))
+   );
+   ```
+
+2. ✅ **Reuse WebDriverWait Instance**: Create once, use throughout test
+   - Why: Improves performance and maintains consistent timeout across operations
+   - How: Create WebDriverWait in setup or test method, reuse for all waits
+   - Example:
+   ```java
+   @Test
+   public void loginTest() {
+       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+       // Reuse wait object multiple times
+       wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username")))
+           .sendKeys("user");
+       wait.until(ExpectedConditions.elementToBeClickable(By.id("submit")))
+           .click();
+       wait.until(ExpectedConditions.urlContains("dashboard"));
+   }
+   ```
+
+3. ✅ **Choose Appropriate ExpectedConditions**: Match condition to scenario
+   - Why: Different conditions handle different scenarios optimally
+   - How: Select from: elementToBeClickable, visibilityOfElementLocated, presenceOfElementLocated, etc.
+   - Example:
+   ```java
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+   // For buttons/links - ensures element is visible AND enabled
+   wait.until(ExpectedConditions.elementToBeClickable(By.id("submit")));
+
+   // For text/images - ensures element is visible
+   wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("message")));
+
+   // For AJAX-loaded content - element exists in DOM (may not be visible)
+   wait.until(ExpectedConditions.presenceOfElementLocated(By.id("data")));
+
+   // For page transitions - URL changes
+   wait.until(ExpectedConditions.urlContains("success"));
+   ```
+
+4. ✅ **Set Different Timeouts for Different Operations**: Context-aware waiting
+   - Why: Some operations (API calls, file uploads) take longer than standard interactions
+   - How: Create separate wait instances with appropriate timeouts
+   - Example:
+   ```java
+   // Standard timeout for most operations
+   WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+   // Longer timeout for slow operations
+   WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(30));
+
+   // Standard interaction
+   shortWait.until(ExpectedConditions.elementToBeClickable(By.id("upload")))
+       .sendKeys("/path/to/file.pdf");
+
+   // Wait for file processing
+   longWait.until(ExpectedConditions.visibilityOfElementLocated(
+       By.id("upload-success")
+   ));
+   ```
+
+5. ✅ **Handle TimeoutException Gracefully**: Provide meaningful error messages
+   - Why: Default timeout messages don't explain what failed or why
+   - How: Catch TimeoutException and provide context-specific error message
+   - Example:
+   ```java
+   try {
+       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+       wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("result")));
+   } catch (TimeoutException e) {
+       String currentUrl = driver.getCurrentUrl();
+       String pageSource = driver.getPageSource();
+       throw new AssertionError(
+           "Result element not found after 10 seconds. " +
+           "Current URL: " + currentUrl +
+           ". Check if page loaded correctly."
+       );
+   }
+   ```
+
 ### Exercise 10: Handle Loading Spinners
 
 ```exercise
@@ -900,6 +1556,113 @@ public class LoadingSpinnerWait {
 4. ❌ **Not handling spinners that appear/disappear quickly**: Missing the transition
    - Why: Spinner may already be gone before wait starts
    - Fix: Use presenceOfElementLocated first, then invisibility
+
+**Best Practices:**
+
+1. ✅ **Wait for Invisibility, Not Just Absence**: Handle dynamic loading indicators
+   - Why: invisibilityOfElementLocated handles both invisible and absent elements
+   - How: Use ExpectedConditions.invisibilityOfElementLocated() for spinners
+   - Example:
+   ```java
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+   // Click action that triggers loading
+   driver.findElement(By.id("loadData")).click();
+
+   // Wait for spinner to disappear
+   wait.until(ExpectedConditions.invisibilityOfElementLocated(
+       By.className("loading-spinner")
+   ));
+
+   // Now safe to interact with loaded content
+   ```
+
+2. ✅ **Combine Multiple Wait Conditions**: Ensure page is ready
+   - Why: Multiple indicators may signal page readiness (spinner gone + content visible)
+   - How: Chain ExpectedConditions or use custom wait conditions
+   - Example:
+   ```java
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+   // Wait for spinner to disappear
+   wait.until(ExpectedConditions.invisibilityOfElementLocated(
+       By.className("spinner")
+   ));
+
+   // Then wait for content to appear
+   wait.until(ExpectedConditions.visibilityOfElementLocated(
+       By.id("data-table")
+   ));
+
+   // Page is now fully loaded and ready
+   ```
+
+3. ✅ **Create Reusable Spinner Wait Method**: Centralize loading wait logic
+   - Why: Consistent spinner handling across all tests
+   - How: Create utility method in BaseTest or helper class
+   - Example:
+   ```java
+   public void waitForSpinnerToDisappear() {
+       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+       try {
+           wait.until(ExpectedConditions.invisibilityOfElementLocated(
+               By.cssSelector(".spinner, .loading, [class*='load']")
+           ));
+       } catch (TimeoutException e) {
+           System.out.println("Spinner timeout - may not be present");
+       }
+   }
+
+   // Usage in tests
+   submitButton.click();
+   waitForSpinnerToDisappear();
+   verifyResults();
+   ```
+
+4. ✅ **Use Longer Timeouts for Backend Operations**: Account for server processing
+   - Why: Database queries, API calls, file processing take variable time
+   - How: Increase timeout for operations that involve backend processing
+   - Example:
+   ```java
+   // Standard UI interaction - 10 seconds
+   WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+   // Backend operations - 30 seconds
+   WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(30));
+
+   driver.findElement(By.id("generateReport")).click();
+
+   // Wait for report generation (backend process)
+   longWait.until(ExpectedConditions.invisibilityOfElementLocated(
+       By.className("processing-spinner")
+   ));
+   ```
+
+5. ✅ **Handle Overlays and Modal Spinners**: Clear blocking elements
+   - Why: Overlays can block interaction even after main spinner disappears
+   - How: Wait for both spinner and overlay to become invisible
+   - Example:
+   ```java
+   public void waitForPageReady() {
+       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+       // Wait for all common loading indicators to disappear
+       By[] loadingIndicators = {
+           By.className("spinner"),
+           By.className("loading-overlay"),
+           By.cssSelector(".modal-backdrop"),
+           By.id("loading-screen")
+       };
+
+       for (By indicator : loadingIndicators) {
+           try {
+               wait.until(ExpectedConditions.invisibilityOfElementLocated(indicator));
+           } catch (TimeoutException e) {
+               // Indicator not present, continue
+           }
+       }
+   }
+   ```
 
 ---
 
@@ -1003,6 +1766,94 @@ public class DropdownExample {
 5. ❌ **Not checking if dropdown is multi-select**: Incorrect handling
    - Why: Multi-select dropdowns behave differently
    - Fix: Use isMultiple() to check, then use deselectAll() if needed
+
+**Best Practices:**
+
+1. ✅ **Always Create Select Object for Dropdowns**: Use Select class, not raw WebElement
+   - Why: Select class provides specialized methods for dropdown interaction
+   - How: Wrap dropdown WebElement with Select class
+   - Example:
+   ```java
+   WebElement dropdownElement = driver.findElement(By.id("country"));
+   Select dropdown = new Select(dropdownElement);
+
+   // Now use Select methods
+   dropdown.selectByVisibleText("United States");
+   dropdown.selectByValue("US");
+   dropdown.selectByIndex(0);
+   ```
+
+2. ✅ **Verify Dropdown Type Before Operations**: Check for multi-select behavior
+   - Why: Multi-select dropdowns require different handling (deselectAll, getAllSelectedOptions)
+   - How: Use isMultiple() to determine dropdown type
+   - Example:
+   ```java
+   Select dropdown = new Select(driver.findElement(By.id("skills")));
+
+   if (dropdown.isMultiple()) {
+       // Multi-select: can select multiple options
+       dropdown.deselectAll();  // Clear previous selections
+       dropdown.selectByVisibleText("Java");
+       dropdown.selectByVisibleText("Selenium");
+       dropdown.selectByVisibleText("TestNG");
+
+       List<WebElement> selected = dropdown.getAllSelectedOptions();
+       System.out.println("Selected " + selected.size() + " options");
+   } else {
+       // Single select: only one option
+       dropdown.selectByVisibleText("Java");
+   }
+   ```
+
+3. ✅ **Validate Selection After Choosing Option**: Confirm operation succeeded
+   - Why: Selection may fail due to JavaScript events or disabled options
+   - How: Use getFirstSelectedOption() or getAllSelectedOptions() to verify
+   - Example:
+   ```java
+   Select dropdown = new Select(driver.findElement(By.id("country")));
+   dropdown.selectByVisibleText("Canada");
+
+   // Verify selection
+   WebElement selectedOption = dropdown.getFirstSelectedOption();
+   String selectedText = selectedOption.getText();
+
+   assert selectedText.equals("Canada") :
+       "Expected 'Canada' but got '" + selectedText + "'";
+   ```
+
+4. ✅ **Iterate and Print All Options**: Understand available choices
+   - Why: Helps debug dropdown issues and validate option availability
+   - How: Use getOptions() to get all available options
+   - Example:
+   ```java
+   Select dropdown = new Select(driver.findElement(By.name("color")));
+   List<WebElement> allOptions = dropdown.getOptions();
+
+   System.out.println("Available options (" + allOptions.size() + "):");
+   for (int i = 0; i < allOptions.size(); i++) {
+       String text = allOptions.get(i).getText();
+       String value = allOptions.get(i).getAttribute("value");
+       System.out.println(i + ": " + text + " (value=" + value + ")");
+   }
+   ```
+
+5. ✅ **Handle Dynamic Dropdowns with Waits**: Wait for options to load
+   - Why: AJAX-loaded dropdowns may not have options immediately available
+   - How: Wait for options to be present before selecting
+   - Example:
+   ```java
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+   // Wait for dropdown to have options
+   wait.until(driver -> {
+       Select dropdown = new Select(driver.findElement(By.id("states")));
+       return dropdown.getOptions().size() > 1;  // More than just placeholder
+   });
+
+   // Now safe to select
+   Select dropdown = new Select(driver.findElement(By.id("states")));
+   dropdown.selectByVisibleText("California");
+   ```
 
 ### Exercise 12: Handle Alerts
 
@@ -1112,6 +1963,107 @@ public class AlertHandling {
 5. ❌ **Not importing Alert interface**: Compilation error
    - Why: Missing import org.openqa.selenium.Alert
    - Fix: Import the Alert interface at the top of file
+
+**Best Practices:**
+
+1. ✅ **Always Wait for Alert Before Switching**: Use ExpectedConditions.alertIsPresent()
+   - Why: Alerts may take time to appear after triggering action
+   - How: Use WebDriverWait with alertIsPresent() condition
+   - Example:
+   ```java
+   driver.findElement(By.id("showAlert")).click();
+
+   // Wait for alert to appear (don't assume immediate appearance)
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+   Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+
+   // Now safe to interact with alert
+   System.out.println(alert.getText());
+   alert.accept();
+   ```
+
+2. ✅ **Read Alert Text Before Accepting/Dismissing**: Capture message for logging
+   - Why: Once accepted/dismissed, alert is gone and text cannot be retrieved
+   - How: Call getText() first, then accept() or dismiss()
+   - Example:
+   ```java
+   Alert alert = driver.switchTo().alert();
+
+   // Get text BEFORE accepting
+   String alertMessage = alert.getText();
+   System.out.println("Alert message: " + alertMessage);
+
+   // Then accept
+   alert.accept();
+
+   // Can still use the message variable
+   assert alertMessage.contains("Success");
+   ```
+
+3. ✅ **Create Alert Helper Methods**: Standardize alert handling
+   - Why: Reduces code duplication and ensures consistent alert handling
+   - How: Create utility methods for common alert operations
+   - Example:
+   ```java
+   public String handleAlertAndGetText(boolean accept) {
+       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+       Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+       String text = alert.getText();
+
+       if (accept) {
+           alert.accept();
+       } else {
+           alert.dismiss();
+       }
+
+       return text;
+   }
+
+   // Usage
+   String message = handleAlertAndGetText(true);  // Accept
+   System.out.println("Alert said: " + message);
+   ```
+
+4. ✅ **Handle Prompt Alerts with Validation**: Verify input acceptance
+   - Why: Prompt alerts require text input; validation ensures correct data entry
+   - How: Send text, accept, then verify result on page
+   - Example:
+   ```java
+   driver.findElement(By.id("showPrompt")).click();
+
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+   Alert prompt = wait.until(ExpectedConditions.alertIsPresent());
+
+   System.out.println("Prompt: " + prompt.getText());
+
+   // Enter text in prompt
+   String inputText = "Test User";
+   prompt.sendKeys(inputText);
+   prompt.accept();
+
+   // Verify the input was processed
+   WebElement result = driver.findElement(By.id("promptResult"));
+   assert result.getText().contains(inputText);
+   ```
+
+5. ✅ **Handle UnhandledAlertException in Catch Blocks**: Defensive alert management
+   - Why: Unexpected alerts can cause test failures; catching prevents crashes
+   - How: Wrap risky operations in try-catch and handle any alerts
+   - Example:
+   ```java
+   try {
+       driver.findElement(By.id("riskyButton")).click();
+       // Continue with test
+   } catch (UnhandledAlertException e) {
+       // Handle unexpected alert
+       Alert alert = driver.switchTo().alert();
+       System.out.println("Unexpected alert: " + alert.getText());
+       alert.accept();
+
+       // Retry operation or fail gracefully
+       System.out.println("Handled unexpected alert, continuing...");
+   }
+   ```
 
 ---
 
@@ -1243,6 +2195,164 @@ public class SampleTest extends BaseTest {
 5. ❌ **Initializing driver in constructor instead of @BeforeMethod**: Timing issues
    - Why: Constructor runs before TestNG setup, causing lifecycle problems
    - Fix: Always initialize driver in @BeforeMethod, not constructor
+
+**Best Practices:**
+
+1. ✅ **Use ThreadLocal for Parallel Test Execution**: Prevent thread interference
+   - Why: Each thread needs its own WebDriver instance for parallel execution
+   - How: Wrap WebDriver in ThreadLocal with get/set/remove methods
+   - Example:
+   ```java
+   public class BaseTest {
+       private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+       protected static WebDriver getDriver() {
+           return driver.get();
+       }
+
+       @BeforeMethod
+       public void setUp() {
+           driver.set(new ChromeDriver());
+           getDriver().manage().window().maximize();
+       }
+
+       @AfterMethod
+       public void tearDown() {
+           if (getDriver() != null) {
+               getDriver().quit();
+           }
+           driver.remove();  // Prevent memory leaks
+       }
+   }
+   ```
+
+2. ✅ **Set Implicit Wait in BaseTest Setup**: Default timeout for all element operations
+   - Why: Provides baseline wait time for element finding across all tests
+   - How: Set implicit wait in @BeforeMethod after driver initialization
+   - Example:
+   ```java
+   @BeforeMethod
+   public void setUp() {
+       WebDriver webDriver = new ChromeDriver();
+       driver.set(webDriver);
+
+       // Configure timeouts
+       getDriver().manage().timeouts()
+           .implicitlyWait(Duration.ofSeconds(10))
+           .pageLoadTimeout(Duration.ofSeconds(30))
+           .scriptTimeout(Duration.ofSeconds(30));
+
+       getDriver().manage().window().maximize();
+   }
+   ```
+
+3. ✅ **Implement Screenshot on Failure in BaseTest**: Automatic failure capture
+   - Why: Every test failure automatically captures evidence without extra code
+   - How: Use ITestResult in @AfterMethod to detect and capture failures
+   - Example:
+   ```java
+   @AfterMethod
+   public void tearDown(ITestResult result) {
+       if (result.getStatus() == ITestResult.FAILURE) {
+           captureScreenshot(result.getName() + "_FAILED");
+       } else if (result.getStatus() == ITestResult.SUCCESS) {
+           captureScreenshot(result.getName() + "_PASSED");
+       }
+
+       if (getDriver() != null) {
+           getDriver().quit();
+       }
+       driver.remove();
+   }
+
+   private void captureScreenshot(String fileName) {
+       try {
+           TakesScreenshot ts = (TakesScreenshot) getDriver();
+           File source = ts.getScreenshotAs(OutputType.FILE);
+           String path = "screenshots/" + fileName + "_" +
+               new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".png";
+           FileUtils.copyFile(source, new File(path));
+       } catch (Exception e) {
+           System.out.println("Screenshot failed: " + e.getMessage());
+       }
+   }
+   ```
+
+4. ✅ **Use Configuration Properties for Environment Settings**: Externalize configuration
+   - Why: Enables testing across different environments without code changes
+   - How: Load properties from external file in BaseTest
+   - Example:
+   ```java
+   public class BaseTest {
+       protected static Properties config = new Properties();
+
+       @BeforeSuite
+       public void loadConfig() throws IOException {
+           FileInputStream fis = new FileInputStream("config.properties");
+           config.load(fis);
+       }
+
+       @BeforeMethod
+       public void setUp() {
+           String browser = config.getProperty("browser", "chrome");
+           WebDriver webDriver;
+
+           switch (browser.toLowerCase()) {
+               case "firefox":
+                   webDriver = new FirefoxDriver();
+                   break;
+               case "edge":
+                   webDriver = new EdgeDriver();
+                   break;
+               default:
+                   webDriver = new ChromeDriver();
+           }
+
+           driver.set(webDriver);
+       }
+   }
+
+   // config.properties:
+   // browser=chrome
+   // baseUrl=https://example.com
+   // timeout=10
+   ```
+
+5. ✅ **Add Logging Framework to BaseTest**: Track test execution flow
+   - Why: Provides detailed execution logs for debugging and audit trails
+   - How: Integrate Log4j or SLF4J in BaseTest and utility methods
+   - Example:
+   ```java
+   public class BaseTest {
+       protected static final Logger logger = LogManager.getLogger(BaseTest.class);
+
+       @BeforeMethod
+       public void setUp() {
+           logger.info("Starting test setup");
+           driver.set(new ChromeDriver());
+           logger.info("ChromeDriver initialized");
+
+           getDriver().manage().window().maximize();
+           logger.info("Browser maximized");
+       }
+
+       @AfterMethod
+       public void tearDown(ITestResult result) {
+           logger.info("Test: " + result.getName() +
+               " - Status: " + getStatus(result.getStatus()));
+
+           if (getDriver() != null) {
+               getDriver().quit();
+               logger.info("Browser closed");
+           }
+       }
+
+       private String getStatus(int status) {
+           return status == ITestResult.SUCCESS ? "PASSED" :
+                  status == ITestResult.FAILURE ? "FAILED" : "SKIPPED";
+       }
+   }
+   ```
 
 ### Exercise 14: Complete End-to-End Test
 
@@ -1435,6 +2545,177 @@ public class CompleteLoginTest extends BaseTest {
 5. ❌ **Not taking screenshots on failure**: Hard to debug failed tests
    - Why: No visual evidence of failure state
    - Fix: Implement @AfterMethod to capture screenshot on test failure
+
+**Best Practices:**
+
+1. ✅ **Combine All Synchronization Techniques**: Use explicit waits with state verification
+   - Why: Ensures robust test execution with proper element readiness checks
+   - How: Wait for element, verify state, then interact
+   - Example:
+   ```java
+   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+   // Wait for element to be clickable
+   WebElement button = wait.until(
+       ExpectedConditions.elementToBeClickable(By.id("submit"))
+   );
+
+   // Verify state before clicking
+   assert button.isDisplayed() && button.isEnabled();
+
+   // Perform action
+   button.click();
+
+   // Verify result
+   wait.until(ExpectedConditions.urlContains("success"));
+   ```
+
+2. ✅ **Use Assertions for All Validations**: Make test failures explicit
+   - Why: Tests without assertions can pass even when functionality is broken
+   - How: Assert every expected behavior using TestNG Assert class
+   - Example:
+   ```java
+   // Bad - no assertion, test passes even if wrong
+   String title = driver.getTitle();
+   System.out.println("Title: " + title);
+
+   // Good - test fails if expectation not met
+   String title = driver.getTitle();
+   Assert.assertTrue(title.contains("Dashboard"),
+       "Expected title to contain 'Dashboard' but was: " + title);
+
+   // Better - specific assertion with clear message
+   Assert.assertEquals(title, "User Dashboard - MyApp",
+       "Login should navigate to user dashboard");
+   ```
+
+3. ✅ **Separate Positive and Negative Test Scenarios**: Test both success and failure paths
+   - Why: Validates error handling and edge cases, not just happy path
+   - How: Create separate test methods with priority ordering
+   - Example:
+   ```java
+   @Test(priority = 1)
+   public void testValidLogin() {
+       // Test successful login flow
+       loginPage.login("validuser", "validpass");
+       Assert.assertTrue(dashboardPage.isDisplayed());
+   }
+
+   @Test(priority = 2)
+   public void testInvalidUsername() {
+       // Test with invalid username
+       loginPage.login("invaliduser", "validpass");
+       Assert.assertTrue(loginPage.hasErrorMessage());
+       Assert.assertTrue(loginPage.getErrorMessage()
+           .contains("Invalid username"));
+   }
+
+   @Test(priority = 3)
+   public void testInvalidPassword() {
+       // Test with invalid password
+       loginPage.login("validuser", "wrongpass");
+       Assert.assertTrue(loginPage.hasErrorMessage());
+   }
+   ```
+
+4. ✅ **Implement Page Object Model Pattern**: Separate test logic from page interactions
+   - Why: Improves maintainability, reusability, and readability of tests
+   - How: Create page classes with element locators and action methods
+   - Example:
+   ```java
+   // LoginPage.java - Page Object
+   public class LoginPage {
+       private WebDriver driver;
+       private WebDriverWait wait;
+
+       private By usernameField = By.id("username");
+       private By passwordField = By.id("password");
+       private By submitButton = By.id("submit");
+       private By errorMessage = By.id("error");
+
+       public LoginPage(WebDriver driver) {
+           this.driver = driver;
+           this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+       }
+
+       public void enterUsername(String username) {
+           WebElement field = wait.until(
+               ExpectedConditions.visibilityOfElementLocated(usernameField)
+           );
+           field.clear();
+           field.sendKeys(username);
+       }
+
+       public void enterPassword(String password) {
+           driver.findElement(passwordField).clear();
+           driver.findElement(passwordField).sendKeys(password);
+       }
+
+       public void clickSubmit() {
+           wait.until(ExpectedConditions.elementToBeClickable(submitButton))
+               .click();
+       }
+
+       public void login(String username, String password) {
+           enterUsername(username);
+           enterPassword(password);
+           clickSubmit();
+       }
+
+       public boolean hasErrorMessage() {
+           try {
+               return driver.findElement(errorMessage).isDisplayed();
+           } catch (NoSuchElementException e) {
+               return false;
+           }
+       }
+   }
+
+   // Test using Page Object
+   @Test
+   public void testLogin() {
+       LoginPage loginPage = new LoginPage(driver);
+       loginPage.login("student", "Password123");
+
+       wait.until(ExpectedConditions.urlContains("logged-in-successfully"));
+       Assert.assertTrue(driver.getCurrentUrl().contains("success"));
+   }
+   ```
+
+5. ✅ **Create Comprehensive Test Data Management**: Externalize test data
+   - Why: Separates test data from test logic, enables data-driven testing
+   - How: Use TestNG DataProvider or external files for test data
+   - Example:
+   ```java
+   @DataProvider(name = "loginData")
+   public Object[][] getLoginData() {
+       return new Object[][] {
+           {"student", "Password123", true, "Valid credentials"},
+           {"invaliduser", "Password123", false, "Invalid username"},
+           {"student", "wrongpass", false, "Invalid password"},
+           {"", "Password123", false, "Empty username"},
+           {"student", "", false, "Empty password"}
+       };
+   }
+
+   @Test(dataProvider = "loginData")
+   public void testLoginScenarios(String username, String password,
+                                   boolean shouldSucceed, String description) {
+       System.out.println("Testing: " + description);
+
+       LoginPage loginPage = new LoginPage(driver);
+       loginPage.login(username, password);
+
+       if (shouldSucceed) {
+           wait.until(ExpectedConditions.urlContains("success"));
+           Assert.assertTrue(driver.getCurrentUrl().contains("success"),
+               description + " should succeed");
+       } else {
+           Assert.assertTrue(loginPage.hasErrorMessage(),
+               description + " should show error");
+       }
+   }
+   ```
 
 ---
 

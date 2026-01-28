@@ -3325,6 +3325,30 @@ Tomorrow (Day 18), we'll learn about:
 
 ---
 
+## 🔗 Navigation
+
+### Previous Day
+← [Day 16: Packages & Static Keyword](day16_packages_static.md)
+
+### Next Day
+→ [Day 18: Exception Handling - Part 2](day18_exception_handling_part2.md)
+
+### Week Overview
+↑ [Week 3: Advanced Java Fundamentals](README.md)
+
+### Course Home
+🏠 [Core Java Daily Learning](../README.md)
+
+### Related Topics
+- [Day 16: Packages & Static](day16_packages_static.md) - Understanding Java program structure
+- [Day 18: Exception Handling - Part 2](day18_exception_handling_part2.md) - Advanced exception concepts
+- [Day 22: File I/O](../week-04/day22_file_io.md) - Using exceptions with file operations
+
+### Assessment
+📝 [Day 17 Assessment](../../assessments/java/week3/day17.js) - Test your Exception Handling knowledge
+
+---
+
 ## 📚 Additional Resources
 
 - [Oracle Exception Handling Tutorial](https://docs.oracle.com/javase/tutorial/essential/exceptions/)

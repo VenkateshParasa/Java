@@ -4801,6 +4801,30 @@ Next week (Week 4), we'll learn about:
 
 ---
 
+## 🔗 Navigation
+
+### Previous Day
+← [Day 20: Collections - Map](day20_collections_map.md)
+
+### Next Day
+→ [Day 22: File I/O Basics](../week-04/day22_file_io.md)
+
+### Week Overview
+↑ [Week 3: Advanced Java Fundamentals](README.md)
+
+### Course Home
+🏠 [Core Java Daily Learning](../README.md)
+
+### Related Topics
+- [Day 19: Collections - List & Set](day19_collections_list_set.md) - Using generics with collections
+- [Day 20: Collections - Map](day20_collections_map.md) - Generic Map implementations
+- [Day 28: Stream API](../week-04/day28_stream_api.md) - Generics with functional programming
+
+### Assessment
+📝 [Day 21 Assessment](../../assessments/java/week3/day21.js) - Test your Generics knowledge
+
+---
+
 ## 📚 Additional Resources
 
 - [Oracle Generics Tutorial](https://docs.oracle.com/javase/tutorial/java/generics/)

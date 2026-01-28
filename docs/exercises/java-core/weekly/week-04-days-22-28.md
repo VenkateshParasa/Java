@@ -10584,6 +10584,221 @@ public class ZonedDateTimeDemo {
 
 Total Available Zones: 600
 
+Common Timezones:
+  America/New_York (-05:00)
+  America/Los_Angeles (-08:00)
+  America/Chicago (-06:00)
+  Europe/London (+00:00)
+  Europe/Paris (+01:00)
+  Asia/Tokyo (+09:00)
+  Asia/Kolkata (+05:30)
+  Australia/Sydney (+11:00)
+
+System Default: America/Los_Angeles
+
+=== CREATING ZONEDDATETIME ===
+
+Now (System Default): 2026-01-28T14:30:25.123-08:00[America/Los_Angeles]
+Now in Tokyo: 2026-01-29T07:30:25.123+09:00[Asia/Tokyo]
+
+Meeting (NY): 2026-01-25T14:30-05:00[America/New_York]
+LocalDateTime to Zoned: 2026-03-15T10:00+01:00[Europe/Paris]
+Parsed: 2025-12-25T10:00+05:30[Asia/Kolkata]
+
+=== TIMEZONE CONVERSIONS ===
+
+Original (New York): Jan 25, 2026 02:00 PM EST
+London:              Jan 25, 2026 07:00 PM GMT
+Tokyo:               Jan 26, 2026 04:00 AM JST
+India:               Jan 26, 2026 12:30 AM IST
+
+Time Offsets from New York:
+London: 0 hours
+Tokyo: 0 hours
+India: 0 hours
+
+=== PRACTICAL APPLICATIONS ===
+
+--- Global Meeting Scheduler ---
+Team Meeting:
+  New York:  10:00 AM (EST)
+  London:    03:00 PM (GMT)
+  Mumbai:    08:30 PM (IST)
+  Tokyo:     12:00 AM (JST)
+  Sydney:    02:00 AM (AEDT)
+
+--- Flight Schedule ---
+Flight: Los Angeles → Tokyo
+Departure: Mar 15, 2026 06:30 PM PDT
+Arrival:   Mar 17, 2026 01:00 AM JST
+Flight Duration: 11h 30m
+
+--- Daylight Saving Time ---
+Before DST: 2026-03-07T12:00-05:00[America/New_York]
+After DST:  2026-04-07T12:00-04:00[America/New_York]
+Offset Before: -05:00
+Offset After:  -04:00
+
+════════════════════════════════════════════
+```
+
+**💡 Key Concepts:**
+
+**ZonedDateTime Components:**
+```
+ZonedDateTime = LocalDateTime + ZoneId + ZoneOffset
+
+2026-01-25T14:30:00-05:00[America/New_York]
+     ↑          ↑      ↑         ↑
+   Date       Time  Offset  Zone ID
+```
+
+**Common Operations:**
+```java
+// Creating
+ZonedDateTime.now()
+ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
+ZonedDateTime.of(2026, 1, 25, 14, 30, 0, 0, ZoneId.of("America/New_York"))
+localDateTime.atZone(ZoneId.of("Europe/London"))
+
+// Converting
+zonedDT.withZoneSameInstant(ZoneId.of("Asia/Tokyo"))  // Convert to different timezone
+zonedDT.withZoneSameLocal(ZoneId.of("Asia/Tokyo"))    // Keep same local time
+
+// Extracting
+zonedDT.getZone()      // ZoneId
+zonedDT.getOffset()    // ZoneOffset
+zonedDT.toLocalDate()  // LocalDate
+zonedDT.toLocalTime()  // LocalTime
+```
+
+**Use Cases:**
+- Global meeting schedulers
+- Flight booking systems
+- International event coordination
+- Financial trading systems
+- Log timestamp conversion
+
+**✅ Success Criteria:**
+- Can create ZonedDateTime with specific timezones
+- Understand difference between zone ID and zone offset
+- Can convert times between different timezones
+- Know how to handle daylight saving time
+- Can format timezone-aware dates for display
+- Understand withZoneSameInstant vs withZoneSameLocal
+
+**❌ Common Mistakes:**
+
+1. **Using withZoneSameLocal Instead of withZoneSameInstant**
+   - Why: `withZoneSameLocal()` keeps the clock time the same but changes the actual instant (e.g., 2:00 PM NY becomes 2:00 PM Tokyo - different moments!). `withZoneSameInstant()` keeps the same point in time but adjusts the clock display.
+   - Fix: For timezone conversion, always use `withZoneSameInstant()` to convert the same moment to a different timezone.
+   - Example:
+   ```java
+   ZonedDateTime nyTime = ZonedDateTime.of(2026, 1, 25, 14, 0, 0, 0,
+                                           ZoneId.of("America/New_York"));
+
+   // ❌ Wrong - changes the instant, keeps local time
+   ZonedDateTime tokyo1 = nyTime.withZoneSameLocal(ZoneId.of("Asia/Tokyo"));
+   // Result: 2026-01-25T14:00+09:00 (different moment in time!)
+
+   // ✅ Correct - keeps same instant, adjusts local time
+   ZonedDateTime tokyo2 = nyTime.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+   // Result: 2026-01-26T04:00+09:00 (same moment, different display)
+   ```
+
+2. **Ignoring Daylight Saving Time (DST) Transitions**
+   - Why: Adding months or days across DST boundaries can produce unexpected results. Spring forward skips an hour (2 AM → 3 AM), fall back repeats an hour (2 AM → 1 AM → 2 AM).
+   - Fix: Be aware of DST when adding/subtracting time. Use `ZonedDateTime` (DST-aware) instead of `LocalDateTime` (no timezone info).
+   - Example:
+   ```java
+   // DST transition on March 8, 2026 (2:00 AM → 3:00 AM)
+   ZonedDateTime before = ZonedDateTime.of(2026, 3, 8, 1, 30, 0, 0,
+                                           ZoneId.of("America/New_York"));
+
+   // ❌ Wrong - ignoring DST with LocalDateTime
+   LocalDateTime local = before.toLocalDateTime().plusHours(1);
+   // Result: 2026-03-08T02:30 (this time doesn't exist due to DST!)
+
+   // ✅ Correct - ZonedDateTime handles DST automatically
+   ZonedDateTime after = before.plusHours(1);
+   // Result: 2026-03-08T03:30-04:00 (skips non-existent 2:30 AM)
+   ```
+
+3. **Using String Zone IDs Instead of ZoneId Objects**
+   - Why: Hardcoded string zone IDs are error-prone (typos like "America/NewYork" vs "America/New_York"), don't validate at compile-time, and make refactoring difficult.
+   - Fix: Use `ZoneId.of()` to create and validate zone IDs, or use constants like `ZoneId.systemDefault()`.
+   - Example:
+   ```java
+   // ❌ Wrong - error-prone string manipulation
+   String zoneStr = "America/New_York";
+   ZonedDateTime zdt1 = ZonedDateTime.parse("2026-01-25T14:00:00" + zoneStr);
+   // Runtime error if string format is wrong!
+
+   // ✅ Correct - use ZoneId objects
+   ZoneId zone = ZoneId.of("America/New_York");
+   ZonedDateTime zdt2 = ZonedDateTime.of(2026, 1, 25, 14, 0, 0, 0, zone);
+   // Validates zone ID at creation
+   ```
+
+4. **Comparing ZonedDateTime with == Instead of equals() or isEqual()**
+   - Why: `==` checks object reference, not the actual instant. Two `ZonedDateTime` objects representing the same moment in different timezones will fail `==` comparison.
+   - Fix: Use `equals()` for exact comparison (same instant AND same zone), or `isEqual()` for instant-only comparison.
+   - Example:
+   ```java
+   ZonedDateTime nyTime = ZonedDateTime.of(2026, 1, 25, 14, 0, 0, 0,
+                                           ZoneId.of("America/New_York"));
+   ZonedDateTime tokyoTime = nyTime.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+
+   // ❌ Wrong - compares object references
+   if (nyTime == tokyoTime) { }  // false (different objects)
+
+   // ❌ Wrong for cross-timezone comparison
+   if (nyTime.equals(tokyoTime)) { }  // false (different zones)
+
+   // ✅ Correct - compares the instant (moment in time)
+   if (nyTime.isEqual(tokyoTime)) { }  // true (same moment)
+
+   // ✅ Or compare instants directly
+   if (nyTime.toInstant().equals(tokyoTime.toInstant())) { }  // true
+   ```
+
+5. **Not Handling Invalid Zone IDs**
+   - Why: Invalid zone IDs throw `ZoneRulesException` at runtime. User input or external data might contain invalid zones like "PST", "EST" (abbreviations not supported), or typos.
+   - Fix: Always validate zone IDs from external sources using try-catch, and provide fallback behavior.
+   - Example:
+   ```java
+   // ❌ Wrong - crashes on invalid input
+   String userInput = "PST";  // Invalid! Use "America/Los_Angeles"
+   ZoneId zone = ZoneId.of(userInput);  // ZoneRulesException!
+
+   // ✅ Correct - validate with error handling
+   String userInput = "PST";
+   ZoneId zone;
+   try {
+       zone = ZoneId.of(userInput);
+   } catch (ZoneRulesException e) {
+       System.out.println("Invalid zone: " + userInput);
+       zone = ZoneId.systemDefault();  // Fallback
+   }
+
+   // ✅ Or validate before parsing
+   if (ZoneId.getAvailableZoneIds().contains(userInput)) {
+       zone = ZoneId.of(userInput);
+   } else {
+       // Handle invalid zone
+   }
+   ```
+
+**🎯 Challenge:**
+1. Create a world clock showing current time in 5 major cities
+2. Build a meeting scheduler that finds suitable times across 3 timezones
+3. Calculate flight duration considering timezone changes
+4. Handle DST transition edge cases (spring forward/fall back)
+5. Create a timezone converter tool (input: time + source zone, output: time in multiple zones)
+6. Implement a "business hours" checker across different timezones
+
+---
+
 ### Day 28: Wrapper Classes & Autoboxing
 
 ---

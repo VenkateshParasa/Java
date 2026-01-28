@@ -164,6 +164,31 @@ public static void methodName() {
      greet();  // This goes in main
      ```
 
+**Best Practices:**
+1. ✅ **Use Verb Names for Methods**: Name methods after actions they perform
+   - Why: Makes code self-documenting and shows what method does at a glance
+   - How: Start method names with verbs like calculate, print, display, validate, process
+   - Example: `printWelcome()`, `calculateTotal()`, `validateInput()` (not `welcome()`, `total()`, `input()`)
+
+2. ✅ **Keep Methods Small and Focused**: Each method should do one thing well
+   - Why: Easier to understand, test, debug, and reuse
+   - How: If method does multiple tasks, split into separate methods
+   - Example: Have `printHeader()`, `printBody()`, `printFooter()` instead of one giant `printEverything()` method
+
+3. ✅ **Add Method Documentation**: Write comment above method explaining purpose
+   - Why: Helps others (and future you) understand what method does and when to use it
+   - How: Add brief comment describing method's purpose, parameters, and return value
+   - Example:
+     ```java
+     // Prints a welcome message to the console
+     public static void greet() { }
+     ```
+
+4. ✅ **Order Methods Logically**: Place related methods near each other
+   - Why: Makes code easier to navigate and understand
+   - How: Group similar methods together, put main() first, helper methods after
+   - Example: Keep all printing methods together, all calculation methods together
+
 **🎯 Challenge:**
 1. Create a method called `printLine()` that prints "================="
 2. Create a method called `showMenu()` that prints a menu
@@ -385,6 +410,36 @@ greet("Alice");  // "Alice" is argument
 
      // Correct
      printSum(5, 10);      // Exactly 2 arguments
+     ```
+
+**Best Practices:**
+1. ✅ **Use Descriptive Parameter Names**: Choose clear names that explain what data represents
+   - Why: Makes method calls self-documenting and easier to understand
+   - How: Use meaningful names like `userName`, `userAge`, `totalPrice` instead of `x`, `y`, `data`
+   - Example: `greetUser(String userName)` is clearer than `greetUser(String s)`
+
+2. ✅ **Limit Number of Parameters**: Keep methods to 3-4 parameters maximum
+   - Why: Too many parameters make methods hard to use and understand
+   - How: If you need many parameters, consider creating a class to hold the data
+   - Example: Instead of `createUser(String name, int age, String email, String phone, String address)`, create a User class
+
+3. ✅ **Order Parameters Logically**: Put most important/common parameters first
+   - Why: Makes method calls more intuitive and consistent
+   - How: Place required parameters before optional ones, group related parameters
+   - Example: `sendEmail(String to, String subject, String body)` - recipient first, content after
+
+4. ✅ **Validate Parameters Inside Methods**: Check that parameter values are valid
+   - Why: Prevents bugs from invalid input
+   - How: Add checks at method start to verify parameters are not null, in valid range
+   - Example:
+     ```java
+     public static void printAge(int age) {
+         if (age < 0 || age > 150) {
+             System.out.println("Invalid age");
+             return;
+         }
+         System.out.println("Age: " + age);
+     }
      ```
 
 **🎯 Challenge:**
@@ -678,6 +733,45 @@ public static int getSum(int a, int b) {
      }
      ```
 
+**Best Practices:**
+1. ✅ **Use Return Values Instead of Printing**: Return data rather than printing inside methods
+   - Why: Makes methods more flexible and reusable in different contexts
+   - How: Return the calculated value and let the caller decide what to do with it
+   - Example: `return sum;` instead of `System.out.println(sum);` inside the method
+
+2. ✅ **Keep Return Type Simple and Specific**: Use the most appropriate return type
+   - Why: Makes method contract clear and prevents unnecessary type conversions
+   - How: Return `int` for counts, `boolean` for yes/no, `String` for text, `double` for calculations
+   - Example: `public static boolean isValid()` is clearer than `public static int isValid()` returning 1/0
+
+3. ✅ **Ensure All Code Paths Return a Value**: Every branch must return appropriate type
+   - Why: Prevents compilation errors and logic bugs
+   - How: Check if/else branches, loops all have return statements
+   - Example:
+     ```java
+     public static String getGrade(int score) {
+         if (score >= 90) return "A";
+         else if (score >= 80) return "B";
+         else return "F";  // Must have final return
+     }
+     ```
+
+4. ✅ **Return Early for Error Conditions**: Check and return immediately for invalid cases
+   - Why: Reduces nesting and makes code clearer
+   - How: Validate parameters at start, return error value/throw exception early
+   - Example:
+     ```java
+     public static int divide(int a, int b) {
+         if (b == 0) return -1;  // Error case first
+         return a / b;  // Main logic after
+     }
+     ```
+
+5. ✅ **Assign Return Values to Well-Named Variables**: Store returned values with descriptive names
+   - Why: Makes code more readable and easier to debug
+   - How: Use meaningful variable names that describe what the returned value represents
+   - Example: `int totalPrice = calculatePrice();` not `int x = calculatePrice();`
+
 **🎯 Challenge:**
 1. Create `max(int a, int b)` that returns the larger number
 2. Create `isEven(int n)` that returns true if even
@@ -908,6 +1002,32 @@ processStudent()        ← Main coordinator
      }
      // Can now use: double avg = calculateAverage(x, y, z);
      ```
+
+**Best Practices:**
+1. ✅ **Apply Single Responsibility Principle**: Each method should have one clear purpose
+   - Why: Makes code easier to understand, test, and maintain
+   - How: If a method name needs "and" to describe it, split into separate methods
+   - Example: Instead of `calculateAndPrintAverage()`, have `calculateAverage()` and `printAverage()`
+
+2. ✅ **Create Helper Methods for Common Tasks**: Extract repeated code into reusable methods
+   - Why: Reduces duplication, makes updates easier (change once, not everywhere)
+   - How: Identify repeated patterns and create methods for them
+   - Example: Create `printHeader()` method if you print headers multiple times
+
+3. ✅ **Design Methods for Reusability**: Make methods generic enough to use in different contexts
+   - Why: Increases code reuse and reduces overall code size
+   - How: Use parameters to make methods flexible, avoid hardcoding values
+   - Example: `printBox(String title, int width)` instead of `printStudentBox()` with fixed values
+
+4. ✅ **Use Method Chaining When Appropriate**: Return values that can be used by other methods
+   - Why: Enables composing multiple operations in a clean, readable way
+   - How: Return values from methods that can be passed to other methods
+   - Example: `printResult(calculateAverage(getScores()));` - each method returns value for the next
+
+5. ✅ **Keep Methods Focused and Cohesive**: Group related methods together in code
+   - Why: Makes code organization clear and easy to navigate
+   - How: Place related calculation methods together, I/O methods together, validation methods together
+   - Example: All grade calculation methods near each other, all printing methods grouped separately
 
 **🎯 Challenge:**
 1. Add `getHighestScore(int a, int b, int c)` method
@@ -1194,6 +1314,32 @@ Do you need to make decisions based on result?
          return amount * 0.08;  // Return value needed for total
      }
      ```
+
+**Best Practices:**
+1. ✅ **Choose Return Type Based on Method Purpose**: Decide void vs return by asking "Will I use this result elsewhere?"
+   - Why: Makes method design intentional and appropriate for use case
+   - How: If method just displays information, use void. If it calculates/checks something needed elsewhere, return it
+   - Example: `void printReceipt()` for display, `double calculateTotal()` for calculations
+
+2. ✅ **Prefer Return Methods for Testability**: Return values make methods easier to test
+   - Why: Can verify returned value matches expected result without checking console output
+   - How: When possible, return computed values rather than printing them inside method
+   - Example: `return sum;` instead of `System.out.println(sum);` - caller can print if needed
+
+3. ✅ **Avoid Side Effects in Return Methods**: Return methods should focus on computing and returning values
+   - Why: Makes method behavior predictable and easier to reason about
+   - How: Don't print or modify global state in return methods, just calculate and return
+   - Example: `return price * 1.10;` (pure calculation) not `System.out.println(...); return price * 1.10;` (mixed concerns)
+
+4. ✅ **Use void for User Interface Methods**: Print/display methods should typically be void
+   - Why: Their purpose is to show information, not produce values for further use
+   - How: Methods that print menus, reports, messages should be void
+   - Example: `void displayMenu()`, `void printReport()`, `void showError(String msg)`
+
+5. ✅ **Always Capture or Use Return Values**: Don't waste returned values
+   - Why: If method returns a value, use it - otherwise the return is pointless
+   - How: Store in variable or use directly in expression/condition
+   - Example: `int total = calculateSum(a, b);` or `if (isValid(input)) { ... }`
 
 **🎯 Challenge:**
 Create pairs of methods:
@@ -1591,6 +1737,32 @@ Calculation Methods (return)
          return a - b;  // Consistent pattern
      }
      ```
+
+**Best Practices:**
+1. ✅ **Separate Calculation Logic from Presentation**: Keep business logic and UI concerns separate
+   - Why: Makes code more reusable, testable, and maintainable
+   - How: Calculation methods return values, display methods handle formatting and printing
+   - Example: `double result = calculate()` then `displayResult(result)` - not mixed in one method
+
+2. ✅ **Validate Input Parameters**: Check for invalid inputs before processing
+   - Why: Prevents runtime errors and unexpected behavior
+   - How: Add parameter validation at start of methods (check for null, zero, negative, out of range)
+   - Example: Check `if (divisor == 0)` before dividing, `if (n < 0)` before factorial
+
+3. ✅ **Use Consistent Naming Patterns**: Follow clear naming conventions across all methods
+   - Why: Makes codebase predictable and easier to understand
+   - How: Use verbs for actions (calculate, display, validate), nouns for getters (getMax, getSum)
+   - Example: `calculateSum()`, `isValid()`, `displayMenu()` - all follow verb+noun pattern
+
+4. ✅ **Group Related Methods Together**: Organize methods by functionality
+   - Why: Makes code easier to navigate and understand structure
+   - How: Place all arithmetic methods together, all validation methods together, all display methods together
+   - Example: Group add/subtract/multiply/divide in one section, max/min/abs in another
+
+5. ✅ **Create Reusable Building Blocks**: Design methods to be called by other methods
+   - Why: Promotes code reuse and reduces duplication
+   - How: Make methods generic with parameters, avoid hardcoded values
+   - Example: `max(a, b)` can be reused: `max(max(a, b), c)` for three numbers
 
 **🎯 Challenges:**
 1. Add `absolute(double n)` method
@@ -3434,14 +3606,131 @@ public static void methodName() {
 - Know methods execute when called, then return to caller
 - Recognize methods help avoid code repetition
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| `greet;` | Missing parentheses | `greet();` |
-| Method inside main | Methods must be at class level | Define after main method's closing } |
-| Forgetting `static` | Can't call non-static from static main | Always use `public static` for now |
-| Typo in method name | `greet()` defined, `great()` called | Method name must match exactly |
+1. ❌ **Missing Parentheses When Calling Method**: Writing `greet;` instead of `greet();`
+   - Why: Students often forget that parentheses are required to actually execute/call a method. Without them, Java thinks you're trying to reference the method itself, not run it.
+   - Fix: Always include `()` when calling a method, even if it has no parameters. Write `greet();` not `greet;`
+   - Example:
+     ```java
+     // Wrong
+     greet;  // Compile error: "not a statement"
+
+     // Correct
+     greet();  // Method is called and executed
+     ```
+
+2. ❌ **Defining Method Inside main Method**: Trying to write a method inside the main method's curly braces
+   - Why: Java doesn't allow nested method definitions. Methods must be defined at the class level, not inside other methods.
+   - Fix: Define your methods outside and after the main method's closing brace, at the class level.
+   - Example:
+     ```java
+     // Wrong
+     public class Example {
+         public static void main(String[] args) {
+             public static void greet() { }  // Error: can't define method here
+         }
+     }
+
+     // Correct
+     public class Example {
+         public static void main(String[] args) {
+             greet();  // Call the method
+         }
+
+         public static void greet() {  // Defined at class level
+             System.out.println("Hello!");
+         }
+     }
+     ```
+
+3. ❌ **Forgetting the `static` Keyword**: Defining method without `static` when calling from `main`
+   - Why: The `main` method is static, which means it belongs to the class itself, not to any object. You can only call other static methods directly from a static context.
+   - Fix: Add the `static` keyword to your method definition when calling it from `main`: `public static void methodName()`
+   - Example:
+     ```java
+     // Wrong
+     public void greet() { }  // Can't call from static main
+
+     // Correct
+     public static void greet() { }  // Can be called from static main
+     ```
+
+4. ❌ **Typo in Method Name**: Defining a method with one name but calling it with a different name
+   - Why: Java is case-sensitive and requires exact name matching. Students make typos like defining `greet()` but calling `great()`.
+   - Fix: Method name in the call must exactly match the method definition, including capitalization.
+   - Example:
+     ```java
+     public static void greet() {  // Defined as "greet"
+         System.out.println("Hello!");
+     }
+
+     // Wrong
+     great();  // Error: cannot find symbol "great"
+     greet;    // Error: missing parentheses
+
+     // Correct
+     greet();  // Exact match with parentheses
+     ```
+
+5. ❌ **Not Understanding Method Execution Flow**: Thinking methods run automatically when defined
+   - Why: Students don't realize that defining a method doesn't run it. You must explicitly call the method.
+   - Fix: Methods only execute when called. A method definition just describes what to do; a method call actually does it.
+   - Example:
+     ```java
+     public static void main(String[] args) {
+         // Method is defined below but won't run unless called
+         System.out.println("Before");
+         greet();  // Only runs when we call it here
+         System.out.println("After");
+     }
+
+     public static void greet() {
+         System.out.println("Hello!");  // Only executes when greet() is called
+     }
+     ```
+
+**Best Practices:**
+
+1. ✅ **Use Descriptive Method Names**: Choose names that clearly describe what the method does
+   - Why: Makes code self-documenting and easier to understand without reading implementation
+   - How: Use verb-noun combinations like `printReport()`, `calculateTotal()`, `displayMenu()`
+   - Example:
+     ```java
+     // Poor - vague, unclear purpose
+     public static void doIt() { }
+     public static void method1() { }
+
+     // Good - clear, descriptive
+     public static void displayWelcomeMessage() { }
+     public static void printLine() { }
+     ```
+
+2. ✅ **Follow Naming Conventions**: Use camelCase for method names, start with lowercase
+   - Why: Follows Java standards, makes code consistent and professional
+   - How: First word lowercase, capitalize first letter of each subsequent word
+   - Example: `greet()`, `printLine()`, `displayWelcomeMessage()`, `calculateStudentGrade()`
+
+3. ✅ **Keep Methods Small and Focused**: Each method should do ONE thing well
+   - Why: Easier to understand, test, debug, and reuse
+   - How: If a method does multiple unrelated tasks, split it into separate methods
+   - Example: Have `printHeader()` and `printFooter()` instead of one `printEverything()` method
+
+4. ✅ **Write Methods for Reusability**: Design methods to be called multiple times
+   - Why: Eliminates code duplication and makes updates easier
+   - How: Extract any code you use more than once into a method
+   - Example:
+     ```java
+     // Instead of repeating:
+     System.out.println("==========");
+     System.out.println("==========");
+
+     // Create reusable method:
+     public static void printLine() {
+         System.out.println("==========");
+     }
+     // Call it: printLine(); printLine();
+     ```
 
 **🎯 Challenge:**
 1. Create a method `printStars()` that prints "*****"
@@ -3592,14 +3881,151 @@ greetPerson("Alice");
 - Know how to pass different data types
 - Recognize parameters make methods flexible
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Wrong number of arguments | Method expects 2, you pass 1 | Match parameter count exactly |
-| Wrong order | `displayInfo(25, "Alice")` | Match parameter order: (String, int) |
-| Wrong type | Passing String where int expected | Match parameter types |
-| Using parameter name as argument | `greetPerson(name)` when name undefined | Pass actual value: `greetPerson("Alice")` |
+1. ❌ **Wrong Number of Arguments**: Passing more or fewer arguments than the method has parameters
+   - Why: Java requires the exact number of arguments to match the number of parameters. Each parameter needs a corresponding argument.
+   - Fix: Count the parameters in the method definition and pass exactly that many arguments when calling.
+   - Example:
+     ```java
+     public static void displayInfo(String name, int age) {
+         System.out.println(name + " is " + age);
+     }
+
+     // Wrong
+     displayInfo("Alice");        // Error: needs 2 arguments
+     displayInfo("Alice", 25, 5); // Error: too many arguments
+
+     // Correct
+     displayInfo("Alice", 25);    // Exactly 2 arguments
+     ```
+
+2. ❌ **Wrong Argument Order**: Passing arguments in different order than parameters are defined
+   - Why: Java matches arguments to parameters by position, not by meaning. The first argument goes to the first parameter, second to second, etc.
+   - Fix: Pass arguments in the exact same order as parameters are defined in the method signature.
+   - Example:
+     ```java
+     public static void displayInfo(String name, int age) {
+         System.out.println(name + " is " + age);
+     }
+
+     // Wrong
+     displayInfo(25, "Alice");  // Error: int cannot be String
+
+     // Correct
+     displayInfo("Alice", 25);  // Arguments match parameter order
+     ```
+
+3. ❌ **Wrong Data Type**: Passing an argument of incompatible type
+   - Why: Each parameter has a specific type, and you must pass an argument of that type or one that can be automatically converted.
+   - Fix: Ensure each argument's type matches the corresponding parameter's type.
+   - Example:
+     ```java
+     public static void printAge(int age) {
+         System.out.println("Age: " + age);
+     }
+
+     // Wrong
+     printAge("25");      // Error: String cannot be int
+     printAge(25.5);      // Error: double cannot be int (loses precision)
+
+     // Correct
+     printAge(25);        // int matches int parameter
+     ```
+
+4. ❌ **Using Parameter Name as Argument**: Writing `greetPerson(name)` when `name` is not defined in the calling scope
+   - Why: Students confuse the parameter name in the method definition with what they should pass when calling.
+   - Fix: Pass an actual value or a variable that exists in the scope where you're calling the method.
+   - Example:
+     ```java
+     public static void greetPerson(String name) {
+         System.out.println("Hello, " + name);
+     }
+
+     public static void main(String[] args) {
+         // Wrong
+         greetPerson(name);  // Error: cannot find symbol 'name'
+
+         // Correct - pass actual value
+         greetPerson("Alice");
+
+         // Or use a variable that exists in main
+         String myName = "Alice";
+         greetPerson(myName);
+     }
+     ```
+
+5. ❌ **Missing Data Type in Parameter Declaration**: Writing `greet(name)` instead of `greet(String name)`
+   - Why: Students coming from languages like Python forget that Java requires explicit type declarations for all parameters.
+   - Fix: Always specify the data type before the parameter name: `methodName(dataType paramName)`
+   - Example:
+     ```java
+     // Wrong
+     public static void greet(name) { }  // Compile error
+
+     // Correct
+     public static void greet(String name) { }  // Type specified
+     ```
+
+**Best Practices:**
+
+1. ✅ **Use Meaningful Parameter Names**: Choose names that clearly describe the data
+   - Why: Makes method calls self-documenting and reduces need for comments
+   - How: Use descriptive names like `customerName`, `orderTotal`, `studentAge` instead of `x`, `y`, `data`
+   - Example:
+     ```java
+     // Poor - unclear what parameters represent
+     public static void display(String s, int n) { }
+
+     // Good - immediately clear
+     public static void displayStudent(String studentName, int studentAge) { }
+     ```
+
+2. ✅ **Order Parameters Logically**: Put most important or most used parameters first
+   - Why: Makes method calls more intuitive and easier to remember
+   - How: Required parameters first, optional-like parameters last; related parameters together
+   - Example:
+     ```java
+     // Good ordering - name is primary, details follow
+     public static void showProduct(String name, double price, int quantity) { }
+     ```
+
+3. ✅ **Limit Number of Parameters**: Keep to 3-4 parameters maximum
+   - Why: Too many parameters make methods hard to use and remember
+   - How: If you need many parameters, consider creating a class to group related data
+   - Example:
+     ```java
+     // Avoid - too many parameters
+     public static void createUser(String name, int age, String email,
+                                   String phone, String address, String city) { }
+
+     // Better - limit to essentials
+     public static void createUser(String name, int age, String email) { }
+     ```
+
+4. ✅ **Match Parameter Types to Data**: Use the most appropriate type for each parameter
+   - Why: Prevents type conversion errors and makes method purpose clearer
+   - How: `int` for whole numbers, `double` for decimals, `String` for text, `boolean` for yes/no
+   - Example:
+     ```java
+     // Good type choices
+     public static void calculateGrade(double score, int totalQuestions) { }
+     public static void displayUser(String name, boolean isPremium) { }
+     ```
+
+5. ✅ **Validate Parameters When Needed**: Check parameter values for validity
+   - Why: Prevents errors and unexpected behavior from invalid input
+   - How: Add checks at start of method for critical validations
+   - Example:
+     ```java
+     public static void displayAge(int age) {
+         if (age < 0 || age > 150) {
+             System.out.println("Invalid age!");
+             return;
+         }
+         System.out.println("Age: " + age);
+     }
+     ```
 
 **🎯 Challenge:**
 1. Create method `calculateRectangleArea(int length, int width)` that prints the area
@@ -3778,15 +4204,176 @@ public static void printMessage() {
 - Know how to store and use return values
 - Recognize return exits the method immediately
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| `void` but has return value | void means no return | Change to: `public static int method()` |
-| `int` but no return | Declared int, must return int | Add: `return someInt;` |
-| Return wrong type | Returning String when int expected | Match declared type |
-| Code after return | Never executes | Put code before return |
-| Forgetting to use return value | Value is lost | Store it: `int x = method();` |
+1. ❌ **Using `void` When Method Should Return a Value**: Declaring method as `void` but trying to return a value
+   - Why: Students don't understand that `void` means "no return value" and cannot be used with return statements that return values.
+   - Fix: If your method needs to send back a value, change `void` to the appropriate return type (int, String, boolean, double, etc.)
+   - Example:
+     ```java
+     // Wrong
+     public static void add(int a, int b) {
+         return a + b;  // Error: void method cannot return a value
+     }
+
+     // Correct
+     public static int add(int a, int b) {
+         return a + b;  // Returns int as declared
+     }
+     ```
+
+2. ❌ **Forgetting Return Statement**: Method declares a return type but doesn't return anything
+   - Why: Students forget that if a method has a return type other than void, it MUST return that type in all execution paths.
+   - Fix: Ensure every possible path through your method has a return statement that returns the correct type.
+   - Example:
+     ```java
+     // Wrong
+     public static int getNumber() {
+         System.out.println("Getting number");
+         // Error: missing return statement
+     }
+
+     // Correct
+     public static int getNumber() {
+         System.out.println("Getting number");
+         return 42;  // Returns an int
+     }
+     ```
+
+3. ❌ **Return Type Mismatch**: Returning wrong data type than what method signature declares
+   - Why: Students don't carefully match what they return with the declared return type.
+   - Fix: The value after `return` must exactly match the return type in the method signature.
+   - Example:
+     ```java
+     // Wrong
+     public static int getName() {
+         return "Alice";  // Error: String cannot be converted to int
+     }
+
+     // Correct - option 1: match the return type
+     public static String getName() {
+         return "Alice";  // Returns String as declared
+     }
+
+     // Correct - option 2: return the right type
+     public static int getAge() {
+         return 25;  // Returns int as declared
+     }
+     ```
+
+4. ❌ **Writing Code After Return Statement**: Placing code after return that will never execute
+   - Why: The return statement immediately exits the method, so any code after it is unreachable.
+   - Fix: Put all necessary code before the return statement, or use conditional logic if you need multiple return points.
+   - Example:
+     ```java
+     // Wrong
+     public static int calculate() {
+         return 42;
+         System.out.println("Done");  // Error: unreachable statement
+     }
+
+     // Correct
+     public static int calculate() {
+         System.out.println("Calculating...");
+         return 42;  // Return at the end
+     }
+     ```
+
+5. ❌ **Not Using the Returned Value**: Calling a method that returns a value but ignoring the result
+   - Why: Students call methods like `add(5, 10)` without capturing the return value, so the result is lost.
+   - Fix: Store the returned value in a variable or use it directly in an expression or print statement.
+   - Example:
+     ```java
+     public static int add(int a, int b) {
+         return a + b;
+     }
+
+     // Wrong - value is calculated but lost
+     add(5, 10);  // Result 15 is thrown away
+
+     // Correct - store the value
+     int sum = add(5, 10);
+     System.out.println(sum);
+
+     // Or use directly
+     System.out.println(add(5, 10));
+     ```
+
+**Best Practices:**
+
+1. ✅ **Prefer Return Values Over Printing**: Return calculated values rather than printing them
+   - Why: Makes methods more flexible, reusable, and testable
+   - How: Calculate the result, return it, let the caller decide what to do with it
+   - Example:
+     ```java
+     // Poor - limited to printing
+     public static void calculateSum(int a, int b) {
+         System.out.println(a + b);
+     }
+
+     // Better - flexible, reusable
+     public static int calculateSum(int a, int b) {
+         return a + b;  // Caller can print, store, or use in calculations
+     }
+     ```
+
+2. ✅ **Match Return Type to Purpose**: Choose the most appropriate return type
+   - Why: Makes method contract clear and prevents unnecessary type conversions
+   - How: `int` for counts/whole numbers, `double` for calculations, `boolean` for yes/no checks, `String` for text
+   - Example:
+     ```java
+     public static boolean isValid(int age) { return age >= 0 && age <= 150; }
+     public static double calculateAverage(int a, int b) { return (a + b) / 2.0; }
+     public static int countItems(String text) { return text.length(); }
+     ```
+
+3. ✅ **Ensure All Code Paths Return**: Every possible path through method must return a value
+   - Why: Compiler requires all execution paths to return the declared type
+   - How: Check all if/else branches return appropriate value; add default return at end if needed
+   - Example:
+     ```java
+     public static String getGrade(int score) {
+         if (score >= 90) return "A";
+         else if (score >= 80) return "B";
+         else if (score >= 70) return "C";
+         else if (score >= 60) return "D";
+         else return "F";  // All paths covered
+     }
+     ```
+
+4. ✅ **Use Clear Return Names**: When storing return values, use descriptive variable names
+   - Why: Makes code readable and shows intent clearly
+   - How: Name variables after what they represent, not generic names
+   - Example:
+     ```java
+     // Poor
+     int x = add(5, 10);
+
+     // Good
+     int totalScore = add(score1, score2);
+     double average = calculateAverage(test1, test2, test3);
+     boolean isEligible = checkAge(userAge);
+     ```
+
+5. ✅ **Simplify Boolean Returns**: Return boolean expressions directly instead of if-else
+   - Why: More concise, clearer, professional code
+   - How: Instead of if-else returning true/false, return the condition itself
+   - Example:
+     ```java
+     // Verbose
+     public static boolean isEven(int n) {
+         if (n % 2 == 0) {
+             return true;
+         } else {
+             return false;
+         }
+     }
+
+     // Better - direct and clear
+     public static boolean isEven(int n) {
+         return n % 2 == 0;
+     }
+     ```
 
 **🎯 Challenge:**
 1. Create `getMax(int a, int b)` that returns the larger number
@@ -3984,14 +4571,184 @@ Is method name same?
 - Know Java chooses method based on arguments
 - Recognize overloading makes APIs easier to use
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | How to Fix |
-|---------|----------------|------------|
-| Overloading by return type only | Not enough to distinguish | Change parameters too |
-| Exact duplicate parameters | Can't have two identical signatures | Make parameters different |
-| Ambiguous calls | Java can't decide which to call | Make parameter lists more distinct |
-| Confusing parameter order | Hard to remember which is which | Use meaningful parameter names |
+1. ❌ **Trying to Overload by Return Type Only**: Creating two methods with same name and parameters but different return types
+   - Why: Java identifies methods by their signature (name + parameters), not by return type. Two methods with identical signatures but different return types cause a compile error.
+   - Fix: If you want to overload, you must change the parameter list (number, type, or order), not just the return type.
+   - Example:
+     ```java
+     // Wrong - can't distinguish by return type alone
+     public static int calculate(int a, int b) {
+         return a + b;
+     }
+     public static double calculate(int a, int b) {  // Error: duplicate method
+         return (a + b) / 2.0;
+     }
+
+     // Correct - different parameter types
+     public static int calculate(int a, int b) {
+         return a + b;
+     }
+     public static double calculate(double a, double b) {
+         return (a + b) / 2.0;
+     }
+     ```
+
+2. ❌ **Creating Exact Duplicate Method Signatures**: Defining two methods with identical name and parameter list
+   - Why: Java cannot have two methods with the exact same signature (name + parameter types). This creates ambiguity about which method to call.
+   - Fix: Change at least one aspect of the parameter list: number, type, or order of parameters.
+   - Example:
+     ```java
+     // Wrong - identical signatures
+     public static void print(int value) {
+         System.out.println("First: " + value);
+     }
+     public static void print(int number) {  // Error: duplicate method
+         System.out.println("Second: " + number);
+     }
+
+     // Correct - different parameter types
+     public static void print(int value) {
+         System.out.println("Int: " + value);
+     }
+     public static void print(String value) {
+         System.out.println("String: " + value);
+     }
+     ```
+
+3. ❌ **Creating Ambiguous Overloads**: Defining overloaded methods that Java cannot clearly distinguish
+   - Why: When Java can automatically convert types (like int to double), it may not be able to decide which overloaded method to call.
+   - Fix: Make parameter lists clearly distinct so Java can always determine the correct method to call.
+   - Example:
+     ```java
+     // Potentially ambiguous
+     public static void process(int x, double y) { }
+     public static void process(double x, int y) { }
+
+     // Calling: process(5, 10) - Java can't decide which one!
+
+     // Better - clearly different
+     public static void process(int x, int y) { }
+     public static void process(double x, double y) { }
+     ```
+
+4. ❌ **Overloading Unrelated Operations**: Using same method name for completely different operations
+   - Why: Overloading should be for the same operation with different input types, not for different operations. This confuses users of your code.
+   - Fix: Only overload when all versions perform conceptually the same operation. Use different names for different operations.
+   - Example:
+     ```java
+     // Wrong - different operations with same name
+     public static void process(int x) {
+         // Calculates sum
+         System.out.println("Sum: " + (x + x));
+     }
+     public static void process(String s) {
+         // Reverses string - completely different!
+         System.out.println(new StringBuilder(s).reverse());
+     }
+
+     // Correct - different names for different operations
+     public static void calculateSum(int x) {
+         System.out.println("Sum: " + (x + x));
+     }
+     public static void reverseString(String s) {
+         System.out.println(new StringBuilder(s).reverse());
+     }
+     ```
+
+5. ❌ **Confusing Parameter Order in Overloads**: Overloading by only swapping parameter order without clear naming
+   - Why: When you overload by changing parameter order (like int, String vs String, int), it's easy to accidentally call the wrong version.
+   - Fix: Use meaningful parameter names and be very careful when calling. Consider if parameter order overloading is really necessary.
+   - Example:
+     ```java
+     public static void display(String name, int age) {
+         System.out.println(name + " is " + age);
+     }
+     public static void display(int age, String name) {
+         System.out.println(name + " is " + age);
+     }
+
+     // Confusing to call - easy to mix up
+     display("Alice", 25);  // Which one gets called?
+     display(25, "Alice");  // This one? They do the same thing!
+
+     // Better - use one method instead
+     public static void display(String name, int age) {
+         System.out.println(name + " is " + age);
+     }
+     ```
+
+**Best Practices:**
+
+1. ✅ **Overload for Flexibility, Not Complexity**: Use overloading when operations are truly the same
+   - Why: Overloading should make code simpler, not more confusing
+   - How: Only overload when methods perform the same logical operation with different input types/counts
+   - Example:
+     ```java
+     // Good - same operation (addition), different parameter counts
+     public static int add(int a, int b) { return a + b; }
+     public static int add(int a, int b, int c) { return a + b + c; }
+
+     // Poor - different operations with same name confuses users
+     public static void process(int x) { /* calculates sum */ }
+     public static void process(String s) { /* sorts characters */ }
+     ```
+
+2. ✅ **Keep Overloaded Methods Consistent**: All overloads should behave similarly
+   - Why: Users expect same method name to do conceptually the same thing
+   - How: Ensure all overloaded versions perform the same core operation
+   - Example:
+     ```java
+     // Good - all versions print, just different formats
+     public static void print(int value) { System.out.println("Int: " + value); }
+     public static void print(double value) { System.out.println("Double: " + value); }
+     public static void print(String value) { System.out.println("String: " + value); }
+     ```
+
+3. ✅ **Make Parameter Lists Clearly Distinct**: Avoid ambiguous overloads
+   - Why: Prevents compilation errors and makes method selection clear
+   - How: Ensure parameter lists differ enough that Java can always determine which to call
+   - Example:
+     ```java
+     // Good - clearly different
+     public static void display(String name, int age) { }
+     public static void display(int age, String name) { }
+
+     // Avoid - can be ambiguous with type promotions
+     public static void calculate(int x, double y) { }
+     public static void calculate(double x, int y) { }
+     ```
+
+4. ✅ **Use Varargs for Unlimited Parameters**: Consider varargs instead of many overloads
+   - Why: More flexible and cleaner than creating many overloaded versions
+   - How: If you need to support many parameter counts, use `type... paramName` instead
+   - Example:
+     ```java
+     // Instead of many overloads:
+     // public static int sum(int a, int b) { }
+     // public static int sum(int a, int b, int c) { }
+     // public static int sum(int a, int b, int c, int d) { }
+
+     // Use varargs - one method handles all:
+     public static int sum(int... numbers) {
+         int total = 0;
+         for (int num : numbers) total += num;
+         return total;
+     }
+     ```
+
+5. ✅ **Document Overloaded Methods**: Clearly explain differences between overloads
+   - Why: Helps users understand when to use each version
+   - How: Add comments explaining what makes each overload different and when to use it
+   - Example:
+     ```java
+     // Calculate area of square (one side length)
+     public static double calculateArea(double side) { return side * side; }
+
+     // Calculate area of rectangle (length and width)
+     public static double calculateArea(double length, double width) { return length * width; }
+     ```
 
 **🎯 Challenge:**
 1. Create overloaded `greet()` methods:
@@ -4209,14 +4966,186 @@ int count = numbers.length;
 - Can use varargs like an array inside method
 - Recognize when varargs is better than overloading
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Multiple varargs | Only one allowed per method | Use one varargs or arrays |
-| Varargs not last | Must be final parameter | Move to end of parameter list |
-| Forgetting length check | Might access empty array | Check `numbers.length` first |
-| Wrong syntax | `int... nums` not `int ...nums` | `type... name` (dots after type) |
+1. ❌ **Declaring Multiple Varargs Parameters**: Trying to have more than one varargs parameter in a method
+   - Why: Java only allows one varargs parameter per method. Multiple varargs would create ambiguity about which arguments go to which parameter.
+   - Fix: Use only one varargs parameter per method. If you need multiple variable-length inputs, use arrays instead.
+   - Example:
+     ```java
+     // Wrong - can't have two varargs
+     public static void process(int... numbers, String... words) {  // Error!
+         // Which arguments go to numbers? Which to words?
+     }
+
+     // Correct - only one varargs
+     public static void process(int... numbers) {
+         // Works fine
+     }
+
+     // Alternative - use arrays for multiple variable inputs
+     public static void process(int[] numbers, String[] words) {
+         // Both can be variable length
+     }
+     ```
+
+2. ❌ **Placing Varargs Before Other Parameters**: Putting varargs parameter before regular parameters
+   - Why: Java requires varargs to be the last parameter because it consumes all remaining arguments. If it's not last, Java can't figure out where varargs ends and next parameter begins.
+   - Fix: Always place varargs as the final parameter in the method signature.
+   - Example:
+     ```java
+     // Wrong - varargs must be last
+     public static String join(String... words, String separator) {  // Error!
+         return "";
+     }
+
+     // Correct - varargs is last
+     public static String join(String separator, String... words) {
+         // Now Java knows: first arg = separator, rest = words
+         return "";
+     }
+     ```
+
+3. ❌ **Not Checking Varargs Length Before Accessing**: Accessing array elements without verifying the array isn't empty
+   - Why: Varargs can receive zero arguments, resulting in an empty array. Accessing elements without checking causes ArrayIndexOutOfBoundsException.
+   - Fix: Always check the length before accessing elements by index. Use length property or check in a loop.
+   - Example:
+     ```java
+     // Wrong - might be empty
+     public static int getFirst(int... numbers) {
+         return numbers[0];  // Crash if no arguments passed!
+     }
+
+     // Correct - check length first
+     public static int getFirst(int... numbers) {
+         if (numbers.length == 0) {
+             return 0;  // or throw exception, or use default
+         }
+         return numbers[0];  // Safe now
+     }
+     ```
+
+4. ❌ **Wrong Varargs Syntax**: Placing the dots (...) in the wrong position
+   - Why: The varargs syntax is specific: dots must come right after the type, then space, then variable name.
+   - Fix: Use the correct format: `type... variableName` (dots immediately after type).
+   - Example:
+     ```java
+     // Wrong - various incorrect placements
+     public static void method(int ...numbers) {  // Space before dots
+     }
+     public static void method(int. ..numbers) {  // Space between dots
+     }
+     public static void method(...int numbers) {  // Dots before type
+     }
+
+     // Correct - dots right after type
+     public static void method(int... numbers) {
+         // This is the right way
+     }
+     ```
+
+5. ❌ **Confusing Varargs with Arrays**: Not understanding that varargs is syntactic sugar for arrays
+   - Why: Students don't realize that inside the method, varargs behaves exactly like an array. You can use array operations on it.
+   - Fix: Understand that `type... name` becomes `type[] name` inside the method. Use array methods like length, loops, indexing.
+   - Example:
+     ```java
+     public static void printAll(String... items) {
+         // items is actually String[] inside the method
+
+         // You can use .length
+         System.out.println("Count: " + items.length);
+
+         // You can index it
+         if (items.length > 0) {
+             System.out.println("First: " + items[0]);
+         }
+
+         // You can loop through it
+         for (String item : items) {
+             System.out.println(item);
+         }
+     }
+     ```
+
+**Best Practices:**
+
+1. ✅ **Always Validate Varargs Length**: Check for empty varargs before processing
+   - Why: Prevents ArrayIndexOutOfBoundsException when accessing elements
+   - How: Check `parameters.length` before iterating or accessing elements
+   - Example:
+     ```java
+     public static int max(int... numbers) {
+         if (numbers.length == 0) {
+             return 0;  // or throw exception, or return Integer.MIN_VALUE
+         }
+         // Now safe to process
+         int maximum = numbers[0];
+         for (int num : numbers) {
+             if (num > maximum) maximum = num;
+         }
+         return maximum;
+     }
+     ```
+
+2. ✅ **Use Varargs for Flexible APIs**: Prefer varargs over multiple overloaded methods
+   - Why: Cleaner, more maintainable, and more flexible than many overloads
+   - How: When a method needs to accept varying numbers of same-type arguments, use varargs
+   - Example:
+     ```java
+     // Instead of:
+     // public static int sum(int a, int b) { }
+     // public static int sum(int a, int b, int c) { }
+     // public static int sum(int a, int b, int c, int d) { }
+
+     // Use varargs:
+     public static int sum(int... numbers) {
+         int total = 0;
+         for (int num : numbers) total += num;
+         return total;
+     }
+     ```
+
+3. ✅ **Place Varargs Last**: Always put varargs as the last parameter
+   - Why: Java requirement - only one varargs per method and must be last
+   - How: Regular parameters first, varargs parameter last
+   - Example:
+     ```java
+     // Good
+     public static String join(String separator, String... words) { }
+
+     // Wrong - won't compile
+     public static String join(String... words, String separator) { }
+     ```
+
+4. ✅ **Use Enhanced For Loop with Varargs**: Iterate using for-each loop
+   - Why: Cleaner, safer, and more readable than index-based loops
+   - How: Use `for (Type element : varargsParam)` pattern
+   - Example:
+     ```java
+     public static void printAll(String... items) {
+         // Good - clean and simple
+         for (String item : items) {
+             System.out.println(item);
+         }
+
+         // Less preferred - more verbose
+         for (int i = 0; i < items.length; i++) {
+             System.out.println(items[i]);
+         }
+     }
+     ```
+
+5. ✅ **Consider Varargs vs. Collections**: Choose appropriate data structure
+   - Why: Varargs for simple cases, Collections for complex operations
+   - How: Use varargs for utility methods; use List/Set for methods that need collection operations
+   - Example:
+     ```java
+     // Good for simple aggregation
+     public static int sum(int... numbers) { }
+
+     // Better for complex operations (sorting, filtering, etc.)
+     public static void processData(List<Integer> numbers) { }
+     ```
 
 **🎯 Challenge:**
 1. Create `concatenate(String... words)` that joins all strings with spaces
@@ -4464,14 +5393,194 @@ Array:
 - Know array/object contents CAN be modified
 - Recognize why swap doesn't work in Java
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Reality |
-|---------|----------------|---------|
-| Expecting primitive to change | Java passes copy of value | Original unchanged |
-| Thinking Java is pass-by-reference | It's always pass-by-value | Even objects are "value of reference" |
-| Trying to swap without return | Changes only affect copies | Must return new values or use array |
-| Confusion about arrays | Array contents vs array reference | Can change contents, not reference |
+1. ❌ **Expecting Primitive Values to Change After Method Call**: Thinking that modifying a parameter inside a method will change the original variable
+   - Why: Java passes a copy of primitive values, not the original. Changes to the copy don't affect the original variable outside the method.
+   - Fix: If you need to modify a primitive value, return the new value from the method and assign it back to the variable.
+   - Example:
+     ```java
+     public static void modifyNumber(int x) {
+         x = x * 2;  // Only modifies the copy
+     }
+
+     public static void main(String[] args) {
+         int number = 10;
+         modifyNumber(number);
+         System.out.println(number);  // Still 10, not 20!
+
+         // Correct approach - return the value
+         number = doubleNumber(number);  // Now number = 20
+     }
+
+     public static int doubleNumber(int x) {
+         return x * 2;  // Return the modified value
+     }
+     ```
+
+2. ❌ **Thinking Java Has Pass-by-Reference**: Believing Java passes references like C++ or C#
+   - Why: Java is ALWAYS pass-by-value. Even for objects, Java passes a copy of the reference value, not the reference itself.
+   - Fix: Understand that you get a copy of the reference. You can modify object contents through the copy, but can't change what the original reference points to.
+   - Example:
+     ```java
+     public static void reassignArray(int[] arr) {
+         arr = new int[]{10, 20, 30};  // Changes only the copy of reference
+     }
+
+     public static void main(String[] args) {
+         int[] numbers = {1, 2, 3};
+         reassignArray(numbers);
+         System.out.println(numbers[0]);  // Still 1, not 10!
+         // The original reference still points to {1,2,3}
+
+         // But you CAN modify contents:
+         modifyContents(numbers);
+         System.out.println(numbers[0]);  // Now 99!
+     }
+
+     public static void modifyContents(int[] arr) {
+         arr[0] = 99;  // This works - modifying through the reference
+     }
+     ```
+
+3. ❌ **Trying to Swap Primitive Values Without Return**: Attempting to swap two primitives by passing them to a method
+   - Why: The swap only affects the copies of the values inside the method, not the originals.
+     - Fix: Can't directly swap primitives through parameters. Either use an array wrapper or return multiple values (via array/object).
+   - Example:
+     ```java
+     // Wrong - doesn't work
+     public static void swap(int a, int b) {
+         int temp = a;
+         a = b;
+         b = temp;  // Only swaps the copies!
+     }
+
+     int x = 5, y = 10;
+     swap(x, y);
+     System.out.println(x + ", " + y);  // Still 5, 10
+
+     // Correct - use an array
+     public static void swap(int[] values) {
+         int temp = values[0];
+         values[0] = values[1];
+         values[1] = temp;
+     }
+
+     int[] nums = {5, 10};
+     swap(nums);
+     System.out.println(nums[0] + ", " + nums[1]);  // Now 10, 5
+     ```
+
+4. ❌ **Confusing Array Contents vs Array Reference**: Not understanding the difference between modifying array contents and reassigning the reference
+   - Why: You can modify the contents of an array through a reference copy, but you can't make the original reference point to a different array.
+   - Fix: Understand two concepts: (1) modifying existing array elements works, (2) reassigning the parameter to a new array doesn't affect original.
+   - Example:
+     ```java
+     public static void modifyArray(int[] arr) {
+         arr[0] = 100;           // ✓ Works - modifies original array contents
+         arr = new int[]{1,2,3}; // ✗ Doesn't affect original reference
+     }
+
+     int[] numbers = {5, 10, 15};
+     modifyArray(numbers);
+     System.out.println(numbers[0]);     // 100 (first modification worked)
+     System.out.println(numbers.length); // 3 (reassignment didn't work)
+     ```
+
+5. ❌ **Expecting Immutable Objects to Change**: Trying to modify immutable objects like String and expecting changes
+   - Why: Strings are immutable in Java. Any "modification" creates a new String object without changing the original.
+   - Fix: Return the new String from the method and assign it back to the variable.
+   - Example:
+     ```java
+     public static void modifyString(String s) {
+         s = s + " World";  // Creates new String, doesn't change original
+     }
+
+     String text = "Hello";
+     modifyString(text);
+     System.out.println(text);  // Still "Hello"
+
+     // Correct - return the new string
+     public static String appendWorld(String s) {
+         return s + " World";
+     }
+
+     text = appendWorld(text);
+     System.out.println(text);  // Now "Hello World"
+     ```
+
+**Best Practices:**
+
+1. ✅ **Return Modified Values for Primitives**: Use return values when you need to modify primitives
+   - Why: Java passes primitive values by copy, so changes inside method don't affect original
+   - How: Return the modified value and assign it back to the variable
+   - Example:
+     ```java
+     // Won't work - passes copy
+     public static void increment(int n) {
+         n++;  // Only affects copy
+     }
+
+     // Works - returns new value
+     public static int increment(int n) {
+         return n + 1;  // Caller assigns: x = increment(x);
+     }
+     ```
+
+2. ✅ **Understand Reference Copying for Objects**: Know that object references are copied, not objects themselves
+   - Why: Helps avoid confusion about why object contents change but reassignment doesn't
+   - How: Remember you can modify object contents but can't make parameter point to different object
+   - Example:
+     ```java
+     public static void modifyArray(int[] arr) {
+         arr[0] = 100;  // Works - modifies array contents
+         arr = new int[]{1, 2, 3};  // Doesn't affect original - only changes local reference
+     }
+     ```
+
+3. ✅ **Use Return Values for Swap Operations**: Can't swap primitive variables directly in Java
+   - Why: Pass-by-value means you only have copies of the values
+   - How: Return swapped values in an array or use a wrapper class
+   - Example:
+     ```java
+     // Won't work
+     public static void swap(int a, int b) {
+         int temp = a;
+         a = b;
+         b = temp;  // Only swaps copies
+     }
+
+     // Works - return array with swapped values
+     public static int[] swap(int a, int b) {
+         return new int[]{b, a};
+     }
+     // Usage: int[] result = swap(x, y); x = result[0]; y = result[1];
+     ```
+
+4. ✅ **Leverage Arrays/Objects for Multiple Return Values**: Use array or object when method needs to modify multiple values
+   - Why: Can modify array/object contents which persists after method returns
+   - How: Pass array or object, modify its contents, changes are visible to caller
+   - Example:
+     ```java
+     public static void updateCoordinates(int[] point) {
+         point[0] += 10;  // Move x
+         point[1] += 20;  // Move y
+         // Changes persist after method ends
+     }
+     // Usage: int[] position = {0, 0}; updateCoordinates(position);
+     ```
+
+5. ✅ **Document Pass-by-Value Behavior**: Clearly indicate whether method modifies parameters
+   - Why: Helps users understand method's effect on arguments
+   - How: Add comments explaining if/how parameters are affected
+   - Example:
+     ```java
+     // Modifies array contents in place
+     public static void sortArray(int[] numbers) { }
+
+     // Returns new value, doesn't modify parameter
+     public static int double(int number) { return number * 2; }
+     ```
 
 **Key Distinctions:**
 ```java
@@ -4692,13 +5801,127 @@ Final balance: $700.0
 - Can validate data in setter methods
 - Recognize encapsulation protects data integrity
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Making all variables public | No protection, anyone can change | Make variables private |
-| No validation in setters | Bad data can be set | Add if statements to validate |
-| Not using getters/setters | Direct access defeats encapsulation | Always use methods |
+1. ❌ **Making All Instance Variables Public**: Declaring class fields as public instead of private
+   - Why: Public fields can be directly accessed and modified by anyone, bypassing validation and breaking encapsulation. This leads to data corruption and hard-to-track bugs.
+   - Fix: Always declare instance variables as `private` and provide controlled access through getter/setter methods.
+   - Example:
+     ```java
+     // Wrong - no protection
+     public class BankAccount {
+         public double balance;  // Anyone can do: account.balance = -1000;
+     }
+
+     // Correct - encapsulated
+     public class BankAccount {
+         private double balance;  // Hidden from outside
+
+         public double getBalance() {
+             return balance;
+         }
+
+         public void deposit(double amount) {
+             if (amount > 0) {
+                 balance += amount;  // Controlled access with validation
+             }
+         }
+     }
+     ```
+
+2. ❌ **No Validation in Setter Methods**: Accepting any value without checking if it's valid
+   - Why: Without validation, invalid or malicious data can corrupt the object's state, leading to bugs and security issues.
+   - Fix: Add validation logic in setter methods to ensure only valid data is accepted.
+   - Example:
+     ```java
+     // Wrong - accepts any value
+     public void setAge(int age) {
+         this.age = age;  // Could be -100 or 9999!
+     }
+
+     // Correct - validates before setting
+     public void setAge(int age) {
+         if (age >= 0 && age <= 150) {
+             this.age = age;
+         } else {
+             System.out.println("Invalid age! Must be 0-150");
+         }
+     }
+     ```
+
+3. ❌ **Not Using Getters/Setters**: Accessing or modifying private variables directly from outside the class
+   - Why: This defeats the purpose of encapsulation. Students make variables private but then try to access them directly like `person.name`.
+   - Fix: Always use getter and setter methods to access private variables.
+   - Example:
+     ```java
+     public class Person {
+         private String name;
+
+         public String getName() { return name; }
+         public void setName(String name) { this.name = name; }
+     }
+
+     // Wrong - can't access private field directly
+     Person p = new Person();
+     p.name = "Alice";  // Error: name has private access
+
+     // Correct - use setter method
+     p.setName("Alice");
+     String name = p.getName();
+     ```
+
+4. ❌ **Exposing Private Data Through Getters**: Returning mutable objects directly from getters
+   - Why: If you return a reference to a mutable object (like an array or ArrayList), callers can modify it directly, bypassing encapsulation.
+   - Fix: Return a copy of mutable objects, or use Collections.unmodifiableList() for collections.
+   - Example:
+     ```java
+     // Wrong - exposes internal array
+     private int[] scores;
+     public int[] getScores() {
+         return scores;  // Caller can modify the array!
+     }
+
+     // Correct - return a copy
+     public int[] getScores() {
+         return Arrays.copyOf(scores, scores.length);
+     }
+     ```
+
+5. ❌ **Forgetting the `this` Keyword**: Not using `this` when parameter name matches field name
+   - Why: When a setter parameter has the same name as the field, you must use `this` to distinguish between them. Without it, you're just assigning the parameter to itself.
+   - Fix: Use `this.fieldName` to refer to the instance variable.
+   - Example:
+     ```java
+     // Wrong - doesn't actually set the field
+     private String name;
+     public void setName(String name) {
+         name = name;  // Just assigns parameter to itself!
+     }
+
+     // Correct - uses this to refer to instance variable
+     public void setName(String name) {
+         this.name = name;  // this.name is the field
+     }
+     ```
+
+**Best Practices:**
+
+1. ✅ **Always Use private for Fields**: Make instance variables private by default
+   - Why: Protects data from unauthorized access and modification
+   - How: Declare all fields as `private` unless there's a specific reason not to
+   - Example: `private String name;` not `public String name;`
+
+2. ✅ **Provide Controlled Access via Methods**: Use getters and setters to access private fields
+   - Why: Allows validation and maintains encapsulation while providing necessary access
+   - How: Create public getter/setter methods for fields that need external access
+
+3. ✅ **Initialize Fields in Constructor**: Set initial values when object is created
+   - Why: Ensures object starts in valid state
+   - How: Create constructor that accepts parameters and initializes fields
+
+4. ✅ **Validate Input in Setters**: Check values before assigning to fields
+   - Why: Prevents invalid data from corrupting object state
+   - How: Add validation checks in setter methods before assignment
 
 **🎯 Challenge:**
 Create a `Student` class with:
@@ -4905,14 +6128,140 @@ public boolean getActive()    // ⚠️  Should be "is" for boolean
 - Add validation in setters
 - Understand when to omit getter or setter
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| `public int age()` | Missing "get" prefix | `public int getAge()` |
-| `public boolean getActive()` | Should use "is" for boolean | `public boolean isActive()` |
-| No validation in setter | Allows invalid data | Add if statement |
-| Setter returns value | Should be void | `public void setAge(...)` |
+1. ❌ **Missing "get" Prefix in Getter Methods**: Writing `public int age()` instead of `public int getAge()`
+   - Why: Java naming conventions and frameworks like JavaBeans expect getters to start with "get" (or "is" for booleans). Missing this prefix breaks convention and can cause issues with frameworks.
+   - Fix: Always prefix getters with "get" for non-boolean types and "is" for boolean types.
+   - Example:
+     ```java
+     private int age;
+
+     // Wrong - doesn't follow convention
+     public int age() {
+         return age;
+     }
+
+     // Correct - follows JavaBeans convention
+     public int getAge() {
+         return age;
+     }
+     ```
+
+2. ❌ **Using "get" for Boolean Getters**: Writing `public boolean getActive()` instead of `public boolean isActive()`
+   - Why: The convention for boolean getters is to use "is" prefix, not "get". This makes the code more readable and natural.
+   - Fix: Use "is" prefix for boolean getters: `isActive()`, `isValid()`, `isEmpty()`.
+   - Example:
+     ```java
+     private boolean active;
+     private boolean employed;
+
+     // Wrong - uses get for boolean
+     public boolean getActive() {
+         return active;
+     }
+
+     // Correct - uses is for boolean
+     public boolean isActive() {
+         return active;
+     }
+
+     public boolean isEmployed() {
+         return employed;
+     }
+     ```
+
+3. ❌ **No Validation in Setter Methods**: Accepting any value without checking if it's valid
+   - Why: Setters should validate input to prevent invalid data from corrupting object state.
+   - Fix: Add validation checks in setters before assigning values.
+   - Example:
+     ```java
+     // Wrong - no validation
+     public void setAge(int age) {
+         this.age = age;  // Could be negative or unrealistic!
+     }
+
+     // Correct - validates input
+     public void setAge(int age) {
+         if (age >= 0 && age <= 150) {
+             this.age = age;
+         } else {
+             System.out.println("Invalid age! Must be 0-150");
+         }
+     }
+     ```
+
+4. ❌ **Setter Returning a Value**: Making setter return something other than void
+   - Why: By convention, setters should be void methods that just set the value. Returning a value confuses the method's purpose.
+   - Fix: Make setters return `void` (or return `this` for method chaining if intentional).
+   - Example:
+     ```java
+     // Wrong - setter returns a value
+     public int setAge(int age) {
+         this.age = age;
+         return age;  // Why return? Confusing!
+     }
+
+     // Correct - setter is void
+     public void setAge(int age) {
+         if (age >= 0 && age <= 150) {
+             this.age = age;
+         }
+     }
+
+     // Alternative - return this for method chaining
+     public Person setAge(int age) {
+         this.age = age;
+         return this;  // Allows: person.setAge(25).setName("Alice")
+     }
+     ```
+
+5. ❌ **Getter with Complex Logic**: Putting complicated calculations or side effects in getter methods
+   - Why: Getters should be simple, fast, and predictable. Complex logic makes the method slow and unpredictable.
+   - Fix: Keep getters simple - just return the field. Move complex calculations to separate methods with descriptive names.
+   - Example:
+     ```java
+     // Wrong - getter does too much
+     public String getName() {
+         connectToDatabase();
+         logAccess();
+         updateStatistics();
+         return name;  // Too much happening for a simple "get"!
+     }
+
+     // Correct - getter is simple
+     public String getName() {
+         return name;
+     }
+
+     // Complex logic in separate method
+     public String getNameWithStats() {
+         updateStatistics();
+         return name;
+     }
+     ```
+
+**Best Practices:**
+
+1. ✅ **Follow JavaBeans Naming Convention**: Use get/set/is prefixes consistently
+   - Why: Standard recognized by frameworks and IDEs
+   - How: `getName()`, `setName()`, `isActive()` for boolean
+   - Example: Field `age` → `getAge()` and `setAge(int age)`
+
+2. ✅ **Keep Getters Simple**: Just return the field value
+   - Why: Getters should be fast, predictable accessors
+   - How: Simple `return field;` without complex logic
+   - Example: `public String getName() { return name; }`
+
+3. ✅ **Add Validation in Setters**: Protect against invalid data
+   - Why: Maintains object integrity and data quality
+   - How: Check parameter value before assignment
+   - Example: `public void setAge(int age) { if (age >= 0 && age <= 150) this.age = age; }`
+
+4. ✅ **Return this for Method Chaining**: Enable fluent interfaces in setters
+   - Why: Allows convenient chaining of setter calls
+   - How: Return `this` instead of `void` from setters
+   - Example: `public Person setName(String name) { this.name = name; return this; }`
 
 **🎯 Challenge:**
 Create a `Product` class with:
@@ -5127,14 +6476,114 @@ Should everyone access this?
 - Can explain visibility of each modifier
 - Recognize private is most restrictive, public is least
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Better Choice |
-|---------|----------------|---------------|
-| Everything public | No encapsulation | Make variables private |
-| Forgetting modifier | Defaults to package-private | Be explicit with private/public |
-| Using protected unnecessarily | Too permissive | Use private unless subclasses need it |
-| Private methods too early | Over-engineering | Start with private, change if needed |
+1. ❌ **Making Everything Public**: Declaring all variables and methods as public without considering security
+   - Why: Public access means anyone can access and modify data directly, defeating encapsulation and creating security risks.
+   - Fix: Start with `private` by default and only use `public` for methods that need to be accessed from outside.
+   - Example:
+     ```java
+     // Wrong - everything exposed
+     public class BankAccount {
+         public String password;  // Security risk!
+         public double balance;   // Can be modified directly!
+     }
+
+     // Correct - appropriate access levels
+     public class BankAccount {
+         private String password;  // Hidden
+         private double balance;   // Protected
+
+         public double getBalance() {  // Controlled access
+             return balance;
+         }
+     }
+     ```
+
+2. ❌ **Forgetting Access Modifier**: Omitting the access modifier and getting default (package-private) accidentally
+   - Why: When you don't specify an access modifier, Java uses "default" (package-private), which might not be what you intend. This makes code unclear.
+   - Fix: Always explicitly specify the access modifier to make your intentions clear.
+   - Example:
+     ```java
+     // Wrong - unclear intent, defaults to package-private
+     String name;
+     int age;
+
+     // Correct - explicit intent
+     private String name;  // Clear: only this class
+     public int getAge() { // Clear: accessible everywhere
+         return age;
+     }
+     ```
+
+3. ❌ **Using Protected Unnecessarily**: Making fields protected when private would suffice
+   - Why: Protected gives access to subclasses and the same package, which is more permissive than needed in most cases.
+   - Fix: Use `private` unless you specifically need subclasses to access the member.
+   - Example:
+     ```java
+     // Wrong - unnecessarily permissive
+     public class User {
+         protected String internalId;  // Do subclasses really need this?
+     }
+
+     // Correct - restrictive until proven otherwise
+     public class User {
+         private String internalId;  // Hidden by default
+
+         // Provide access method if subclasses need it
+         protected String getInternalId() {
+             return internalId;
+         }
+     }
+     ```
+
+4. ❌ **Making Helper Methods Public**: Exposing internal utility methods that should be private
+   - Why: Helper methods are implementation details that users don't need to know about. Making them public clutters the public API.
+   - Fix: Mark internal helper methods as `private`.
+   - Example:
+     ```java
+     // Wrong - implementation details exposed
+     public class Calculator {
+         public double add(double a, double b) {
+             return a + b;
+         }
+
+         public boolean validateNumber(double n) {  // Internal helper, shouldn't be public!
+             return !Double.isNaN(n);
+         }
+     }
+
+     // Correct - helpers are private
+     public class Calculator {
+         public double add(double a, double b) {
+             validateNumber(a);
+             validateNumber(b);
+             return a + b;
+         }
+
+         private boolean validateNumber(double n) {  // Internal only
+             return !Double.isNaN(n);
+         }
+     }
+     ```
+
+5. ❌ **Confusing Default with Public**: Thinking that omitting an access modifier makes a member public
+   - Why: Many beginners think no modifier = public, but it actually means package-private (default). This leads to unexpected access restrictions.
+   - Fix: Understand that no modifier = default (package-private), not public. Be explicit with modifiers.
+   - Example:
+     ```java
+     // What students think default means:
+     class Example {
+         String name;  // Student thinks: "This is public"
+     }
+     // Reality: name is only accessible within the same package
+
+     // Be explicit:
+     class Example {
+         public String name;   // Truly public - accessible everywhere
+         private String name2; // Private - this class only
+     }
+     ```
 
 **🎯 Challenge:**
 1. Create a `BankAccount` class with appropriate access modifiers:
@@ -5144,6 +6593,87 @@ Should everyone access this?
    - Public: deposit(), withdraw(), getBalance()
 2. Try accessing each member from a test class
 3. Observe what works and what doesn't
+
+**📋 Best Practices:**
+
+✅ **Follow the Principle of Least Privilege**
+- **Why:** Grant the minimum level of access necessary for functionality
+- **How:** Start with `private` by default, only increase visibility when needed
+- **Example:**
+```java
+// ❌ Bad - Unnecessarily public
+public class User {
+    public String password;  // Security risk!
+}
+
+// ✅ Good - Minimal necessary access
+public class User {
+    private String password;  // Hidden from outside
+    public boolean verifyPassword(String input) {
+        return password.equals(input);
+    }
+}
+```
+
+✅ **Use Private for Implementation Details**
+- **Why:** Internal helper methods and data should be hidden to allow implementation changes
+- **How:** Mark all internal calculations, validations, and helper methods as `private`
+- **Example:**
+```java
+public class Calculator {
+    private double validateInput(double value) {  // Internal helper
+        if (value < 0) throw new IllegalArgumentException();
+        return value;
+    }
+
+    public double add(double a, double b) {  // Public interface
+        return validateInput(a) + validateInput(b);
+    }
+}
+```
+
+✅ **Protected for Inheritance, Not General Access**
+- **Why:** `protected` is for subclass extension, not package-wide sharing
+- **How:** Only use `protected` when you intend for subclasses to access or override members
+- **Example:**
+```java
+public class Employee {
+    protected String name;  // ✅ Subclasses need this
+    protected void calculateBonus() { }  // ✅ For override
+
+    String department;  // ❌ Use private, not default
+}
+```
+
+✅ **Avoid Default (Package-Private) Unless Intentional**
+- **Why:** Default access is often used unintentionally, creating unclear boundaries
+- **How:** Always explicitly declare `private` or `public`; use default only for package-internal utilities
+- **Example:**
+```java
+// ✅ Good - Intentional package-private for testing
+class TestHelper {  // Package-private class
+    static void resetTestData() { }
+}
+
+// ❌ Bad - Accidental default access
+class User {
+    String username;  // Forgot to add private!
+}
+```
+
+✅ **Document Access Level Decisions**
+- **Why:** Future developers need to understand why certain access levels were chosen
+- **How:** Add comments explaining non-obvious access choices
+- **Example:**
+```java
+public class Cache {
+    // Protected to allow test subclasses to verify internal state
+    protected Map<String, Object> data;
+
+    // Package-private for use by CacheManager in same package
+    void clearExpired() { }
+}
+```
 
 ---
 
@@ -5485,6 +7015,220 @@ Create a `ShoppingCart` class with:
 2. Public methods: addItem(), removeItem(), getTotal(), checkout()
 3. Validation: can't add negative prices, can't checkout if empty
 4. Read-only: itemCount (calculated, no setter)
+
+**📋 Best Practices:**
+
+✅ **Make Data Members Private by Default**
+- **Why:** Private fields enforce encapsulation and prevent uncontrolled external access
+- **How:** Declare all instance variables as `private`, expose only through controlled methods
+- **Example:**
+```java
+// ❌ Bad - Direct access possible
+public class Product {
+    public double price;  // Anyone can set negative price!
+}
+
+// ✅ Good - Controlled access only
+public class Product {
+    private double price;
+    public void setPrice(double price) {
+        if (price >= 0) this.price = price;
+    }
+}
+```
+
+✅ **Use Read-Only Properties for Derived or Immutable Data**
+- **Why:** Some data shouldn't be directly set but should still be readable
+- **How:** Provide getter only, no setter; value is set in constructor or calculated
+- **Example:**
+```java
+public class BankAccount {
+    private String accountNumber;  // Set once in constructor
+    private double balance;
+
+    public BankAccount(String accountNumber) {
+        this.accountNumber = accountNumber;  // Never changes
+    }
+
+    public String getAccountNumber() { return accountNumber; }
+    // No setAccountNumber() - read-only!
+}
+```
+
+✅ **Implement Business Logic Through Methods, Not Direct Field Access**
+- **Why:** Business rules need validation and side effects; direct field access bypasses this
+- **How:** Create methods like `deposit()`, `withdraw()` instead of `setBalance()`
+- **Example:**
+```java
+// ❌ Bad - No business logic
+public void setBalance(double balance) {
+    this.balance = balance;  // Can set any value!
+}
+
+// ✅ Good - Enforces business rules
+public void withdraw(double amount) {
+    if (amount > 0 && amount <= balance && balance - amount >= MIN_BALANCE) {
+        balance -= amount;
+    } else {
+        throw new IllegalArgumentException("Invalid withdrawal");
+    }
+}
+```
+
+✅ **Validate All Input in Setters and Constructors**
+- **Why:** Prevents invalid object states that could cause bugs or security issues
+- **How:** Check all parameters before assigning; throw exceptions or return error messages
+- **Example:**
+```java
+public void setAccountType(String type) {
+    if (type == null || type.trim().isEmpty()) {
+        throw new IllegalArgumentException("Account type cannot be empty");
+    }
+    if (!type.equals("Savings") && !type.equals("Checking")) {
+        throw new IllegalArgumentException("Invalid account type");
+    }
+    this.accountType = type;
+}
+```
+
+✅ **Use Constants for Business Rules and Limits**
+- **Why:** Makes business rules visible, reusable, and easy to change
+- **How:** Define `private static final` constants at class level
+- **Example:**
+```java
+public class BankAccount {
+    private static final double MIN_BALANCE = 100.0;
+    private static final double MAX_WITHDRAWAL = 5000.0;
+    private static final String[] VALID_TYPES = {"Savings", "Checking"};
+
+    public void withdraw(double amount) {
+        if (amount > MAX_WITHDRAWAL) {
+            throw new IllegalArgumentException("Exceeds max withdrawal");
+        }
+        // Use constants consistently
+    }
+}
+```
+
+**Common Mistakes:**
+
+1. ❌ **Exposing Private Fields with Public Setters That Don't Validate**: Creating setters that blindly accept any value without checking if it makes sense
+   - Why: Students think adding getters/setters is enough for encapsulation, but if setters don't validate, anyone can still set invalid data. This defeats the purpose of encapsulation.
+   - Fix: Every setter must validate input before accepting it. Use constants for limits and throw exceptions or print errors for invalid values.
+   - Example:
+     ```java
+     // Wrong - no validation
+     public void setBalance(double balance) {
+         this.balance = balance;  // Can set negative balance!
+     }
+
+     // Correct - with validation
+     public void deposit(double amount) {
+         if (amount <= 0) {
+             throw new IllegalArgumentException("Deposit amount must be positive");
+         }
+         this.balance += amount;
+     }
+
+     // For balance, don't provide setter at all - use deposit/withdraw methods
+     ```
+
+2. ❌ **Providing Setters for Fields That Should Be Immutable**: Creating public setters for fields like account numbers that should never change after creation
+   - Why: Not all private fields need setters. Some data (like account numbers, IDs) should be set once in the constructor and never modified.
+   - Fix: Only provide getters for read-only fields. Set them in the constructor and omit the setter method entirely.
+   - Example:
+     ```java
+     // Wrong - account number can be changed
+     private String accountNumber;
+
+     public void setAccountNumber(String accountNumber) {
+         this.accountNumber = accountNumber;  // Should never change!
+     }
+
+     // Correct - read-only after construction
+     private String accountNumber;
+
+     public BankAccount(String accountNumber) {
+         this.accountNumber = accountNumber;  // Set once
+     }
+
+     public String getAccountNumber() {
+         return accountNumber;  // Only getter, no setter
+     }
+     ```
+
+3. ❌ **Not Using Constants for Business Rules**: Hardcoding magic numbers in validation logic instead of defining constants
+   - Why: Business rules (min balance, max withdrawal, etc.) should be clear and easy to change. Hardcoding values like `100.0` throughout the class makes it hard to maintain and understand.
+   - Fix: Define `private static final` constants at the top of the class with meaningful names.
+   - Example:
+     ```java
+     // Wrong - magic numbers everywhere
+     public void withdraw(double amount) {
+         if (balance - amount < 100.0) {  // What does 100 mean?
+             // error
+         }
+         if (amount > 5000.0) {  // What does 5000 mean?
+             // error
+         }
+     }
+
+     // Correct - using constants
+     private static final double MIN_BALANCE = 100.0;
+     private static final double MAX_WITHDRAWAL = 5000.0;
+
+     public void withdraw(double amount) {
+         if (balance - amount < MIN_BALANCE) {
+             System.out.println("Minimum balance of $" + MIN_BALANCE + " required");
+         }
+         if (amount > MAX_WITHDRAWAL) {
+             System.out.println("Exceeds maximum withdrawal of $" + MAX_WITHDRAWAL);
+         }
+     }
+     ```
+
+4. ❌ **Mixing Direct Field Access with Method Access in Business Logic**: Accessing private fields directly in some methods but through getters in others, leading to inconsistency
+   - Why: While methods in the same class can access private fields directly, using getters internally can sometimes be better for consistency and future refactoring (if getter logic changes).
+   - Fix: Be consistent. For simple fields, direct access is fine within the class. For computed or validated fields, consider using getters even internally.
+   - Example:
+     ```java
+     // Inconsistent
+     public void transfer(BankAccount recipient, double amount) {
+         this.balance -= amount;  // Direct access
+         recipient.balance += amount;  // Direct access
+         System.out.println(recipient.getBalance());  // Using getter
+     }
+
+     // Consistent approach 1 - direct access (common for same class)
+     public void transfer(BankAccount recipient, double amount) {
+         this.balance -= amount;
+         recipient.balance += amount;
+     }
+
+     // Consistent approach 2 - using getters (more flexible)
+     public void transfer(BankAccount recipient, double amount) {
+         this.balance -= amount;
+         recipient.balance += amount;
+         // When displaying, use getter for consistency
+     }
+     ```
+
+5. ❌ **Forgetting to Validate in Constructors**: Validating in setters but directly assigning in constructors, bypassing validation
+   - Why: Constructors are the first point where data enters the object. If you validate in setters but not in constructors, invalid objects can still be created.
+   - Fix: Call setters from the constructor instead of assigning directly, or duplicate validation logic in constructor.
+   - Example:
+     ```java
+     // Wrong - bypasses validation
+     public BankAccount(String accountHolderName, String accountType) {
+         this.accountHolderName = accountHolderName;  // No validation!
+         this.accountType = accountType;  // No validation!
+     }
+
+     // Correct - uses setters for validation
+     public BankAccount(String accountHolderName, String accountType) {
+         setAccountHolderName(accountHolderName);  // Validation happens here
+         setAccountType(accountType);  // Validation happens here
+     }
+     ```
 
 ---
 
@@ -5842,14 +7586,133 @@ if (valid) {
 - Provide clear error messages
 - Handle edge cases (null, empty, negative, out of range)
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| No validation | Accepts invalid data | Always validate in setters |
-| Silent failures | User doesn't know why it failed | Print clear error messages |
-| Magic numbers | Hard to maintain | Use named constants |
-| Not checking null | NullPointerException | Check null first |
+1. ❌ **No Validation in Setters**: Accepting any value without checking if it's valid
+   - Why: Setters without validation allow invalid data to corrupt object state, leading to bugs, crashes, or security vulnerabilities.
+   - Fix: Always add validation logic in setters to check that input meets requirements before assigning.
+   - Example:
+     ```java
+     // Wrong - no validation
+     public void setAge(int age) {
+         this.age = age;  // Could be -100 or 9999!
+     }
+
+     // Correct - validates input
+     public void setAge(int age) {
+         if (age >= 0 && age <= 150) {
+             this.age = age;
+         } else {
+             System.out.println("Error: Age must be between 0 and 150");
+         }
+     }
+     ```
+
+2. ❌ **Silent Failures in Validation**: Not informing the user when validation fails
+   - Why: When validation fails silently, users don't know their input was rejected, making debugging and user experience terrible.
+   - Fix: Print clear error messages or throw exceptions when validation fails to inform the caller what went wrong.
+   - Example:
+     ```java
+     // Wrong - silent failure
+     public void setEmail(String email) {
+         if (email.contains("@")) {
+             this.email = email;
+         }
+         // Silently ignores invalid email - user has no idea!
+     }
+
+     // Correct - clear feedback
+     public void setEmail(String email) {
+         if (email != null && email.contains("@")) {
+             this.email = email;
+         } else {
+             System.out.println("Error: Invalid email format. Must contain @");
+         }
+     }
+     ```
+
+3. ❌ **Using Magic Numbers in Validation**: Hard-coding validation values directly in the code
+   - Why: Magic numbers make code hard to understand and maintain. If business rules change, you have to find and update every instance.
+   - Fix: Define constants with descriptive names for all validation limits and use them throughout the class.
+   - Example:
+     ```java
+     // Wrong - magic numbers
+     public void setAge(int age) {
+         if (age >= 0 && age <= 150) {  // What do these numbers mean?
+             this.age = age;
+         }
+     }
+
+     // Correct - named constants
+     private static final int MIN_AGE = 0;
+     private static final int MAX_AGE = 150;
+
+     public void setAge(int age) {
+         if (age >= MIN_AGE && age <= MAX_AGE) {  // Clear intent!
+             this.age = age;
+         }
+     }
+     ```
+
+4. ❌ **Not Checking for Null Values**: Forgetting to validate that String or object parameters aren't null
+   - Why: Null parameters can cause NullPointerException when you try to use them, crashing the program.
+   - Fix: Always check for null before processing String or object parameters in setters.
+   - Example:
+     ```java
+     // Wrong - will crash if null
+     public void setName(String name) {
+         if (name.trim().isEmpty()) {  // NullPointerException if name is null!
+             System.out.println("Name cannot be empty");
+         } else {
+             this.name = name;
+         }
+     }
+
+     // Correct - null check first
+     public void setName(String name) {
+         if (name == null) {
+             System.out.println("Error: Name cannot be null");
+             return;
+         }
+         if (name.trim().isEmpty()) {
+             System.out.println("Error: Name cannot be empty");
+         } else {
+             this.name = name;
+         }
+     }
+     ```
+
+5. ❌ **Inconsistent Validation Logic**: Using different validation rules in constructor vs setter
+   - Why: If constructor and setter have different validation rules, the object can end up in an invalid state depending on how it's created.
+   - Fix: Use the same validation logic in both constructor and setter. Extract validation to a private helper method that both use.
+   - Example:
+     ```java
+     // Wrong - inconsistent validation
+     public Person(String name, int age) {
+         this.name = name;  // No validation!
+         this.age = age;
+     }
+
+     public void setAge(int age) {
+         if (age >= 0 && age <= 150) {  // Validates here
+             this.age = age;
+         }
+     }
+
+     // Correct - consistent validation
+     public Person(String name, int age) {
+         setName(name);  // Reuse validation
+         setAge(age);    // Reuse validation
+     }
+
+     public void setName(String name) {
+         if (name != null && !name.trim().isEmpty()) {
+             this.name = name;
+         } else {
+             System.out.println("Error: Invalid name");
+         }
+     }
+     ```
 
 **🎯 Challenge:**
 Create a `CreditCard` class with validation for:
@@ -5859,6 +7722,107 @@ Create a `CreditCard` class with validation for:
 4. expiryYear (current year or later)
 5. creditLimit (1000-100000)
 6. balance (0 to creditLimit)
+
+**📋 Best Practices:**
+
+✅ **Use Constants for Validation Limits**
+- **Why:** Makes validation rules visible, maintainable, and prevents magic numbers
+- **How:** Declare `private static final` constants at the top of your class
+- **Example:**
+```java
+// ❌ Bad - Magic numbers scattered
+public void setAge(int age) {
+    if (age < 5 || age > 100) return;  // What do these mean?
+}
+
+// ✅ Good - Named constants
+private static final int MIN_AGE = 5;
+private static final int MAX_AGE = 100;
+public void setAge(int age) {
+    if (age < MIN_AGE || age > MAX_AGE) return;  // Clear meaning
+}
+```
+
+✅ **Validate in Both Setters and Constructors**
+- **Why:** Ensures objects are never in an invalid state from creation onwards
+- **How:** Call setters from constructors to reuse validation logic
+- **Example:**
+```java
+public class Student {
+    public Student(String name, int age) {
+        setName(name);  // ✅ Reuses validation
+        setAge(age);    // ✅ Reuses validation
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Name required");
+        }
+        this.name = name;
+    }
+}
+```
+
+✅ **Provide Clear, Actionable Error Messages**
+- **Why:** Users need to understand what went wrong and how to fix it
+- **How:** Include the invalid value, the constraint, and expected format in error messages
+- **Example:**
+```java
+// ❌ Bad - Vague message
+if (gpa < 0 || gpa > 4) {
+    System.out.println("Invalid GPA");
+}
+
+// ✅ Good - Specific and helpful
+if (gpa < MIN_GPA || gpa > MAX_GPA) {
+    System.out.println("❌ ERROR: GPA " + gpa +
+        " is invalid. Must be between " + MIN_GPA + " and " + MAX_GPA);
+}
+```
+
+✅ **Use Regular Expressions for Format Validation**
+- **Why:** Ensures data matches expected patterns (emails, IDs, phone numbers)
+- **How:** Use `String.matches()` with appropriate regex patterns
+- **Example:**
+```java
+public void setStudentId(String id) {
+    if (!id.matches("STU\\d{4}")) {  // STU followed by 4 digits
+        throw new IllegalArgumentException(
+            "Student ID must match format STU#### (e.g., STU1234)");
+    }
+    this.studentId = id;
+}
+
+public void setEmail(String email) {
+    if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        throw new IllegalArgumentException("Invalid email format");
+    }
+    this.email = email;
+}
+```
+
+✅ **Validate Related Fields Together (Cross-Field Validation)**
+- **Why:** Some constraints depend on multiple fields working together
+- **How:** Check relationships between fields in setters or dedicated validation methods
+- **Example:**
+```java
+public void setEnrolled(boolean enrolled) {
+    // Cross-field validation: can't unenroll with 0 credits
+    if (!enrolled && creditsCompleted == 0) {
+        throw new IllegalStateException(
+            "Cannot unenroll student with no completed credits");
+    }
+    this.isEnrolled = enrolled;
+}
+
+public void setEndDate(Date endDate) {
+    if (startDate != null && endDate.before(startDate)) {
+        throw new IllegalArgumentException(
+            "End date must be after start date");
+    }
+    this.endDate = endDate;
+}
+```
 
 ---
 
@@ -6227,14 +8191,149 @@ class Example {
 - Use `final` keyword for immutable properties
 - Choose appropriate access pattern for each property
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Setter for ID | IDs shouldn't change | Make read-only (final) |
-| Getter for password | Security risk | Write-only or hash comparison |
-| Storing calculated values | Wastes memory, may be stale | Compute in getter |
-| Not using `final` | Can be changed accidentally | Use `final` for read-only |
+1. ❌ **Providing Setter for ID or Immutable Fields**: Creating a setter for fields that should never change after initialization
+   - Why: IDs, timestamps, and other identifiers should be immutable. Allowing them to change breaks referential integrity and causes bugs.
+   - Fix: Make the field `final`, initialize it in the constructor, and provide only a getter (no setter).
+   - Example:
+     ```java
+     // Wrong - ID can be changed
+     public class Account {
+         private String accountId;
+
+         public void setAccountId(String id) {  // Dangerous!
+             this.accountId = id;
+         }
+     }
+
+     // Correct - ID is read-only
+     public class Account {
+         private final String accountId;  // Can't be reassigned
+
+         public Account(String id) {
+             this.accountId = id;  // Set once in constructor
+         }
+
+         public String getAccountId() {
+             return accountId;
+         }
+         // No setter - read-only!
+     }
+     ```
+
+2. ❌ **Providing Getter for Password or Sensitive Data**: Exposing passwords, pins, or secrets through getter methods
+   - Why: Security risk! Passwords should never be retrieved directly. Instead, use comparison methods or hash verification.
+   - Fix: Make the field write-only (setter but no getter) and provide a verification method like `checkPassword()`.
+   - Example:
+     ```java
+     // Wrong - password can be read!
+     public class User {
+         private String password;
+
+         public String getPassword() {  // Security risk!
+             return password;
+         }
+     }
+
+     // Correct - write-only with verification
+     public class User {
+         private String password;
+
+         public void setPassword(String pwd) {  // Can write
+             this.password = pwd;
+         }
+
+         public boolean verifyPassword(String pwd) {  // Can check, can't read
+             return this.password.equals(pwd);
+         }
+         // No getter - write-only!
+     }
+     ```
+
+3. ❌ **Storing Calculated Values Instead of Computing Them**: Creating a field to store a value that can be calculated from other fields
+   - Why: Stored calculated values can get out of sync when source data changes, causing bugs and wasting memory.
+   - Fix: Compute the value in the getter method instead of storing it. This ensures it's always accurate.
+   - Example:
+     ```java
+     // Wrong - stored value can become stale
+     public class Person {
+         private String firstName;
+         private String lastName;
+         private String fullName;  // Risk: might not match first+last
+
+         public void setFirstName(String name) {
+             this.firstName = name;
+             // Forgot to update fullName - now it's wrong!
+         }
+     }
+
+     // Correct - always computed correctly
+     public class Person {
+         private String firstName;
+         private String lastName;
+
+         public String getFullName() {
+             return firstName + " " + lastName;  // Always current
+         }
+         // No field needed - computed on demand
+     }
+     ```
+
+4. ❌ **Not Using `final` for Read-Only Properties**: Forgetting to mark immutable fields as final
+   - Why: Without `final`, the field can accidentally be reassigned within the class, breaking immutability. `final` enforces immutability at compile time.
+   - Fix: Always mark read-only fields as `final` to prevent accidental modification.
+   - Example:
+     ```java
+     // Wrong - can be changed accidentally
+     public class Transaction {
+         private String transactionId;  // Not final
+
+         public Transaction(String id) {
+             this.transactionId = id;
+         }
+
+         private void someMethod() {
+             this.transactionId = "new_id";  // Oops! Can be changed
+         }
+     }
+
+     // Correct - enforced immutability
+     public class Transaction {
+         private final String transactionId;  // Final
+
+         public Transaction(String id) {
+             this.transactionId = id;
+         }
+
+         private void someMethod() {
+             // this.transactionId = "new_id";  // Compile error - can't change final
+         }
+     }
+     ```
+
+5. ❌ **Confusing Read-Only with Constant**: Using `static final` for instance-specific values
+   - Why: `static final` creates a class-level constant shared by all instances. Read-only instance fields should use `final` only (not static).
+   - Fix: Use `final` (without static) for read-only instance fields. Use `static final` only for true constants.
+   - Example:
+     ```java
+     // Wrong - same ID for all accounts!
+     public class Account {
+         private static final String accountId = "ACC001";  // Shared!
+     }
+
+     // Correct - each account has its own ID
+     public class Account {
+         private final String accountId;  // Instance-specific
+
+         public Account(String id) {
+             this.accountId = id;  // Each account gets unique ID
+         }
+     }
+
+     // Constants ARE static final
+     private static final double TAX_RATE = 0.08;  // Same for all instances
+     ```
 
 **🎯 Challenge:**
 Create an `Invoice` class with:
@@ -6242,6 +8341,114 @@ Create an `Invoice` class with:
 2. Read-write: customerName, items[], tax
 3. Calculated: subtotal (sum of items), total (subtotal + tax), dueDate (invoiceDate + 30 days)
 4. Write-only: approvalCode (6-digit code)
+
+**📋 Best Practices:**
+
+✅ **Use Read-Only Properties for Immutable Identifiers**
+- **Why:** IDs, timestamps, and other identifiers should never change after creation
+- **How:** Use `final` keyword and provide getter only; initialize in constructor
+- **Example:**
+```java
+// ✅ Good - Immutable identifier
+public class Transaction {
+    private final String transactionId;  // Can't be changed
+    private final LocalDateTime createdAt;
+
+    public Transaction(String id) {
+        this.transactionId = id;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public String getTransactionId() { return transactionId; }
+    // No setter - read-only!
+}
+```
+
+✅ **Use Calculated Properties for Derived Values**
+- **Why:** Avoids data duplication and keeps derived values always accurate
+- **How:** Compute in getter method, don't store as field
+- **Example:**
+```java
+// ❌ Bad - Stored derived value can get out of sync
+public class Person {
+    private String firstName;
+    private String lastName;
+    private String fullName;  // Risk: might not match first+last
+
+    public void setFirstName(String name) {
+        this.firstName = name;
+        // Forgot to update fullName!
+    }
+}
+
+// ✅ Good - Always computed correctly
+public class Person {
+    private String firstName;
+    private String lastName;
+
+    public String getFullName() {
+        return firstName + " " + lastName;  // Always current
+    }
+}
+```
+
+✅ **Use Write-Only Properties for Sensitive Data**
+- **Why:** Passwords and secrets should be set but never retrieved
+- **How:** Provide setter for input, comparison method for verification; no getter
+- **Example:**
+```java
+public class UserAccount {
+    private String passwordHash;  // Store hash, not plain text
+
+    // Write-only: can set but not get
+    public void setPassword(String password) {
+        this.passwordHash = hashPassword(password);
+    }
+
+    // Verification instead of getter
+    public boolean verifyPassword(String input) {
+        return hashPassword(input).equals(passwordHash);
+    }
+
+    // ❌ NO getter for password!
+    // public String getPassword() { ... }  // Security risk!
+}
+```
+
+✅ **Prefer final for Truly Immutable Fields**
+- **Why:** Compiler enforces immutability, preventing accidental changes
+- **How:** Declare field as `final` and initialize in constructor only
+- **Example:**
+```java
+public class BankAccount {
+    private final String accountNumber;  // Cannot change
+    private final LocalDate createdDate;
+
+    public BankAccount(String accountNumber) {
+        this.accountNumber = accountNumber;  // Set once
+        this.createdDate = LocalDate.now();
+        // accountNumber = "new";  // ❌ Compiler error!
+    }
+}
+```
+
+✅ **Document Property Access Patterns**
+- **Why:** Helps other developers understand design decisions
+- **How:** Add comments explaining why properties are read-only, write-only, or calculated
+- **Example:**
+```java
+public class Order {
+    // Read-only: Order ID never changes after creation
+    private final String orderId;
+
+    // Calculated: Total is always sum of items, no need to store
+    public double getTotal() { /* calculate */ }
+
+    // Write-only: Security code verified but never exposed
+    private String securityCode;
+    public void setSecurityCode(String code) { this.securityCode = code; }
+}
+```
 
 ---
 
@@ -6900,6 +9107,126 @@ Extend the system with:
 4. Check if project is over budget
 5. Display project status report
 
+**📋 Best Practices:**
+
+✅ **Design Classes Around Real-World Entities**
+- **Why:** Makes code intuitive, maintainable, and aligned with business requirements
+- **How:** Each class represents one business concept with its own responsibilities
+- **Example:**
+```java
+// ✅ Good - Clear separation of concerns
+class Employee { /* employee data and behavior */ }
+class Department { /* department data and behavior */ }
+class EmployeeManagementSystem { /* coordinates Employee and Department */ }
+
+// ❌ Bad - Everything mixed together
+class System {
+    String[] employeeNames;
+    String[] departmentNames;
+    // Confusing and hard to maintain
+}
+```
+
+✅ **Combine All Encapsulation Patterns Together**
+- **Why:** Real applications need private fields, validation, read-only properties, and business logic
+- **How:** Use final for IDs, validation in setters, calculated properties, and meaningful methods
+- **Example:**
+```java
+public class Employee {
+    private final String employeeId;  // Read-only identifier
+    private String name;
+    private double salary;
+
+    public void setName(String name) {  // Validation
+        if (name == null || name.isEmpty()) throw new IllegalArgumentException();
+        this.name = name;
+    }
+
+    public int getYearsOfService() {  // Calculated property
+        return Period.between(hireDate, LocalDate.now()).getYears();
+    }
+
+    public void giveRaise(double percentage) {  // Business logic
+        if (percentage > 0 && percentage <= 20) {
+            salary *= (1 + percentage / 100);
+        }
+    }
+}
+```
+
+✅ **Create Coordinating Classes for System-Level Operations**
+- **Why:** Separates business logic from data classes; follows Single Responsibility Principle
+- **How:** Create manager/service classes that coordinate multiple entity classes
+- **Example:**
+```java
+// ✅ Good - Separation of concerns
+class Employee { /* data and basic operations */ }
+class Department { /* data and basic operations */ }
+
+class EmployeeManagementSystem {
+    public void transferEmployee(Employee emp, Department from, Department to) {
+        from.removeEmployee(emp);
+        to.addEmployee(emp);
+        emp.setDepartment(to.getId());
+    }
+}
+
+// ❌ Bad - Employee class knows about system-wide operations
+class Employee {
+    public void transfer(Department from, Department to) { /* too much responsibility */ }
+}
+```
+
+✅ **Use Immutable Objects Where Appropriate**
+- **Why:** Prevents accidental modification, simplifies concurrency, reduces bugs
+- **How:** Make all fields final, provide values in constructor, no setters
+- **Example:**
+```java
+// ✅ Immutable class - safe to share
+public final class EmployeeId {
+    private final String id;
+    private final LocalDate issueDate;
+
+    public EmployeeId(String id) {
+        this.id = id;
+        this.issueDate = LocalDate.now();
+    }
+
+    public String getId() { return id; }
+    public LocalDate getIssueDate() { return issueDate; }
+    // No setters - completely immutable
+}
+```
+
+✅ **Validate Cross-Object Relationships**
+- **Why:** Multi-object operations need coordinated validation
+- **How:** Check relationships and states across objects before executing operations
+- **Example:**
+```java
+public class EmployeeManagementSystem {
+    public void assignToDepartment(Employee emp, Department dept) {
+        // Validate employee state
+        if (!emp.isActive()) {
+            throw new IllegalStateException("Cannot assign inactive employee");
+        }
+
+        // Validate department state
+        if (dept.isFull()) {
+            throw new IllegalStateException("Department is at capacity");
+        }
+
+        // Cross-object validation
+        if (emp.getSalary() > dept.getBudgetPerEmployee()) {
+            throw new IllegalStateException("Employee salary exceeds department budget");
+        }
+
+        // All validations passed, proceed
+        dept.addEmployee(emp);
+        emp.setDepartmentId(dept.getId());
+    }
+}
+```
+
 **Real-World Applications:**
 - HR Management Systems
 - Banking Applications
@@ -6907,6 +9234,152 @@ Extend the system with:
 - Hospital Patient Records
 - School Student Management
 - Library Book Tracking
+
+**Common Mistakes:**
+
+1. ❌ **Exposing Internal Collections Without Protection**: Returning direct references to internal lists/arrays, allowing external modification
+   - Why: When a getter returns a reference to a mutable collection (like ArrayList), the caller can modify it directly, bypassing all validation and breaking encapsulation.
+   - Fix: Return copies of collections or use unmodifiable wrappers. Never return direct references to internal mutable data structures.
+   - Example:
+     ```java
+     // Wrong - exposes internal list
+     public class Department {
+         private List<Employee> employees = new ArrayList<>();
+
+         public List<Employee> getEmployees() {
+             return employees;  // Caller can now do: dept.getEmployees().clear()
+         }
+     }
+
+     // Correct - returns unmodifiable view
+     public List<Employee> getEmployees() {
+         return Collections.unmodifiableList(employees);
+     }
+
+     // Also correct - returns a copy
+     public List<Employee> getEmployees() {
+         return new ArrayList<>(employees);
+     }
+     ```
+
+2. ❌ **Not Updating Dependent Fields When Related Data Changes**: Forgetting to regenerate calculated fields when their dependencies change
+   - Why: When fields like email depend on other fields (firstName, lastName), changing those fields should trigger recalculation. Forgetting this leads to stale data.
+   - Fix: Call update methods in setters whenever dependent data changes. In the Employee example, changing name should regenerate email.
+   - Example:
+     ```java
+     // Wrong - email becomes outdated
+     public void setFirstName(String firstName) {
+         this.firstName = firstName;
+         // Email still has old first name!
+     }
+
+     // Correct - updates dependent field
+     public void setFirstName(String firstName) {
+         this.firstName = firstName;
+         generateEmail();  // Regenerate email with new name
+     }
+
+     private void generateEmail() {
+         this.email = (firstName + "." + lastName + "@company.com").toLowerCase();
+     }
+     ```
+
+3. ❌ **Mixing Business Logic Validation with Data Validation**: Combining simple data validation with complex business rules in the same setter
+   - Why: Setters should do basic data validation (null checks, range checks). Complex business rules involving multiple objects belong in separate business methods.
+   - Fix: Keep setters focused on basic validation. Put multi-object business rules in dedicated methods in a service/manager class.
+   - Example:
+     ```java
+     // Wrong - complex business logic in setter
+     public void setDepartmentId(String deptId) {
+         if (deptId == null) throw new IllegalArgumentException("Department ID required");
+
+         // Too complex for a setter:
+         Department dept = companyDatabase.findDepartment(deptId);
+         if (dept.isFull()) throw new IllegalStateException("Department full");
+         if (this.salary > dept.getBudgetPerEmployee()) throw new IllegalStateException("Salary too high");
+
+         this.departmentId = deptId;
+     }
+
+     // Correct - simple validation in setter
+     public void setDepartmentId(String deptId) {
+         if (deptId == null || deptId.trim().isEmpty()) {
+             throw new IllegalArgumentException("Department ID required");
+         }
+         this.departmentId = deptId;
+     }
+
+     // Business logic in separate method
+     public class EmployeeManagementSystem {
+         public void assignToDepartment(Employee emp, Department dept) {
+             if (dept.isFull()) throw new IllegalStateException("Department full");
+             if (emp.getSalary() > dept.getBudgetPerEmployee()) {
+                 throw new IllegalStateException("Salary exceeds budget");
+             }
+             emp.setDepartmentId(dept.getId());
+             dept.addEmployee(emp);
+         }
+     }
+     ```
+
+4. ❌ **Using Strings for Relationships Instead of Object References**: Storing only IDs to relate objects instead of maintaining actual object references
+   - Why: Storing just a departmentId means you need to look up the Department object every time. This is inefficient and creates tight coupling with a data store.
+   - Fix: For in-memory systems, consider storing object references. For persistence, store both the ID (for database) and a transient reference (for runtime).
+   - Example:
+     ```java
+     // Weak approach - only ID
+     public class Employee {
+         private String departmentId;
+
+         // Always need external lookup
+         public Department getDepartment(DepartmentService service) {
+             return service.findById(departmentId);
+         }
+     }
+
+     // Better - store reference
+     public class Employee {
+         private String departmentId;  // For persistence
+         private Department department;  // For runtime use
+
+         public void setDepartment(Department dept) {
+             this.department = dept;
+             this.departmentId = dept.getId();
+         }
+
+         public Department getDepartment() {
+             return department;  // Direct access
+         }
+     }
+     ```
+
+5. ❌ **Forgetting to Make Calculated Properties Read-Only**: Providing setters for fields that should always be computed
+   - Why: Fields like fullName, yearsOfService, totalCompensation should be calculated from other data, not set directly. Allowing setters creates inconsistency.
+   - Fix: Only provide getters for calculated properties. Compute them on-the-fly in the getter method.
+   - Example:
+     ```java
+     // Wrong - calculated field with setter
+     public class Employee {
+         private String firstName;
+         private String lastName;
+         private String fullName;  // Stored separately
+
+         public void setFullName(String fullName) {
+             this.fullName = fullName;  // Now firstName+lastName != fullName!
+         }
+     }
+
+     // Correct - calculated in getter
+     public class Employee {
+         private String firstName;
+         private String lastName;
+         // No fullName field!
+
+         public String getFullName() {
+             return firstName + " " + lastName;  // Always consistent
+         }
+     }
+     ```
 
 ---
 
@@ -7163,14 +9636,130 @@ class ChildClass extends ParentClass {
 - [ ] Recognize child can add own members
 - [ ] Create both parent and child classes successfully
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Trying to inherit from multiple classes | Java allows single inheritance only | Extend one class only |
-| Forgetting `extends` keyword | No inheritance without it | `class Dog extends Animal` |
-| Accessing private parent members | Private is not inherited | Use protected or public |
-| Writing duplicate code in children | Defeats purpose of inheritance | Put common code in parent |
+1. ❌ **Trying to Use Multiple Inheritance**: Attempting to extend multiple classes at once
+   - Why: Students coming from languages like C++ or Python try `class Dog extends Animal, Pet`, but Java only supports single inheritance to avoid the diamond problem and keep the language simple.
+   - Fix: A class can only extend ONE parent class. Use interfaces for multiple type relationships (covered later).
+   - Example:
+     ```java
+     // Wrong - Java doesn't support this
+     class Dog extends Animal, Mammal {  // Compile error!
+     }
+
+     // Correct - single inheritance only
+     class Dog extends Animal {
+     }
+     ```
+
+2. ❌ **Forgetting the `extends` Keyword**: Trying to create inheritance relationship without proper syntax
+   - Why: Students assume naming or proximity creates inheritance, but Java requires explicit `extends` keyword.
+   - Fix: Always use `class ChildClass extends ParentClass` syntax.
+   - Example:
+     ```java
+     // Wrong - no inheritance relationship
+     class Animal { }
+     class Dog { }  // Not inheriting from Animal!
+
+     // Correct - explicit inheritance
+     class Animal { }
+     class Dog extends Animal { }  // Now Dog inherits from Animal
+     ```
+
+3. ❌ **Attempting to Access Private Parent Members in Child Class**: Trying to directly use parent's private fields/methods in the child
+   - Why: Students don't understand that `private` means "only accessible within the same class." Even though the field exists in the child object, it's not accessible from child class code.
+   - Fix: Use `protected` or `public` for members that children need to access. Use getters/setters for private fields.
+   - Example:
+     ```java
+     // Wrong - can't access private members
+     class Animal {
+         private String name;
+     }
+     class Dog extends Animal {
+         void bark() {
+             System.out.println(name + " says Woof!");  // Error: name has private access
+         }
+     }
+
+     // Correct - use protected or public
+     class Animal {
+         protected String name;  // or public
+     }
+     class Dog extends Animal {
+         void bark() {
+             System.out.println(name + " says Woof!");  // Works!
+         }
+     }
+
+     // Also correct - use getters
+     class Animal {
+         private String name;
+         public String getName() { return name; }
+     }
+     class Dog extends Animal {
+         void bark() {
+             System.out.println(getName() + " says Woof!");  // Works!
+         }
+     }
+     ```
+
+4. ❌ **Duplicating Parent Code in Child Classes**: Copying the same properties/methods from parent into each child
+   - Why: Students don't trust inheritance or don't realize that child automatically has parent's members. This defeats the purpose of inheritance.
+   - Fix: Only define members in the child that are specific to that child. Don't redefine parent members.
+   - Example:
+     ```java
+     // Wrong - duplicating code
+     class Animal {
+         String name;
+         void eat() { System.out.println("Eating"); }
+     }
+     class Dog extends Animal {
+         String name;  // Unnecessary duplication!
+         void eat() { System.out.println("Eating"); }  // Unnecessary duplication!
+         void bark() { System.out.println("Woof"); }
+     }
+
+     // Correct - only child-specific code
+     class Animal {
+         String name;
+         void eat() { System.out.println("Eating"); }
+     }
+     class Dog extends Animal {
+         // name and eat() are inherited automatically
+         void bark() { System.out.println("Woof"); }  // Only Dog-specific method
+     }
+     ```
+
+5. ❌ **Using Inheritance for HAS-A Relationships**: Using `extends` when composition would be better
+   - Why: Not everything should use inheritance. If the relationship is "has a" instead of "is a", use composition (a field) instead.
+   - Fix: Use inheritance only for true IS-A relationships. Use composition (fields) for HAS-A relationships.
+   - Example:
+     ```java
+     // Wrong - Car HAS-A engine, not IS-A engine
+     class Engine {
+         void start() { }
+     }
+     class Car extends Engine {  // Wrong relationship!
+     }
+
+     // Correct - Car HAS-A engine (composition)
+     class Engine {
+         void start() { }
+     }
+     class Car {
+         private Engine engine;  // Composition
+         Car() {
+             this.engine = new Engine();
+         }
+         void start() {
+             engine.start();
+         }
+     }
+
+     // Another example:
+     // Wrong: class Student extends School { }  // Student doesn't "IS-A" School
+     // Correct: Student HAS-A school field
+     ```
 
 **🎯 Challenge:**
 Create:
@@ -7178,6 +9767,107 @@ Create:
 2. `Car` child class (numberOfDoors, honk())
 3. `Motorcycle` child class (hasSidecar, wheelie())
 4. Test both children, use inherited and own methods
+
+**📋 Best Practices:**
+
+✅ **Use Inheritance for IS-A Relationships Only**
+- **Why:** Inheritance represents true type relationships; misuse leads to confusing code
+- **How:** Ask "Is the child truly a type of parent?" before using `extends`
+- **Example:**
+```java
+// ✅ Good - Clear IS-A relationships
+class Dog extends Animal { }  // Dog IS-A Animal
+class SavingsAccount extends BankAccount { }  // SavingsAccount IS-A BankAccount
+
+// ❌ Bad - Wrong relationships
+class Car extends Engine { }  // Car HAS-A Engine (composition, not inheritance)
+class Student extends School { }  // Student belongs to School (association, not IS-A)
+```
+
+✅ **Put Common Code in Parent Class**
+- **Why:** Eliminates code duplication; changes propagate automatically to all children
+- **How:** Identify shared properties and behaviors; move them up to parent class
+- **Example:**
+```java
+// ❌ Bad - Duplicated code
+class Dog {
+    String name;
+    void eat() { System.out.println("Eating"); }
+}
+class Cat {
+    String name;  // Duplicated!
+    void eat() { System.out.println("Eating"); }  // Duplicated!
+}
+
+// ✅ Good - Common code in parent
+class Animal {
+    String name;
+    void eat() { System.out.println("Eating"); }
+}
+class Dog extends Animal { }  // Inherits name and eat()
+class Cat extends Animal { }  // Inherits name and eat()
+```
+
+✅ **Keep Parent Classes General, Child Classes Specific**
+- **Why:** Maintains clear hierarchy; parent represents broad category, children add specifics
+- **How:** Parent has common features; children add specialized behavior
+- **Example:**
+```java
+// ✅ Good - Clear generalization
+class Animal {  // General
+    void eat() { }
+    void sleep() { }
+}
+class Dog extends Animal {  // Specific
+    void bark() { }  // Dog-specific
+    void fetch() { }  // Dog-specific
+}
+```
+
+✅ **Don't Access Private Parent Members from Child**
+- **Why:** Private members are implementation details; use protected or public instead
+- **How:** Use `protected` for members that children need; keep truly private as `private`
+- **Example:**
+```java
+class Animal {
+    private String secretId;  // Only Animal should access
+    protected String name;  // Children can access
+
+    protected String getName() { return name; }  // Accessible to children
+}
+
+class Dog extends Animal {
+    void printInfo() {
+        // System.out.println(secretId);  // ❌ Error - private
+        System.out.println(name);  // ✅ OK - protected
+        System.out.println(getName());  // ✅ OK - protected method
+    }
+}
+```
+
+✅ **Design Parent Classes as Reusable Base Components**
+- **Why:** Well-designed parent classes enable easy extension without modification
+- **How:** Include methods/properties all children will need; avoid child-specific details
+- **Example:**
+```java
+// ✅ Good - Reusable parent
+class Employee {
+    protected String name;
+    protected double baseSalary;
+
+    public double calculatePay() {
+        return baseSalary;  // Default implementation
+    }
+}
+
+class Manager extends Employee {
+    private double bonus;
+    @Override
+    public double calculatePay() {
+        return baseSalary + bonus;  // Specialized
+    }
+}
+```
 
 ---
 
@@ -7346,14 +10036,165 @@ Person (Parent)
 - [ ] Can access inherited properties and methods directly
 - [ ] Understand difference between access levels
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Trying to access private parent members | Private is not inherited | Use protected or public |
-| Thinking default = public | Default has package restrictions | Use public for full access |
-| Not understanding protected | Protected allows child access | Use protected for child-only access |
-| Making everything public | Breaks encapsulation | Use appropriate access level |
+1. ❌ **Attempting to Access Private Parent Fields Directly**: Trying to use `parent.privateField` in child class code
+   - Why: Students see the field exists in the parent and assume they can access it, but `private` means "only within the same class." Even child classes cannot access parent's private members.
+   - Fix: Use `protected` for fields children need, or provide protected/public getters.
+   - Example:
+     ```java
+     // Wrong
+     class Person {
+         private String ssn;
+     }
+     class Employee extends Person {
+         void display() {
+             System.out.println(ssn);  // Error: ssn has private access
+         }
+     }
+
+     // Correct option 1 - use protected
+     class Person {
+         protected String ssn;
+     }
+     class Employee extends Person {
+         void display() {
+             System.out.println(ssn);  // Works!
+         }
+     }
+
+     // Correct option 2 - use getter
+     class Person {
+         private String ssn;
+         protected String getSSN() { return ssn; }
+     }
+     class Employee extends Person {
+         void display() {
+             System.out.println(getSSN());  // Works!
+         }
+     }
+     ```
+
+2. ❌ **Confusing Default (Package-Private) with Public Access**: Thinking fields with no access modifier are accessible from child classes in different packages
+   - Why: Default (no modifier) access means "same package only." If child class is in a different package, it cannot access default members.
+   - Fix: Use `public` or `protected` for cross-package inheritance. Default is for same-package access only.
+   - Example:
+     ```java
+     // Wrong - different packages
+     package com.company.parent;
+     class Person {
+         String name;  // Default access
+     }
+
+     package com.company.child;
+     class Employee extends Person {
+         void display() {
+             System.out.println(name);  // Error: name is not accessible (different package)
+         }
+     }
+
+     // Correct - use protected or public
+     package com.company.parent;
+     class Person {
+         protected String name;  // or public
+     }
+
+     package com.company.child;
+     class Employee extends Person {
+         void display() {
+             System.out.println(name);  // Works!
+         }
+     }
+     ```
+
+3. ❌ **Making Everything Public to Avoid Access Issues**: Setting all fields to public to make them accessible in child classes
+   - Why: Using `public` for everything breaks encapsulation. External code can now access and modify these fields directly, defeating the purpose of information hiding.
+   - Fix: Use `protected` for inheritance access. This allows child classes to access while still protecting from external modification.
+   - Example:
+     ```java
+     // Wrong - breaks encapsulation
+     class BankAccount {
+         public double balance;  // Anyone can modify!
+     }
+
+     class SavingsAccount extends BankAccount {
+         void addInterest() {
+             balance *= 1.05;
+         }
+     }
+
+     // External code can do this:
+     SavingsAccount account = new SavingsAccount();
+     account.balance = -1000;  // Disaster! No validation
+
+     // Correct - use protected
+     class BankAccount {
+         protected double balance;  // Only subclasses can access
+     }
+
+     class SavingsAccount extends BankAccount {
+         void addInterest() {
+             balance *= 1.05;  // Works for child
+         }
+     }
+
+     // External code CANNOT do this:
+     // account.balance = -1000;  // Error: balance has protected access
+     ```
+
+4. ❌ **Not Understanding That Protected Allows Package Access Too**: Thinking `protected` means "only child classes"
+   - Why: Protected actually means "child classes AND same package." Classes in the same package can access protected members even without inheritance.
+   - Fix: Be aware that `protected` is not just for inheritance. Use `private` with protected methods if you need strict control.
+   - Example:
+     ```java
+     // Protected is accessible in same package
+     package com.company;
+
+     class Person {
+         protected String name;
+     }
+
+     class UnrelatedClass {  // Not a child of Person
+         void test() {
+             Person p = new Person();
+             p.name = "Test";  // Works! Same package
+         }
+     }
+
+     // To restrict to children only, use private + protected methods
+     class Person {
+         private String name;
+
+         protected String getName() { return name; }  // Only through method
+     }
+     ```
+
+5. ❌ **Forgetting That Inherited Members Can Be Used as If They Were Declared in Child**: Thinking you need special syntax to access inherited members
+   - Why: Students sometimes try `super.inheritedField` or `parent.inheritedMethod()` unnecessarily. Inherited members become part of the child class and can be accessed directly.
+   - Fix: Access inherited public/protected members directly with no special syntax (unless shadowed/overridden).
+   - Example:
+     ```java
+     class Person {
+         protected String name;
+         protected void greet() { System.out.println("Hello"); }
+     }
+
+     class Employee extends Person {
+         void display() {
+             // Wrong - unnecessary 'super'
+             System.out.println(super.name);  // Works but unnecessary
+             super.greet();  // Works but unnecessary
+
+             // Correct - direct access
+             System.out.println(name);  // Inherited, use directly
+             greet();  // Inherited, call directly
+
+             // Note: 'super' is only needed when:
+             // 1. Child has same-named field/method
+             // 2. You want to access parent's version explicitly
+         }
+     }
+     ```
 
 **🎯 Challenge:**
 Create:
@@ -7361,6 +10202,98 @@ Create:
 2. `SavingsAccount` extends BankAccount
 3. Try accessing each member type in SavingsAccount
 4. Document which ones work and which give errors
+
+**📋 Best Practices:**
+
+✅ **Use Protected for Members Children Need to Access**
+- **Why:** Protected balances encapsulation with inheritance; children can access but external code cannot
+- **How:** Mark fields/methods as `protected` when subclasses need direct access
+- **Example:**
+```java
+class Employee {
+    protected String name;  // ✅ Subclasses can access
+    private String ssn;     // ✅ Truly private, no access
+
+    protected double getBaseSalary() {  // ✅ For subclasses to use
+        return baseSalary;
+    }
+}
+
+class Manager extends Employee {
+    void display() {
+        System.out.println(name);  // ✅ Works - protected
+        // System.out.println(ssn);  // ❌ Error - private
+    }
+}
+```
+
+✅ **Understand the Four Access Levels in Inheritance**
+- **Why:** Choosing the right access level prevents bugs and maintains encapsulation
+- **How:** Use public (everywhere), protected (subclasses), default (same package), private (same class only)
+- **Example:**
+```java
+class Parent {
+    public String publicField;      // Accessible everywhere
+    protected String protectedField; // Accessible in subclasses
+    String defaultField;            // Accessible in same package
+    private String privateField;    // Only in Parent class
+}
+
+class Child extends Parent {
+    void test() {
+        publicField = "ok";     // ✅ Public accessible
+        protectedField = "ok";  // ✅ Protected accessible
+        defaultField = "ok";    // ✅ If same package
+        // privateField = "no";  // ❌ Private not accessible
+    }
+}
+```
+
+✅ **Prefer Private with Protected Getters/Setters**
+- **Why:** Maintains encapsulation while allowing controlled subclass access
+- **How:** Keep fields private, provide protected methods for subclass access
+- **Example:**
+```java
+// ✅ Good - Controlled access
+class BankAccount {
+    private double balance;  // Private field
+
+    protected double getBalance() {  // Protected getter for subclasses
+        return balance;
+    }
+
+    protected void setBalance(double balance) {  // Protected setter with validation
+        if (balance >= 0) this.balance = balance;
+    }
+}
+
+class SavingsAccount extends BankAccount {
+    void addInterest() {
+        double current = getBalance();  // ✅ Access via protected method
+        setBalance(current * 1.05);
+    }
+}
+```
+
+✅ **Don't Make Everything Public Just for Inheritance**
+- **Why:** Public access breaks encapsulation and exposes implementation details
+- **How:** Use the minimum necessary access level; prefer protected over public for inheritance
+- **Example:**
+```java
+// ❌ Bad - Unnecessarily public
+class Parent {
+    public double internalCalculation;  // Exposed to everyone!
+}
+
+// ✅ Good - Appropriate access levels
+class Parent {
+    private double internalCalculation;  // Hidden
+
+    protected double calculate() {  // Available to subclasses only
+        return internalCalculation * 2;
+    }
+}
+```
 
 ---
 
@@ -7562,15 +10495,150 @@ class Child extends Parent {
 - [ ] Recognize constructor chaining sequence
 - [ ] Successfully compile and run the program
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| super() not first | Must be first statement | Put super() at top of constructor |
-| Multiple super() calls | Can only call once | One super() call per constructor |
-| Forgetting super() with params | Parent needs args | `super(brand, year, color);` |
-| Using super in static context | super refers to instance | Only use in instance methods |
-| Calling super.method() that doesn't exist | Method must exist in parent | Check parent class has the method |
+1. ❌ **Not Placing super() as First Statement in Constructor**: Writing code before `super()` call
+   - Why: Java requires parent initialization to happen first. The parent must be fully constructed before the child can safely access inherited members or initialize its own fields.
+   - Fix: Always make `super()` the very first statement in child constructor. Nothing can come before it.
+   - Example:
+     ```java
+     // Wrong - code before super()
+     class Car extends Vehicle {
+         Car(String brand, int year) {
+             System.out.println("Creating car");  // Error: super() not first
+             super(brand, year);
+         }
+     }
+
+     // Also wrong - field initialization before super()
+     class Car extends Vehicle {
+         int doors;
+         Car(String brand, int year, int d) {
+             this.doors = d;  // Error: super() must be first
+             super(brand, year);
+         }
+     }
+
+     // Correct - super() first
+     class Car extends Vehicle {
+         Car(String brand, int year) {
+             super(brand, year);  // First statement
+             System.out.println("Creating car");  // Now OK
+         }
+     }
+     ```
+
+2. ❌ **Forgetting to Call super() When Parent Has No Default Constructor**: Not calling super with arguments when parent only has parameterized constructor
+   - Why: If parent class doesn't have a no-arg constructor, Java cannot automatically call `super()`. You must explicitly call `super(args)` with the required parameters.
+   - Fix: When parent has only parameterized constructors, explicitly call `super(args)` with matching parameters.
+   - Example:
+     ```java
+     // Wrong - parent needs parameters
+     class Vehicle {
+         String brand;
+         Vehicle(String brand) {  // No default constructor!
+             this.brand = brand;
+         }
+     }
+
+     class Car extends Vehicle {
+         Car() {
+             // Implicit super() fails - Vehicle needs a parameter!
+         }  // Compile error: constructor Vehicle in class Vehicle cannot be applied
+     }
+
+     // Correct - explicit super with parameters
+     class Car extends Vehicle {
+         Car(String brand) {
+             super(brand);  // Must provide required parameter
+         }
+     }
+     ```
+
+3. ❌ **Calling super() Multiple Times**: Trying to call parent constructor more than once
+   - Why: Each object can only be constructed once. Calling super() multiple times would try to initialize the parent multiple times, which makes no sense.
+   - Fix: Call super() exactly once, as the first statement. If you need to initialize multiple things, pass all necessary data in one super() call.
+     ```java
+     // Wrong - multiple super() calls
+     class Car extends Vehicle {
+         Car(String brand, int year) {
+             super(brand);  // First call
+             super(year);   // Error: Call to super must be first statement
+         }
+     }
+
+     // Correct - one super() call with all parameters
+     class Car extends Vehicle {
+         Car(String brand, int year) {
+             super(brand, year);  // One call with all needed data
+         }
+     }
+     ```
+
+4. ❌ **Confusing super.method() with this.method()**: Using `this` when you mean `super`, or vice versa
+   - Why: `this` refers to the current object (child), while `super` refers to the parent class. Using the wrong one calls the wrong version of the method.
+   - Fix: Use `super.method()` to explicitly call parent's version, `this.method()` for current class version (or just `method()` for current class).
+   - Example:
+     ```java
+     class Animal {
+         void sound() { System.out.println("Generic sound"); }
+     }
+
+     class Dog extends Animal {
+         @Override
+         void sound() { System.out.println("Woof!"); }
+
+         void makeAllSounds() {
+             this.sound();   // Calls Dog's sound() → "Woof!"
+             // or just: sound();  // Same as this.sound()
+
+             super.sound();  // Calls Animal's sound() → "Generic sound"
+         }
+     }
+
+     // Wrong - using this when you want parent behavior
+     class Dog extends Animal {
+         @Override
+         void sound() {
+             this.sound();  // Infinite recursion! Calls itself
+         }
+     }
+
+     // Correct - use super for parent behavior
+     class Dog extends Animal {
+         @Override
+         void sound() {
+             super.sound();  // Calls parent's sound()
+             System.out.println("Woof!");
+         }
+     }
+     ```
+
+5. ❌ **Using super in Static Methods**: Trying to access super keyword in static context
+   - Why: `super` refers to an instance of the parent class, but static methods don't have instances. They belong to the class itself.
+   - Fix: Don't use `super` in static methods. Use the parent class name directly if needed.
+   - Example:
+     ```java
+     class Parent {
+         static void staticMethod() {
+             System.out.println("Parent static");
+         }
+         void instanceMethod() {
+             System.out.println("Parent instance");
+         }
+     }
+
+     class Child extends Parent {
+         static void childStatic() {
+             // super.staticMethod();  // Error: non-static variable super cannot be referenced from static context
+             Parent.staticMethod();  // Correct - use class name
+         }
+
+         void childInstance() {
+             super.instanceMethod();  // OK - instance method can use super
+         }
+     }
+     ```
 
 **🎯 Challenge:**
 Create:
@@ -7579,6 +10647,118 @@ Create:
 3. Manager constructor calls super(name, salary)
 4. Manager.displayInfo() calls super.displayInfo() then adds department/bonus
 5. Test with multiple managers
+
+**📋 Best Practices:**
+
+✅ **Always Call super() First in Child Constructors**
+- **Why:** Parent must be initialized before child; Java enforces super() as first statement
+- **How:** Place `super(...)` as the very first line in child constructor
+- **Example:**
+```java
+class Employee {
+    String name;
+    Employee(String name) { this.name = name; }
+}
+
+class Manager extends Employee {
+    String department;
+
+    Manager(String name, String dept) {
+        super(name);  // ✅ First statement
+        this.department = dept;  // Then child initialization
+    }
+}
+```
+
+✅ **Use super to Call Parent Methods When Extending Behavior**
+- **Why:** Reuses parent logic instead of duplicating; maintains DRY principle
+- **How:** Call `super.methodName()` to execute parent version, then add child-specific logic
+- **Example:**
+```java
+class Animal {
+    void makeSound() {
+        System.out.println("Some sound");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void makeSound() {
+        super.makeSound();  // ✅ Call parent version
+        System.out.println("Woof!");  // Add child-specific behavior
+    }
+}
+```
+
+✅ **Pass Correct Arguments to Parent Constructor**
+- **Why:** Parent constructor needs proper initialization data
+- **How:** Match parent constructor parameters exactly in super() call
+- **Example:**
+```java
+class Vehicle {
+    String brand;
+    int year;
+
+    Vehicle(String brand, int year) {
+        this.brand = brand;
+        this.year = year;
+    }
+}
+
+class Car extends Vehicle {
+    int doors;
+
+    Car(String brand, int year, int doors) {
+        super(brand, year);  // ✅ Passes required parent parameters
+        this.doors = doors;
+    }
+}
+```
+
+✅ **Avoid super Calls for Complete Method Replacement**
+- **Why:** If you're completely replacing behavior, calling super() adds unnecessary overhead
+- **How:** Only use super.method() when you want to extend, not replace
+- **Example:**
+```java
+// ❌ Bad - Calling super when completely replacing
+class Square extends Shape {
+    @Override
+    double getArea() {
+        super.getArea();  // Pointless - not using result
+        return side * side;  // Complete replacement
+    }
+}
+
+// ✅ Good - No super call for complete replacement
+class Square extends Shape {
+    @Override
+    double getArea() {
+        return side * side;  // Complete replacement, no super needed
+    }
+}
+```
+
+✅ **Don't Use super in Static Contexts**
+- **Why:** super refers to instance, but static methods belong to class
+- **How:** Keep super usage to instance methods and constructors only
+- **Example:**
+```java
+class Parent {
+    static void staticMethod() { }
+    void instanceMethod() { }
+}
+
+class Child extends Parent {
+    static void childStatic() {
+        // super.staticMethod();  // ❌ Error - can't use super in static
+        Parent.staticMethod();  // ✅ Use class name instead
+    }
+
+    void childInstance() {
+        super.instanceMethod();  // ✅ OK in instance method
+    }
+}
+```
 
 ---
 
@@ -7855,16 +11035,165 @@ class Child extends Parent {
 - [ ] Successfully override multiple methods
 - [ ] Understand when to override vs when to inherit as-is
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Different parameters | That's overloading, not overriding | Keep parameters identical |
-| Stricter access modifier | Can't reduce visibility | Keep same or wider access |
-| Different return type | Not compatible override | Use same or covariant return type |
-| No @Override annotation | Miss typos and mistakes | Always use @Override |
-| Overriding final methods | final cannot be overridden | Don't override final methods |
-| Overriding static methods | Static methods are hidden, not overridden | Use instance methods |
+1. ❌ **Changing Method Parameters (Overloading Instead of Overriding)**: Adding or changing parameters when trying to override
+   - Why: Students don't realize that overriding requires the exact same method signature. Changing parameters creates a new method (overloading), not an override.
+   - Fix: Match the parent method's signature exactly - same name, same parameters (type, order, number).
+   - Example:
+     ```java
+     // Wrong - this is overloading, not overriding
+     class Shape {
+         double getArea() { return 0; }
+     }
+
+     class Circle extends Shape {
+         @Override  // Error: method does not override a method from its superclass
+         double getArea(double radius) {  // Different parameters!
+             return Math.PI * radius * radius;
+         }
+     }
+
+     // Correct - exact match
+     class Circle extends Shape {
+         double radius = 5;
+
+         @Override
+         double getArea() {  // Same signature
+             return Math.PI * radius * radius;
+         }
+     }
+     ```
+
+2. ❌ **Not Using @Override Annotation**: Omitting `@Override` and making typos that create new methods instead of overriding
+   - Why: Without `@Override`, the compiler doesn't know you intended to override. A typo will silently create a new method instead of giving an error.
+   - Fix: Always use `@Override` annotation. The compiler will verify you're actually overriding a parent method.
+   - Example:
+     ```java
+     // Wrong - typo creates new method
+     class Animal {
+         void makeSound() { System.out.println("Generic sound"); }
+     }
+
+     class Dog extends Animal {
+         void makeSond() {  // Typo! Creates NEW method, doesn't override
+             System.out.println("Woof");
+         }
+     }
+
+     // Correct - @Override catches typos
+     class Dog extends Animal {
+         @Override
+         void makeSond() {  // Compile error: method does not override
+             System.out.println("Woof");
+         }
+     }
+
+     // Fixed - correct spelling with @Override
+     class Dog extends Animal {
+         @Override
+         void makeSound() {  // Now it works!
+             System.out.println("Woof");
+         }
+     }
+     ```
+
+3. ❌ **Using Stricter Access Modifier in Child**: Making overridden method less accessible than parent
+   - Why: Overriding method must be at least as accessible as the parent method. You can't reduce visibility (e.g., public → private).
+   - Fix: Keep the same access level or make it wider. If parent is public, child must be public. If parent is protected, child can be protected or public.
+   - Example:
+     ```java
+     // Wrong - reducing visibility
+     class Animal {
+         public void eat() {  // public
+             System.out.println("Eating");
+         }
+     }
+
+     class Dog extends Animal {
+         @Override
+         private void eat() {  // Error: attempting to assign weaker access privileges
+             System.out.println("Dog eating");
+         }
+     }
+
+     // Correct - same or wider access
+     class Dog extends Animal {
+         @Override
+         public void eat() {  // public (same level)
+             System.out.println("Dog eating");
+         }
+     }
+     ```
+
+4. ❌ **Trying to Override final Methods**: Attempting to override a method marked as final in parent class
+   - Why: The `final` keyword explicitly prevents overriding. It's used when the parent wants to lock down behavior.
+   - Fix: Don't try to override final methods. Either accept the parent's implementation or discuss with your team if final should be removed.
+   - Example:
+     ```java
+     // Wrong - can't override final
+     class Animal {
+         final void breathe() {  // final method
+             System.out.println("Breathing air");
+         }
+     }
+
+     class Fish extends Animal {
+         @Override
+         void breathe() {  // Error: cannot override final method
+             System.out.println("Breathing underwater");
+         }
+     }
+
+     // Correct - create a different method
+     class Fish extends Animal {
+         // breathe() is inherited and cannot be overridden
+         void breatheUnderwater() {  // New method instead
+             System.out.println("Breathing underwater");
+         }
+     }
+     ```
+
+5. ❌ **Confusing Overriding with Hiding (Static Methods)**: Trying to override static methods
+   - Why: Static methods belong to the class, not instances. You cannot override static methods - you can only hide them (which works differently).
+   - Fix: Don't use @Override with static methods. If you need polymorphic behavior, use instance methods.
+   - Example:
+     ```java
+     // Wrong understanding - this hides, doesn't override
+     class Parent {
+         static void staticMethod() {
+             System.out.println("Parent static");
+         }
+     }
+
+     class Child extends Parent {
+         @Override  // Error: method does not override
+         static void staticMethod() {  // This hides, not overrides
+             System.out.println("Child static");
+         }
+     }
+
+     // Correct - remove @Override for static (but this is hiding, not overriding)
+     class Child extends Parent {
+         static void staticMethod() {  // Hides parent's static method
+             System.out.println("Child static");
+         }
+     }
+
+     // Better - use instance methods for true overriding
+     class Parent {
+         void instanceMethod() {  // Instance method
+             System.out.println("Parent");
+         }
+     }
+
+     class Child extends Parent {
+         @Override
+         void instanceMethod() {  // True override
+             System.out.println("Child");
+         }
+     }
+     ```
 
 **🎯 Challenge:**
 Create:
@@ -7873,6 +11202,120 @@ Create:
 3. Each animal makes different sound and moves differently
 4. Create array of Animals, loop through calling overridden methods
 5. Verify polymorphism works correctly
+
+**📋 Best Practices:**
+
+✅ **Use @Override Annotation**
+- **Why:** Catches errors at compile-time if method doesn't actually override parent
+- **How:** Add `@Override` annotation above any method that overrides a parent method
+- **Example:**
+```java
+class Animal {
+    void makeSound() { }
+}
+
+class Dog extends Animal {
+    @Override  // ✅ Compiler verifies this actually overrides
+    void makeSound() {
+        System.out.println("Woof");
+    }
+
+    @Override
+    void makeSond() {  // ❌ Compiler error - typo detected!
+        // Parent has makeSound not makeSond
+    }
+}
+```
+
+✅ **Keep Override Signatures Identical**
+- **Why:** Different signatures create overloading, not overriding
+- **How:** Match exact method name, parameter types, and order
+- **Example:**
+```java
+class Shape {
+    double getArea() { return 0; }
+}
+
+// ❌ Bad - This is overloading, not overriding
+class Circle extends Shape {
+    double getArea(double radius) { return Math.PI * radius * radius; }
+}
+
+// ✅ Good - Exact match = overriding
+class Circle extends Shape {
+    @Override
+    double getArea() { return Math.PI * radius * radius; }
+}
+```
+
+✅ **Override for Specialized Behavior, Not Just to Change**
+- **Why:** Overriding should provide meaningful specialized implementation
+- **How:** Override when child has fundamentally different behavior for same concept
+- **Example:**
+```java
+// ✅ Good - Each shape calculates area differently
+class Shape {
+    double getArea() { return 0; }
+}
+
+class Circle extends Shape {
+    @Override
+    double getArea() { return Math.PI * radius * radius; }  // Circle-specific formula
+}
+
+class Rectangle extends Shape {
+    @Override
+    double getArea() { return width * height; }  // Rectangle-specific formula
+}
+```
+
+✅ **Don't Override final Methods**
+- **Why:** final methods are locked and cannot be overridden
+- **How:** Check if parent method is final before attempting to override
+- **Example:**
+```java
+class Parent {
+    final void lockedMethod() { }  // Cannot override
+    void flexibleMethod() { }      // Can override
+}
+
+class Child extends Parent {
+    // @Override
+    // void lockedMethod() { }  // ❌ Compiler error - final method
+
+    @Override
+    void flexibleMethod() { }  // ✅ OK - not final
+}
+```
+
+✅ **Maintain Behavioral Consistency When Overriding**
+- **Why:** Child's override should honor parent's contract (Liskov Substitution Principle)
+- **How:** Don't completely change expected behavior; specialize it
+- **Example:**
+```java
+// ❌ Bad - Violates parent contract
+class BankAccount {
+    void deposit(double amount) {
+        balance += amount;  // Increases balance
+    }
+}
+
+class BrokenAccount extends BankAccount {
+    @Override
+    void deposit(double amount) {
+        balance -= amount;  // ❌ Decreases? Violates expectation!
+    }
+}
+
+// ✅ Good - Specializes but maintains contract
+class SavingsAccount extends BankAccount {
+    @Override
+    void deposit(double amount) {
+        super.deposit(amount);  // Still increases balance
+        balance += amount * 0.01;  // Adds 1% bonus
+    }
+}
+```
 
 ---
 
@@ -8136,15 +11579,139 @@ Result: Fully initialized Manager object
 - [ ] Understand why constructor chaining is important
 - [ ] Successfully create multilevel inheritance hierarchy
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| super() not first | Must be first statement | Put super() at very top |
-| Forgetting super() with params | Parent needs initialization | Call super(params) |
-| Expecting child before parent | Parent always first | Accept execution order |
-| No-arg parent constructor missing | Java adds super() automatically | Provide no-arg constructor or call parameterized one |
-| Circular inheritance | Java doesn't allow | Create proper hierarchy |
+1. ❌ **Forgetting super() When Parent Has Only Parameterized Constructor**: Not calling super() explicitly when parent class doesn't have a default constructor
+   - Why: If parent has no no-arg constructor, Java cannot automatically insert `super()`. You must explicitly call `super(params)`.
+   - Fix: Always call `super(params)` with required arguments when parent doesn't have a default constructor.
+   - Example:
+     ```java
+     // Wrong - missing super()
+     class Person {
+         String name;
+         Person(String name) {  // No default constructor
+             this.name = name;
+         }
+     }
+
+     class Employee extends Person {
+         String id;
+         Employee(String id) {
+             // Error: implicit super() cannot be called - no default constructor
+             this.id = id;
+         }
+     }
+
+     // Correct - explicit super() call
+     class Employee extends Person {
+         String id;
+         Employee(String name, String id) {
+             super(name);  // Must call parameterized constructor
+             this.id = id;
+         }
+     }
+     ```
+
+2. ❌ **Putting super() Anywhere Other Than First Line**: Placing code before the super() call
+   - Why: Parent must be fully initialized before child can use inherited members or initialize its own fields.
+   - Fix: Always make `super()` the absolute first statement in the constructor.
+   - Example:
+     ```java
+     // Wrong - code before super()
+     class Employee extends Person {
+         Employee(String name, String id) {
+             System.out.println("Creating employee");  // Error!
+             super(name);  // super() must be first
+         }
+     }
+
+     // Correct - super() first
+     class Employee extends Person {
+         Employee(String name, String id) {
+             super(name);  // First statement
+             System.out.println("Creating employee");
+         }
+     }
+     ```
+
+3. ❌ **Not Understanding Constructor Execution Order**: Expecting child constructor to execute before parent
+   - Why: Students see child constructor called first in their code and think it executes first, but parent always executes first due to super() call.
+   - Fix: Understand the flow: Child constructor called → super() jumps to parent → parent executes → returns to child → child continues.
+   - Example:
+     ```java
+     class Person {
+         Person() {
+             System.out.println("1. Person constructor");  // Executes FIRST
+         }
+     }
+
+     class Employee extends Person {
+         Employee() {
+             super();  // Jumps to parent constructor
+             System.out.println("2. Employee constructor");  // Executes SECOND
+         }
+     }
+
+     // When you call: new Employee()
+     // Output:
+     // 1. Person constructor
+     // 2. Employee constructor
+     ```
+
+4. ❌ **Trying to Access Child Fields in Parent Constructor**: Using child's fields before they're initialized
+   - Why: Parent constructor runs before child fields are initialized. Accessing them in parent constructor will see uninitialized values.
+   - Fix: Don't access child-specific fields in parent constructor. Parent should only work with its own data.
+   - Example:
+     ```java
+     // Wrong - accessing child field from parent
+     class Person {
+         Person() {
+             // Can't access Employee's field here - it doesn't exist yet!
+         }
+     }
+
+     class Employee extends Person {
+         String employeeId;
+         Employee(String id) {
+             super();  // Parent runs first, employeeId not initialized yet
+             this.employeeId = id;  // Now it's initialized
+         }
+     }
+     ```
+
+5. ❌ **Creating Circular Constructor Dependencies**: Child constructor calls super(), which tries to call child, creating infinite loop
+   - Why: This is usually a design error. Constructors should form a clear parent→child initialization chain, not a cycle.
+   - Fix: Design proper constructor hierarchy. Parent should not depend on child's constructor.
+   - Example:
+     ```java
+     // Wrong - circular dependency (conceptual error)
+     class Parent {
+         Parent() {
+             // Some logic that somehow depends on child being constructed first
+         }
+     }
+
+     class Child extends Parent {
+         Child() {
+             super();  // Calls Parent constructor
+             // But Parent constructor expects Child to be ready - CIRCULAR!
+         }
+     }
+
+     // Correct - proper hierarchy
+     class Parent {
+         Parent() {
+             // Initialize parent-specific data only
+         }
+     }
+
+     class Child extends Parent {
+         Child() {
+             super();  // Parent initializes first (independent of child)
+             // Then child initializes its own data
+         }
+     }
+     ```
 
 **🎯 Challenge:**
 Create a 4-level hierarchy:
@@ -8155,6 +11722,134 @@ Create a 4-level hierarchy:
 5. Create constructors at each level with chaining
 6. Print message in each constructor to see execution order
 7. Create a Dog object and verify all constructors execute
+
+**📋 Best Practices:**
+
+✅ **Chain Constructors from Child to Parent**
+- **Why:** Ensures all levels of the hierarchy are properly initialized
+- **How:** Call `super()` as first statement in every child constructor
+- **Example:**
+```java
+class Person {
+    String name;
+    Person(String name) { this.name = name; }
+}
+
+class Employee extends Person {
+    String id;
+    Employee(String name, String id) {
+        super(name);  // ✅ Initialize parent first
+        this.id = id;
+    }
+}
+
+class Manager extends Employee {
+    String department;
+    Manager(String name, String id, String dept) {
+        super(name, id);  // ✅ Chain continues
+        this.department = dept;
+    }
+}
+```
+
+✅ **Initialize Parent Data Through super(), Not Direct Assignment**
+- **Why:** Parent constructor may have validation or initialization logic
+- **How:** Pass data to parent via super() instead of setting parent fields directly
+- **Example:**
+```java
+// ❌ Bad - Bypasses parent constructor logic
+class Manager extends Employee {
+    Manager(String name, String id) {
+        this.name = name;  // Direct assignment to parent field
+        this.employeeId = id;
+    }
+}
+
+// ✅ Good - Uses parent constructor
+class Manager extends Employee {
+    Manager(String name, String id) {
+        super(name, id);  // Parent handles its own initialization
+    }
+}
+```
+
+✅ **Keep Constructor Chains Short and Logical**
+- **Why:** Deep hierarchies become hard to maintain and understand
+- **How:** Limit inheritance depth to 3-4 levels; prefer composition for deeper structures
+- **Example:**
+```java
+// ✅ Good - Reasonable depth
+LivingBeing → Animal → Dog  // 3 levels
+
+// ❌ Bad - Too deep
+Entity → LivingThing → Creature → Animal → Mammal
+  → Carnivore → Canine → WildDog → Wolf  // 9 levels!
+```
+
+✅ **Provide Default and Parameterized Constructors at Each Level**
+- **Why:** Gives flexibility in object creation; supports various initialization scenarios
+- **How:** Create both no-arg and parameterized constructors, chain appropriately
+- **Example:**
+```java
+class Employee {
+    String name;
+    double salary;
+
+    // Default constructor
+    Employee() {
+        this("Unknown", 0.0);
+    }
+
+    // Parameterized constructor
+    Employee(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+}
+
+class Manager extends Employee {
+    String department;
+
+    Manager() {
+        super();  // ✅ Calls parent default
+        this.department = "General";
+    }
+
+    Manager(String name, double salary, String dept) {
+        super(name, salary);  // ✅ Calls parent parameterized
+        this.department = dept;
+    }
+}
+```
+
+✅ **Validate Data at the Appropriate Level**
+- **Why:** Each level should validate its own concerns
+- **How:** Validate parent-level data in parent constructor, child-level in child
+- **Example:**
+```java
+class Employee {
+    protected double salary;
+
+    Employee(double salary) {
+        if (salary < 0) {
+            throw new IllegalArgumentException("Salary cannot be negative");
+        }
+        this.salary = salary;  // ✅ Parent validates parent data
+    }
+}
+
+class Manager extends Employee {
+    private int teamSize;
+
+    Manager(double salary, int teamSize) {
+        super(salary);  // Parent validates salary
+        if (teamSize < 0) {  // ✅ Child validates child data
+            throw new IllegalArgumentException("Team size cannot be negative");
+        }
+        this.teamSize = teamSize;
+    }
+}
+```
 
 ---
 
@@ -8503,15 +12198,97 @@ Area: 78.54
 - [ ] Program produces correct calculations
 - [ ] Professional output formatting
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Duplicating displayInfo() | Defeats inheritance purpose | Keep in parent, use in all children |
-| Wrong area formulas | Math errors | Double-check geometry formulas |
-| Not using @Override | Miss typos | Always use @Override annotation |
-| Forgetting super() call | Parent not initialized | Call super() in child constructor |
-| Not testing polymorphism | Miss the main benefit | Create array of parent type |
+1. ❌ **Duplicating Code Across Child Classes**: Repeating the same methods (like displayInfo) in each child class
+   - Why: This violates DRY (Don't Repeat Yourself) and defeats the purpose of inheritance. Changes must be made in multiple places.
+   - Fix: Put common behavior in the parent class. All children inherit and reuse it automatically.
+   - Example:
+     ```java
+     // Wrong - duplicating displayInfo in every child
+     class Circle extends Shape {
+         void displayInfo() {
+             System.out.println("Color: " + color);  // Duplicated
+         }
+     }
+     class Rectangle extends Shape {
+         void displayInfo() {
+             System.out.println("Color: " + color);  // Duplicated again!
+         }
+     }
+
+     // Correct - define once in parent
+     class Shape {
+         void displayInfo() {
+             System.out.println("Color: " + color);  // Defined once
+         }
+     }
+     class Circle extends Shape {
+         // Inherits displayInfo automatically
+     }
+     class Rectangle extends Shape {
+         // Inherits displayInfo automatically
+     }
+     ```
+
+2. ❌ **Using Incorrect Geometry Formulas**: Making math errors in area/perimeter calculations
+   - Why: Students mix up formulas or forget mathematical constants, leading to wrong results.
+   - Fix: Double-check geometry formulas. Use Math.PI for circles, correct formulas for each shape.
+   - Example:
+     ```java
+     // Wrong - incorrect formulas
+     class Circle extends Shape {
+         @Override
+         double getArea() {
+             return 2 * Math.PI * radius;  // Wrong! This is circumference
+         }
+     }
+
+     class Triangle extends Shape {
+         @Override
+         double getArea() {
+             return base * height;  // Wrong! Missing 0.5
+         }
+     }
+
+     // Correct - right formulas
+     class Circle extends Shape {
+         @Override
+         double getArea() {
+             return Math.PI * radius * radius;  // π r²
+         }
+     }
+
+     class Triangle extends Shape {
+         @Override
+         double getArea() {
+             return 0.5 * base * height;  // ½ × base × height
+         }
+     }
+     ```
+
+3. ❌ **Not Testing Polymorphism**: Only creating objects with specific types, not using parent reference
+   - Why: Students test each shape individually but miss testing polymorphism, which is a key benefit of inheritance.
+   - Fix: Create an array of the parent type (Shape[]) and store different child objects to demonstrate polymorphism.
+   - Example:
+     ```java
+     // Wrong - no polymorphism demonstrated
+     Circle circle = new Circle("Red", 5);
+     Rectangle rect = new Rectangle("Blue", 4, 6);
+     // Just testing individually
+
+     // Correct - demonstrate polymorphism
+     Shape[] shapes = {
+         new Circle("Red", 5),
+         new Rectangle("Blue", 4, 6),
+         new Triangle("Green", 3, 4, 3, 4, 5)
+     };
+
+     // Polymorphism: Same code works for all shapes
+     for (Shape shape : shapes) {
+         System.out.println(shape.getArea());  // Calls correct version for each
+     }
+     ```
 
 **🎯 Challenges:**
 1. Add a `Pentagon` class (5 sides)
@@ -8519,6 +12296,93 @@ Area: 78.54
 3. Implement a method to scale all shapes by a factor
 4. Add a `getType()` method that returns "2D Shape"
 5. Create a method to compare two shapes by area
+
+**📋 Best Practices:**
+
+✅ **Design Parent Class with Common Behavior**
+- **Why:** Shared methods belong in parent; avoids duplication across children
+- **How:** Identify operations all children need; implement once in parent
+- **Example:**
+```java
+// ✅ Good - Common behavior in parent
+class Shape {
+    protected String color;
+
+    void displayInfo() {  // All shapes can use this
+        System.out.println("Color: " + color);
+    }
+
+    double calculateCost(double pricePerUnit) {  // Shared logic
+        return getArea() * pricePerUnit;
+    }
+
+    abstract double getArea();  // Each child implements differently
+}
+```
+
+✅ **Let Each Child Provide Specialized Implementation**
+- **Why:** Children add specifics while inheriting common structure
+- **How:** Override methods that need shape-specific logic
+- **Example:**
+```java
+class Shape {
+    abstract double getArea();  // Different for each shape
+}
+
+class Circle extends Shape {
+    @Override
+    double getArea() { return Math.PI * radius * radius; }
+}
+
+class Rectangle extends Shape {
+    @Override
+    double getArea() { return width * height; }
+}
+```
+
+✅ **Use Polymorphism to Process Mixed Collections**
+- **Why:** Allows treating different types uniformly while maintaining specific behavior
+- **How:** Store children in parent-type arrays/lists; call overridden methods
+- **Example:**
+```java
+// ✅ Polymorphism in action
+Shape[] shapes = {
+    new Circle(5),
+    new Rectangle(4, 6),
+    new Triangle(3, 4, 5)
+};
+
+for (Shape shape : shapes) {
+    System.out.println("Area: " + shape.getArea());  // Calls correct version
+}
+```
+
+✅ **Organize Hierarchy by True IS-A Relationships**
+- **Why:** Inheritance should represent genuine type relationships
+- **How:** Verify each child truly "is a" type of parent
+- **Example:**
+```java
+// ✅ Good - Clear IS-A relationships
+class Shape { }
+class Circle extends Shape { }  // Circle IS-A Shape
+class Rectangle extends Shape { }  // Rectangle IS-A Shape
+
+// ❌ Bad - Wrong relationship
+class Circle extends Color { }  // Circle is NOT-A Color (has-a relationship)
+```
+
+✅ **Keep Hierarchy Shallow and Focused**
+- **Why:** Deep hierarchies become fragile and hard to maintain
+- **How:** Limit to 2-3 levels; use composition for complex structures
+- **Example:**
+```java
+// ✅ Good - Shallow hierarchy
+Shape → Circle, Rectangle, Triangle  // 2 levels
+
+// ❌ Bad - Too deep
+Shape → Polygon → Quadrilateral → Parallelogram
+  → Rectangle → Square  // 6 levels!
+```
 
 ---
 
@@ -8970,15 +12834,88 @@ Total Pay: $101,500.00
 - [ ] Professional output with proper formatting
 - [ ] System demonstrates real-world business logic
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Duplicating common code | Defeats inheritance | Put common code in Employee |
-| Wrong pay calculations | Business logic errors | Carefully implement formulas |
-| Not using @Override | Miss typos | Always use @Override |
-| Public fields instead of protected | Poor encapsulation | Use protected for inheritance |
-| Forgetting super() | Parent not initialized | Call super() in all child constructors |
+1. ❌ **Duplicating Common Employee Logic in Each Subclass**: Repeating fields like name, id, baseSalary in Developer, Manager, Intern
+   - Why: Violates DRY principle. Common employee data should be defined once in the parent Employee class.
+   - Fix: Put all common fields (name, id, email, baseSalary) in the Employee class. Children only add their specific fields.
+   - Example:
+     ```java
+     // Wrong - duplicating fields
+     class Employee { }
+
+     class Developer extends Employee {
+         String name;  // Duplicated
+         String id;    // Duplicated
+         double baseSalary;  // Duplicated
+         String primaryLanguage;
+     }
+
+     class Manager extends Employee {
+         String name;  // Duplicated again!
+         String id;    // Duplicated again!
+         double baseSalary;  // Duplicated again!
+         String department;
+     }
+
+     // Correct - common fields in parent
+     class Employee {
+         protected String name;
+         protected String id;
+         protected double baseSalary;
+     }
+
+     class Developer extends Employee {
+         private String primaryLanguage;  // Only Developer-specific
+     }
+
+     class Manager extends Employee {
+         private String department;  // Only Manager-specific
+     }
+     ```
+
+2. ❌ **Incorrect Pay Calculation Logic**: Making errors in business logic for bonuses, stipends, or total pay
+   - Why: Each employee type has different pay calculation rules. Getting the formula wrong leads to incorrect payroll.
+   - Fix: Carefully implement each type's calculateTotalPay() according to business rules. Test with known values.
+   - Example:
+     ```java
+     // Wrong - incorrect logic
+     class Developer extends Employee {
+         @Override
+         public double calculateTotalPay() {
+             return baseSalary + projectsCompleted;  // Wrong! Missing calculation
+         }
+     }
+
+     // Correct - proper business logic
+     class Developer extends Employee {
+         @Override
+         public double calculateTotalPay() {
+             double projectBonus = projectsCompleted * BONUS_PER_PROJECT;
+             return baseSalary + projectBonus;  // Base + bonus per project
+         }
+     }
+     ```
+
+3. ❌ **Using Public Fields Instead of Protected for Inheritance**: Making fields public when they should be protected
+   - Why: Public breaks encapsulation - any code can modify the fields. Protected allows only the class and its children to access.
+   - Fix: Use `protected` for fields that children need to access, `private` for truly internal fields.
+   - Example:
+     ```java
+     // Wrong - public breaks encapsulation
+     class Employee {
+         public String name;  // Anyone can modify!
+         public double baseSalary;  // Anyone can set any value!
+     }
+
+     // Correct - protected for inheritance
+     class Employee {
+         protected String name;  // Accessible to children only
+         protected double baseSalary;
+
+         public String getName() { return name; }  // Controlled external access
+     }
+     ```
 
 **🎯 Challenges:**
 1. Add a `Contractor` class (hourly rate, hours worked)
@@ -8988,6 +12925,144 @@ Total Pay: $101,500.00
 5. Add a `calculateYearlyBonus()` method with different formulas per employee type
 6. Implement an `Employee of the Month` feature
 7. Add ability to promote Intern to Developer
+
+**📋 Best Practices:**
+
+✅ **Model Real Business Entities and Rules**
+- **Why:** Code should reflect actual business requirements and relationships
+- **How:** Map classes to real-world entities; implement actual business logic
+- **Example:**
+```java
+// ✅ Good - Models real business structure
+class Employee {
+    protected String name;
+    protected double baseSalary;
+
+    double calculateTotalPay() {
+        return baseSalary;  // Base implementation
+    }
+}
+
+class Manager extends Employee {
+    private double bonus;
+    @Override
+    double calculateTotalPay() {
+        return baseSalary + bonus;  // Real business rule
+    }
+}
+```
+
+✅ **Use Polymorphism for Uniform Processing**
+- **Why:** Process different employee types uniformly while maintaining unique behaviors
+- **How:** Store all types in parent-type collection; call overridden methods
+- **Example:**
+```java
+// ✅ Polymorphism enables uniform processing
+Employee[] employees = {
+    new Developer(...),
+    new Manager(...),
+    new Intern(...)
+};
+
+double totalPayroll = 0;
+for (Employee emp : employees) {
+    totalPayroll += emp.calculateTotalPay();  // Calls correct version for each type
+}
+```
+
+✅ **Implement Type-Specific Behavior Through Overriding**
+- **Why:** Each employee type has unique compensation, responsibilities, and behaviors
+- **How:** Override methods to provide type-specific implementations
+- **Example:**
+```java
+class Developer extends Employee {
+    private int projectsCompleted;
+
+    @Override
+    double calculateTotalPay() {
+        return baseSalary + (projectsCompleted * 1000);  // Project bonuses
+    }
+
+    @Override
+    String getRole() { return "Software Developer"; }
+}
+
+class Manager extends Employee {
+    private int teamSize;
+
+    @Override
+    double calculateTotalPay() {
+        return baseSalary + (teamSize * 500);  // Team management bonus
+    }
+
+    @Override
+    String getRole() { return "Team Manager"; }
+}
+```
+
+✅ **Use Protected for Subclass-Accessible Fields**
+- **Why:** Subclasses need access to base employee data without breaking encapsulation
+- **How:** Mark parent fields as `protected`; keep truly private as `private`
+- **Example:**
+```java
+class Employee {
+    protected String name;       // ✅ Subclasses can access
+    protected double baseSalary; // ✅ Needed for pay calculations
+    private String ssn;          // ✅ Truly private - security
+
+    protected String getName() { return name; }  // ✅ Safe access
+}
+
+class Developer extends Employee {
+    void displayInfo() {
+        System.out.println(name);  // ✅ Can access protected field
+        // System.out.println(ssn);  // ❌ Error - private
+    }
+}
+```
+
+✅ **Combine All OOP Principles in Real Systems**
+- **Why:** Real applications use encapsulation, inheritance, polymorphism together
+- **How:** Encapsulate data, inherit common structure, override for specialization, use polymorphism
+- **Example:**
+```java
+// ✅ Complete OOP design
+class Employee {
+    // Encapsulation
+    private String name;
+    protected double baseSalary;
+
+    // Constructor chaining
+    public Employee(String name, double salary) {
+        this.name = name;
+        this.baseSalary = salary;
+    }
+
+    // Overridable behavior
+    public double calculateTotalPay() {
+        return baseSalary;
+    }
+}
+
+// Inheritance + Overriding
+class Manager extends Employee {
+    private int teamSize;
+
+    public Manager(String name, double salary, int teamSize) {
+        super(name, salary);  // Chaining
+        this.teamSize = teamSize;
+    }
+
+    @Override
+    public double calculateTotalPay() {
+        return baseSalary + (teamSize * 500);  // Specialization
+    }
+}
+
+// Polymorphism in action
+Employee[] staff = {new Manager(...), new Developer(...)};
+for (Employee e : staff) { System.out.println(e.calculateTotalPay()); }
+```
 
 ---
 
@@ -9250,19 +13325,162 @@ Method Called = Dog's version (runtime decision)
 - Recognize method called is based on actual object (runtime)
 - Can create polymorphic references
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Reality |
-|---------|----------------|---------|
-| Thinking it's compile-time | Decision is at runtime | JVM decides based on object |
-| Using child-only methods | Parent reference can't see them | Only parent methods accessible |
-| Confusing with overloading | Overloading is compile-time | Polymorphism is runtime |
+1. ❌ **Thinking Polymorphism Is Compile-Time**: Believing the method to call is decided when code is compiled
+   - Why: Students confuse polymorphism (runtime) with overloading (compile-time). Polymorphism's power is that the JVM decides which method to call based on the actual object at runtime.
+   - Fix: Understand that polymorphism = runtime decision. The actual object type determines which overridden method runs, not the reference type.
+   - Example:
+     ```java
+     Animal animal = new Dog();  // Reference type: Animal, Actual type: Dog
+     animal.makeSound();  // At RUNTIME, JVM sees it's a Dog and calls Dog's makeSound()
+
+     // Compile time: Compiler only checks that Animal has makeSound()
+     // Runtime: JVM calls Dog's version because object is actually a Dog
+     ```
+
+2. ❌ **Trying to Call Child-Specific Methods Through Parent Reference**: Attempting to use methods that only exist in child class
+   - Why: When using a parent reference (Animal a = new Dog()), you can only call methods defined in the parent class, even though the object is actually a child.
+   - Fix: Cast to child type if you need child-specific methods, or redesign to put method in parent.
+   - Example:
+     ```java
+     class Animal {
+         void makeSound() { }
+     }
+
+     class Dog extends Animal {
+         void makeSound() { System.out.println("Woof"); }
+         void fetch() { System.out.println("Fetching"); }  // Dog-only method
+     }
+
+     // Wrong - can't call child-only method
+     Animal animal = new Dog();
+     animal.makeSound();  // OK - makeSound() exists in Animal
+     animal.fetch();  // Error: cannot find symbol fetch() in Animal
+
+     // Correct - cast to child type
+     Animal animal = new Dog();
+     ((Dog) animal).fetch();  // Works - cast to Dog first
+
+     // Or check type first
+     if (animal instanceof Dog) {
+         Dog dog = (Dog) animal;
+         dog.fetch();
+     }
+     ```
+
+3. ❌ **Confusing Polymorphism with Overloading**: Mixing up method overriding (polymorphism) with method overloading
+   - Why: Both involve multiple methods with same name, but they're completely different mechanisms with different timing.
+   - Fix: Remember: Overloading = compile-time (different parameters), Overriding = runtime (same signature, different class).
+   - Example:
+     ```java
+     // Overloading - compile-time (NOT polymorphism)
+     class Calculator {
+         int add(int a, int b) { return a + b; }
+         double add(double a, double b) { return a + b; }  // Different parameters
+         // Compiler picks which one based on arguments at compile-time
+     }
+
+     // Overriding - runtime (IS polymorphism)
+     class Animal {
+         void makeSound() { System.out.println("Generic"); }
+     }
+     class Dog extends Animal {
+         @Override
+         void makeSound() { System.out.println("Woof"); }  // Same signature
+     }
+
+     Animal animal = new Dog();
+     animal.makeSound();  // JVM decides at RUNTIME which version to call
+     ```
 
 **🎯 Challenge:**
 1. Create `Shape` with `draw()` and `getArea()`
 2. Create `Circle`, `Rectangle`, `Triangle` children
 3. Override both methods in each
 4. Create Shape array, fill with different shapes, call methods
+
+**📋 Best Practices:**
+
+✅ **Use Parent Type References for Flexibility**
+- **Why:** Enables code to work with any child type; increases flexibility and reusability
+- **How:** Declare variables/parameters as parent type; assign child objects
+- **Example:**
+```java
+// ✅ Good - Flexible, works with any Animal
+Animal pet1 = new Dog("Buddy");
+Animal pet2 = new Cat("Whiskers");
+pet1.makeSound();  // Calls Dog's version
+pet2.makeSound();  // Calls Cat's version
+
+// ❌ Limited - Hardcoded to specific type
+Dog dog = new Dog("Buddy");
+Cat cat = new Cat("Whiskers");
+```
+
+✅ **Understand Runtime vs Compile-Time Method Resolution**
+- **Why:** Polymorphism uses actual object type at runtime, not reference type
+- **How:** Declared type determines what methods you can call; actual type determines which version runs
+- **Example:**
+```java
+Animal animal = new Dog();
+animal.makeSound();  // ✅ Calls Dog.makeSound() - runtime decision
+
+// animal.fetch();  // ❌ Compile error - Animal doesn't have fetch()
+// Even though object IS a Dog, reference type is Animal
+```
+
+✅ **Design Methods to Accept Parent Types**
+- **Why:** Single method can process all child types; avoid writing duplicate methods
+- **How:** Use parent type for method parameters
+- **Example:**
+```java
+// ✅ Good - Works with any Animal
+public void feedAnimal(Animal animal) {
+    animal.eat();  // Works for Dog, Cat, Cow, etc.
+}
+
+// ❌ Bad - Need separate methods for each type
+public void feedDog(Dog dog) { dog.eat(); }
+public void feedCat(Cat cat) { cat.eat(); }
+public void feedCow(Cow cow) { cow.eat(); }
+```
+
+✅ **Override Methods for Type-Specific Behavior**
+- **Why:** Each child provides its own implementation while maintaining common interface
+- **How:** Use `@Override` to replace parent method with child-specific version
+- **Example:**
+```java
+class Animal {
+    void makeSound() { System.out.println("Some sound"); }
+}
+
+class Dog extends Animal {
+    @Override
+    void makeSound() { System.out.println("Woof!"); }  // Dog-specific
+}
+
+class Cat extends Animal {
+    @Override
+    void makeSound() { System.out.println("Meow!"); }  // Cat-specific
+}
+```
+
+✅ **Remember: Can Only Call Methods Declared in Reference Type**
+- **Why:** Compiler checks based on declared type, not actual object type
+- **How:** Cast to child type if you need child-specific methods
+- **Example:**
+```java
+Animal animal = new Dog();
+animal.makeSound();  // ✅ OK - Animal has makeSound()
+// animal.fetch();    // ❌ Compile error - Animal doesn't have fetch()
+
+// Need to cast for child-specific methods
+if (animal instanceof Dog) {
+    Dog dog = (Dog) animal;
+    dog.fetch();  // ✅ Now OK
+}
+```
 
 ---
 
@@ -9491,12 +13709,157 @@ for (Intern i : interns) { i.work(); }
 - Understand each object behaves according to its type
 - Recognize polymorphism enables uniform processing
 
+**Common Mistakes:**
+
+1. ❌ **Using Separate Arrays for Each Child Type**: Creating one array for each subclass instead of using a parent array
+   - Why: Defeats the purpose of polymorphism. With separate arrays, you lose the ability to process all objects uniformly.
+   - Fix: Use a single array of the parent type that can hold all child objects.
+   - Example:
+     ```java
+     // Wrong - separate arrays
+     Manager[] managers = {new Manager(), new Manager()};
+     Developer[] developers = {new Developer(), new Developer()};
+     Intern[] interns = {new Intern()};
+
+     // Need separate loops for each type
+     for (Manager m : managers) { m.work(); }
+     for (Developer d : developers) { d.work(); }
+     for (Intern i : interns) { i.work(); }
+
+     // Correct - one parent array
+     Employee[] employees = {
+         new Manager(),
+         new Developer(),
+         new Intern(),
+         new Manager(),
+         new Developer()
+     };
+
+     // One loop for all types
+     for (Employee emp : employees) {
+         emp.work();  // Polymorphic call
+     }
+     ```
+
+2. ❌ **Casting Every Element Without instanceof Check**: Blindly casting array elements to child type
+   - Why: If the array contains mixed types and you cast to the wrong type, you get a ClassCastException at runtime.
+   - Fix: Use `instanceof` to check type before casting, or better yet, use polymorphism to avoid casting.
+   - Example:
+     ```java
+     Employee[] team = {new Manager(), new Developer(), new Manager()};
+
+     // Wrong - unsafe casting
+     for (Employee emp : team) {
+         Manager m = (Manager) emp;  // Throws ClassCastException when emp is Developer!
+         m.managTeam();
+     }
+
+     // Correct - check before casting
+     for (Employee emp : team) {
+         if (emp instanceof Manager) {
+             Manager m = (Manager) emp;
+             m.manageTeam();
+         }
+     }
+
+     // Best - use polymorphism, avoid casting
+     for (Employee emp : team) {
+         emp.work();  // No casting needed
+     }
+     ```
+
+3. ❌ **Not Leveraging Polymorphism for Aggregate Operations**: Using type checks and casting instead of relying on polymorphism
+   - Why: Defeats the purpose of polymorphism. Code becomes cluttered with instanceof checks and type-specific logic.
+   - Fix: Design parent class with methods that all children override. Use those methods directly without checking types.
+   - Example:
+     ```java
+     Shape[] shapes = {new Circle(5), new Rectangle(4, 6), new Triangle(3, 4, 5)};
+
+     // Wrong - checking types explicitly
+     double totalArea = 0;
+     for (Shape shape : shapes) {
+         if (shape instanceof Circle) {
+             Circle c = (Circle) shape;
+             totalArea += Math.PI * c.radius * c.radius;
+         } else if (shape instanceof Rectangle) {
+             Rectangle r = (Rectangle) shape;
+             totalArea += r.width * r.height;
+         }
+         // ... more type checks
+     }
+
+     // Correct - polymorphism handles it
+     double totalArea = 0;
+     for (Shape shape : shapes) {
+         totalArea += shape.getArea();  // Calls correct version automatically
+     }
+     ```
+
 **🎯 Challenge:**
 Create:
 1. `Vehicle` parent with `start()`, `getFuelEfficiency()`
 2. `Car`, `Truck`, `Motorcycle` children with different implementations
 3. Array of Vehicles with mixed types
 4. Loop through, start all, calculate average fuel efficiency
+
+**📋 Best Practices:**
+
+✅ **Use Parent-Type Arrays for Heterogeneous Collections**
+- **Why:** Store and process different child types uniformly
+- **How:** Declare array as parent type, populate with various child objects
+- **Example:**
+```java
+// ✅ Good - One array for all shapes
+Shape[] shapes = {
+    new Circle(5),
+    new Rectangle(4, 6),
+    new Triangle(3, 4, 5)
+};
+
+for (Shape shape : shapes) {
+    shape.draw();  // Polymorphic call
+}
+
+// ❌ Bad - Separate arrays for each type
+Circle[] circles = {new Circle(5)};
+Rectangle[] rectangles = {new Rectangle(4, 6)};
+// Hard to process together
+```
+
+✅ **Process Collections Uniformly with Polymorphism**
+- **Why:** Single loop can handle all types; cleaner, more maintainable code
+- **How:** Iterate once, call overridden methods
+- **Example:**
+```java
+Employee[] team = {new Manager(...), new Developer(...), new Intern(...)};
+
+double totalPay = 0;
+for (Employee emp : team) {
+    totalPay += emp.calculatePay();  // Each calculates differently
+}
+```
+
+✅ **Leverage Polymorphism for Aggregate Operations**
+- **Why:** Perform operations across all types without type-specific logic
+- **How:** Use common parent methods to calculate totals, averages, find max/min
+- **Example:**
+```java
+Shape[] shapes = {new Circle(5), new Rectangle(4, 6), new Triangle(3, 4)};
+
+// Find largest shape
+Shape largest = shapes[0];
+for (Shape shape : shapes) {
+    if (shape.getArea() > largest.getArea()) {
+        largest = shape;
+    }
+}
+
+// Calculate total area
+double totalArea = 0;
+for (Shape shape : shapes) {
+    totalArea += shape.getArea();
+}
+```
 
 ---
 
@@ -9729,14 +14092,89 @@ for (Animal animal : animals) {
 - Know instanceof returns boolean
 - Recognize instanceof checks inheritance hierarchy
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| Downcasting without checking | Can cause ClassCastException | Check with instanceof first |
-| Checking after downcasting | Too late if wrong type | Check BEFORE casting |
-| Using == for type check | Doesn't work | Use instanceof |
-| Overusing instanceof | Defeats polymorphism | Use sparingly, prefer overriding |
+1. ❌ **Downcasting Without instanceof Check**: Casting directly without checking type first
+   - Why: If the object is not actually of the type you're casting to, you get a ClassCastException at runtime.
+   - Fix: Always use `instanceof` to check before casting.
+   - Example:
+     ```java
+     // Wrong - unsafe casting
+     Animal animal = getAnimal();  // Could be any Animal type
+     Dog dog = (Dog) animal;  // ClassCastException if it's not a Dog!
+     dog.fetch();
+
+     // Correct - check first
+     Animal animal = getAnimal();
+     if (animal instanceof Dog) {
+         Dog dog = (Dog) animal;  // Safe - we checked
+         dog.fetch();
+     }
+     ```
+
+2. ❌ **Checking Type After Downcasting**: Using instanceof after you've already cast
+   - Why: Too late! If the cast fails, exception is thrown before you can check. The check must come BEFORE the cast.
+   - Fix: Always check with instanceof BEFORE casting, not after.
+   - Example:
+     ```java
+     // Wrong - checking after cast
+     Animal animal = getAnimal();
+     Dog dog = (Dog) animal;  // May throw exception here!
+     if (dog instanceof Dog) {  // Too late!
+         dog.fetch();
+     }
+
+     // Correct - check before cast
+     Animal animal = getAnimal();
+     if (animal instanceof Dog) {  // Check first
+         Dog dog = (Dog) animal;  // Then cast
+         dog.fetch();
+     }
+     ```
+
+3. ❌ **Using == to Check Object Type**: Trying `object.getClass() == ClassName.class` instead of instanceof
+   - Why: `==` checks for exact class match, while instanceof also returns true for subclasses. instanceof is usually what you want.
+   - Fix: Use instanceof for type checking in most cases.
+   - Example:
+     ```java
+     class Animal { }
+     class Dog extends Animal { }
+     class Bulldog extends Dog { }
+
+     Bulldog bulldog = new Bulldog();
+
+     // Wrong - too specific
+     if (bulldog.getClass() == Dog.class) {  // false! Bulldog != Dog
+         // Never executes
+     }
+
+     // Correct - checks inheritance
+     if (bulldog instanceof Dog) {  // true! Bulldog IS-A Dog
+         // Executes as expected
+     }
+     ```
+
+4. ❌ **Overusing instanceof Instead of Polymorphism**: Checking types everywhere instead of using overridden methods
+   - Why: Defeats the purpose of polymorphism. Code becomes hard to maintain with lots of type checks.
+   - Fix: Use polymorphism. Override methods in children. Only use instanceof when absolutely necessary.
+   - Example:
+     ```java
+     // Wrong - type-checking everywhere
+     for (Animal animal : animals) {
+         if (animal instanceof Dog) {
+             System.out.println("Woof");
+         } else if (animal instanceof Cat) {
+             System.out.println("Meow");
+         } else if (animal instanceof Bird) {
+             System.out.println("Tweet");
+         }
+     }
+
+     // Correct - polymorphism
+     for (Animal animal : animals) {
+         animal.makeSound();  // Each type has overridden makeSound()
+     }
+     ```
 
 **🎯 Challenge:**
 Create payment system:
@@ -9744,6 +14182,81 @@ Create payment system:
 2. `CreditCard`, `PayPal`, `Cash` children
 3. Array of mixed Payment objects
 4. Use instanceof to apply different fees for each type
+
+**📋 Best Practices:**
+
+✅ **Always Check with instanceof Before Downcasting**
+- **Why:** Prevents ClassCastException at runtime
+- **How:** Use instanceof check before casting to child type
+- **Example:**
+```java
+// ✅ Good - Safe downcasting
+Animal animal = getAnimal();
+if (animal instanceof Dog) {
+    Dog dog = (Dog) animal;
+    dog.fetch();  // Safe - we know it's a Dog
+}
+
+// ❌ Bad - Unsafe cast
+Dog dog = (Dog) animal;  // ClassCastException if not a Dog!
+```
+
+✅ **Use instanceof Sparingly - Prefer Polymorphism**
+- **Why:** Excessive type checking defeats the purpose of polymorphism
+- **How:** Override methods instead of checking types
+- **Example:**
+```java
+// ❌ Bad - Type checking everywhere
+for (Animal animal : animals) {
+    if (animal instanceof Dog) {
+        System.out.println("Woof");
+    } else if (animal instanceof Cat) {
+        System.out.println("Meow");
+    }
+}
+
+// ✅ Good - Polymorphism
+for (Animal animal : animals) {
+    animal.makeSound();  // Each type knows its own sound
+}
+```
+
+✅ **Check Most Specific Types First**
+- **Why:** More general types will match subclasses too
+- **How:** Check child types before parent types
+- **Example:**
+```java
+// ✅ Good - Specific to general
+if (animal instanceof Dog) {
+    // Handle Dog
+} else if (animal instanceof Animal) {
+    // Handle other Animals
+}
+
+// ❌ Bad - General first catches everything
+if (animal instanceof Animal) {  // Always true!
+    // This catches Dog, Cat, etc.
+} else if (animal instanceof Dog) {
+    // Never reached!
+}
+```
+
+✅ **Use instanceof for Optional Type-Specific Operations**
+- **Why:** Sometimes you genuinely need to handle specific types differently
+- **How:** Use for legitimately type-dependent operations
+- **Example:**
+```java
+// ✅ Good use case - Optional behavior
+for (Animal animal : animals) {
+    animal.feed();  // Common operation
+
+    // Optional: Groom only dogs
+    if (animal instanceof Dog) {
+        Dog dog = (Dog) animal;
+        dog.groom();
+    }
+}
+```
 
 ---
 
@@ -9989,14 +14502,103 @@ abstract class Example {
 - Can implement all abstract methods in child
 - Recognize abstract classes force common structure
 
-**❌ Common Mistakes:**
+**Common Mistakes:**
 
-| Mistake | Why It's Wrong | Correct Way |
-|---------|----------------|-------------|
-| `new AbstractClass()` | Cannot instantiate | Create child instance |
-| Forgetting to implement | Child must implement ALL | Implement all abstract methods |
-| Abstract method with body | Abstract = no implementation | Remove body |
-| Making everything abstract | Defeats purpose | Mix abstract and concrete |
+1. ❌ **Trying to Instantiate an Abstract Class**: Using `new AbstractClassName()`
+   - Why: Abstract classes are incomplete by definition - they have abstract methods with no implementation. You cannot create objects from incomplete classes.
+   - Fix: Create instances of concrete child classes that implement all abstract methods.
+   - Example:
+     ```java
+     abstract class Animal {
+         abstract void makeSound();
+     }
+
+     // Wrong - cannot instantiate abstract class
+     Animal animal = new Animal();  // Error: Animal is abstract; cannot be instantiated
+
+     // Correct - instantiate concrete child class
+     class Dog extends Animal {
+         void makeSound() { System.out.println("Woof"); }
+     }
+
+     Animal animal = new Dog();  // OK - Dog is concrete
+     ```
+
+2. ❌ **Forgetting to Implement All Abstract Methods in Child Class**: Creating child class but not implementing all required abstract methods
+   - Why: If child doesn't implement all abstract methods, it becomes abstract too. You must implement every abstract method from the parent.
+   - Fix: Either implement all abstract methods, or declare the child class as abstract too.
+   - Example:
+     ```java
+     abstract class Shape {
+         abstract double getArea();
+         abstract double getPerimeter();
+     }
+
+     // Wrong - missing implementations
+     class Circle extends Shape {
+         double getArea() { return 0; }
+         // Error: Circle is not abstract and does not override getPerimeter()
+     }
+
+     // Correct - all methods implemented
+     class Circle extends Shape {
+         double radius;
+         double getArea() { return Math.PI * radius * radius; }
+         double getPerimeter() { return 2 * Math.PI * radius; }
+     }
+     ```
+
+3. ❌ **Providing Method Body for Abstract Methods**: Writing implementation in abstract method declaration
+   - Why: Abstract methods are meant to be declarations only - no body. The body goes in child classes.
+   - Fix: Remove the method body. Use semicolon after declaration.
+   - Example:
+     ```java
+     // Wrong - abstract method with body
+     abstract class Animal {
+         abstract void makeSound() {  // Error: abstract methods cannot have a body
+             System.out.println("Sound");
+         }
+     }
+
+     // Correct - no body
+     abstract class Animal {
+         abstract void makeSound();  // Declaration only
+     }
+
+     class Dog extends Animal {
+         void makeSound() {  // Implementation in child
+             System.out.println("Woof");
+         }
+     }
+     ```
+
+4. ❌ **Making Everything Abstract**: Declaring all methods as abstract with no concrete methods
+   - Why: Defeats the purpose of abstract classes. If everything is abstract, use an interface instead. Abstract classes should provide some shared concrete implementation.
+   - Fix: Mix abstract methods (for customization) with concrete methods (for shared behavior).
+   - Example:
+     ```java
+     // Wrong - everything abstract (use interface instead)
+     abstract class Shape {
+         abstract double getArea();
+         abstract double getPerimeter();
+         abstract void displayInfo();  // Could be concrete
+     }
+
+     // Correct - mix of abstract and concrete
+     abstract class Shape {
+         protected String color;
+
+         // Concrete - shared by all shapes
+         void displayInfo() {
+             System.out.println("Shape: " + color);
+             System.out.println("Area: " + getArea());
+         }
+
+         // Abstract - each shape calculates differently
+         abstract double getArea();
+         abstract double getPerimeter();
+     }
+     ```
 
 **🎯 Challenge:**
 Create abstract `Shape` class:
@@ -10004,6 +14606,108 @@ Create abstract `Shape` class:
 2. Concrete method: displayInfo()
 3. Create `Circle`, `Rectangle` that implement abstract methods
 4. Test both shapes
+
+**📋 Best Practices:**
+
+✅ **Use Abstract Classes for Partial Implementation**
+- **Why:** Share common code while forcing children to implement specific parts
+- **How:** Provide concrete methods for shared behavior; abstract methods for required customization
+- **Example:**
+```java
+// ✅ Good - Mix of concrete and abstract
+abstract class Shape {
+    protected String color;
+
+    // Concrete - shared by all shapes
+    void displayInfo() {
+        System.out.println("Color: " + color);
+        System.out.println("Area: " + getArea());
+    }
+
+    // Abstract - each shape calculates differently
+    abstract double getArea();
+}
+```
+
+✅ **Force Consistent API Through Abstract Methods**
+- **Why:** Ensures all children provide required functionality
+- **How:** Declare abstract methods for operations all children must implement
+- **Example:**
+```java
+abstract class Animal {
+    abstract void makeSound();  // All animals must make sound
+    abstract void move();       // All animals must move
+
+    // ✅ Compiler enforces implementation
+}
+
+class Dog extends Animal {
+    @Override
+    void makeSound() { System.out.println("Woof"); }  // Must implement
+    @Override
+    void move() { System.out.println("Runs"); }       // Must implement
+}
+```
+
+✅ **Don't Instantiate Abstract Classes**
+- **Why:** Abstract classes are incomplete; they require child implementation
+- **How:** Always create instances of concrete child classes
+- **Example:**
+```java
+abstract class Vehicle {
+    abstract void start();
+}
+
+// ❌ Cannot instantiate
+// Vehicle v = new Vehicle();  // Compiler error!
+
+// ✅ Instantiate concrete child
+class Car extends Vehicle {
+    @Override
+    void start() { System.out.println("Car starting"); }
+}
+Vehicle v = new Car();  // ✅ OK
+```
+
+✅ **Mix Abstract and Concrete Methods Strategically**
+- **Why:** Provide shared functionality while requiring customization
+- **How:** Concrete for common behavior, abstract for type-specific behavior
+- **Example:**
+```java
+abstract class Employee {
+    protected String name;
+    protected double baseSalary;
+
+    // Concrete - shared logic
+    void displayInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Pay: " + calculatePay());
+    }
+
+    // Abstract - each type calculates differently
+    abstract double calculatePay();
+}
+```
+
+✅ **Use Abstract Classes When You Need Shared State**
+- **Why:** Abstract classes can have fields and constructors; interfaces cannot (pre-Java 8)
+- **How:** Use abstract class when children share common fields
+- **Example:**
+```java
+// ✅ Abstract class with shared state
+abstract class Shape {
+    protected String color;     // Shared field
+    protected int x, y;         // Position
+
+    Shape(String color, int x, int y) {  // Constructor
+        this.color = color;
+        this.x = x;
+        this.y = y;
+    }
+
+    abstract double getArea();  // Still enforce this
+}
+```
 
 ---
 
@@ -10243,6 +14947,114 @@ class Circle extends Shape implements Drawable, Movable { }  // ✅ OK\!
 - Know all interface methods must be implemented
 - Recognize interfaces enable polymorphism
 
+**Common Mistakes:**
+
+1. ❌ **Forgetting to Implement All Interface Methods**: Implementing interface but missing one or more methods
+   - Why: When you say a class "implements" an interface, you're promising to provide implementations for ALL methods declared in that interface.
+   - Fix: Implement every single method from the interface, or declare the class as abstract.
+   - Example:
+     ```java
+     interface Drawable {
+         void draw();
+         void erase();
+         void resize();
+     }
+
+     // Wrong - missing methods
+     class Circle implements Drawable {
+         public void draw() { }
+         // Error: Circle is not abstract and does not override erase() and resize()
+     }
+
+     // Correct - all methods implemented
+     class Circle implements Drawable {
+         public void draw() { System.out.println("Drawing circle"); }
+         public void erase() { System.out.println("Erasing circle"); }
+         public void resize() { System.out.println("Resizing circle"); }
+     }
+     ```
+
+2. ❌ **Not Making Interface Methods public**: Implementing interface methods without public access modifier
+   - Why: Interface methods are implicitly public. When implementing them, you must use public (or wider) access modifier. You cannot reduce visibility.
+   - Fix: Always declare implemented methods as public.
+   - Example:
+     ```java
+     interface Flyable {
+         void fly();  // Implicitly public
+     }
+
+     // Wrong - not public
+     class Bird implements Flyable {
+         void fly() {  // Error: attempting to assign weaker access privileges
+             System.out.println("Flying");
+         }
+     }
+
+     // Correct - public
+     class Bird implements Flyable {
+         public void fly() {  // Must be public
+             System.out.println("Flying");
+         }
+     }
+     ```
+
+3. ❌ **Trying to Create Interface Variables (Fields)**: Trying to put regular instance variables in an interface
+   - Why: Interfaces can only have constants (public static final), not instance variables. Interfaces define behavior, not state.
+   - Fix: Put instance variables in implementing classes. Use constants in interfaces only when needed.
+   - Example:
+     ```java
+     // Wrong - trying to have instance variables
+     interface Animal {
+         String name;  // Error: interface variables are implicitly static final, need initialization
+         int age;
+     }
+
+     // Correct - constants only
+     interface Animal {
+         int MAX_AGE = 100;  // Constant (public static final)
+         void makeSound();   // Method declaration
+     }
+
+     // Put instance variables in implementing class
+     class Dog implements Animal {
+         private String name;  // Instance variable
+         private int age;
+
+         public void makeSound() { System.out.println("Woof"); }
+     }
+     ```
+
+4. ❌ **Confusing Interfaces with Abstract Classes**: Using interface when abstract class would be better, or vice versa
+   - Why: Interfaces are for pure contracts (no implementation or state). Abstract classes can have both abstract methods AND concrete methods/fields.
+   - Fix: Use interface for pure "can do" contracts. Use abstract class when you need shared implementation.
+   - Example:
+     ```java
+     // Wrong - interface can't have shared implementation
+     interface Shape {
+         String color;  // Error - can't have instance variables
+         void displayInfo() {  // Error - can't have method body
+             System.out.println("Color: " + color);
+         }
+         void getArea();
+     }
+
+     // Correct - use abstract class for shared implementation
+     abstract class Shape {
+         protected String color;  // Shared field
+
+         void displayInfo() {  // Shared concrete method
+             System.out.println("Color: " + color);
+         }
+
+         abstract double getArea();  // Abstract - each shape implements differently
+     }
+
+     // Use interface for pure contract
+     interface Drawable {
+         void draw();  // All classes must provide their own implementation
+     }
+     ```
+
 **🎯 Challenge:**
 Create:
 1. `Playable` interface (play(), pause(), stop())
@@ -10250,6 +15062,112 @@ Create:
 3. `MusicPlayer` class implements Playable
 4. `VoiceRecorder` class implements Recordable
 5. `SmartPhone` class implements BOTH
+
+**📋 Best Practices:**
+
+✅ **Use Interfaces to Define Contracts**
+- **Why:** Interfaces specify what a class can do without dictating how
+- **How:** Define interface with method signatures; implementing classes provide behavior
+- **Example:**
+```java
+// ✅ Interface defines contract
+interface Drawable {
+    void draw();  // What, not how
+    void erase();
+}
+
+class Circle implements Drawable {
+    @Override
+    public void draw() {
+        // Circle-specific drawing logic
+    }
+    @Override
+    public void erase() {
+        // Circle-specific erasing logic
+    }
+}
+```
+
+✅ **Implement Multiple Interfaces for Multiple Capabilities**
+- **Why:** Java single inheritance limitation; interfaces enable multiple behaviors
+- **How:** Use `implements Interface1, Interface2` to gain multiple capabilities
+- **Example:**
+```java
+// ✅ Multiple interfaces = multiple capabilities
+interface Flyable {
+    void fly();
+}
+
+interface Swimmable {
+    void swim();
+}
+
+class Duck implements Flyable, Swimmable {
+    @Override
+    public void fly() { System.out.println("Duck flying"); }
+
+    @Override
+    public void swim() { System.out.println("Duck swimming"); }
+}
+```
+
+✅ **Prefer Interfaces Over Abstract Classes for Pure Contracts**
+- **Why:** Interfaces are more flexible; classes can implement multiple interfaces
+- **How:** Use interface when you don't need shared state or implementation
+- **Example:**
+```java
+// ✅ Good - Pure contract
+interface Sortable {
+    int compareTo(Sortable other);
+}
+
+// ❌ Overkill - No shared state/behavior needed
+abstract class Sortable {
+    abstract int compareTo(Sortable other);
+}
+```
+
+✅ **Make All Interface Methods public**
+- **Why:** Interface methods are implicitly public; explicit declaration prevents confusion
+- **How:** Add `public` modifier to interface methods (though not required)
+- **Example:**
+```java
+// ✅ Explicit - Clear intent
+interface Drawable {
+    public void draw();
+    public void erase();
+}
+
+// Also OK - Implicitly public
+interface Drawable {
+    void draw();
+    void erase();
+}
+```
+
+✅ **Use Interfaces for Polymorphism Across Unrelated Classes**
+- **Why:** Enables polymorphism without forcing inheritance relationship
+- **How:** Unrelated classes implement same interface; process them uniformly
+- **Example:**
+```java
+interface Printable {
+    void print();
+}
+
+class Document implements Printable {
+    public void print() { /* print document */ }
+}
+
+class Photo implements Printable {
+    public void print() { /* print photo */ }
+}
+
+// ✅ Polymorphism without inheritance
+Printable[] items = {new Document(), new Photo()};
+for (Printable item : items) {
+    item.print();  // Each prints differently
+}
+```
 
 ---
 

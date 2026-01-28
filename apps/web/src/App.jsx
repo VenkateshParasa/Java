@@ -15,6 +15,10 @@ function App() {
     return saved ? parseInt(saved) : 280;
   });
 
+  const [selectedCourse, setSelectedCourse] = useState(() => {
+    return localStorage.getItem('selectedCourse') || 'java';
+  });
+
   useEffect(() => {
     const handleStorageChange = () => {
       const saved = localStorage.getItem('sideMenuWidth');
@@ -33,6 +37,29 @@ function App() {
     };
   }, []);
 
+  // Listen for course changes
+  useEffect(() => {
+    const handleCourseChange = () => {
+      const course = localStorage.getItem('selectedCourse') || 'java';
+      setSelectedCourse(course);
+    };
+
+    window.addEventListener('storage', handleCourseChange);
+    window.addEventListener('courseChange', handleCourseChange);
+
+    return () => {
+      window.removeEventListener('storage', handleCourseChange);
+      window.removeEventListener('courseChange', handleCourseChange);
+    };
+  }, []);
+
+  // Get dynamic title based on selected course
+  const getHeaderTitle = () => {
+    return selectedCourse === 'selenium'
+      ? 'Selenium Automation Platform'
+      : 'Java Learning Platform';
+  };
+
   return (
     <Router>
       <MenuProvider>
@@ -41,7 +68,7 @@ function App() {
             <div className="header-content">
               <MenuToggleButton />
               <Link to="/" className="logo">
-                <h1>Java Learning Platform</h1>
+                <h1>{getHeaderTitle()}</h1>
               </Link>
               <nav className="nav-links">
                 <Link to="/" className="nav-link">Home</Link>
@@ -63,7 +90,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/assessments" element={<AssessmentList />} />
                 <Route path="/course/:week/:day" element={<CoursePage />} />
-                
+
                 {/* Selenium Course Content Routes - All 49 Days */}
                 <Route path="/selenium/:day" element={<CoursePage course="selenium" />} />
 

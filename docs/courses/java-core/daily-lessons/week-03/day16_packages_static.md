@@ -3180,6 +3180,30 @@ Tomorrow (Day 17), we'll learn about:
 
 ---
 
+## 🔗 Navigation
+
+### Previous Day
+← [Day 15: Strings](day15_strings.md)
+
+### Next Day
+→ [Day 17: Exception Handling - Part 1](day17_exception_handling_part1.md)
+
+### Week Overview
+↑ [Week 3: Advanced Java Fundamentals](README.md)
+
+### Course Home
+🏠 [Core Java Daily Learning](../README.md)
+
+### Related Topics
+- [Day 8: Classes & Objects](../week-02/day08_oop_classes.md) - Foundation for static members
+- [Day 9: Constructors](../week-02/day09_constructors_this.md) - Static vs instance initialization
+- [Day 15: Strings](day15_strings.md) - Using packages in Java
+
+### Assessment
+📝 [Day 16 Assessment](../../assessments/java/week3/day16.js) - Test your Packages & Static knowledge
+
+---
+
 ## 📚 Additional Resources
 
 - [Oracle Packages Tutorial](https://docs.oracle.com/javase/tutorial/java/package/)

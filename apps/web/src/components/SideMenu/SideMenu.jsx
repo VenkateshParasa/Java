@@ -69,6 +69,8 @@ function SideMenu() {
     setSelectedCourse(course);
     localStorage.setItem('selectedCourse', course);
     setCollapsedWeeks({}); // Reset collapsed state when switching courses
+    // Dispatch custom event to notify App component
+    window.dispatchEvent(new Event('courseChange'));
   };
 
   // Handle resize

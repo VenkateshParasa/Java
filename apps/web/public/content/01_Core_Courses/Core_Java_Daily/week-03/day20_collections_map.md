@@ -4015,6 +4015,30 @@ Tomorrow (Day 21), we'll learn about:
 
 ---
 
+## 🔗 Navigation
+
+### Previous Day
+← [Day 19: Collections - List & Set](day19_collections_list_set.md)
+
+### Next Day
+→ [Day 21: Generics](day21_generics.md)
+
+### Week Overview
+↑ [Week 3: Advanced Java Fundamentals](README.md)
+
+### Course Home
+🏠 [Core Java Daily Learning](../README.md)
+
+### Related Topics
+- [Day 19: Collections - List & Set](day19_collections_list_set.md) - Other collection types
+- [Day 21: Generics](day21_generics.md) - Type-safe collections
+- [Day 8: Classes & Objects](../week-02/day08_oop_classes.md) - Understanding equals() and hashCode()
+
+### Assessment
+📝 [Day 20 Assessment](../../assessments/java/week3/day20.js) - Test your Map knowledge
+
+---
+
 ## 📚 Additional Resources
 
 - [Oracle Map Tutorial](https://docs.oracle.com/javase/tutorial/collections/interfaces/map.html)

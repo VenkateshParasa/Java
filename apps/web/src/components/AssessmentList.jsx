@@ -1,10 +1,54 @@
 import { Link } from 'react-router-dom';
-import { getAllAssessments, getAllWeeksInfo } from '../data/assessments';
+import { useState, useEffect } from 'react';
+import {
+  getAssessmentsByCourse,
+  week1Info, week2Info, week3Info, week4Info,
+  seleniumWeek1Info, seleniumWeek2Info, seleniumWeek3Info,
+  seleniumWeek4Info, seleniumWeek5Info, seleniumWeek6Info, seleniumWeek7Info
+} from '../data/assessments';
 import { getAssessmentResults } from '../utils/assessmentStorage';
 
 function AssessmentList() {
-  const assessments = getAllAssessments();
-  const weeksInfo = getAllWeeksInfo();
+  // Get selected course from localStorage
+  const [selectedCourse, setSelectedCourse] = useState(() => {
+    return localStorage.getItem('selectedCourse') || 'java';
+  });
+
+  // Listen for course changes
+  useEffect(() => {
+    const handleCourseChange = () => {
+      const course = localStorage.getItem('selectedCourse') || 'java';
+      setSelectedCourse(course);
+    };
+
+    window.addEventListener('storage', handleCourseChange);
+    window.addEventListener('courseChange', handleCourseChange);
+
+    return () => {
+      window.removeEventListener('storage', handleCourseChange);
+      window.removeEventListener('courseChange', handleCourseChange);
+    };
+  }, []);
+
+  // Get course-specific data
+  const isSelenium = selectedCourse === 'selenium';
+  const coursePrefix = isSelenium ? 'selenium' : 'java';
+
+  // Get assessments for selected course
+  const assessments = getAssessmentsByCourse(coursePrefix);
+
+  // Get weeks info for selected course
+  const weeksInfo = isSelenium
+    ? [
+        seleniumWeek1Info,
+        seleniumWeek2Info,
+        seleniumWeek3Info,
+        seleniumWeek4Info,
+        seleniumWeek5Info,
+        seleniumWeek6Info,
+        seleniumWeek7Info
+      ]
+    : [week1Info, week2Info, week3Info, week4Info];
 
   // Group assessments by week using proper day ranges
   const weeks = weeksInfo.map((weekInfo, index) => {
@@ -26,12 +70,21 @@ function AssessmentList() {
   const totalQuestions = weeksInfo.reduce((sum, w) => sum + w.totalQuestions, 0);
   const totalPoints = weeksInfo.reduce((sum, w) => sum + w.totalPoints, 0);
 
+  // Dynamic titles based on course
+  const courseTitle = isSelenium
+    ? 'Selenium Automation Assessments'
+    : 'Java Core Fundamentals Assessments';
+
+  const courseSubtitle = isSelenium
+    ? `Test your knowledge with ${totalAssessments} comprehensive assessments covering ${weeksInfo.length} weeks of Selenium automation`
+    : `Test your knowledge with ${totalAssessments} comprehensive assessments covering ${weeksInfo.length} weeks of Java programming`;
+
   return (
     <div className="assessment-list-container">
       <div className="assessment-list-header">
-        <h1>Java Core Fundamentals Assessments</h1>
+        <h1>{courseTitle}</h1>
         <p className="subtitle">
-          Test your knowledge with {totalAssessments} comprehensive assessments covering 4 weeks of Java programming
+          {courseSubtitle}
         </p>
       </div>
 
@@ -114,9 +167,13 @@ function AssessmentCard({ assessment }) {
     (assessment.questions?.[0]?.difficulty) ||
     'beginner';
 
-  // Strip 'java-' prefix from ID for route matching
-  const routeId = assessment.id.replace('java-', '');
-  
+  // Prepare route ID:
+  // - For Java assessments (java-day1), strip prefix to get 'day1'
+  // - For Selenium assessments (selenium-day1), keep as is
+  const routeId = assessment.id.startsWith('java-')
+    ? assessment.id.replace('java-', '')
+    : assessment.id;
+
   return (
     <Link to={`/assessment/${routeId}`} className="assessment-card">
       <div className="card-header">

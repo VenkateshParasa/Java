@@ -29,7 +29,22 @@
       "Bash(echo:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(rsync:*)",
+      "Bash(npm run build:*)",
+      "Bash(for file in week-*/day*.md)",
+      "Bash(do if grep -q \"## Navigation\\\\|## 🧭 Navigation\" \"$file\")",
+      "Bash(then echo \"✅ $file\")",
+      "Bash(else echo \"❌ $file\")",
+      "Bash(fi)",
+      "Bash(do if grep -q \"^## .*Navigation\" \"$file\")",
+      "Bash(npm install:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(npm start)",
+      "Bash(npm uninstall:*)",
+      "Bash(pkill:*)",
+      "Bash(git push)",
+      "Bash(git push:*)"
     ]
   }
 }

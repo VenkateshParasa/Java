@@ -2997,6 +2997,522 @@ public class CrossBrowserReportListener implements ITestListener {
 
 ---
 
+## Common Mistakes and How to Avoid Them
+
+### ❌ Mistake 1: Using Local WebDriver Instead of RemoteWebDriver for Grid
+
+**Why it's wrong:**
+When connecting to Selenium Grid, students often forget to use `RemoteWebDriver` and continue using browser-specific drivers like `ChromeDriver` or `FirefoxDriver`, which only work locally.
+
+**How to fix:**
+Always use `RemoteWebDriver` when connecting to Grid or cloud platforms. RemoteWebDriver takes a URL and capabilities.
+
+**Example:**
+```java
+// ❌ WRONG - This won't connect to Grid
+WebDriverManager.chromedriver().setup();
+WebDriver driver = new ChromeDriver();
+
+// ✅ CORRECT - Using RemoteWebDriver for Grid
+ChromeOptions options = new ChromeOptions();
+WebDriver driver = new RemoteWebDriver(
+    new URL("http://localhost:4444"),
+    options
+);
+```
+
+---
+
+### ❌ Mistake 2: Not Using ThreadLocal for Parallel Execution
+
+**Why it's wrong:**
+Sharing a single WebDriver instance across parallel tests causes thread interference, resulting in "session not found", "element not found", or "stale element" exceptions.
+
+**How to fix:**
+Use ThreadLocal to maintain separate WebDriver instances for each thread.
+
+**Example:**
+```java
+// ❌ WRONG - Shared driver across threads
+public class Test {
+    private WebDriver driver;  // All threads share this
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();  // Race condition!
+    }
+}
+
+// ✅ CORRECT - ThreadLocal for thread safety
+public class Test {
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    @BeforeMethod
+    public void setup() {
+        driver.set(new ChromeDriver());
+    }
+
+    public WebDriver getDriver() {
+        return driver.get();
+    }
+
+    @AfterMethod
+    public void teardown() {
+        driver.get().quit();
+        driver.remove();  // Important to prevent memory leaks
+    }
+}
+```
+
+---
+
+### ❌ Mistake 3: Hardcoding Grid URL and Credentials
+
+**Why it's wrong:**
+Hardcoding Grid URLs, BrowserStack credentials, or configuration values makes tests environment-specific and exposes sensitive data in version control.
+
+**How to fix:**
+Use configuration files or environment variables for external values.
+
+**Example:**
+```java
+// ❌ WRONG - Hardcoded values
+String gridUrl = "http://localhost:4444";
+String bsUser = "myusername";
+String bsKey = "abc123secret";
+
+// ✅ CORRECT - Using environment variables
+String gridUrl = System.getenv("GRID_URL") != null ?
+    System.getenv("GRID_URL") : "http://localhost:4444";
+String bsUser = System.getenv("BROWSERSTACK_USER");
+String bsKey = System.getenv("BROWSERSTACK_KEY");
+
+// ✅ BETTER - Using properties file
+Properties config = new Properties();
+config.load(new FileInputStream("config.properties"));
+String gridUrl = config.getProperty("grid.url");
+```
+
+---
+
+### ❌ Mistake 4: Not Configuring shm_size in Docker
+
+**Why it's wrong:**
+When running Selenium Grid in Docker without configuring shared memory (`shm_size`), browsers crash with "session deleted because of page crash" errors.
+
+**How to fix:**
+Always set `shm_size` to at least 2GB in docker-compose.yml or docker run command.
+
+**Example:**
+```yaml
+# ❌ WRONG - Missing shm_size
+chrome-node:
+  image: selenium/node-chrome:4.15.0
+  ports:
+    - "5900:5900"
+
+# ✅ CORRECT - With shm_size configured
+chrome-node:
+  image: selenium/node-chrome:4.15.0
+  ports:
+    - "5900:5900"
+  shm_size: '2gb'  # Prevents browser crashes
+```
+
+---
+
+### ❌ Mistake 5: Forgetting to Remove ThreadLocal After Test
+
+**Why it's wrong:**
+Not calling `ThreadLocal.remove()` after tests can cause memory leaks, especially in long-running test suites or CI/CD environments.
+
+**How to fix:**
+Always remove ThreadLocal variables in @AfterMethod or finally blocks.
+
+**Example:**
+```java
+// ❌ WRONG - Memory leak
+@AfterMethod
+public void teardown() {
+    driver.get().quit();
+    // Missing driver.remove() - memory leak!
+}
+
+// ✅ CORRECT - Proper cleanup
+@AfterMethod
+public void teardown() {
+    if (driver.get() != null) {
+        driver.get().quit();
+        driver.remove();  // Prevents memory leak
+    }
+}
+
+// ✅ EVEN BETTER - Using try-finally
+@AfterMethod
+public void teardown() {
+    try {
+        if (driver.get() != null) {
+            driver.get().quit();
+        }
+    } finally {
+        driver.remove();  // Always executes
+    }
+}
+```
+
+---
+
+### ❌ Mistake 6: Not Handling Browser-Specific Differences
+
+**Why it's wrong:**
+Assuming all browsers behave identically leads to flaky tests. Safari handles file downloads differently, Firefox has different default timeouts, and Edge may require different wait strategies.
+
+**How to fix:**
+Implement browser-specific logic where needed and use explicit waits.
+
+**Example:**
+```java
+// ❌ WRONG - Assuming all browsers behave the same
+driver.findElement(By.id("download")).click();
+Thread.sleep(5000);  // Bad practice, won't work reliably
+
+// ✅ CORRECT - Browser-specific handling
+String browser = ((RemoteWebDriver) driver).getCapabilities()
+    .getBrowserName();
+
+if (browser.equalsIgnoreCase("safari")) {
+    // Safari-specific file download handling
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    wait.until(ExpectedConditions.alertIsPresent());
+    driver.switchTo().alert().accept();
+} else {
+    // Chrome/Firefox download
+    driver.findElement(By.id("download")).click();
+    // Wait for download to complete
+    waitForFileDownload(downloadPath);
+}
+```
+
+---
+
+### ❌ Mistake 7: Using Same Port for Multiple Grid Components
+
+**Why it's wrong:**
+Starting Hub and Nodes on the same port (4444) causes "port already in use" errors and prevents Grid from functioning.
+
+**How to fix:**
+Use different ports for Hub (4444) and Nodes (5555, 5556, etc.).
+
+**Example:**
+```bash
+# ❌ WRONG - Port conflict
+java -jar selenium-server.jar hub --port 4444
+java -jar selenium-server.jar node --port 4444  # Error!
+
+# ✅ CORRECT - Different ports
+# Terminal 1 - Hub
+java -jar selenium-server.jar hub --port 4444
+
+# Terminal 2 - Node 1
+java -jar selenium-server.jar node \
+  --hub http://localhost:4444 \
+  --port 5555
+
+# Terminal 3 - Node 2
+java -jar selenium-server.jar node \
+  --hub http://localhost:4444 \
+  --port 5556
+```
+
+---
+
+### ❌ Mistake 8: Not Setting Browser Options for Headless Execution
+
+**Why it's wrong:**
+Running browsers in CI/CD environments without headless mode fails because there's no display available, causing "cannot open display" errors.
+
+**How to fix:**
+Configure browsers to run in headless mode for CI/CD environments.
+
+**Example:**
+```java
+// ❌ WRONG - No headless configuration for CI
+ChromeOptions options = new ChromeOptions();
+WebDriver driver = new ChromeDriver(options);
+
+// ✅ CORRECT - Headless for CI environment
+ChromeOptions options = new ChromeOptions();
+
+if (System.getenv("CI") != null) {
+    options.addArguments("--headless=new");
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+    options.addArguments("--window-size=1920,1080");
+}
+
+WebDriver driver = new ChromeDriver(options);
+```
+
+---
+
+### ❌ Mistake 9: Not Checking Grid Status Before Running Tests
+
+**Why it's wrong:**
+Running tests when Grid is down or nodes aren't registered causes "Could not start a new session" errors and wastes time debugging.
+
+**How to fix:**
+Check Grid/Node availability before test execution or implement retry logic.
+
+**Example:**
+```java
+// ❌ WRONG - No Grid availability check
+@BeforeMethod
+public void setup() throws Exception {
+    driver = new RemoteWebDriver(
+        new URL("http://localhost:4444"),
+        new ChromeOptions()
+    );
+}
+
+// ✅ CORRECT - Check Grid status first
+@BeforeMethod
+public void setup() throws Exception {
+    String gridUrl = "http://localhost:4444";
+
+    // Check if Grid is available
+    if (!isGridAvailable(gridUrl)) {
+        throw new RuntimeException("Grid is not available at " + gridUrl);
+    }
+
+    driver = new RemoteWebDriver(new URL(gridUrl), new ChromeOptions());
+}
+
+private boolean isGridAvailable(String gridUrl) {
+    try {
+        URL url = new URL(gridUrl + "/status");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(5000);
+        int responseCode = connection.getResponseCode();
+        return responseCode == 200;
+    } catch (Exception e) {
+        return false;
+    }
+}
+```
+
+---
+
+### ❌ Mistake 10: Creating New BrowserFactory Instance Every Time
+
+**Why it's wrong:**
+Creating BrowserFactory instances instead of using static methods is inefficient and defeats the purpose of the factory pattern.
+
+**How to fix:**
+Make factory methods static and use them directly without instantiation.
+
+**Example:**
+```java
+// ❌ WRONG - Creating factory instance
+public class Test {
+    @BeforeMethod
+    public void setup() {
+        BrowserFactory factory = new BrowserFactory();  // Unnecessary
+        driver = factory.getBrowser("chrome");  // Should be static
+    }
+}
+
+// ✅ CORRECT - Using static factory method
+public class Test {
+    @BeforeMethod
+    public void setup() {
+        driver = BrowserFactory.getBrowser("chrome");  // Direct static call
+    }
+}
+
+// Factory class should have static methods
+public class BrowserFactory {
+    // ✅ Static method - no instantiation needed
+    public static WebDriver getBrowser(String browserName) {
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                return new ChromeDriver();
+            case "firefox":
+                return new FirefoxDriver();
+            default:
+                throw new IllegalArgumentException("Unsupported browser");
+        }
+    }
+}
+```
+
+---
+
+### ❌ Mistake 11: Not Using WebDriverManager for Driver Setup
+
+**Why it's wrong:**
+Manually downloading and managing browser drivers (chromedriver, geckodriver) is error-prone and version-dependent, leading to "driver executable not found" or version mismatch errors.
+
+**How to fix:**
+Use WebDriverManager to automatically download and manage browser drivers.
+
+**Example:**
+```java
+// ❌ WRONG - Manual driver management
+System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+WebDriver driver = new ChromeDriver();  // Breaks if path is wrong
+
+// ✅ CORRECT - Using WebDriverManager
+WebDriverManager.chromedriver().setup();  // Auto-downloads correct version
+WebDriver driver = new ChromeDriver();
+
+// ✅ EVEN BETTER - Specify version if needed
+WebDriverManager.chromedriver().driverVersion("120.0.6099.109").setup();
+WebDriver driver = new ChromeDriver();
+```
+
+---
+
+### ❌ Mistake 12: Ignoring Browser Capabilities Mismatch
+
+**Why it's wrong:**
+Requesting capabilities that don't match any available nodes causes "session not created" errors with no clear explanation.
+
+**How to fix:**
+Ensure requested capabilities match what's available on Grid nodes, and check Grid UI for available browsers.
+
+**Example:**
+```java
+// ❌ WRONG - Requesting unavailable browser version
+ChromeOptions options = new ChromeOptions();
+options.setBrowserVersion("999.0");  // Doesn't exist!
+options.setPlatformName("Windows 20");  // Wrong OS!
+driver = new RemoteWebDriver(new URL(gridUrl), options);
+
+// ✅ CORRECT - Using available capabilities
+ChromeOptions options = new ChromeOptions();
+// Don't specify version to get latest available
+// or specify a version you know exists
+options.setPlatformName("WINDOWS");  // Use standard platform names
+driver = new RemoteWebDriver(new URL(gridUrl), options);
+
+// ✅ BETTER - Check Grid capabilities first
+// Visit http://localhost:4444 to see available browsers
+```
+
+---
+
+### ❌ Mistake 13: Not Configuring Timeouts for Remote Execution
+
+**Why it's wrong:**
+Using default timeouts on Grid can cause premature test failures due to network latency, as remote execution is slower than local.
+
+**How to fix:**
+Increase timeouts for Grid execution and use explicit waits appropriately.
+
+**Example:**
+```java
+// ❌ WRONG - Using local execution timeouts on Grid
+driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+
+// ✅ CORRECT - Increased timeouts for Grid
+driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
+driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(30));
+
+// ✅ BETTER - Using explicit waits
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+wait.until(ExpectedConditions.elementToBeClickable(By.id("button")));
+```
+
+---
+
+### ❌ Mistake 14: Missing depends_on in Docker Compose
+
+**Why it's wrong:**
+Starting nodes before the Hub in Docker Compose causes connection failures as nodes try to register with a Hub that doesn't exist yet.
+
+**How to fix:**
+Use `depends_on` to ensure Hub starts before nodes.
+
+**Example:**
+```yaml
+# ❌ WRONG - No dependency management
+version: '3'
+services:
+  chrome-node:
+    image: selenium/node-chrome:4.15.0
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+
+  selenium-hub:
+    image: selenium/hub:4.15.0
+
+# ✅ CORRECT - With depends_on
+version: '3'
+services:
+  selenium-hub:
+    image: selenium/hub:4.15.0
+    ports:
+      - "4444:4444"
+
+  chrome-node:
+    image: selenium/node-chrome:4.15.0
+    depends_on:
+      - selenium-hub  # Waits for Hub to start first
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+```
+
+---
+
+### ❌ Mistake 15: Not Marking Test Status in Cloud Platforms
+
+**Why it's wrong:**
+When using BrowserStack or Sauce Labs, all tests show as "Completed" instead of "Passed/Failed" because the status isn't explicitly set.
+
+**How to fix:**
+Use JavascriptExecutor to mark test status on cloud platforms.
+
+**Example:**
+```java
+// ❌ WRONG - No status marking on BrowserStack
+@Test
+public void testOnBrowserStack() {
+    driver.get("https://example.com");
+    Assert.assertTrue(driver.getTitle().contains("Example"));
+    // Test shows as "Completed" not "Passed"
+}
+
+// ✅ CORRECT - Marking test status
+@Test
+public void testOnBrowserStack() {
+    try {
+        driver.get("https://example.com");
+        Assert.assertTrue(driver.getTitle().contains("Example"));
+
+        // Mark as passed
+        markTestStatus("passed", "Test completed successfully");
+    } catch (AssertionError e) {
+        // Mark as failed
+        markTestStatus("failed", e.getMessage());
+        throw e;
+    }
+}
+
+private void markTestStatus(String status, String reason) {
+    JavascriptExecutor jse = (JavascriptExecutor) driver;
+    jse.executeScript(
+        "browserstack_executor: {\"action\": \"setSessionStatus\", " +
+        "\"arguments\": {\"status\": \"" + status + "\", " +
+        "\"reason\": \"" + reason + "\"}}"
+    );
+}
+```
+
+---
+
 ## 18. Key Takeaways
 
 1. **Cross-Browser Testing** ensures consistent functionality across different browsers

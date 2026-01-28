@@ -3403,6 +3403,30 @@ Tomorrow (Day 20), we'll learn about:
 
 ---
 
+## 🔗 Navigation
+
+### Previous Day
+← [Day 18: Exception Handling - Part 2](day18_exception_handling_part2.md)
+
+### Next Day
+→ [Day 20: Collections - Map](day20_collections_map.md)
+
+### Week Overview
+↑ [Week 3: Advanced Java Fundamentals](README.md)
+
+### Course Home
+🏠 [Core Java Daily Learning](../README.md)
+
+### Related Topics
+- [Day 6: Arrays - Part 1](../week-01/day06_arrays_part1.md) - Foundation for collections
+- [Day 7: Arrays - Part 2](../week-01/day07_arrays_part2_review.md) - Arrays vs Collections
+- [Day 20: Collections - Map](day20_collections_map.md) - Key-value pair collections
+
+### Assessment
+📝 [Day 19 Assessment](../../assessments/java/week3/day19.js) - Test your List & Set knowledge
+
+---
+
 ## 📚 Additional Resources
 
 - [Oracle Collections Tutorial](https://docs.oracle.com/javase/tutorial/collections/)

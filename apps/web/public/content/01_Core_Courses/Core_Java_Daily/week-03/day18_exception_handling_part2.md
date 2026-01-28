@@ -4115,6 +4115,30 @@ Tomorrow (Day 19), we'll learn about:
 
 ---
 
+## 🔗 Navigation
+
+### Previous Day
+← [Day 17: Exception Handling - Part 1](day17_exception_handling_part1.md)
+
+### Next Day
+→ [Day 19: Collections - List & Set](day19_collections_list_set.md)
+
+### Week Overview
+↑ [Week 3: Advanced Java Fundamentals](README.md)
+
+### Course Home
+🏠 [Core Java Daily Learning](../README.md)
+
+### Related Topics
+- [Day 17: Exception Handling - Part 1](day17_exception_handling_part1.md) - try-catch-finally basics
+- [Day 22: File I/O](../week-04/day22_file_io.md) - Exceptions in file handling
+- [Day 23: File Operations](../week-04/day23_file_operations.md) - try-with-resources usage
+
+### Assessment
+📝 [Day 18 Assessment](../../assessments/java/week3/day18.js) - Test your advanced exception handling knowledge
+
+---
+
 ## 📚 Additional Resources
 
 - [Oracle Exception Handling Best Practices](https://docs.oracle.com/javase/tutorial/essential/exceptions/)

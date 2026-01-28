@@ -1,5 +1,8 @@
 // Import week-based assessments for better organization
-// Updated: Force cache refresh
+// Updated: 2026-01-28
+// - Added difficulty-based assessment support
+// - Added getAssessmentByDifficulty helper function
+// - Supports easy/medium/hard difficulty levels for assessments
 import { week1Assessments, week1Info } from './java/week1/index.js';
 import { week2Assessments, week2Info } from './java/week2/index.js';
 import { week3Assessments, week3Info } from './java/week3/index.js';
@@ -36,8 +39,7 @@ import {
 } from './selenium/week7/index.js';
 
 // Import all day assessments (for backward compatibility)
-import day1 from './java/week1/day1.js';
-import day2 from './java/week1/day2.js';
+// Note: day1 and day2 are now imported via week1Assessments (difficulty-based)
 import day3 from './java/week1/day3.js';
 import day4 from './java/week1/day4.js';
 import day5 from './java/week1/day5.js';
@@ -71,14 +73,12 @@ import day28 from './java/week4/day28.js';
 import seleniumDay1 from './selenium/week1/day1.js';
 
 // Export assessments object
+// Note: Week 1 assessments now include difficulty-based variants for day1 and day2
 export const assessments = {
-  'java-day1': day1,
-  'java-day2': day2,
-  'java-day3': day3,
-  'java-day4': day4,
-  'java-day5': day5,
-  'java-day6': day6,
-  'java-day7': day7,
+  // Week 1: Import difficulty-based assessments from week1Assessments
+  ...week1Assessments,
+
+  // Week 2-4: Legacy single-file structure
   'java-day8': day8,
   'java-day9': day9,
   'java-day10': day10,
@@ -150,6 +150,29 @@ export const getAssessment = (dayId, mode = 'quick') => {
   }
 
   return assessment;
+};
+
+/**
+ * Get assessment by difficulty level
+ * @param {string} dayId - Day identifier without difficulty (e.g., 'java-day1', 'selenium-day1')
+ * @param {string} difficulty - Difficulty level ('easy', 'medium', 'hard')
+ * @returns {Object|null} - Assessment object or null
+ */
+export const getAssessmentByDifficulty = (dayId, difficulty = 'easy') => {
+  // First try with difficulty suffix
+  const key = `${dayId}-${difficulty}`;
+
+  // If specific difficulty exists, return it
+  if (assessments[key]) {
+    return assessments[key];
+  }
+
+  // Fall back to default (no difficulty) if available
+  if (assessments[dayId]) {
+    return assessments[dayId];
+  }
+
+  return null;
 };
 
 /**
