@@ -1,6 +1,7 @@
 // Week 1: Java Fundamentals (Days 1-7)
 // Topics: Setup, Variables, Operators, Control Flow, Loops, Arrays
 
+// Import single-file assessments for all days
 import day1 from './day1.js';
 import day2 from './day2.js';
 import day3 from './day3.js';
