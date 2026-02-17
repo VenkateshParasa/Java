@@ -61,7 +61,7 @@ function App() {
   };
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <MenuProvider>
         <div className="app">
           <header className="app-header">

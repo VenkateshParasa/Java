@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
+import './AssessmentQuiz.css';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -38,6 +39,7 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
   const [currentSection, setCurrentSection] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [markedForReview, setMarkedForReview] = useState({});
   const [showResults, setShowResults] = useState(reviewMode);
   const [timeRemaining, setTimeRemaining] = useState(baseAssessment.timeLimit * 60);
   const [timerPaused, setTimerPaused] = useState(false);
@@ -263,6 +265,17 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
     return section.questions.filter(q => answers[q.id] !== undefined).length;
   };
 
+  const getMarkedForReviewCount = () => {
+    return Object.keys(markedForReview).filter(id => markedForReview[id]).length;
+  };
+
+  const toggleMarkForReview = (questionId) => {
+    setMarkedForReview(prev => ({
+      ...prev,
+      [questionId]: !prev[questionId]
+    }));
+  };
+
   const question = sectionQuestions[currentQuestion];
   const isLastQuestionInSection = currentQuestion === sectionQuestions.length - 1;
   const isLastSection = !hasSections || currentSection === assessment.sections.length - 1;
@@ -351,8 +364,8 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
 
         {/* Section Tabs */}
         {hasSections && (
-          <div className="mb-4 border-b border-gray-200">
-            <div className="flex gap-2 overflow-x-auto">
+          <div className="section-tabs-container">
+            <div className="section-tabs">
               {assessment.sections.map((section, index) => {
                 const sectionAnswered = getSectionAnsweredCount(section);
                 const sectionTotal = section.questions.length;
@@ -360,22 +373,16 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
 
                 return (
                   <button
-                    key={section.id}
+                    key={`section-${section.id}-${index}`}
                     onClick={() => handleSectionChange(index)}
-                    className={`
-                      px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors
-                      ${currentSection === index
-                        ? 'border-primary-600 text-primary-600'
-                        : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
-                      }
-                    `}
+                    className={`section-tab-button ${currentSection === index ? 'active' : ''}`}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="section-tab-content">
                       <span>{section.title.split(':')[0]}</span>
                       {isComplete && (
                         <CheckCircle2 className="w-4 h-4 text-green-600" />
                       )}
-                      <span className="text-xs text-gray-500">
+                      <span className="section-tab-count">
                         ({sectionAnswered}/{sectionTotal})
                       </span>
                     </div>
@@ -419,9 +426,23 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
               {currentQuestion + 1}
             </div>
             <div className="flex-1">
-              <p className="text-lg font-medium text-gray-900 mb-2">
-                {question.question}
-              </p>
+              <div className="flex items-start justify-between gap-4 mb-2">
+                <p className="text-lg font-medium text-gray-900 flex-1">
+                  {question.question}
+                </p>
+                <button
+                  onClick={() => toggleMarkForReview(question.id)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 transition-all text-sm font-medium ${
+                    markedForReview[question.id]
+                      ? 'border-orange-500 bg-orange-50 text-orange-700'
+                      : 'border-gray-300 bg-white text-gray-600 hover:border-orange-300 hover:bg-orange-50'
+                  }`}
+                  title={markedForReview[question.id] ? 'Unmark for review' : 'Mark for review'}
+                >
+                  <BookOpen className="w-4 h-4" />
+                  {markedForReview[question.id] ? 'Marked' : 'Mark for Review'}
+                </button>
+              </div>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-500">
                   {question.points} {question.points === 1 ? 'point' : 'points'}
@@ -441,7 +462,7 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
 
           {/* Question Type Specific UI */}
           <div className="mt-6">
-            {question.type === 'mcq' && (
+            {(question.type === 'mcq' || question.type === 'multiple-choice') && (
               <MCQQuestion
                 question={question}
                 answer={answers[question.id]}
@@ -449,7 +470,7 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
               />
             )}
 
-            {question.type === 'truefalse' && (
+            {(question.type === 'truefalse' || question.type === 'true-false') && (
               <TrueFalseQuestion
                 question={question}
                 answer={answers[question.id]}
@@ -457,7 +478,7 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
               />
             )}
 
-            {question.type === 'fillblank' && (
+            {(question.type === 'fillblank' || question.type === 'fill-blank') && (
               <FillBlankQuestion
                 question={question}
                 answer={answers[question.id]}
@@ -465,7 +486,7 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
               />
             )}
 
-            {question.type === 'shortanswer' && (
+            {(question.type === 'shortanswer' || question.type === 'short-answer') && (
               <ShortAnswerQuestion
                 question={question}
                 answer={answers[question.id]}
@@ -481,17 +502,23 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
         <button
           onClick={handlePrevious}
           disabled={currentQuestion === 0 && currentSection === 0}
-          className="btn-secondary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="nav-button nav-button-secondary"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft />
           Previous
         </button>
 
-        <div className="text-sm text-gray-600">
+        <div className="flex flex-col items-center gap-2 text-sm">
           {answeredCount < totalQuestions && (
             <span className="flex items-center gap-2 text-orange-600">
               <AlertCircle className="w-4 h-4" />
               {totalQuestions - answeredCount} unanswered
+            </span>
+          )}
+          {getMarkedForReviewCount() > 0 && (
+            <span className="flex items-center gap-2 text-blue-600">
+              <BookOpen className="w-4 h-4" />
+              {getMarkedForReviewCount()} marked for review
             </span>
           )}
         </div>
@@ -499,18 +526,18 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
         {!(isLastQuestionInSection && isLastSection) ? (
           <button
             onClick={handleNext}
-            className="btn-primary flex items-center gap-2"
+            className="nav-button nav-button-primary"
           >
             {isLastQuestionInSection ? 'Next Section' : 'Next'}
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight />
           </button>
         ) : (
           <button
             onClick={handleSubmit}
-            className="btn-primary flex items-center gap-2 bg-green-600 hover:bg-green-700"
+            className="nav-button nav-button-success"
           >
             Submit Assessment
-            <CheckCircle2 className="w-4 h-4" />
+            <CheckCircle2 />
           </button>
         )}
       </div>
@@ -521,32 +548,20 @@ const AssessmentQuiz = ({ assessment: propAssessment, dayId, onComplete, reviewM
 // MCQ Question Component
 const MCQQuestion = ({ question, answer, onAnswer }) => {
   return (
-    <div className="space-y-3">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
       {question.options.map((option, index) => (
         <button
           key={index}
           onClick={() => onAnswer(index)}
-          className={`
-            w-full text-left p-4 rounded-lg border-2 transition-all
-            ${answer === index
-              ? 'border-primary-600 bg-primary-50'
-              : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
-            }
-          `}
+          className={`mcq-option-button ${answer === index ? 'selected' : ''}`}
         >
-          <div className="flex items-center gap-3">
-            <div className={`
-              w-6 h-6 rounded-full border-2 flex items-center justify-center
-              ${answer === index
-                ? 'border-primary-600 bg-primary-600'
-                : 'border-gray-300'
-              }
-            `}>
+          <div className="mcq-option-content">
+            <div className={`mcq-radio-circle ${answer === index ? 'selected' : ''}`}>
               {answer === index && (
-                <div className="w-3 h-3 bg-white rounded-full" />
+                <div className="mcq-radio-inner" />
               )}
             </div>
-            <span className="flex-1">{option}</span>
+            <span className="mcq-option-text">{option}</span>
           </div>
         </button>
       ))}
@@ -557,37 +572,21 @@ const MCQQuestion = ({ question, answer, onAnswer }) => {
 // True/False Question Component
 const TrueFalseQuestion = ({ question, answer, onAnswer }) => {
   return (
-    <div className="flex gap-4">
+    <div className="tf-container">
       <button
         onClick={() => onAnswer(true)}
-        className={`
-          flex-1 p-6 rounded-lg border-2 transition-all
-          ${answer === true
-            ? 'border-green-600 bg-green-50'
-            : 'border-gray-200 hover:border-green-300 hover:bg-gray-50'
-          }
-        `}
+        className={`tf-button ${answer === true ? 'selected-true' : ''}`}
       >
-        <div className="text-center">
-          <CheckCircle2 className={`w-8 h-8 mx-auto mb-2 ${answer === true ? 'text-green-600' : 'text-gray-400'}`} />
-          <span className="font-semibold">True</span>
-        </div>
+        <CheckCircle2 className={`tf-icon true-icon ${answer === true ? 'selected' : ''}`} />
+        <span className="tf-label">True</span>
       </button>
 
       <button
         onClick={() => onAnswer(false)}
-        className={`
-          flex-1 p-6 rounded-lg border-2 transition-all
-          ${answer === false
-            ? 'border-red-600 bg-red-50'
-            : 'border-gray-200 hover:border-red-300 hover:bg-gray-50'
-          }
-        `}
+        className={`tf-button ${answer === false ? 'selected-false' : ''}`}
       >
-        <div className="text-center">
-          <XCircle className={`w-8 h-8 mx-auto mb-2 ${answer === false ? 'text-red-600' : 'text-gray-400'}`} />
-          <span className="font-semibold">False</span>
-        </div>
+        <XCircle className={`tf-icon false-icon ${answer === false ? 'selected' : ''}`} />
+        <span className="tf-label">False</span>
       </button>
     </div>
   );
@@ -596,15 +595,15 @@ const TrueFalseQuestion = ({ question, answer, onAnswer }) => {
 // Fill in the Blank Question Component
 const FillBlankQuestion = ({ question, answer, onAnswer }) => {
   return (
-    <div>
+    <div className="fib-container">
       <input
         type="text"
         value={answer || ''}
         onChange={(e) => onAnswer(e.target.value)}
         placeholder="Type your answer here..."
-        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+        className="fib-input"
       />
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="fib-hint">
         Enter your answer in the blank above
       </p>
     </div>
@@ -614,15 +613,15 @@ const FillBlankQuestion = ({ question, answer, onAnswer }) => {
 // Short Answer Question Component
 const ShortAnswerQuestion = ({ question, answer, onAnswer }) => {
   return (
-    <div>
+    <div className="sa-container">
       <textarea
         value={answer || ''}
         onChange={(e) => onAnswer(e.target.value)}
         placeholder="Type your answer here..."
         rows={4}
-        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+        className="sa-textarea"
       />
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="sa-hint">
         Provide a detailed answer (minimum {question.minKeywords || 2} key points)
       </p>
     </div>
@@ -807,9 +806,9 @@ const ResultsView = ({ results, assessment, answers, dayId, reviewMode = false, 
 const checkAnswer = (question, userAnswer) => {
   if (userAnswer === undefined || userAnswer === null) return false;
 
-  if (question.type === 'mcq' || question.type === 'truefalse') {
+  if (question.type === 'mcq' || question.type === 'multiple-choice' || question.type === 'truefalse' || question.type === 'true-false') {
     return userAnswer === question.correctAnswer;
-  } else if (question.type === 'fillblank') {
+  } else if (question.type === 'fillblank' || question.type === 'fill-blank') {
     const acceptable = question.acceptableAnswers || [question.correctAnswer];
     const userAnswerNormalized = question.caseSensitive
       ? userAnswer.trim()
@@ -821,7 +820,7 @@ const checkAnswer = (question, userAnswer) => {
         : ans.trim().toLowerCase();
       return userAnswerNormalized === ansNormalized;
     });
-  } else if (question.type === 'shortanswer') {
+  } else if (question.type === 'shortanswer' || question.type === 'short-answer') {
     const userAnswerLower = userAnswer.toLowerCase();
     const matchedKeywords = question.keywords.filter(keyword =>
       userAnswerLower.includes(keyword.toLowerCase())
@@ -835,9 +834,9 @@ const checkAnswer = (question, userAnswer) => {
 const formatUserAnswer = (question, answer) => {
   if (answer === undefined || answer === null) return 'Not answered';
 
-  if (question.type === 'mcq') {
+  if (question.type === 'mcq' || question.type === 'multiple-choice') {
     return question.options[answer] || 'Not answered';
-  } else if (question.type === 'truefalse') {
+  } else if (question.type === 'truefalse' || question.type === 'true-false') {
     return answer ? 'True' : 'False';
   } else {
     return answer;
@@ -845,13 +844,13 @@ const formatUserAnswer = (question, answer) => {
 };
 
 const formatCorrectAnswer = (question) => {
-  if (question.type === 'mcq') {
+  if (question.type === 'mcq' || question.type === 'multiple-choice') {
     return question.options[question.correctAnswer];
-  } else if (question.type === 'truefalse') {
+  } else if (question.type === 'truefalse' || question.type === 'true-false') {
     return question.correctAnswer ? 'True' : 'False';
-  } else if (question.type === 'fillblank') {
+  } else if (question.type === 'fillblank' || question.type === 'fill-blank') {
     return question.correctAnswer;
-  } else if (question.type === 'shortanswer') {
+  } else if (question.type === 'shortanswer' || question.type === 'short-answer') {
     return question.sampleAnswer;
   }
   return '';

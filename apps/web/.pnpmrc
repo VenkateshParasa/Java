@@ -1,0 +1,24 @@
+# pnpm-specific configuration for faster installs
+
+# Timeout and retry settings
+fetch-timeout=120000
+fetch-retries=10
+fetch-retry-mintimeout=30000
+fetch-retry-maxtimeout=180000
+
+# Network optimization
+network-concurrency=5
+prefer-offline=true
+
+# Registry configuration
+registry=https://registry.npmjs.org/
+
+# Store configuration (shared across projects)
+store-dir=~/.pnpm-store
+
+# Symlink settings
+symlink=true
+enable-pre-post-scripts=true
+
+# Logging
+loglevel=info

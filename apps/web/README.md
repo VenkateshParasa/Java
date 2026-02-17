@@ -10,6 +10,7 @@ A comprehensive React-based assessment system for learning Java programming with
 
 ### Installation
 
+#### Option 1: Using npm (Standard)
 1. **Install Dependencies**
    ```bash
    npm install
@@ -20,7 +21,7 @@ A comprehensive React-based assessment system for learning Java programming with
    npm run dev
    ```
    
-   The application will automatically open at `http://localhost:3000`
+   The application will start at `http://localhost:3000`
 
 3. **Build for Production**
    ```bash
@@ -31,6 +32,46 @@ A comprehensive React-based assessment system for learning Java programming with
    ```bash
    npm run preview
    ```
+
+#### Option 2: Using pnpm (Recommended - 3x Faster)
+1. **Install pnpm globally** (one-time setup)
+   ```bash
+   npm install -g pnpm
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Start Development Server**
+   ```bash
+   pnpm dev
+   ```
+
+4. **Build for Production**
+   ```bash
+   pnpm build
+   ```
+
+5. **Preview Production Build**
+   ```bash
+   pnpm preview
+   ```
+
+#### For Slow Networks or Client Machines
+If you experience slow installation due to network issues:
+
+```bash
+# Using npm with optimized settings
+npm run install:safe
+
+# Or use pnpm (much faster)
+npm install -g pnpm
+pnpm install
+```
+
+See [INSTALLATION_GUIDE.md](./INSTALLATION_GUIDE.md) for detailed troubleshooting and offline installation methods.
 
 ## 📚 Features
 
@@ -99,8 +140,10 @@ java-learning-app/
 
 - **React 18.3.1** - UI library
 - **React Router 6.28.0** - Client-side routing
-- **Vite 6.0.3** - Build tool and dev server
+- **Webpack 5.105.2** - Module bundler and build tool
+- **Babel 7.29.0** - JavaScript transpiler
 - **Tailwind CSS 3.4.17** - Utility-first CSS framework
+- **PostCSS 8.4.49** - CSS processing
 
 ## 📖 Usage
 
@@ -133,14 +176,12 @@ After completing an assessment:
 
 ### Changing Port
 
-Edit `vite.config.js`:
+Edit `webpack.config.js`:
 ```javascript
-export default defineConfig({
-  server: {
-    port: 3000, // Change this
-    open: true
-  }
-})
+devServer: {
+  port: 3000, // Change this
+  open: false
+}
 ```
 
 ### Customizing Styles
@@ -159,10 +200,36 @@ export default defineConfig({
 ## 🐛 Troubleshooting
 
 ### Dependencies Won't Install
+
+**For npm:**
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
+
+**For pnpm:**
+```bash
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+### Slow Installation on Client Machines
+
+If installation is taking too long due to network issues:
+
+**Option 1: Use optimized npm settings**
+```bash
+npm run install:safe
+```
+
+**Option 2: Switch to pnpm (3x faster)**
+```bash
+npm install -g pnpm
+pnpm install
+```
+
+**Option 3: Offline installation**
+See [INSTALLATION_GUIDE.md](./INSTALLATION_GUIDE.md) for complete offline installation instructions.
 
 ### Port Already in Use
 ```bash
